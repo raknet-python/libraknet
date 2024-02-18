@@ -853,6 +853,7 @@ protected:
 //		char remote_challenge[cat::EasyHandshake::CHALLENGE_BYTES];
 	//	char random[16];
 #endif
+        unsigned int protocolVersion;
 	};
 #if LIBCAT_SECURITY==1
 	bool GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,PublicKey *publicKey);
@@ -1024,6 +1025,9 @@ protected:
 
 	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
 	void FillIPList(void);
+
+    unsigned int protocol;
+    unsigned int GetProtocolVersion() const { return protocol; }
 } 
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))

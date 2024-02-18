@@ -376,6 +376,8 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 	if (IsActive())
 		return RAKNET_ALREADY_STARTED;
 
+    protocol = protocolVersion;
+
 	// If getting the guid failed in the constructor, try again
 	if (myGuid.g==0)
 	{
@@ -3300,6 +3302,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 	memcpy(rcs->outgoingPassword, passwordData, passwordDataLength);
 	rcs->outgoingPasswordLength=(unsigned char) passwordDataLength;
 	rcs->timeoutTime=timeoutTime;
+    rcs->protocolVersion=GetProtocolVersion();
 
 #if LIBCAT_SECURITY==1
 	CAT_AUDIT_PRINTF("AUDIT: In SendConnectionRequest()\n");
@@ -3355,6 +3358,7 @@ ConnectionAttemptResult RakPeer::SendConnectionRequest( const char* host, unsign
 	rcs->outgoingPasswordLength=(unsigned char) passwordDataLength;
 	rcs->timeoutTime=timeoutTime;
 	rcs->socket=socket;
+    rcs->protocolVersion=GetProtocolVersion();
 
 #if LIBCAT_SECURITY==1
 	if (!GenerateConnectionRequestChallenge(rcs,publicKey))
@@ -5144,11 +5148,11 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			unsigned int i;
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
 			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
-			if (remoteProtocol!=RAKNET_PROTOCOL_VERSION)
+			if (remoteProtocol!=rakPeer->GetProtocolVersion())
 			{
 				RakNet::BitStream bs;
 				bs.Write((MessageID)ID_INCOMPATIBLE_PROTOCOL_VERSION);
-				bs.Write((unsigned char)RAKNET_PROTOCOL_VERSION);
+				bs.Write((unsigned char)rakPeer->GetProtocolVersion());
 				bs.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
 				bs.Write(rakPeer->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS));
 
@@ -5766,7 +5770,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 					//WriteOutOfBandHeader(&bitStream, ID_USER_PACKET_ENUM);
 					bitStream.Write((MessageID)ID_OPEN_CONNECTION_REQUEST_1);
 					bitStream.WriteAlignedBytes((const unsigned char*) OFFLINE_MESSAGE_DATA_ID, sizeof(OFFLINE_MESSAGE_DATA_ID));
-					bitStream.Write((MessageID)RAKNET_PROTOCOL_VERSION);
+					bitStream.Write((MessageID)rcs->protocolVersion);
 					bitStream.PadWithZeroToByteLength(mtuSizes[MTUSizeIndex]-UDP_HEADER_SIZE);
 
 					char str[256];
