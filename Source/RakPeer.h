@@ -75,7 +75,7 @@ public:
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return RAKNET_STARTED on success, otherwise appropriate failure enumeration.
-	StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999, int protocolVersion = RAKNET_PROTOCOL_VERSION, unsigned int maxInternalIds = MAXIMUM_NUMBER_OF_INTERNAL_IDS );
+	StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999, unsigned char protocolVersion = RAKNET_PROTOCOL_VERSION, unsigned int maxInternalIds = MAXIMUM_NUMBER_OF_INTERNAL_IDS );
 
 	/// If you accept connections, you must call this or else security will not be enabled for incoming connections.
 	/// This feature requires more round trips, bandwidth, and CPU time for the connection handshake
@@ -853,7 +853,7 @@ protected:
 //		char remote_challenge[cat::EasyHandshake::CHALLENGE_BYTES];
 	//	char random[16];
 #endif
-        unsigned int protocolVersion;
+        unsigned char protocolVersion;
 	};
 #if LIBCAT_SECURITY==1
 	bool GenerateConnectionRequestChallenge(RequestedConnectionStruct *rcs,PublicKey *publicKey);
@@ -1026,8 +1026,8 @@ protected:
 	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct);
 	void FillIPList(void);
 
-    unsigned int protocol;
-    unsigned int GetProtocolVersion() const { return protocol; }
+    unsigned char protocol;
+    unsigned char GetProtocolVersion() const { return protocol; }
 } 
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))

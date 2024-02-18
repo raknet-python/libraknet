@@ -371,7 +371,7 @@ RakPeer::~RakPeer()
 // \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 // \return False on failure (can't create socket or thread), true on success.
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority, int protocolVersion, unsigned int maxInternalIds )
+StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority, unsigned char protocolVersion, unsigned int maxInternalIds )
 {
 	if (IsActive())
 		return RAKNET_ALREADY_STARTED;
@@ -5147,7 +5147,7 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 
 			unsigned int i;
 			//RAKNET_DEBUG_PRINTF("%i:IOCR, ", __LINE__);
-			char remoteProtocol=data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)];
+			auto remoteProtocol=static_cast<unsigned char>(data[1+sizeof(OFFLINE_MESSAGE_DATA_ID)]);
 			if (remoteProtocol!=rakPeer->GetProtocolVersion())
 			{
 				RakNet::BitStream bs;
