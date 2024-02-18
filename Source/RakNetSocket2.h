@@ -128,7 +128,7 @@ public:
 	RNS2EventHandler * GetEventHandler(void) const;
 
 	// ----------- STATICS ------------
-	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
+	static void GetMyIP( SystemAddress* addresses, size_t length );
 	static void DomainNameToIP( const char *domainName, char ip[65] );
 
 protected:
@@ -423,7 +423,7 @@ public:
 	void SetSocketLayerOverride(SocketLayerOverride *_slo);
 	SocketLayerOverride* GetSocketLayerOverride(void);
 	// ----------- STATICS ------------
-	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
+	static void GetMyIP( SystemAddress* addresses, size_t length );
 protected:
 	static void GetMyIPIPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 	static void GetMyIPIPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
@@ -438,7 +438,7 @@ public:
 	RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
 
 	// ----------- STATICS ------------
-	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
+	static void GetMyIP( SystemAddress* addresses, size_t length );
 protected:
 	static void GetMyIPIPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 	static void GetMyIPIPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );

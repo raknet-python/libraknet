@@ -15,6 +15,7 @@
 
 #define CAT_NEUTER_EXPORT /* Neuter dllimport for libcat */
 
+#define MAXIMUM_NUMBER_OF_INTERNAL_IDS 20
 #include "RakNetDefines.h"
 #include "RakPeer.h"
 #include "RakNetTypes.h"
@@ -228,6 +229,7 @@ RakPeer::RakPeer()
 	occasionalPing = false;
 #endif
 	allowInternalRouting=false;
+    ipList = RakNet::OP_NEW_ARRAY<SystemAddress>(MAXIMUM_NUMBER_OF_INTERNAL_IDS, _FILE_AND_LINE_ );
 	for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
 		ipList[i]=UNASSIGNED_SYSTEM_ADDRESS;
 	allowConnectionResponseIPMigration = false;
@@ -369,7 +371,7 @@ RakPeer::~RakPeer()
 // \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 // \return False on failure (can't create socket or thread), true on success.
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority )
+StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority, int protocolVersion, unsigned int maxInternalIds )
 {
 	if (IsActive())
 		return RAKNET_ALREADY_STARTED;
@@ -398,6 +400,10 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 	}
 
 
+    if (maxInternalIds <= 0 || maxInternalIds > MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+        return STARTUP_OTHER_FAILURE;
+
+    maximumNumberOfInternalIds = maxInternalIds;
 	FillIPList();
 
 	if (myGuid==UNASSIGNED_RAKNET_GUID)
@@ -1212,6 +1218,9 @@ void RakPeer::Shutdown( unsigned int blockDuration, unsigned char orderingChanne
 	activeSystemList=0;
 
 	ClearRemoteSystemLookup();
+
+    RakNet::OP_DELETE_ARRAY(ipList, _FILE_AND_LINE_);
+    ipList=nullptr;
 
 #ifdef USE_THREADED_SEND
 	RakNet::SendToThread::Deref();
@@ -3545,7 +3554,7 @@ void RakPeer::OnConnectionRequest( RakPeer::RemoteSystemStruct *remoteSystem, Ra
 	SystemIndex systemIndex = (SystemIndex) GetIndexFromSystemAddress( remoteSystem->systemAddress, true );
 	RakAssert(systemIndex!=65535);
 	bitStream.Write(systemIndex);
-	for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+	for (unsigned int i=0; i < maximumNumberOfInternalIds; i++)
 		bitStream.Write(ipList[i]);
 	bitStream.Write(incomingTimestamp);
 	bitStream.Write(RakNet::GetTime());
@@ -6017,7 +6026,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 							inBitStream.IgnoreBits(8);
 							inBitStream.Read(bsSystemAddress);
-							for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+							for (unsigned int i=0; i < maximumNumberOfInternalIds; i++)
 								inBitStream.Read(remoteSystem->theirInternalSystemAddress[i]);
 
 							RakNet::Time sendPingTime, sendPongTime;
@@ -6154,7 +6163,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 								//	inBitStream.Read(remotePort);
 								inBitStream.Read(externalID);
 								inBitStream.Read(systemIndex);
-								for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+								for (unsigned int i=0; i < maximumNumberOfInternalIds; i++)
 									inBitStream.Read(remoteSystem->theirInternalSystemAddress[i]);
 
 								RakNet::Time sendPingTime, sendPongTime;
@@ -6193,7 +6202,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 								RakNet::BitStream outBitStream;
 								outBitStream.Write((MessageID)ID_NEW_INCOMING_CONNECTION);
 								outBitStream.Write(systemAddress);
-								for (unsigned int i=0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+								for (unsigned int i=0; i < maximumNumberOfInternalIds; i++)
 									outBitStream.Write(ipList[i]);
 								outBitStream.Write(sendPongTime);
 								outBitStream.Write(RakNet::GetTime());
@@ -6467,7 +6476,7 @@ void RakPeer::FillIPList(void)
 
 	// Fill out ipList structure
 #if  !defined(WINDOWS_STORE_RT)
-	RakNetSocket2::GetMyIP( ipList );
+	RakNetSocket2::GetMyIP( ipList, MAXIMUM_NUMBER_OF_INTERNAL_IDS );
 #endif
 
 	// Sort the addresses from lowest to highest

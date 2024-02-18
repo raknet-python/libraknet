@@ -26,7 +26,7 @@ void PrepareAddrInfoHints2(addrinfo *hints)
 	hints->ai_flags = AI_PASSIVE;     // fill in my IP for me
 }
 
-void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+void GetMyIP_Windows_Linux_IPV4And6( SystemAddress* addresses, size_t length )
 {
 	int idx=0;
 	char ac[ 80 ];
@@ -38,7 +38,7 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 	PrepareAddrInfoHints2(&hints);
 	getaddrinfo(ac, "", &hints, &servinfo);
 
-	for (idx=0, aip = servinfo; aip != NULL && idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; aip = aip->ai_next, idx++)
+	for (idx=0, aip = servinfo; aip != NULL && idx < length; aip = aip->ai_next, idx++)
 	{
 		if (aip->ai_family == AF_INET)
 		{
@@ -55,7 +55,7 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 
 	freeaddrinfo(servinfo); // free the linked-list
 	
-	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+	while (idx < length)
 	{
 		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
 		idx++;
@@ -67,7 +67,7 @@ void GetMyIP_Windows_Linux_IPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_I
 #if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
 #include <netdb.h>
 #endif
-void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+void GetMyIP_Windows_Linux_IPV4( SystemAddress* addresses, size_t length )
 {
 
 
@@ -85,7 +85,7 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 		RakAssert(phe!=0);
 		return ;
 	}
-	for ( idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx )
+	for ( idx = 0; idx < length; ++idx )
 	{
 		if (phe->h_addr_list[ idx ] == 0)
 			break;
@@ -93,7 +93,7 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 		memcpy(&addresses[idx].address.addr4.sin_addr,phe->h_addr_list[ idx ],sizeof(struct in_addr));
 	}
 	
-	while (idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS)
+	while (idx < length)
 	{
 		addresses[idx]=UNASSIGNED_SYSTEM_ADDRESS;
 		idx++;
@@ -104,12 +104,12 @@ void GetMyIP_Windows_Linux_IPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTER
 #endif // RAKNET_SUPPORT_IPV6==1
 
 
-void GetMyIP_Windows_Linux( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] )
+void GetMyIP_Windows_Linux( SystemAddress* addresses, size_t length )
 {
 	#if RAKNET_SUPPORT_IPV6==1
-		GetMyIP_Windows_Linux_IPV4And6(addresses);
+		GetMyIP_Windows_Linux_IPV4And6(addresses, length);
 	#else
-		GetMyIP_Windows_Linux_IPV4(addresses);
+		GetMyIP_Windows_Linux_IPV4(addresses, length);
 	#endif
 }
 

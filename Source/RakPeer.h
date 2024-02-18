@@ -75,7 +75,7 @@ public:
 	/// \param[in] socketDescriptorCount The size of the \a socketDescriptors array.  Pass 1 if you are not sure what to pass.
 	/// \param[in] threadPriority Passed to the thread creation routine. Use THREAD_PRIORITY_NORMAL for Windows. For Linux based systems, you MUST pass something reasonable based on the thread priorities for your application.
 	/// \return RAKNET_STARTED on success, otherwise appropriate failure enumeration.
-	StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999 );
+	StartupResult Startup( unsigned int maxConnections, SocketDescriptor *socketDescriptors, unsigned socketDescriptorCount, int threadPriority=-99999, int protocolVersion = RAKNET_PROTOCOL_VERSION, unsigned int maxInternalIds = MAXIMUM_NUMBER_OF_INTERNAL_IDS );
 
 	/// If you accept connections, you must call this or else security will not be enabled for incoming connections.
 	/// This feature requires more round trips, bandwidth, and CPU time for the connection handshake
@@ -979,7 +979,8 @@ protected:
 	// Systems in this list will not go through the secure connection process, even when secure connections are turned on. Wildcards are accepted.
 	DataStructures::List<RakNet::RakString> securityExceptionList;
 
-	SystemAddress ipList[ MAXIMUM_NUMBER_OF_INTERNAL_IDS ];
+	SystemAddress* ipList;
+    unsigned int maximumNumberOfInternalIds;
 
 	bool allowInternalRouting;
 
