@@ -530,7 +530,7 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 			{
 				RakNetSocket2Allocator::DeallocRNS2(r2);
 				DerefAllSockets();
-				return SOCKET_PORT_ALREADY_IN_USE;
+				return SOCKET_FAILED_TO_BIND;
 			}
 			else if (br==BR_FAILED_SEND_TEST)
 			{
