@@ -8,28 +8,23 @@
  *
  */
 
-#if   defined(_WIN32)
+#if defined(_WIN32)
 #include <conio.h> /* getche() */
-#elif  defined(__S3E__)
+#elif defined(__S3E__)
 
 #else
 
 #include "Getche.h"
 
-char getche()
-{
-
-
-  struct termios oldt,
-                 newt;
-  char            ch;
-  tcgetattr( STDIN_FILENO, &oldt );
+char getche() {
+  struct termios oldt, newt;
+  char ch;
+  tcgetattr(STDIN_FILENO, &oldt);
   newt = oldt;
-  newt.c_lflag &= ~( ICANON | ECHO );
-  tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+  newt.c_lflag &= ~(ICANON | ECHO);
+  tcsetattr(STDIN_FILENO, TCSANOW, &newt);
   ch = getchar();
-  tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+  tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
   return ch;
-
-} 
+}
 #endif
