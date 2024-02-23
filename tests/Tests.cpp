@@ -21,14 +21,15 @@ class RakNetTest : public testing::Test {
   bool disallowTestToPause = true;
 };
 
-#define RAKNET_TEST(TEST_NAME)                                                                   \
-    TEST_F(RakNetTest, Run##TEST_NAME)                                                        \
-    {                                                                                         \
-        TEST_NAME test;                                                                       \
-        const int result = test.RunTest(noParamsList, isVerbose, disallowTestToPause);        \
-        ASSERT_EQ(result, 0) << "Test failed with error: " << test.ErrorCodeToString(result); \
-        test.DestroyPeers();                                                                  \
-    }
+#define RAKNET_TEST(TEST_NAME)                                      \
+  TEST_F(RakNetTest, Run##TEST_NAME) {                              \
+    TEST_NAME test;                                                 \
+    const int result =                                              \
+        test.RunTest(noParamsList, isVerbose, disallowTestToPause); \
+    ASSERT_EQ(result, 0) << "Test failed with error: "              \
+                         << test.ErrorCodeToString(result);         \
+    test.DestroyPeers();                                            \
+  }
 
 RAKNET_TEST(EightPeerTest)
 RAKNET_TEST(MaximumConnectTest)
