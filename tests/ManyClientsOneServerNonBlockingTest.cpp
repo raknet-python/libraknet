@@ -118,7 +118,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakString>
 		{
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
-			currentSystem.port=60000;
+			currentSystem.SetPortHostOrder(60000);
 			if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 			{
 
@@ -449,7 +449,7 @@ int ManyClientsOneServerNonBlockingTest::RunTest(DataStructures::List<RakString>
 	{
 
 		currentSystem.SetBinaryAddress("127.0.0.1");
-		currentSystem.port=60000;
+                currentSystem.SetPortHostOrder(60000);
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (clientList[i],currentSystem,true,true,true,true) )//Are we connected or is there a pending operation ?
 		{

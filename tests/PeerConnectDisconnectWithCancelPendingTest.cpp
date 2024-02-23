@@ -122,7 +122,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 			{
 
 				currentSystem.SetBinaryAddress("127.0.0.1");
-				currentSystem.port=60000+j;
+				currentSystem.SetPortHostOrder(60000+j);
 
 				peerList[i]->CancelConnectionAttempt(currentSystem);  	//Make sure a connection is not pending before trying to connect.
 
@@ -143,7 +143,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 				{
 
 					currentSystem.SetBinaryAddress("127.0.0.1");
-					currentSystem.port=60000+j;
+					currentSystem.SetPortHostOrder(60000+j);
 
 					peerList[i]->GetSystemList(systemList,guidList);//Get connectionlist
 
@@ -347,7 +347,7 @@ int PeerConnectDisconnectWithCancelPendingTest::RunTest(DataStructures::List<Rak
 		{
 
 			currentSystem.SetBinaryAddress("127.0.0.1");
-			currentSystem.port=60000+j;
+			currentSystem.SetPortHostOrder(60000+j);
 
 			peerList[i]->CancelConnectionAttempt(currentSystem);  	//Make sure a connection is not pending before trying to connect.
 

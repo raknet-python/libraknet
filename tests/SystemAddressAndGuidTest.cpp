@@ -191,7 +191,7 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakString> params,boo
 	printf("Test GetSystemListValues of the system and guid list\n");
 	SystemAddress serverAddress;
 	serverAddress.SetBinaryAddress("127.0.0.1");
-	serverAddress.port=60000;
+	serverAddress.SetPortHostOrder(60000);
 
 	if (!compareSystemAddresses(systemList[0],serverAddress))
 	{
@@ -259,7 +259,7 @@ int SystemAddressAndGuidTest::RunTest(DataStructures::List<RakString> params,boo
 
 	SystemAddress clientAddress;
 	clientAddress.SetBinaryAddress("127.0.0.1");
-	clientAddress.port=60001;
+	clientAddress.SetPortHostOrder(60001);
 
 	printf("Test GetExternalID, automatic testing is not only required for this\nbecause of it's nature\nShould be supplemented by internet tests\n");
 
@@ -302,13 +302,7 @@ RakString SystemAddressAndGuidTest::ErrorCodeToString(int errorCode)
 
 bool SystemAddressAndGuidTest::compareSystemAddresses(SystemAddress ad1,SystemAddress ad2)
 {
-	if (ad1.binaryAddress!=ad2.binaryAddress||ad1.port!=ad2.port)
-	{
-		return 0;
-	}
-
-	return 1;
-
+  return ad1 == ad2;
 }
 
 SystemAddressAndGuidTest::SystemAddressAndGuidTest(void)

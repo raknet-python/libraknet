@@ -39,5 +39,5 @@ target_link_libraries(raknet ${RAKNET_LINK_LIBRARIES})
 
 file(GLOB RAKNET_TEST_FILES CONFIGURE_DEPENDS "tests/*.cpp")
 add_executable(raknet_test ${RAKNET_TEST_FILES})
-target_link_libraries(raknet_test raknet GTest::gtest_main)
+target_link_libraries(raknet_test raknet)
 add_test(NAME raknet_test COMMAND raknet_test)

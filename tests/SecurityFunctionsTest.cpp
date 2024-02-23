@@ -98,7 +98,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 	SystemAddress serverAddress;
 
 	serverAddress.SetBinaryAddress("127.0.0.1");
-	serverAddress.port=60000;
+	serverAddress.SetPortHostOrder(60000);
 	TimeMS entryTime=GetTimeMS();
 
 	if (isVerbose)
@@ -109,7 +109,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,0,0);
+			client->Connect("127.0.0.1",serverAddress.GetPort(),0,0);
 		}
 
 		RakSleep(100);
@@ -133,7 +133,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,badPass,(int)strlen(badPass));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),badPass,(int)strlen(badPass));
 		}
 
 		RakSleep(100);
@@ -156,7 +156,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
 		}
 
 		RakSleep(100);
@@ -187,7 +187,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
 		}
 
 		RakSleep(100);
@@ -229,7 +229,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
 		}
 
 		RakSleep(100);
@@ -260,7 +260,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
 		}
 
 		RakSleep(100);
@@ -302,7 +302,7 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
 		{
-			client->Connect("127.0.0.1",serverAddress.port,thePassword,(int)strlen(thePassword));
+			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
 		}
 
 		RakSleep(100);
