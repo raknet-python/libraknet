@@ -76,7 +76,7 @@ StatisticsHistory::~StatisticsHistory() {
 void StatisticsHistory::SetDefaultTimeToTrack(Time defaultTimeToTrack) {
   timeToTrack = defaultTimeToTrack;
 }
-Time StatisticsHistory::GetDefaultTimeToTrack(void) const {
+Time StatisticsHistory::GetDefaultTimeToTrack() const {
   return timeToTrack;
 }
 bool StatisticsHistory::AddObject(TrackedObjectData tod) {
@@ -103,13 +103,13 @@ void StatisticsHistory::RemoveObjectAtIndex(unsigned int index) {
   objects.RemoveAtIndex(index);
   RakNet::OP_DELETE(to, _FILE_AND_LINE_);
 }
-void StatisticsHistory::Clear(void) {
+void StatisticsHistory::Clear() {
   for (unsigned int idx = 0; idx < objects.Size(); idx++) {
     RakNet::OP_DELETE(objects[idx], _FILE_AND_LINE_);
   }
   objects.Clear(false, _FILE_AND_LINE_);
 }
-unsigned int StatisticsHistory::GetObjectCount(void) const {
+unsigned int StatisticsHistory::GetObjectCount() const {
   return objects.Size();
 }
 StatisticsHistory::TrackedObjectData* StatisticsHistory::GetObjectAtIndex(
@@ -317,26 +317,26 @@ StatisticsHistory::TimeAndValueQueue::~TimeAndValueQueue() {}
 void StatisticsHistory::TimeAndValueQueue::SetTimeToTrackValues(Time t) {
   timeToTrackValues = t;
 }
-Time StatisticsHistory::TimeAndValueQueue::GetTimeToTrackValues(void) const {
+Time StatisticsHistory::TimeAndValueQueue::GetTimeToTrackValues() const {
   return timeToTrackValues;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSum(void) const {
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSum() const {
   return recentSum;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentSumOfSquares(
-    void) const {
+    ) const {
   return recentSumOfSquares;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermSum(void) const {
+SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermSum() const {
   return longTermSum;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentAverage(void) const {
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentAverage() const {
   if (values.Size() > 0)
     return recentSum / (SHValueType)values.Size();
   else
     return 0;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest(void) const {
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest() const {
   SHValueType out = SH_TYPE_MAX;
   for (unsigned int idx = 0; idx < values.Size(); idx++) {
     if (values[idx].val < out)
@@ -344,7 +344,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest(void) const {
   }
   return out;
 }
-SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest(void) const {
+SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest() const {
   SHValueType out = -SH_TYPE_MAX;
   for (unsigned int idx = 0; idx < values.Size(); idx++) {
     if (values[idx].val > out)
@@ -353,7 +353,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest(void) const {
   return out;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(
-    void) const {
+    ) const {
   if (values.Size() == 0)
     return 0;
 
@@ -364,20 +364,20 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(
   return meanOfSquares - squareOfMean;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermAverage(
-    void) const {
+    ) const {
   if (longTermCount == 0)
     return 0;
   return longTermSum / longTermCount;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermLowest(
-    void) const {
+    ) const {
   return longTermLowest;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermHighest(
-    void) const {
+    ) const {
   return longTermHighest;
 }
-Time StatisticsHistory::TimeAndValueQueue::GetTimeRange(void) const {
+Time StatisticsHistory::TimeAndValueQueue::GetTimeRange() const {
   if (values.Size() < 2)
     return 0;
   return values[values.Size() - 1].time - values[0].time;
@@ -704,7 +704,7 @@ SHValueType StatisticsHistory::TimeAndValueQueue::Interpolate(
   // 		return t2.val + slope * (SHValueType) (time - t2.time);
   // 	}
 }
-void StatisticsHistory::TimeAndValueQueue::Clear(void) {
+void StatisticsHistory::TimeAndValueQueue::Clear() {
   recentSum = 0;
   recentSumOfSquares = 0;
   longTermSum = 0;
@@ -755,7 +755,7 @@ void StatisticsHistoryPlugin::SetTrackConnections(
   removeLostConnections = _removeLostConnections;
   newConnectionsObjectType = _newConnectionsObjectType;
 }
-void StatisticsHistoryPlugin::Update(void) {
+void StatisticsHistoryPlugin::Update() {
   DataStructures::List<SystemAddress> addresses;
   DataStructures::List<RakNetGUID> guids;
   DataStructures::List<RakNetStatistics> stats;

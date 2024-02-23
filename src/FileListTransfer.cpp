@@ -74,19 +74,19 @@ FileListReceiver::~FileListReceiver() {
 
 STATIC_FACTORY_DEFINITIONS(FileListTransfer, FileListTransfer)
 
-void FileListTransfer::FileToPushRecipient::DeleteThis(void) {
+void FileListTransfer::FileToPushRecipient::DeleteThis() {
   ////	filesToPushMutex.Lock();
   for (unsigned int j = 0; j < filesToPush.Size(); j++)
     RakNet::OP_DELETE(filesToPush[j], _FILE_AND_LINE_);
   ////	filesToPushMutex.Unlock();
   RakNet::OP_DELETE(this, _FILE_AND_LINE_);
 }
-void FileListTransfer::FileToPushRecipient::AddRef(void) {
+void FileListTransfer::FileToPushRecipient::AddRef() {
   refCountMutex.Lock();
   ++refCount;
   refCountMutex.Unlock();
 }
-void FileListTransfer::FileToPushRecipient::Deref(void) {
+void FileListTransfer::FileToPushRecipient::Deref() {
   refCountMutex.Lock();
   --refCount;
   if (refCount == 0) {
@@ -551,12 +551,12 @@ PluginReceiveResult FileListTransfer::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
-void FileListTransfer::OnRakPeerShutdown(void) {
+void FileListTransfer::OnRakPeerShutdown() {
   threadPool.StopThreads();
   threadPool.ClearInput();
   Clear();
 }
-void FileListTransfer::Clear(void) {
+void FileListTransfer::Clear() {
   unsigned i;
   for (i = 0; i < fileListReceivers.Size(); i++) {
     fileListReceivers[i]->downloadHandler->OnDereference();
@@ -662,7 +662,7 @@ void FileListTransfer::RemoveCallback(FileListProgress* cb) {
   if (idx != (unsigned int)-1)
     fileListProgressCallbacks.RemoveAtIndex(idx);
 }
-void FileListTransfer::ClearCallbacks(void) {
+void FileListTransfer::ClearCallbacks() {
   fileListProgressCallbacks.Clear(true, _FILE_AND_LINE_);
 }
 void FileListTransfer::GetCallbacks(
@@ -670,7 +670,7 @@ void FileListTransfer::GetCallbacks(
   callbacks = fileListProgressCallbacks;
 }
 
-void FileListTransfer::Update(void) {
+void FileListTransfer::Update() {
   unsigned i;
   i = 0;
   while (i < fileListReceivers.Size()) {

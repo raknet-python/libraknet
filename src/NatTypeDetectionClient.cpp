@@ -94,10 +94,10 @@ void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result) {
 
   Shutdown();
 }
-bool NatTypeDetectionClient::IsInProgress(void) const {
+bool NatTypeDetectionClient::IsInProgress() const {
   return serverAddress != UNASSIGNED_SYSTEM_ADDRESS;
 }
-void NatTypeDetectionClient::Update(void) {
+void NatTypeDetectionClient::Update() {
   if (IsInProgress()) {
     RNS2RecvStruct* recvStruct;
     bufferedPacketsMutex.Lock();
@@ -155,10 +155,10 @@ void NatTypeDetectionClient::OnClosedConnection(
   if (IsInProgress() && systemAddress == serverAddress)
     Shutdown();
 }
-void NatTypeDetectionClient::OnRakPeerShutdown(void) {
+void NatTypeDetectionClient::OnRakPeerShutdown() {
   Shutdown();
 }
-void NatTypeDetectionClient::OnDetach(void) {
+void NatTypeDetectionClient::OnDetach() {
   Shutdown();
 }
 void NatTypeDetectionClient::OnTestPortRestricted(Packet* packet) {
@@ -188,7 +188,7 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet* packet) {
   bsp.systemAddress = s3p4Addr;
   sockets[0]->Send(&bsp, _FILE_AND_LINE_);
 }
-void NatTypeDetectionClient::Shutdown(void) {
+void NatTypeDetectionClient::Shutdown() {
   serverAddress = UNASSIGNED_SYSTEM_ADDRESS;
   if (c2 != 0) {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)

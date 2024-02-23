@@ -28,7 +28,7 @@ PacketizedTCP::~PacketizedTCP() {
   ClearAllConnections();
 }
 
-void PacketizedTCP::Stop(void) {
+void PacketizedTCP::Stop() {
   unsigned int i;
   TCPInterface::Stop();
   for (i = 0; i < waitingPackets.Size(); i++)
@@ -104,7 +104,7 @@ bool PacketizedTCP::SendList(
   return TCPInterface::SendList(
       dataArray, lengthsArray, numParameters + 1, systemAddress, broadcast);
 }
-void PacketizedTCP::PushNotificationsToQueues(void) {
+void PacketizedTCP::PushNotificationsToQueues() {
   SystemAddress sa;
   sa = TCPInterface::HasNewIncomingConnection();
   if (sa != UNASSIGNED_SYSTEM_ADDRESS) {
@@ -129,7 +129,7 @@ void PacketizedTCP::PushNotificationsToQueues(void) {
     AddToConnectionList(sa);
   }
 }
-Packet* PacketizedTCP::Receive(void) {
+Packet* PacketizedTCP::Receive() {
   PushNotificationsToQueues();
 
   unsigned int i;
@@ -265,7 +265,7 @@ Packet* PacketizedTCP::Receive(void) {
 
   return ReturnOutgoingPacket();
 }
-Packet* PacketizedTCP::ReturnOutgoingPacket(void) {
+Packet* PacketizedTCP::ReturnOutgoingPacket() {
   Packet* outgoingPacket = 0;
   unsigned int i;
   while (outgoingPacket == 0 && waitingPackets.IsEmpty() == false) {
@@ -307,34 +307,34 @@ void PacketizedTCP::AddToConnectionList(const SystemAddress& sa) {
   connections.SetNew(
       sa, RakNet::OP_NEW<DataStructures::ByteQueue>(_FILE_AND_LINE_));
 }
-void PacketizedTCP::ClearAllConnections(void) {
+void PacketizedTCP::ClearAllConnections() {
   unsigned int i;
   for (i = 0; i < connections.Size(); i++)
     RakNet::OP_DELETE(connections[i], _FILE_AND_LINE_);
   connections.Clear();
 }
-SystemAddress PacketizedTCP::HasCompletedConnectionAttempt(void) {
+SystemAddress PacketizedTCP::HasCompletedConnectionAttempt() {
   PushNotificationsToQueues();
 
   if (_completedConnectionAttempts.IsEmpty() == false)
     return _completedConnectionAttempts.Pop();
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasFailedConnectionAttempt(void) {
+SystemAddress PacketizedTCP::HasFailedConnectionAttempt() {
   PushNotificationsToQueues();
 
   if (_failedConnectionAttempts.IsEmpty() == false)
     return _failedConnectionAttempts.Pop();
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasNewIncomingConnection(void) {
+SystemAddress PacketizedTCP::HasNewIncomingConnection() {
   PushNotificationsToQueues();
 
   if (_newIncomingConnections.IsEmpty() == false)
     return _newIncomingConnections.Pop();
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
-SystemAddress PacketizedTCP::HasLostConnection(void) {
+SystemAddress PacketizedTCP::HasLostConnection() {
   PushNotificationsToQueues();
 
   if (_lostConnections.IsEmpty() == false)

@@ -31,10 +31,10 @@ void RakNetRandomSync::SeedMT(uint32_t _seed, uint32_t skipValues) {
   SeedMT(_seed);
   Skip(skipValues);
 }
-float RakNetRandomSync::FrandomMT(void) {
+float RakNetRandomSync::FrandomMT() {
   return (float)((double)RandomMT() / (double)UINT_MAX);
 }
-unsigned int RakNetRandomSync::RandomMT(void) {
+unsigned int RakNetRandomSync::RandomMT() {
   if (usedValueBufferCount > 0) {
     --usedValueBufferCount;
     if (usedValueBufferCount < usedValues.Size()) {
@@ -54,10 +54,10 @@ unsigned int RakNetRandomSync::RandomMT(void) {
     return usedValues[usedValues.Size() - 1];
   }
 }
-uint32_t RakNetRandomSync::GetSeed(void) const {
+uint32_t RakNetRandomSync::GetSeed() const {
   return seed;
 }
-uint32_t RakNetRandomSync::GetCallCount(void) const {
+uint32_t RakNetRandomSync::GetCallCount() const {
   return callCount;
 }
 void RakNetRandomSync::SetCallCount(uint32_t i) {

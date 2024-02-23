@@ -48,10 +48,10 @@ void NetworkIDObject::SetNetworkIDManager(NetworkIDManager* manager) {
 
   networkIDManager->TrackNetworkIDObject(this);
 }
-NetworkIDManager* NetworkIDObject::GetNetworkIDManager(void) const {
+NetworkIDManager* NetworkIDObject::GetNetworkIDManager() const {
   return networkIDManager;
 }
-NetworkID NetworkIDObject::GetNetworkID(void) {
+NetworkID NetworkIDObject::GetNetworkID() {
   return networkID;
 }
 void NetworkIDObject::SetNetworkID(NetworkID id) {
@@ -74,6 +74,6 @@ void NetworkIDObject::SetNetworkID(NetworkID id) {
 void NetworkIDObject::SetParent(void* _parent) {
   parent = _parent;
 }
-void* NetworkIDObject::GetParent(void) const {
+void* NetworkIDObject::GetParent() const {
   return parent;
 }

@@ -80,7 +80,7 @@ UDPProxyCoordinator::~UDPProxyCoordinator() {
 void UDPProxyCoordinator::SetRemoteLoginPassword(RakNet::RakString password) {
   remoteLoginPassword = password;
 }
-void UDPProxyCoordinator::Update(void) {
+void UDPProxyCoordinator::Update() {
   unsigned int idx;
   RakNet::TimeMS curTime = RakNet::GetTimeMS();
   ForwardingRequest* fw;
@@ -590,14 +590,14 @@ void UDPProxyCoordinator::SendAllBusy(
       requestingAddress,
       false);
 }
-void UDPProxyCoordinator::Clear(void) {
+void UDPProxyCoordinator::Clear() {
   serverList.Clear(true, _FILE_AND_LINE_);
   for (unsigned int i = 0; i < forwardingRequestList.Size(); i++) {
     RakNet::OP_DELETE(forwardingRequestList[i], _FILE_AND_LINE_);
   }
   forwardingRequestList.Clear(false, _FILE_AND_LINE_);
 }
-void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry(void) {
+void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry() {
   //DataStructures::Multilist<ML_ORDERED_LIST,UDPProxyCoordinator::ServerWithPing,unsigned short> swpList;
   DataStructures::OrderedList<
       unsigned short,

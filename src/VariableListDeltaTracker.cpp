@@ -22,7 +22,7 @@ VariableListDeltaTracker::~VariableListDeltaTracker() {
 }
 
 // Call before using a series of WriteVar
-void VariableListDeltaTracker::StartWrite(void) {
+void VariableListDeltaTracker::StartWrite() {
   nextWriteIndex = 0;
 }
 

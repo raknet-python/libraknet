@@ -87,12 +87,12 @@ Router2::~Router2() {
     RakNet::OP_DELETE(udpForwarder, _FILE_AND_LINE_);
   }
 }
-void Router2::ClearMinipunches(void) {
+void Router2::ClearMinipunches() {
   miniPunchesInProgressMutex.Lock();
   miniPunchesInProgress.Clear(false, _FILE_AND_LINE_);
   miniPunchesInProgressMutex.Unlock();
 }
-void Router2::ClearConnectionRequests(void) {
+void Router2::ClearConnectionRequests() {
   connectionRequestsMutex.Lock();
   for (unsigned int i = 0; i < connectionRequests.Size(); i++) {
     RakNet::OP_DELETE(connectionRequests[i], _FILE_AND_LINE_);
@@ -393,7 +393,7 @@ PluginReceiveResult Router2::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
-void Router2::Update(void) {
+void Router2::Update() {
   RakNet::TimeMS curTime = RakNet::GetTimeMS();
   unsigned int connectionRequestIndex = 0;
   connectionRequestsMutex.Lock();
@@ -623,7 +623,7 @@ void Router2::OnFailedConnectionAttempt(
   }
   forwardedConnectionListMutex.Unlock();
 }
-void Router2::OnRakPeerShutdown(void) {
+void Router2::OnRakPeerShutdown() {
   ClearAll();
 }
 // connectionRequestsMutex should already be locked
@@ -1454,7 +1454,7 @@ bool Router2::OnForwardingSuccess(Packet* packet) {
   }
   return true; // Return packet to user
 }
-int Router2::GetLargestPingAmongConnectedSystems(void) const {
+int Router2::GetLargestPingAmongConnectedSystems() const {
   int avePing;
   int largestPing = -1;
   unsigned int maxPeers = rakPeerInterface->GetMaximumNumberOfPeers();
@@ -1503,12 +1503,12 @@ void Router2::ReturnToUser(
   p->wasGeneratedLocally = wasGeneratedLocally;
   rakPeerInterface->PushBackPacket(p, true);
 }
-void Router2::ClearForwardedConnections(void) {
+void Router2::ClearForwardedConnections() {
   forwardedConnectionListMutex.Lock();
   forwardedConnectionList.Clear(false, _FILE_AND_LINE_);
   forwardedConnectionListMutex.Unlock();
 }
-void Router2::ClearAll(void) {
+void Router2::ClearAll() {
   ClearConnectionRequests();
   ClearMinipunches();
   ClearForwardedConnections();
@@ -1516,7 +1516,7 @@ void Router2::ClearAll(void) {
 void Router2::SetDebugInterface(Router2DebugInterface* _debugInterface) {
   debugInterface = _debugInterface;
 }
-Router2DebugInterface* Router2::GetDebugInterface(void) const {
+Router2DebugInterface* Router2::GetDebugInterface() const {
   return debugInterface;
 }
 

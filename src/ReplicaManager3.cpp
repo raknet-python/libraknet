@@ -67,7 +67,7 @@ LastSerializationResult::~LastSerializationResult() {
   if (lastSerializationResultBS)
     RakNet::OP_DELETE(lastSerializationResultBS, _FILE_AND_LINE_);
 }
-void LastSerializationResult::AllocBS(void) {
+void LastSerializationResult::AllocBS() {
   if (lastSerializationResultBS == 0) {
     lastSerializationResultBS =
         RakNet::OP_NEW<LastSerializationResultBS>(_FILE_AND_LINE_);
@@ -114,13 +114,13 @@ void ReplicaManager3::SetAutoManageConnections(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool ReplicaManager3::GetAutoCreateConnections(void) const {
+bool ReplicaManager3::GetAutoCreateConnections() const {
   return autoCreateConnections;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool ReplicaManager3::GetAutoDestroyConnections(void) const {
+bool ReplicaManager3::GetAutoDestroyConnections() const {
   return autoDestroyConnections;
 }
 
@@ -568,7 +568,7 @@ void ReplicaManager3::RM3World::Clear(ReplicaManager3* replicaManager3) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-PRO ReplicaManager3::GetDefaultSendParameters(void) const {
+PRO ReplicaManager3::GetDefaultSendParameters() const {
   return defaultSendParameters;
 }
 
@@ -856,7 +856,7 @@ void Connection_RM3::AutoConstructByQuery(
       worldId,
       replicaManager3);
 }
-void ReplicaManager3::Update(void) {
+void ReplicaManager3::Update() {
   unsigned int index, index2, index3;
 
   WorldId worldId;
@@ -980,7 +980,7 @@ void ReplicaManager3::OnNewConnection(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::OnRakPeerShutdown(void) {
+void ReplicaManager3::OnRakPeerShutdown() {
   if (autoDestroyConnections) {
     RM3World* world;
     unsigned int index3;
@@ -1001,7 +1001,7 @@ void ReplicaManager3::OnRakPeerShutdown(void) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void ReplicaManager3::OnDetach(void) {
+void ReplicaManager3::OnDetach() {
   OnRakPeerShutdown();
 }
 
@@ -2436,13 +2436,13 @@ Replica3::~Replica3() {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void Replica3::BroadcastDestruction(void) {
+void Replica3::BroadcastDestruction() {
   replicaManager->BroadcastDestruction(this, UNASSIGNED_SYSTEM_ADDRESS);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RakNetGUID Replica3::GetCreatingSystemGUID(void) const {
+RakNetGUID Replica3::GetCreatingSystemGUID() const {
   return creatingSystemGUID;
 }
 

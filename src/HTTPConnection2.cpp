@@ -130,10 +130,10 @@ bool HTTPConnection2::GetResponse(
   }
   return false;
 }
-bool HTTPConnection2::IsBusy(void) const {
+bool HTTPConnection2::IsBusy() const {
   return pendingRequests.Size() > 0 || sentRequests.Size() > 0;
 }
-bool HTTPConnection2::HasResponse(void) const {
+bool HTTPConnection2::HasResponse() const {
   return completedRequests.Size() > 0;
 }
 int ReadChunkSize(char* txtStart, char** txtEnd) {
@@ -476,7 +476,7 @@ void HTTPConnection2::RemovePendingRequest(SystemAddress sa) {
 
   pendingRequestsMutex.Unlock();
 }
-void HTTPConnection2::SendNextPendingRequest(void) {
+void HTTPConnection2::SendNextPendingRequest() {
   // Send a pending request
   pendingRequestsMutex.Lock();
   if (pendingRequests.Size() > 0) {

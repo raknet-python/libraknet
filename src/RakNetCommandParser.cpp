@@ -322,7 +322,7 @@ bool RakNetCommandParser::OnCommand(
 
   return true;
 }
-const char* RakNetCommandParser::GetName(void) const {
+const char* RakNetCommandParser::GetName() const {
   return "RakNet";
 }
 void RakNetCommandParser::SendHelp(

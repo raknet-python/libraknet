@@ -178,7 +178,7 @@ void Table::Cell::SetByType(
     ptr = (void*)charValue;
   }
 }
-Table::ColumnType Table::Cell::EstimateColumnType(void) const {
+Table::ColumnType Table::Cell::EstimateColumnType() const {
   if (c) {
     if (i != 0.0f)
       return BINARY;
@@ -190,7 +190,7 @@ Table::ColumnType Table::Cell::EstimateColumnType(void) const {
     return POINTER;
   return NUMERIC;
 }
-void Table::Cell::Clear(void) {
+void Table::Cell::Clear() {
   if (isEmpty == false && c) {
     rakFree_Ex(c, _FILE_AND_LINE_);
     c = 0;
@@ -285,10 +285,10 @@ Table::ColumnType Table::GetColumnType(unsigned index) const {
   else
     return columns[index].columnType;
 }
-unsigned Table::GetColumnCount(void) const {
+unsigned Table::GetColumnCount() const {
   return columns.Size();
 }
-unsigned Table::GetRowCount(void) const {
+unsigned Table::GetRowCount() const {
   return rows.Size();
 }
 Table::Row* Table::AddRow(unsigned rowId) {
@@ -1016,24 +1016,24 @@ void Table::PrintRow(
   }
 }
 
-void Table::Clear(void) {
+void Table::Clear() {
   rows.ForEachData(FreeRow);
   rows.Clear();
   columns.Clear(true, _FILE_AND_LINE_);
 }
-const List<Table::ColumnDescriptor>& Table::GetColumns(void) const {
+const List<Table::ColumnDescriptor>& Table::GetColumns() const {
   return columns;
 }
 const DataStructures::BPlusTree<unsigned, Table::Row*, _TABLE_BPLUS_TREE_ORDER>&
-Table::GetRows(void) const {
+Table::GetRows() const {
   return rows;
 }
 DataStructures::
     Page<unsigned, DataStructures::Table::Row*, _TABLE_BPLUS_TREE_ORDER>*
-    Table::GetListHead(void) {
+    Table::GetListHead() {
   return rows.GetListHead();
 }
-unsigned Table::GetAvailableRowId(void) const {
+unsigned Table::GetAvailableRowId() const {
   bool setKey = false;
   unsigned key = 0;
   int i;

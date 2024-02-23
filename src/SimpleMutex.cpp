@@ -40,7 +40,7 @@ SimpleMutex::~SimpleMutex() {
 #endif
 #endif
 
-void SimpleMutex::Lock(void) {
+void SimpleMutex::Lock() {
   // 	if (isInitialized==false)
   // 		Init();
 
@@ -83,7 +83,7 @@ void SimpleMutex::Lock(void) {
 #endif
 }
 
-void SimpleMutex::Unlock(void) {
+void SimpleMutex::Unlock() {
 // 	if (isInitialized==false)
 // 		return;
 #ifdef _WIN32
@@ -97,7 +97,7 @@ void SimpleMutex::Unlock(void) {
 #endif
 }
 
-void SimpleMutex::Init(void) {
+void SimpleMutex::Init() {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
   InitializeCriticalSectionEx(
       &criticalSection, 0, CRITICAL_SECTION_NO_DEBUG_INFO);

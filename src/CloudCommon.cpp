@@ -28,7 +28,7 @@ int RakNet::CloudKeyComp(const CloudKey& key, const CloudKey& data) {
   return 0;
 }
 
-CloudQueryRow* CloudAllocator::AllocateCloudQueryRow(void) {
+CloudQueryRow* CloudAllocator::AllocateCloudQueryRow() {
   return RakNet::OP_NEW<CloudQueryRow>(_FILE_AND_LINE_);
 }
 void CloudAllocator::DeallocateCloudQueryRow(CloudQueryRow* row) {

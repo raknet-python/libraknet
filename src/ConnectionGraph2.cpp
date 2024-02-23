@@ -113,7 +113,7 @@ uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
 }
 
 /// Returns the system with the lowest total ping among all its connections. This can be used as the 'best host' for a peer to peer session
-RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem(void) const {
+RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem() const {
   float lowestPing = -1.0;
   unsigned int lowestPingIdx = (unsigned int)-1;
   float thisAvePing = 0.0f;
@@ -183,7 +183,7 @@ void ConnectionGraph2::OnClosedConnection(
 void ConnectionGraph2::SetAutoProcessNewConnections(bool b) {
   autoProcessNewConnections = b;
 }
-bool ConnectionGraph2::GetAutoProcessNewConnections(void) const {
+bool ConnectionGraph2::GetAutoProcessNewConnections() const {
   return autoProcessNewConnections;
 }
 void ConnectionGraph2::AddParticipant(

@@ -27,8 +27,8 @@ NetworkIDManager::NetworkIDManager() {
   startingOffset = RakPeerInterface::Get64BitUniqueRandomNumber();
   Clear();
 }
-NetworkIDManager::~NetworkIDManager(void) {}
-void NetworkIDManager::Clear(void) {
+NetworkIDManager::~NetworkIDManager() {}
+void NetworkIDManager::Clear() {
   memset(networkIdHash, 0, sizeof(networkIdHash));
 }
 NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
@@ -41,7 +41,7 @@ NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
   }
   return 0;
 }
-NetworkID NetworkIDManager::GetNewNetworkID(void) {
+NetworkID NetworkIDManager::GetNewNetworkID() {
   while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
     ;
   if (startingOffset == UNASSIGNED_NETWORK_ID) {

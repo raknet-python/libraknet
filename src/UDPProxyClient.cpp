@@ -118,7 +118,7 @@ bool UDPProxyClient::RequestForwarding(
 
   return true;
 }
-void UDPProxyClient::Update(void) {
+void UDPProxyClient::Update() {
   unsigned int idx1 = 0;
   while (idx1 < pingServerGroups.Size()) {
     PingServerGroup* psg = pingServerGroups[idx1];
@@ -266,7 +266,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
-void UDPProxyClient::OnRakPeerShutdown(void) {
+void UDPProxyClient::OnRakPeerShutdown() {
   Clear();
 }
 void UDPProxyClient::OnPingServers(Packet* packet) {
@@ -296,7 +296,7 @@ void UDPProxyClient::OnPingServers(Packet* packet) {
   pingServerGroups.Push(psg, _FILE_AND_LINE_);
 }
 
-bool UDPProxyClient::PingServerGroup::AreAllServersPinged(void) const {
+bool UDPProxyClient::PingServerGroup::AreAllServersPinged() const {
   unsigned int serversToPingIndex;
   for (serversToPingIndex = 0; serversToPingIndex < serversToPing.Size();
        serversToPingIndex++) {
@@ -331,7 +331,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(
       coordinatorAddressForPings,
       false);
 }
-void UDPProxyClient::Clear(void) {
+void UDPProxyClient::Clear() {
   for (unsigned int i = 0; i < pingServerGroups.Size(); i++)
     RakNet::OP_DELETE(pingServerGroups[i], _FILE_AND_LINE_);
   pingServerGroups.Clear(false, _FILE_AND_LINE_);

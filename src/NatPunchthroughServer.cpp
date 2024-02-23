@@ -139,7 +139,7 @@ void NatPunchthroughServer::SetDebugInterface(
     NatPunchthroughServerDebugInterface* i) {
   natPunchthroughServerDebugInterface = i;
 }
-void NatPunchthroughServer::Update(void) {
+void NatPunchthroughServer::Update() {
   ConnectionAttempt* connectionAttempt;
   User *user, *recipient;
   unsigned int i, j;

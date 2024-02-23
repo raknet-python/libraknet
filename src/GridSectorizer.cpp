@@ -209,7 +209,7 @@ int GridSectorizer::WorldToCellYOffsetAndClamped(const float input) const {
       : cell; // __min(gridCellHeightCount-1, cell);
   return cell;
 }
-void GridSectorizer::Clear(void) {
+void GridSectorizer::Clear() {
   int cur;
   int count = gridCellWidthCount * gridCellHeightCount;
   for (cur = 0; cur < count; cur++)

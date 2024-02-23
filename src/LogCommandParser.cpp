@@ -97,7 +97,7 @@ bool LogCommandParser::OnCommand(
 
   return true;
 }
-const char* LogCommandParser::GetName(void) const {
+const char* LogCommandParser::GetName() const {
   return "Logger";
 }
 void LogCommandParser::SendHelp(

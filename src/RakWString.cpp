@@ -216,10 +216,10 @@ bool RakWString::operator!=(const RakWString& right) const {
 void RakWString::Set(wchar_t* str) {
   *this = str;
 }
-bool RakWString::IsEmpty(void) const {
+bool RakWString::IsEmpty() const {
   return GetLength() == 0;
 }
-size_t RakWString::GetLength(void) const {
+size_t RakWString::GetLength() const {
   return c_strCharLength;
 }
 unsigned long RakWString::ToInteger(const RakWString& rs) {
@@ -247,12 +247,12 @@ int RakWString::StrICmp(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String());
 #endif
 }
-void RakWString::Clear(void) {
+void RakWString::Clear() {
   rakFree_Ex(c_str, _FILE_AND_LINE_);
   c_str = 0;
   c_strCharLength = 0;
 }
-void RakWString::Printf(void) {
+void RakWString::Printf() {
   printf("%ls", C_String());
 }
 void RakWString::FPrintf(FILE* fp) {

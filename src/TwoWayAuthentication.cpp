@@ -83,7 +83,7 @@ bool TwoWayAuthentication::NonceGenerator::GetNonceById(
   }
   return false;
 }
-void TwoWayAuthentication::NonceGenerator::Clear(void) {
+void TwoWayAuthentication::NonceGenerator::Clear() {
   unsigned int i;
   for (i = 0; i < generatedNonces.Size(); i++)
     RakNet::OP_DELETE(generatedNonces[i], _FILE_AND_LINE_);
@@ -154,7 +154,7 @@ bool TwoWayAuthentication::Challenge(
 
   return true;
 }
-void TwoWayAuthentication::Update(void) {
+void TwoWayAuthentication::Update() {
   RakNet::Time curTime = RakNet::GetTime();
   nonceGenerator.Update(curTime);
   if (GreaterThan(curTime - CHALLENGE_MINIMUM_TIMEOUT, whenLastTimeoutCheck)) {
@@ -211,7 +211,7 @@ PluginReceiveResult TwoWayAuthentication::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
-void TwoWayAuthentication::OnRakPeerShutdown(void) {
+void TwoWayAuthentication::OnRakPeerShutdown() {
   Clear();
 }
 void TwoWayAuthentication::OnClosedConnection(
@@ -238,7 +238,7 @@ void TwoWayAuthentication::OnClosedConnection(
   else
     nonceGenerator.ClearByAddress(systemAddress);
 }
-void TwoWayAuthentication::Clear(void) {
+void TwoWayAuthentication::Clear() {
   outgoingChallenges.Clear(_FILE_AND_LINE_);
   passwords.Clear(_FILE_AND_LINE_);
   nonceGenerator.Clear();

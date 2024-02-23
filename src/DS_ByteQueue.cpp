@@ -100,7 +100,7 @@ void ByteQueue::Clear(const char* file, unsigned int line) {
   readOffset = writeOffset = lengthAllocated = 0;
   data = 0;
 }
-unsigned ByteQueue::GetBytesWritten(void) const {
+unsigned ByteQueue::GetBytesWritten() const {
   if (writeOffset >= readOffset)
     return writeOffset - readOffset;
   else
@@ -115,7 +115,7 @@ void ByteQueue::DecrementReadOffset(unsigned length) {
   else
     readOffset -= length;
 }
-void ByteQueue::Print(void) {
+void ByteQueue::Print() {
   unsigned i;
   for (i = readOffset; i != writeOffset; i++)
     RAKNET_DEBUG_PRINTF("%i ", data[i]);

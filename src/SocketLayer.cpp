@@ -164,7 +164,7 @@ void SocketLayer::SetSocketOptions(
           NULL);
       // something has gone wrong here...
       RAKNET_DEBUG_PRINTF(
-          "setsockopt__(SO_BROADCAST) failed:Error code - %d\n%s",
+          "setsockopt__(SO_BROADCAST) failed:Error code - %lu\n%s",
           dwIOError,
           messageBuffer);
       //Free the buffer.
@@ -291,7 +291,7 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
         NULL);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "gethostname failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "gethostname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
     //Free the buffer.
     LocalFree(messageBuffer);
 #endif
@@ -335,7 +335,7 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
         NULL);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "gethostbyname failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "gethostbyname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
 
     //Free the buffer.
     LocalFree(messageBuffer);
@@ -410,7 +410,7 @@ void SocketLayer::GetSystemAddress_Old(
         NULL);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "getsockname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
 
     //Free the buffer.
     LocalFree(messageBuffer);

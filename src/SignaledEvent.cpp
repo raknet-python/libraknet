@@ -31,7 +31,7 @@ SignaledEvent::~SignaledEvent() {
   // Intentionally do not close event, so it doesn't close twice on linux
 }
 
-void SignaledEvent::InitEvent(void) {
+void SignaledEvent::InitEvent() {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
   eventList = CreateEventEx(0, 0, 0, 0);
 #elif defined(_WIN32)
@@ -50,7 +50,7 @@ void SignaledEvent::InitEvent(void) {
 #endif
 }
 
-void SignaledEvent::CloseEvent(void) {
+void SignaledEvent::CloseEvent() {
 #ifdef _WIN32
   if (eventList != INVALID_HANDLE_VALUE) {
     CloseHandle(eventList);
@@ -67,7 +67,7 @@ void SignaledEvent::CloseEvent(void) {
 #endif
 }
 
-void SignaledEvent::SetEvent(void) {
+void SignaledEvent::SetEvent() {
 #ifdef _WIN32
   ::SetEvent(eventList);
 

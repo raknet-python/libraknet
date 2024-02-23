@@ -22,7 +22,7 @@ int WSAStartupSingleton::refCount = 0;
 
 WSAStartupSingleton::WSAStartupSingleton() {}
 WSAStartupSingleton::~WSAStartupSingleton() {}
-void WSAStartupSingleton::AddRef(void) {
+void WSAStartupSingleton::AddRef() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
 
   refCount++;
@@ -46,7 +46,7 @@ void WSAStartupSingleton::AddRef(void) {
         NULL);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "WSAStartup failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "WSAStartup failed:Error code - %lu\n%s", dwIOError, messageBuffer);
     //Free the buffer.
     LocalFree(messageBuffer);
 #endif
@@ -54,7 +54,7 @@ void WSAStartupSingleton::AddRef(void) {
 
 #endif
 }
-void WSAStartupSingleton::Deref(void) {
+void WSAStartupSingleton::Deref() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
   if (refCount == 0)
     return;

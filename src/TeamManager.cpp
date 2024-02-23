@@ -78,7 +78,7 @@ TeamSelection::TeamSelection(JoinTeamType itt, NoTeamId param)
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamSelection TeamSelection::AnyAvailable(void) {
+TeamSelection TeamSelection::AnyAvailable() {
   return TeamSelection(JOIN_ANY_AVAILABLE_TEAM);
 }
 
@@ -240,7 +240,7 @@ bool TM_TeamMember::RequestTeamSwitch(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamSelection TM_TeamMember::GetRequestedTeam(void) const {
+TeamSelection TM_TeamMember::GetRequestedTeam() const {
   if (teamsRequested.Size() > 0)
     return TeamSelection::SpecificTeam(teamsRequested[0].requested);
   else if (joinTeamType == JOIN_NO_TEAM)
@@ -280,7 +280,7 @@ unsigned int TM_TeamMember::GetRequestedTeamIndex(TM_Team* team) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_TeamMember::GetRequestedTeamCount(void) const {
+unsigned int TM_TeamMember::GetRequestedTeamCount() const {
   return teamsRequested.Size();
 }
 
@@ -363,7 +363,7 @@ bool TM_TeamMember::LeaveAllTeams(NoTeamId noTeamSubcategory) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TM_Team* TM_TeamMember::GetCurrentTeam(void) const {
+TM_Team* TM_TeamMember::GetCurrentTeam() const {
   if (teams.Size() > 0)
     return teams[0];
   return 0;
@@ -371,7 +371,7 @@ TM_Team* TM_TeamMember::GetCurrentTeam(void) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_TeamMember::GetCurrentTeamCount(void) const {
+unsigned int TM_TeamMember::GetCurrentTeamCount() const {
   return teams.Size();
 }
 
@@ -407,13 +407,13 @@ bool TM_TeamMember::IsOnTeam(TM_Team* team) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-NetworkID TM_TeamMember::GetNetworkID(void) const {
+NetworkID TM_TeamMember::GetNetworkID() const {
   return networkId;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TM_World* TM_TeamMember::GetTM_World(void) const {
+TM_World* TM_TeamMember::GetTM_World() const {
   return world;
 }
 
@@ -503,7 +503,7 @@ bool TM_TeamMember::DeserializeConstruction(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void* TM_TeamMember::GetOwner(void) const {
+void* TM_TeamMember::GetOwner() const {
   return owner;
 }
 
@@ -515,13 +515,13 @@ void TM_TeamMember::SetOwner(void* o) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-NoTeamId TM_TeamMember::GetNoTeamId(void) const {
+NoTeamId TM_TeamMember::GetNoTeamId() const {
   return noTeamSubcategory;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_TeamMember::GetWorldIndex(void) const {
+unsigned int TM_TeamMember::GetWorldIndex() const {
   return world->GetTeamMemberIndex(this);
 }
 
@@ -545,7 +545,7 @@ void TM_TeamMember::UpdateListsToNoTeam(NoTeamId nti) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool TM_TeamMember::JoinAnyTeamCheck(void) const {
+bool TM_TeamMember::JoinAnyTeamCheck() const {
   // - - If already on a team, return false
   if (teams.Size() > 0)
     return false;
@@ -633,7 +633,7 @@ bool TM_TeamMember::LeaveTeamCheck(TM_Team* team) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_TeamMember::UpdateTeamsRequestedToAny(void) {
+void TM_TeamMember::UpdateTeamsRequestedToAny() {
   teamsRequested.Clear(true, _FILE_AND_LINE_);
   joinTeamType = JOIN_ANY_AVAILABLE_TEAM;
   whenJoinAnyRequested = RakNet::GetTime();
@@ -644,7 +644,7 @@ void TM_TeamMember::UpdateTeamsRequestedToAny(void) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_TeamMember::UpdateTeamsRequestedToNone(void) {
+void TM_TeamMember::UpdateTeamsRequestedToNone() {
   teamsRequested.Clear(true, _FILE_AND_LINE_);
   joinTeamType = JOIN_NO_TEAM;
 }
@@ -732,7 +732,7 @@ void TM_TeamMember::RemoveFromSpecificTeamInternal(TM_Team* team) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_TeamMember::RemoveFromAllTeamsInternal(void) {
+void TM_TeamMember::RemoveFromAllTeamsInternal() {
   TM_Team* team;
   unsigned int i, j;
   for (i = 0; i < teams.Size(); i++) {
@@ -750,7 +750,7 @@ void TM_TeamMember::RemoveFromAllTeamsInternal(void) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_TeamMember::StoreLastTeams(void) {
+void TM_TeamMember::StoreLastTeams() {
   lastTeams = teams;
 }
 
@@ -801,7 +801,7 @@ bool TM_Team::SetMemberLimit(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamMemberLimit TM_Team::GetMemberLimit(void) const {
+TeamMemberLimit TM_Team::GetMemberLimit() const {
   if (world->GetBalanceTeams() == false) {
     return teamMemberLimit;
   } else {
@@ -814,7 +814,7 @@ TeamMemberLimit TM_Team::GetMemberLimit(void) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamMemberLimit TM_Team::GetMemberLimitSetting(void) const {
+TeamMemberLimit TM_Team::GetMemberLimitSetting() const {
   return teamMemberLimit;
 }
 
@@ -840,7 +840,7 @@ bool TM_Team::SetJoinPermissions(JoinPermissions _joinPermissions) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-JoinPermissions TM_Team::GetJoinPermissions(void) const {
+JoinPermissions TM_Team::GetJoinPermissions() const {
   return joinPermissions;
 }
 
@@ -852,7 +852,7 @@ void TM_Team::LeaveTeam(TM_TeamMember* teamMember, NoTeamId noTeamSubcategory) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool TM_Team::GetBalancingApplies(void) const {
+bool TM_Team::GetBalancingApplies() const {
   return balancingApplies;
 }
 
@@ -865,7 +865,7 @@ void TM_Team::GetTeamMembers(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_Team::GetTeamMembersCount(void) const {
+unsigned int TM_Team::GetTeamMembersCount() const {
   return teamMembers.Size();
 }
 
@@ -877,13 +877,13 @@ TM_TeamMember* TM_Team::GetTeamMemberByIndex(unsigned int index) const {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-NetworkID TM_Team::GetNetworkID(void) const {
+NetworkID TM_Team::GetNetworkID() const {
   return ID;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TM_World* TM_Team::GetTM_World(void) const {
+TM_World* TM_Team::GetTM_World() const {
   return world;
 }
 
@@ -926,13 +926,13 @@ unsigned long TM_Team::ToUint32(const NetworkID& g) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void* TM_Team::GetOwner(void) const {
+void* TM_Team::GetOwner() const {
   return owner;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_Team::GetWorldIndex(void) const {
+unsigned int TM_Team::GetWorldIndex() const {
   return world->GetTeamIndex(this);
 }
 
@@ -990,7 +990,7 @@ TM_World::~TM_World() {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamManager* TM_World::GetTeamManager(void) const {
+TeamManager* TM_World::GetTeamManager() const {
   return teamManager;
 }
 
@@ -1084,7 +1084,7 @@ void TM_World::DereferenceTeam(TM_Team* team, NoTeamId noTeamSubcategory) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_World::GetTeamCount(void) const {
+unsigned int TM_World::GetTeamCount() const {
   return teams.Size();
 }
 
@@ -1149,7 +1149,7 @@ void TM_World::DereferenceTeamMember(TM_TeamMember* teamMember) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TM_World::GetTeamMemberCount(void) const {
+unsigned int TM_World::GetTeamMemberCount() const {
   return teamMembers.Size();
 }
 
@@ -1209,7 +1209,7 @@ bool TM_World::SetBalanceTeams(bool balanceTeams, NoTeamId noTeamId) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-bool TM_World::GetBalanceTeams(void) const {
+bool TM_World::GetBalanceTeams() const {
   return balanceTeamsIsActive;
 }
 
@@ -1229,19 +1229,19 @@ void TM_World::SetHost(RakNetGUID _hostGuid) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-RakNetGUID TM_World::GetHost(void) const {
+RakNetGUID TM_World::GetHost() const {
   return hostGuid;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-WorldId TM_World::GetWorldId(void) const {
+WorldId TM_World::GetWorldId() const {
   return worldId;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_World::Clear(void) {
+void TM_World::Clear() {
   for (unsigned int i = 0; i < teams.Size(); i++) {
     teams[i]->world = 0;
   }
@@ -1342,7 +1342,7 @@ void TM_World::KickExcessMembers(NoTeamId noTeamId) {
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TM_World::FillRequestedSlots(void) {
+void TM_World::FillRequestedSlots() {
   // Host only function
   RakAssert(GetHost() == GetTeamManager()->GetMyGUIDUnified());
 
@@ -1637,7 +1637,7 @@ int TM_World::JoinSpecificTeam(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-TeamMemberLimit TM_World::GetBalancedTeamLimit(void) const {
+TeamMemberLimit TM_World::GetBalancedTeamLimit() const {
   if (teams.Size() == 0)
     return 0;
 
@@ -1719,7 +1719,7 @@ void TeamManager::RemoveWorld(WorldId worldId) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-unsigned int TeamManager::GetWorldCount(void) const {
+unsigned int TeamManager::GetWorldCount() const {
   return worldsList.Size();
 }
 
@@ -2030,7 +2030,7 @@ void TeamManager::DecodeTeamAssigned(
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::Clear(void) {
+void TeamManager::Clear() {
   for (unsigned int i = 0; i < worldsList.Size(); i++) {
     worldsArray[worldsList[i]->worldId] = 0;
     worldsList[i]->Clear();
@@ -2041,7 +2041,7 @@ void TeamManager::Clear(void) {
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-void TeamManager::Update(void) {}
+void TeamManager::Update() {}
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

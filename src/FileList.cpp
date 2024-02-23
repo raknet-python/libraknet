@@ -383,7 +383,7 @@ void FileList::AddFilesFromDirectory(
     rakFree_Ex(dirSoFar, _FILE_AND_LINE_);
   }
 }
-void FileList::Clear(void) {
+void FileList::Clear() {
   unsigned i;
   for (i = 0; i < fileList.Size(); i++) {
     rakFree_Ex(fileList[i].data, _FILE_AND_LINE_);
@@ -728,7 +728,7 @@ void FileList::PopulateDataFromDisk(
     }
   }
 }
-void FileList::FlagFilesAsReferences(void) {
+void FileList::FlagFilesAsReferences() {
   for (unsigned int i = 0; i < fileList.Size(); i++) {
     fileList[i].isAReference = true;
     fileList[i].dataLengthBytes = fileList[i].fileLengthBytes;
@@ -811,7 +811,7 @@ void FileList::RemoveCallback(FileListProgress* cb) {
   if (idx != (unsigned int)-1)
     fileListProgressCallbacks.RemoveAtIndex(idx);
 }
-void FileList::ClearCallbacks(void) {
+void FileList::ClearCallbacks() {
   fileListProgressCallbacks.Clear(true, _FILE_AND_LINE_);
 }
 void FileList::GetCallbacks(

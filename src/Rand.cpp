@@ -84,13 +84,13 @@ float frandomMT(unsigned int* state, unsigned int*& next, int& left);
 void seedMT(unsigned int seed) {
   seedMT(seed, _state, _next, _left);
 }
-unsigned int reloadMT(void) {
+unsigned int reloadMT() {
   return reloadMT(_state, _next, _left);
 }
-unsigned int randomMT(void) {
+unsigned int randomMT() {
   return randomMT(_state, _next, _left);
 }
-float frandomMT(void) {
+float frandomMT() {
   return frandomMT(_state, _next, _left);
 }
 void fillBufferMT(void* buffer, unsigned int bytes) {
@@ -235,15 +235,15 @@ void RakNetRandom::SeedMT(unsigned int seed) {
   seedMT(seed, state, next, left);
 }
 
-unsigned int RakNetRandom::ReloadMT(void) {
+unsigned int RakNetRandom::ReloadMT() {
   return reloadMT(state, next, left);
 }
 
-unsigned int RakNetRandom::RandomMT(void) {
+unsigned int RakNetRandom::RandomMT() {
   return randomMT(state, next, left);
 }
 
-float RakNetRandom::FrandomMT(void) {
+float RakNetRandom::FrandomMT() {
   return frandomMT(state, next, left);
 }
 

@@ -65,15 +65,15 @@ RakNet::TimeUS NormalizeTime(RakNet::TimeUS timeIn) {
   return lastNormalizedReturnedValueCopy;
 }
 #endif // #if defined(GET_TIME_SPIKE_LIMIT) && GET_TIME_SPIKE_LIMIT>0
-RakNet::Time RakNet::GetTime(void) {
+RakNet::Time RakNet::GetTime() {
   return (RakNet::Time)(GetTimeUS() / 1000);
 }
-RakNet::TimeMS RakNet::GetTimeMS(void) {
+RakNet::TimeMS RakNet::GetTimeMS() {
   return (RakNet::TimeMS)(GetTimeUS() / 1000);
 }
 
 #if defined(_WIN32)
-RakNet::TimeUS GetTimeUS_Windows(void) {
+RakNet::TimeUS GetTimeUS_Windows() {
   if (initialized == false) {
     initialized = true;
 
@@ -136,7 +136,7 @@ RakNet::TimeUS GetTimeUS_Linux(void) {
 }
 #endif
 
-RakNet::TimeUS RakNet::GetTimeUS(void) {
+RakNet::TimeUS RakNet::GetTimeUS() {
 #if defined(_WIN32)
   return GetTimeUS_Windows();
 #else

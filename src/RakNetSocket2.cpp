@@ -68,20 +68,20 @@ RakNetSocket2::~RakNetSocket2() {}
 void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler* _eventHandler) {
   eventHandler = _eventHandler;
 }
-RNS2Type RakNetSocket2::GetSocketType(void) const {
+RNS2Type RakNetSocket2::GetSocketType() const {
   return socketType;
 }
 void RakNetSocket2::SetSocketType(RNS2Type t) {
   socketType = t;
 }
-bool RakNetSocket2::IsBerkleySocket(void) const {
+bool RakNetSocket2::IsBerkleySocket() const {
   return socketType != RNS2T_CHROME && socketType != RNS2T_WINDOWS_STORE_8;
 }
-SystemAddress RakNetSocket2::GetBoundAddress(void) const {
+SystemAddress RakNetSocket2::GetBoundAddress() const {
   return boundAddress;
 }
 
-RakNetSocket2* RakNetSocket2Allocator::AllocRNS2(void) {
+RakNetSocket2* RakNetSocket2Allocator::AllocRNS2() {
   RakNetSocket2* s2;
 #if defined(WINDOWS_STORE_RT)
   s2 = RakNet::OP_NEW<RNS2_WindowsStore8>(_FILE_AND_LINE_);
@@ -115,13 +115,13 @@ void RakNetSocket2::GetMyIP(
 #endif
 }
 
-unsigned int RakNetSocket2::GetUserConnectionSocketIndex(void) const {
+unsigned int RakNetSocket2::GetUserConnectionSocketIndex() const {
   return userConnectionSocketIndex;
 }
 void RakNetSocket2::SetUserConnectionSocketIndex(unsigned int i) {
   userConnectionSocketIndex = i;
 }
-RNS2EventHandler* RakNetSocket2::GetEventHandler(void) const {
+RNS2EventHandler* RakNetSocket2::GetEventHandler() const {
   return eventHandler;
 }
 
@@ -359,7 +359,7 @@ RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop) {
   b->RecvFromLoopInt();
   return 0;
 }
-unsigned RNS2_Berkley::RecvFromLoopInt(void) {
+unsigned RNS2_Berkley::RecvFromLoopInt() {
   isRecvFromLoopThreadActive.Increment();
 
   while (endThreads == false) {
@@ -404,10 +404,10 @@ int RNS2_Berkley::CreateRecvPollingThread(int threadPriority) {
 
   return errorCode;
 }
-void RNS2_Berkley::SignalStopRecvPollingThread(void) {
+void RNS2_Berkley::SignalStopRecvPollingThread() {
   endThreads = true;
 }
-void RNS2_Berkley::BlockOnStopRecvPollingThread(void) {
+void RNS2_Berkley::BlockOnStopRecvPollingThread() {
   endThreads = true;
 
   // Get recvfrom to unblock
@@ -427,10 +427,10 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void) {
     RakSleep(30);
   }
 }
-const RNS2_BerkleyBindParameters* RNS2_Berkley::GetBindings(void) const {
+const RNS2_BerkleyBindParameters* RNS2_Berkley::GetBindings() const {
   return &binding;
 }
-RNS2Socket RNS2_Berkley::GetSocket(void) const {
+RNS2Socket RNS2_Berkley::GetSocket() const {
   return rns2Socket;
 }
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
@@ -474,7 +474,7 @@ void RNS2_Windows::GetMyIP(
 void RNS2_Windows::SetSocketLayerOverride(SocketLayerOverride* _slo) {
   slo = _slo;
 }
-SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride(void) {
+SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride() {
   return slo;
 }
 #else

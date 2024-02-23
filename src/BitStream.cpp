@@ -131,7 +131,7 @@ BitStream::~BitStream() {
         _FILE_AND_LINE_); // Use realloc and free so we are more efficient than delete and new for resizing
 }
 
-void BitStream::Reset(void) {
+void BitStream::Reset() {
   // Note:  Do NOT reallocate memory because BitStream is used
   // in places to serialize/deserialize a buffer. Reallocation
   // is a dangerous operation (may result in leaks).
@@ -263,17 +263,17 @@ bool BitStream::Read(char* outByteArray, const unsigned int numberOfBytes) {
 }
 
 // Sets the read pointer back to the beginning of your data.
-void BitStream::ResetReadPointer(void) {
+void BitStream::ResetReadPointer() {
   readOffset = 0;
 }
 
 // Sets the write pointer back to the beginning of your data.
-void BitStream::ResetWritePointer(void) {
+void BitStream::ResetWritePointer() {
   numberOfBitsUsed = 0;
 }
 
 // Write a 0
-void BitStream::Write0(void) {
+void BitStream::Write0() {
   AddBitsAndReallocate(1);
 
   // New bytes need to be zeroed
@@ -284,7 +284,7 @@ void BitStream::Write0(void) {
 }
 
 // Write a 1
-void BitStream::Write1(void) {
+void BitStream::Write1() {
   AddBitsAndReallocate(1);
 
   BitSize_t numberOfBitsMod8 = numberOfBitsUsed & 7;
@@ -299,7 +299,7 @@ void BitStream::Write1(void) {
 }
 
 // Returns true if the next data read is a 1, false if it is a 0
-bool BitStream::ReadBit(void) {
+bool BitStream::ReadBit() {
   bool result = (data[readOffset >> 3] & (0x80 >> (readOffset & 7))) != 0;
   readOffset++;
   return result;
@@ -714,7 +714,7 @@ void BitStream::AddBitsAndReallocate(const BitSize_t numberOfBitsToWrite) {
   if (newNumberOfBitsAllocated > numberOfBitsAllocated)
     numberOfBitsAllocated = newNumberOfBitsAllocated;
 }
-BitSize_t BitStream::GetNumberOfBitsAllocated(void) const {
+BitSize_t BitStream::GetNumberOfBitsAllocated() const {
   return numberOfBitsAllocated;
 }
 void BitStream::PadWithZeroToByteLength(unsigned int bytes) {
@@ -876,7 +876,7 @@ int BitStream::NumberOfLeadingZeroes(uint64_t x) {
 }
 
 // Should hit if reads didn't match writes
-void BitStream::AssertStreamEmpty(void) {
+void BitStream::AssertStreamEmpty() {
   RakAssert(readOffset == numberOfBitsUsed);
 }
 void BitStream::PrintBits(char* out) const {
@@ -913,7 +913,7 @@ void BitStream::PrintBits(char* out) const {
 
   out[strIndex++] = 0;
 }
-void BitStream::PrintBits(void) const {
+void BitStream::PrintBits() const {
   char out[2048];
   PrintBits(out);
   RAKNET_DEBUG_PRINTF("%s", out);
@@ -924,7 +924,7 @@ void BitStream::PrintHex(char* out) const {
     sprintf(out + i * 3, "%02x ", data[i]);
   }
 }
-void BitStream::PrintHex(void) const {
+void BitStream::PrintHex() const {
   char out[2048];
   PrintHex(out);
   RAKNET_DEBUG_PRINTF("%s", out);
@@ -1005,7 +1005,7 @@ return data;
 
 */
 // If we used the constructor version with copy data off, this makes sure it is set to on and the data pointed to is copied.
-void BitStream::AssertCopyData(void) {
+void BitStream::AssertCopyData() {
   if (copyData == false) {
     copyData = true;
 
@@ -1025,7 +1025,7 @@ void BitStream::AssertCopyData(void) {
       data = 0;
   }
 }
-bool BitStream::IsNetworkOrderInternal(void) {
+bool BitStream::IsNetworkOrderInternal() {
   static unsigned long htonlValue = htonl(12345);
   return htonlValue == 12345;
 }

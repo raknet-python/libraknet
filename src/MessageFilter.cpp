@@ -184,7 +184,7 @@ unsigned MessageFilter::GetSystemCount(int filterSetID) const {
     return count;
   }
 }
-unsigned MessageFilter::GetFilterSetCount(void) const {
+unsigned MessageFilter::GetFilterSetCount() const {
   return filterList.Size();
 }
 int MessageFilter::GetFilterSetIDByIndex(unsigned index) {
@@ -222,7 +222,7 @@ void MessageFilter::DeleteFilterSet(int filterSetID) {
 		*/
   }
 }
-void MessageFilter::Clear(void) {
+void MessageFilter::Clear() {
   unsigned i;
   systemList.Clear(_FILE_AND_LINE_);
   for (i = 0; i < filterList.Size(); i++)
@@ -284,7 +284,7 @@ void MessageFilter::OnInvalidMessage(
 #endif
   }
 }
-void MessageFilter::Update(void) {
+void MessageFilter::Update() {
   // Update all timers for all systems.  If those systems' filter sets are expired, take the appropriate action.
   RakNet::Time curTime = RakNet::GetTime();
   if (GreaterThan(curTime - 1000, whenLastTimeoutCheck)) {

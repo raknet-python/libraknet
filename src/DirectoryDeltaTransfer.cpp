@@ -235,7 +235,7 @@ void DirectoryDeltaTransfer::GenerateHashes(
       true,
       FileListNodeContext(0, 0, 0, 0));
 }
-void DirectoryDeltaTransfer::ClearUploads(void) {
+void DirectoryDeltaTransfer::ClearUploads() {
   availableUploads->Clear();
 }
 void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
@@ -284,7 +284,7 @@ PluginReceiveResult DirectoryDeltaTransfer::OnReceive(Packet* packet) {
   return RR_CONTINUE_PROCESSING;
 }
 
-unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload(void) const {
+unsigned DirectoryDeltaTransfer::GetNumberOfFilesForUpload() const {
   return availableUploads->fileList.Size();
 }
 

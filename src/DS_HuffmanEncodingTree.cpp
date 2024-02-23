@@ -27,7 +27,7 @@ HuffmanEncodingTree::~HuffmanEncodingTree() {
   FreeMemory();
 }
 
-void HuffmanEncodingTree::FreeMemory(void) {
+void HuffmanEncodingTree::FreeMemory() {
   if (root == 0)
     return;
 

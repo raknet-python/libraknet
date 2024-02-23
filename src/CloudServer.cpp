@@ -111,7 +111,7 @@ void CloudServer::CloudQueryWithAddresses::Serialize(
     }
   }
 }
-bool CloudServer::GetRequest::AllRemoteServersHaveResponded(void) const {
+bool CloudServer::GetRequest::AllRemoteServersHaveResponded() const {
   unsigned int i;
   for (i = 0; i < remoteServerResponses.Size(); i++)
     if (remoteServerResponses[i]->gotResult == false)
@@ -150,7 +150,7 @@ void CloudServer::SetMaxUploadBytesPerClient(uint64_t bytes) {
 void CloudServer::SetMaxBytesPerDownload(uint64_t bytes) {
   maxBytesPerDowload = bytes;
 }
-void CloudServer::Update(void) {
+void CloudServer::Update() {
   // Timeout getRequests
   RakNet::Time time = RakNet::Time();
   if (time > nextGetRequestsCheck) {
@@ -1032,10 +1032,10 @@ void CloudServer::OnClosedConnection(
     remoteSystems.RemoveAtIndex(remoteSystemIndex, _FILE_AND_LINE_);
   }
 }
-void CloudServer::OnRakPeerShutdown(void) {
+void CloudServer::OnRakPeerShutdown() {
   Clear();
 }
-void CloudServer::Clear(void) {
+void CloudServer::Clear() {
   unsigned int i, j;
   for (i = 0; i < dataRepository.Size(); i++) {
     CloudDataList* cloudDataList = dataRepository[i];
@@ -1769,7 +1769,7 @@ void CloudServer::RemoveQueryFilter(CloudServerQueryFilter* filter) {
   if (index != (unsigned int)-1)
     queryFilters.RemoveAtIndex(index);
 }
-void CloudServer::RemoveAllQueryFilters(void) {
+void CloudServer::RemoveAllQueryFilters() {
   queryFilters.Clear(true, _FILE_AND_LINE_);
 }
 

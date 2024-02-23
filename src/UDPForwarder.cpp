@@ -62,7 +62,7 @@ UDPForwarder::~UDPForwarder() {
   WSAStartupSingleton::Deref();
 #endif
 }
-void UDPForwarder::Startup(void) {
+void UDPForwarder::Startup() {
   if (isRunning.GetValue() > 0)
     return;
 
@@ -80,7 +80,7 @@ void UDPForwarder::Startup(void) {
   while (threadRunning.GetValue() == 0)
     RakSleep(30);
 }
-void UDPForwarder::Shutdown(void) {
+void UDPForwarder::Shutdown() {
   if (isRunning.GetValue() == 0)
     return;
   isRunning.Decrement();
@@ -97,10 +97,10 @@ void UDPForwarder::SetMaxForwardEntries(unsigned short maxEntries) {
   RakAssert(maxEntries > 0 && maxEntries < 65535 / 2);
   maxForwardEntries = maxEntries;
 }
-int UDPForwarder::GetMaxForwardEntries(void) const {
+int UDPForwarder::GetMaxForwardEntries() const {
   return maxForwardEntries;
 }
-int UDPForwarder::GetUsedForwardEntries(void) const {
+int UDPForwarder::GetUsedForwardEntries() const {
   return (int)forwardListNotUpdated.Size();
 }
 UDPForwarderResult UDPForwarder::StartForwarding(
@@ -246,7 +246,7 @@ void UDPForwarder::RecvFrom(
           NULL);
       // something has gone wrong here...
       RAKNET_DEBUG_PRINTF(
-          "recvfrom failed:Error code - %d\n%s", dwIOError, messageBuffer);
+          "recvfrom failed:Error code - %lu\n%s", dwIOError, messageBuffer);
 
       //Free the buffer.
       LocalFree(messageBuffer);
@@ -366,7 +366,7 @@ void UDPForwarder::RecvFrom(
   forwardEntry->timeLastDatagramForwarded = curTime;
 #endif // __native_client__
 }
-void UDPForwarder::UpdateUDPForwarder(void) {
+void UDPForwarder::UpdateUDPForwarder() {
   /*
 #if !defined(SN_TARGET_PSP2)
 	timeval tv;

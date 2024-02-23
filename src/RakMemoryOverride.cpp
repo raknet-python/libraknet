@@ -295,7 +295,7 @@ void UseRaknetFixedHeap(
   (void)yourDirectMMapFunction;
   (void)yourMUnmapFunction;
 }
-void FreeRakNetFixedHeap(void) {}
+void FreeRakNetFixedHeap() {}
 #endif
 
 #if _USE_RAK_MEMORY_OVERRIDE == 1

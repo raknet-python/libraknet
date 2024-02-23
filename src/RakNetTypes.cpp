@@ -132,10 +132,10 @@ bool SystemAddress::EqualsExcludingPort(const SystemAddress& right) const {
 #endif
       ;
 }
-unsigned short SystemAddress::GetPort(void) const {
+unsigned short SystemAddress::GetPort() const {
   return ntohs(address.addr4.sin_port);
 }
-unsigned short SystemAddress::GetPortNetworkOrder(void) const {
+unsigned short SystemAddress::GetPortNetworkOrder() const {
   return address.addr4.sin_port;
 }
 void SystemAddress::SetPortHostOrder(unsigned short s) {
@@ -188,7 +188,7 @@ bool SystemAddress::operator<(const SystemAddress& right) const {
   }
   return address.addr4.sin_port < right.address.addr4.sin_port;
 }
-int SystemAddress::size(void) {
+int SystemAddress::size() {
 #if RAKNET_SUPPORT_IPV6 == 1
   return sizeof(sockaddr_in6) + sizeof(char);
 #else
@@ -218,12 +218,12 @@ unsigned long SystemAddress::ToInteger(const SystemAddress& sa) {
       lastHash);
 #endif
 }
-unsigned char SystemAddress::GetIPVersion(void) const {
+unsigned char SystemAddress::GetIPVersion() const {
   if (address.addr4.sin_family == AF_INET)
     return 4;
   return 6;
 }
-unsigned int SystemAddress::GetIPPROTO(void) const {
+unsigned int SystemAddress::GetIPPROTO() const {
 #if RAKNET_SUPPORT_IPV6 == 1
   if (address.addr4.sin_family == AF_INET)
     return IPPROTO_IP;
@@ -232,7 +232,7 @@ unsigned int SystemAddress::GetIPPROTO(void) const {
   return IPPROTO_IP;
 #endif
 }
-void SystemAddress::SetToLoopback(void) {
+void SystemAddress::SetToLoopback() {
   SetToLoopback(GetIPVersion());
 }
 void SystemAddress::SetToLoopback(unsigned char ipVersion) {
@@ -242,7 +242,7 @@ void SystemAddress::SetToLoopback(unsigned char ipVersion) {
     FromString(IPV6_LOOPBACK, 0, ipVersion);
   }
 }
-bool SystemAddress::IsLoopback(void) const {
+bool SystemAddress::IsLoopback() const {
   if (GetIPVersion() == 4) {
     // unsigned long l = htonl(address.addr4.sin_addr.s_addr);
     if (htonl(address.addr4.sin_addr.s_addr) == 2130706433)
@@ -394,7 +394,7 @@ void SystemAddress::FixForIPVersion(const SystemAddress& boundAddressToSocket) {
     // 		}
   }
 }
-bool SystemAddress::IsLANAddress(void) {
+bool SystemAddress::IsLANAddress() {
 //	return address.addr4.sin_addr.S_un.S_un_b.s_b1==10 || address.addr4.sin_addr.S_un.s_b1==192;
 #if defined(__WIN32__)
   return address.addr4.sin_addr.S_un.S_un_b.s_b1 == 10 ||
@@ -638,7 +638,7 @@ bool RakNetGUID::operator>(const RakNetGUID& right) const {
 bool RakNetGUID::operator<(const RakNetGUID& right) const {
   return g < right.g;
 }
-const char* RakNetGUID::ToString(void) const {
+const char* RakNetGUID::ToString() const {
   static unsigned char strIndex = 0;
   static char str[8][64];
 
