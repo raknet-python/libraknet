@@ -18,11 +18,12 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 
-option(CODE_COVERAGE "Enable code coverage reporting" false)
-if (NOT BUILD_TESTING STREQUAL OFF)
+option(RAKNET_CODE_COVERAGE "Enable code coverage reporting" OFF)
+option(RAKNET_BUILD_TESTING "Enable the building of tests" OFF)
+if (RAKNET_BUILD_TESTING)
     enable_testing()
 
-    if (CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
+    if (RAKNET_CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g --coverage")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage")
     endif ()
@@ -34,6 +35,7 @@ IF (WIN32 AND NOT UNIX)
 ELSE ()
     list(APPEND RAKNET_LINK_LIBRARIES pthread)
 ENDIF ()
+
 
 if (APPLE)
     # tell ranlib to ignore empty compilation units
@@ -51,8 +53,10 @@ target_include_directories(raknet PUBLIC include)
 target_link_libraries(raknet ${RAKNET_LINK_LIBRARIES})
 
 
-file(GLOB RAKNET_TEST_FILES CONFIGURE_DEPENDS "tests/*.cpp")
-add_executable(raknet_test ${RAKNET_TEST_FILES})
-target_link_libraries(raknet_test raknet GTest::gtest_main)
-include(GoogleTest)
-gtest_discover_tests(raknet_test)
+if (RAKNET_BUILD_TESTING)
+    file(GLOB RAKNET_TEST_FILES CONFIGURE_DEPENDS "tests/*.cpp")
+    add_executable(raknet_test ${RAKNET_TEST_FILES})
+    target_link_libraries(raknet_test raknet GTest::gtest_main)
+    include(GoogleTest)
+    gtest_discover_tests(raknet_test)
+endif ()
