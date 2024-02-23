@@ -24,38 +24,48 @@ STATIC_FACTORY_DEFINITIONS(StatisticsHistoryPlugin, StatisticsHistoryPlugin);
 int StatisticsHistory::TrackedObjectComp(
     const uint64_t& key,
     StatisticsHistory::TrackedObject* const& data) {
-  if (key < data->trackedObjectData.objectId)
+  if (key < data->trackedObjectData.objectId) {
     return -1;
-  if (key == data->trackedObjectData.objectId)
+}
+  if (key == data->trackedObjectData.objectId) {
     return 0;
+}
   return 1;
 }
 
 int TimeAndValueQueueCompAsc(
     StatisticsHistory::TimeAndValueQueue* const& key,
     StatisticsHistory::TimeAndValueQueue* const& data) {
-  if (key->sortValue < data->sortValue)
+  if (key->sortValue < data->sortValue) {
     return -1;
-  if (key->sortValue > data->sortValue)
+}
+  if (key->sortValue > data->sortValue) {
     return 1;
-  if (key->key < data->key)
+}
+  if (key->key < data->key) {
     return -1;
-  if (key->key > data->key)
+}
+  if (key->key > data->key) {
     return 1;
+}
   return 0;
 }
 
 int TimeAndValueQueueCompDesc(
     StatisticsHistory::TimeAndValueQueue* const& key,
     StatisticsHistory::TimeAndValueQueue* const& data) {
-  if (key->sortValue > data->sortValue)
+  if (key->sortValue > data->sortValue) {
     return -1;
-  if (key->sortValue < data->sortValue)
+}
+  if (key->sortValue < data->sortValue) {
     return 1;
-  if (key->key > data->key)
+}
+  if (key->key > data->key) {
     return -1;
-  if (key->key < data->key)
+}
+  if (key->key < data->key) {
     return 1;
+}
   return 0;
 }
 StatisticsHistory::TrackedObjectData::TrackedObjectData() = default;
@@ -82,8 +92,9 @@ Time StatisticsHistory::GetDefaultTimeToTrack() const {
 bool StatisticsHistory::AddObject(TrackedObjectData tod) {
   bool objectExists;
   unsigned int idx = objects.GetIndexFromKey(tod.objectId, &objectExists);
-  if (objectExists)
+  if (objectExists) {
     return false;
+}
   auto* to = RakNet::OP_NEW<TrackedObject>(_FILE_AND_LINE_);
   to->trackedObjectData = tod;
   objects.InsertAtIndex(to, idx, _FILE_AND_LINE_);
@@ -91,10 +102,12 @@ bool StatisticsHistory::AddObject(TrackedObjectData tod) {
 }
 bool StatisticsHistory::RemoveObject(uint64_t objectId, void** userData) {
   unsigned int idx = GetObjectIndex(objectId);
-  if (idx == (unsigned int)-1)
+  if (idx == (unsigned int)-1) {
     return false;
-  if (userData)
+}
+  if (userData) {
     *userData = objects[idx]->trackedObjectData.userData;
+}
   RemoveObjectAtIndex(idx);
   return true;
 }
@@ -123,8 +136,9 @@ bool StatisticsHistory::AddValueByObjectID(
     Time curTime,
     bool combineEqualTimes) {
   unsigned int idx = GetObjectIndex(objectId);
-  if (idx == (unsigned int)-1)
+  if (idx == (unsigned int)-1) {
     return false;
+}
   AddValueByIndex(idx, key, val, curTime, combineEqualTimes);
   return true;
 }
@@ -147,7 +161,7 @@ void StatisticsHistory::AddValueByIndex(
   }
 
   TimeAndValue tav;
-  if (combineEqualTimes == true && queue->values.Size() > 0 &&
+  if (combineEqualTimes && queue->values.Size() > 0 &&
       queue->values.PeekTail().time == curTime) {
     tav = queue->values.PopTail();
 
@@ -167,26 +181,31 @@ void StatisticsHistory::AddValueByIndex(
   queue->recentSumOfSquares += tav.val * tav.val;
   queue->longTermSum += tav.val;
   queue->longTermCount = queue->longTermCount + 1;
-  if (queue->longTermLowest > tav.val)
+  if (queue->longTermLowest > tav.val) {
     queue->longTermLowest = tav.val;
-  if (queue->longTermHighest < tav.val)
+}
+  if (queue->longTermHighest < tav.val) {
     queue->longTermHighest = tav.val;
+}
 }
 StatisticsHistory::SHErrorCode StatisticsHistory::GetHistoryForKey(
     uint64_t objectId,
     RakString key,
     StatisticsHistory::TimeAndValueQueue** values,
     Time curTime) const {
-  if (values == nullptr)
+  if (values == nullptr) {
     return SH_INVALID_PARAMETER;
+}
 
   unsigned int idx = GetObjectIndex(objectId);
-  if (idx == (unsigned int)-1)
+  if (idx == (unsigned int)-1) {
     return SH_UKNOWN_OBJECT;
+}
   TrackedObject* to = objects[idx];
   DataStructures::HashIndex hi = to->dataQueues.GetIndexOf(key);
-  if (hi.IsInvalid())
+  if (hi.IsInvalid()) {
     return SH_UKNOWN_KEY;
+}
   *values = to->dataQueues.ItemAtIndex(hi);
   (*values)->CullExpiredValues(curTime);
   return SH_OK;
@@ -196,8 +215,9 @@ bool StatisticsHistory::GetHistorySorted(
     SHSortOperation sortType,
     DataStructures::List<StatisticsHistory::TimeAndValueQueue*>& values) const {
   unsigned int idx = GetObjectIndex(objectId);
-  if (idx == (unsigned int)-1)
+  if (idx == (unsigned int)-1) {
     return false;
+}
   TrackedObject* to = objects[idx];
   DataStructures::List<TimeAndValueQueue*> itemList;
   DataStructures::List<RakString> keyList;
@@ -214,38 +234,39 @@ bool StatisticsHistory::GetHistorySorted(
     tavq->CullExpiredValues(curTime);
 
     if (sortType == SH_SORT_BY_RECENT_SUM_ASCENDING ||
-        sortType == SH_SORT_BY_RECENT_SUM_DESCENDING)
+        sortType == SH_SORT_BY_RECENT_SUM_DESCENDING) {
       tavq->sortValue = tavq->GetRecentSum();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_LONG_TERM_SUM_ASCENDING ||
-        sortType == SH_SORT_BY_LONG_TERM_SUM_DESCENDING)
+        sortType == SH_SORT_BY_LONG_TERM_SUM_DESCENDING) {
       tavq->sortValue = tavq->GetLongTermSum();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_RECENT_SUM_OF_SQUARES_ASCENDING ||
-        sortType == SH_SORT_BY_RECENT_SUM_OF_SQUARES_DESCENDING)
+        sortType == SH_SORT_BY_RECENT_SUM_OF_SQUARES_DESCENDING) {
       tavq->sortValue = tavq->GetRecentSumOfSquares();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_RECENT_AVERAGE_ASCENDING ||
-        sortType == SH_SORT_BY_RECENT_AVERAGE_DESCENDING)
+        sortType == SH_SORT_BY_RECENT_AVERAGE_DESCENDING) {
       tavq->sortValue = tavq->GetRecentAverage();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_LONG_TERM_AVERAGE_ASCENDING ||
-        sortType == SH_SORT_BY_LONG_TERM_AVERAGE_DESCENDING)
+        sortType == SH_SORT_BY_LONG_TERM_AVERAGE_DESCENDING) {
       tavq->sortValue = tavq->GetLongTermAverage();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_RECENT_HIGHEST_ASCENDING ||
-        sortType == SH_SORT_BY_RECENT_HIGHEST_DESCENDING)
+        sortType == SH_SORT_BY_RECENT_HIGHEST_DESCENDING) {
       tavq->sortValue = tavq->GetRecentHighest();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_RECENT_LOWEST_ASCENDING ||
-        sortType == SH_SORT_BY_RECENT_LOWEST_DESCENDING)
+        sortType == SH_SORT_BY_RECENT_LOWEST_DESCENDING) {
       tavq->sortValue = tavq->GetRecentLowest();
-    else if (
+    } else if (
         sortType == SH_SORT_BY_LONG_TERM_HIGHEST_ASCENDING ||
-        sortType == SH_SORT_BY_LONG_TERM_HIGHEST_DESCENDING)
+        sortType == SH_SORT_BY_LONG_TERM_HIGHEST_DESCENDING) {
       tavq->sortValue = tavq->GetLongTermHighest();
-    else
+    } else {
       tavq->sortValue = tavq->GetLongTermLowest();
+}
 
     if (sortType == SH_SORT_BY_RECENT_SUM_ASCENDING ||
         sortType == SH_SORT_BY_LONG_TERM_SUM_ASCENDING ||
@@ -255,16 +276,18 @@ bool StatisticsHistory::GetHistorySorted(
         sortType == SH_SORT_BY_RECENT_HIGHEST_ASCENDING ||
         sortType == SH_SORT_BY_RECENT_LOWEST_ASCENDING ||
         sortType == SH_SORT_BY_LONG_TERM_HIGHEST_ASCENDING ||
-        sortType == SH_SORT_BY_LONG_TERM_LOWEST_ASCENDING)
+        sortType == SH_SORT_BY_LONG_TERM_LOWEST_ASCENDING) {
       sortedQueues.Insert(
           tavq, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompAsc);
-    else
+    } else {
       sortedQueues.Insert(
           tavq, tavq, false, _FILE_AND_LINE_, TimeAndValueQueueCompDesc);
+}
   }
 
-  for (unsigned int i = 0; i < sortedQueues.Size(); i++)
+  for (unsigned int i = 0; i < sortedQueues.Size(); i++) {
     values.Push(sortedQueues[i], _FILE_AND_LINE_);
+}
   return true;
 }
 void StatisticsHistory::MergeAllObjectsOnKey(
@@ -279,7 +302,7 @@ void StatisticsHistory::MergeAllObjectsOnKey(
   for (unsigned int idx = 0; idx < objects.Size(); idx++) {
     TrackedObject* to = objects[idx];
     DataStructures::HashIndex hi = to->dataQueues.GetIndexOf(key);
-    if (hi.IsInvalid() == false) {
+    if (!hi.IsInvalid()) {
       TimeAndValueQueue* tavqInput = to->dataQueues.ItemAtIndex(hi);
       tavqInput->CullExpiredValues(curTime);
       TimeAndValueQueue::MergeSets(
@@ -305,8 +328,9 @@ void StatisticsHistory::GetUniqueKeyList(
         }
       }
 
-      if (hasKey == false)
+      if (!hasKey) {
         keys.Push(keyList[k], _FILE_AND_LINE_);
+}
     }
   }
 }
@@ -331,31 +355,35 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermSum() const {
   return longTermSum;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentAverage() const {
-  if (values.Size() > 0)
+  if (values.Size() > 0) {
     return recentSum / (SHValueType)values.Size();
-  else
+  } else {
     return 0;
+}
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentLowest() const {
   SHValueType out = SH_TYPE_MAX;
   for (unsigned int idx = 0; idx < values.Size(); idx++) {
-    if (values[idx].val < out)
+    if (values[idx].val < out) {
       out = values[idx].val;
+}
   }
   return out;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentHighest() const {
   SHValueType out = -SH_TYPE_MAX;
   for (unsigned int idx = 0; idx < values.Size(); idx++) {
-    if (values[idx].val > out)
+    if (values[idx].val > out) {
       out = values[idx].val;
+}
   }
   return out;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(
     ) const {
-  if (values.Size() == 0)
+  if (values.Size() == 0) {
     return 0;
+}
 
   SHValueType recentMean = GetRecentAverage();
   SHValueType squareOfMean = recentMean * recentMean;
@@ -365,8 +393,9 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetRecentStandardDeviation(
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermAverage(
     ) const {
-  if (longTermCount == 0)
+  if (longTermCount == 0) {
     return 0;
+}
   return longTermSum / longTermCount;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermLowest(
@@ -378,16 +407,18 @@ SHValueType StatisticsHistory::TimeAndValueQueue::GetLongTermHighest(
   return longTermHighest;
 }
 Time StatisticsHistory::TimeAndValueQueue::GetTimeRange() const {
-  if (values.Size() < 2)
+  if (values.Size() < 2) {
     return 0;
+}
   return values[values.Size() - 1].time - values[0].time;
 }
 SHValueType StatisticsHistory::TimeAndValueQueue::GetSumSinceTime(
     Time t) const {
   SHValueType sum = 0;
   for (int i = values.Size(); i > 0; --i) {
-    if (values[i - 1].time >= t)
+    if (values[i - 1].time >= t) {
       sum += values[i - 1].val;
+}
   }
   return sum;
 }
@@ -452,14 +483,16 @@ void StatisticsHistory::TimeAndValueQueue::MergeSets(
         lhs->recentSumOfSquares + rhs->recentSumOfSquares;
     output->longTermSum = lhs->longTermSum + rhs->longTermSum;
     output->longTermCount = lhs->longTermCount + rhs->longTermCount;
-    if (lhs->longTermLowest < rhs->longTermLowest)
+    if (lhs->longTermLowest < rhs->longTermLowest) {
       output->longTermLowest = lhs->longTermLowest;
-    else
+    } else {
       output->longTermLowest = rhs->longTermLowest;
-    if (lhs->longTermHighest > rhs->longTermHighest)
+}
+    if (lhs->longTermHighest > rhs->longTermHighest) {
       output->longTermHighest = lhs->longTermHighest;
-    else
+    } else {
       output->longTermHighest = rhs->longTermHighest;
+}
   } else {
     TimeAndValue lastTimeAndValueLhs, lastTimeAndValueRhs;
     lastTimeAndValueLhs.time = 0;
@@ -482,11 +515,12 @@ void StatisticsHistory::TimeAndValueQueue::MergeSets(
         lastTimeAndValueRhs = rhs->values[rhsIndex];
         if (rhsIndex > 0 &&
             rhs->values[rhsIndex].time != rhs->values[rhsIndex - 1].time &&
-            rhsDataCategory == StatisticsHistory::DC_CONTINUOUS)
+            rhsDataCategory == StatisticsHistory::DC_CONTINUOUS) {
           lastSlopeRhs =
               (rhs->values[rhsIndex].val - rhs->values[rhsIndex - 1].val) /
               (SHValueType)(rhs->values[rhsIndex].time -
                             rhs->values[rhsIndex - 1].time);
+}
         rhsIndex++;
       } else if (lhs->values[lhsIndex].time < rhs->values[rhsIndex].time) {
         timeSinceOppositeValue =
@@ -497,11 +531,12 @@ void StatisticsHistory::TimeAndValueQueue::MergeSets(
         lastTimeAndValueLhs = lhs->values[lhsIndex];
         if (lhsIndex > 0 &&
             lhs->values[lhsIndex].time != lhs->values[lhsIndex - 1].time &&
-            lhsDataCategory == StatisticsHistory::DC_CONTINUOUS)
+            lhsDataCategory == StatisticsHistory::DC_CONTINUOUS) {
           lastSlopeLhs =
               (lhs->values[lhsIndex].val - lhs->values[lhsIndex - 1].val) /
               (SHValueType)(lhs->values[lhsIndex].time -
                             lhs->values[lhsIndex - 1].time);
+}
         lhsIndex++;
       } else {
         newTimeAndValue.val =
@@ -511,18 +546,20 @@ void StatisticsHistory::TimeAndValueQueue::MergeSets(
         lastTimeAndValueLhs = lhs->values[lhsIndex];
         if (rhsIndex > 0 &&
             rhs->values[rhsIndex].time != rhs->values[rhsIndex - 1].time &&
-            rhsDataCategory == StatisticsHistory::DC_CONTINUOUS)
+            rhsDataCategory == StatisticsHistory::DC_CONTINUOUS) {
           lastSlopeRhs =
               (rhs->values[rhsIndex].val - rhs->values[rhsIndex - 1].val) /
               (SHValueType)(rhs->values[rhsIndex].time -
                             rhs->values[rhsIndex - 1].time);
+}
         if (lhsIndex > 0 &&
             lhs->values[lhsIndex].time != lhs->values[lhsIndex - 1].time &&
-            lhsDataCategory == StatisticsHistory::DC_CONTINUOUS)
+            lhsDataCategory == StatisticsHistory::DC_CONTINUOUS) {
           lastSlopeLhs =
               (lhs->values[lhsIndex].val - lhs->values[lhsIndex - 1].val) /
               (SHValueType)(lhs->values[lhsIndex].time -
                             lhs->values[lhsIndex - 1].time);
+}
         lhsIndex++;
         rhsIndex++;
       }
@@ -566,11 +603,13 @@ void StatisticsHistory::TimeAndValueQueue::ResizeSampleSet(
     Time timeClipStart,
     Time timeClipEnd) {
   histogram.Clear(_FILE_AND_LINE_);
-  if (maxSamples == 0)
+  if (maxSamples == 0) {
     return;
+}
   Time timeRange = GetTimeRange();
-  if (timeRange == 0)
+  if (timeRange == 0) {
     return;
+}
   if (maxSamples == 1) {
     StatisticsHistory::TimeAndValue tav;
     tav.time = timeRange;
@@ -579,8 +618,9 @@ void StatisticsHistory::TimeAndValueQueue::ResizeSampleSet(
     return;
   }
   Time interval = timeRange / maxSamples;
-  if (interval == 0)
+  if (interval == 0) {
     interval = 1;
+}
   unsigned int dataIndex;
   Time timeBoundary;
   StatisticsHistory::TimeAndValue currentSum;
@@ -690,8 +730,9 @@ SHValueType StatisticsHistory::TimeAndValueQueue::Interpolate(
     StatisticsHistory::TimeAndValue t1,
     StatisticsHistory::TimeAndValue t2,
     Time time) {
-  if (t2.time == t1.time)
+  if (t2.time == t1.time) {
     return (t1.val + t2.val) / 2;
+}
   //	if (t2.time > t1.time)
   //	{
   SHValueType slope =
@@ -731,14 +772,16 @@ StatisticsHistory::TrackedObject::TrackedObject() = default;
 StatisticsHistory::TrackedObject::~TrackedObject() {
   DataStructures::List<StatisticsHistory::TimeAndValueQueue*> itemList;
   DataStructures::List<RakString> keyList;
-  for (unsigned int idx = 0; idx < itemList.Size(); idx++)
+  for (unsigned int idx = 0; idx < itemList.Size(); idx++) {
     RakNet::OP_DELETE(itemList[idx], _FILE_AND_LINE_);
+}
 }
 unsigned int StatisticsHistory::GetObjectIndex(uint64_t objectId) const {
   bool objectExists;
   unsigned int idx = objects.GetIndexFromKey(objectId, &objectExists);
-  if (objectExists)
+  if (objectExists) {
     return idx;
+}
   return (unsigned int)-1;
 }
 StatisticsHistoryPlugin::StatisticsHistoryPlugin() {

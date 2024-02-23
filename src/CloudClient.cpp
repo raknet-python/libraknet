@@ -42,11 +42,13 @@ void CloudClient::Post(
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_CLOUD_POST_REQUEST);
   cloudKey->Serialize(true, &bsOut);
-  if (data == nullptr)
+  if (data == nullptr) {
     dataLengthBytes = 0;
+}
   bsOut.Write(dataLengthBytes);
-  if (dataLengthBytes > 0)
+  if (dataLengthBytes > 0) {
     bsOut.WriteAlignedBytes((const unsigned char*)data, dataLengthBytes);
+}
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
@@ -177,10 +179,12 @@ void CloudClient::OnGetReponse(
     Packet* packet,
     CloudClientCallback* _callback,
     CloudAllocator* _allocator) {
-  if (_callback == nullptr)
+  if (_callback == nullptr) {
     _callback = callback;
-  if (_allocator == nullptr)
+}
+  if (_allocator == nullptr) {
     _allocator = allocator;
+}
 
   CloudQueryResult cloudQueryResult;
 
@@ -201,8 +205,9 @@ void CloudClient::OnGetReponse(
     CloudQueryResult* cloudQueryResult,
     Packet* packet,
     CloudAllocator* _allocator) {
-  if (_allocator == nullptr)
+  if (_allocator == nullptr) {
     _allocator = allocator;
+}
 
   RakNet::BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID));
@@ -212,10 +217,12 @@ void CloudClient::OnSubscriptionNotification(
     Packet* packet,
     CloudClientCallback* _callback,
     CloudAllocator* _allocator) {
-  if (_callback == nullptr)
+  if (_callback == nullptr) {
     _callback = callback;
-  if (_allocator == nullptr)
+}
+  if (_allocator == nullptr) {
     _allocator = allocator;
+}
 
   bool wasUpdated = false;
   CloudQueryRow row;
@@ -236,8 +243,9 @@ void CloudClient::OnSubscriptionNotification(
     CloudQueryRow* row,
     Packet* packet,
     CloudAllocator* _allocator) {
-  if (_allocator == nullptr)
+  if (_allocator == nullptr) {
     _allocator = allocator;
+}
 
   RakNet::BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID));

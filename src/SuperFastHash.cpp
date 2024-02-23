@@ -9,7 +9,7 @@
  */
 
 #include "SuperFastHash.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "NativeTypes.h"
 
 #if !defined(_WIN32)
@@ -54,8 +54,9 @@ SuperFastHashIncremental(const char* data, int len, unsigned int lastHash) {
   uint32_t tmp;
   int rem;
 
-  if (len <= 0 || data == nullptr)
+  if (len <= 0 || data == nullptr) {
     return 0;
+}
 
   rem = len & 3;
   len >>= 2;
@@ -101,8 +102,9 @@ SuperFastHashIncremental(const char* data, int len, unsigned int lastHash) {
 
 uint32_t SuperFastHashFile(const char* filename) {
   FILE* fp = fopen(filename, "rb");
-  if (fp == nullptr)
+  if (fp == nullptr) {
     return 0;
+}
   uint32_t hash = SuperFastHashFilePtr(fp);
   fclose(fp);
   return hash;

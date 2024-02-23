@@ -35,24 +35,30 @@ using namespace RakNet;
 int UDPProxyCoordinator::ServerWithPingComp(
     const unsigned short& key,
     const UDPProxyCoordinator::ServerWithPing& data) {
-  if (key < data.ping)
+  if (key < data.ping) {
     return -1;
-  if (key > data.ping)
+}
+  if (key > data.ping) {
     return 1;
+}
   return 0;
 }
 
 int UDPProxyCoordinator::ForwardingRequestComp(
     const SenderAndTargetAddress& key,
     ForwardingRequest* const& data) {
-  if (key.senderClientAddress < data->sata.senderClientAddress)
+  if (key.senderClientAddress < data->sata.senderClientAddress) {
     return -1;
-  if (key.senderClientAddress > data->sata.senderClientAddress)
+}
+  if (key.senderClientAddress > data->sata.senderClientAddress) {
     return -1;
-  if (key.targetClientAddress < data->sata.targetClientAddress)
+}
+  if (key.targetClientAddress < data->sata.targetClientAddress) {
     return -1;
-  if (key.targetClientAddress > data->sata.targetClientAddress)
+}
+  if (key.targetClientAddress > data->sata.targetClientAddress) {
     return 1;
+}
   return 0;
 }
 //
@@ -99,8 +105,9 @@ void UDPProxyCoordinator::Update() {
       // Forwarding request succeeded, we waited a bit to prevent duplicates. Can forget about the entry now.
       RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
       forwardingRequestList.RemoveAtIndex(idx);
-    } else
+    } else {
       idx++;
+}
   }
 }
 PluginReceiveResult UDPProxyCoordinator::OnReceive(Packet* packet) {
@@ -137,8 +144,9 @@ void UDPProxyCoordinator::OnClosedConnection(
       // Guy disconnected before the attempt completed
       RakNet::OP_DELETE(forwardingRequestList[idx], _FILE_AND_LINE_);
       forwardingRequestList.RemoveAtIndex(idx);
-    } else
+    } else {
       idx++;
+}
   }
 
   idx = serverList.GetIndexOf(systemAddress);
@@ -163,8 +171,9 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
   incomingBs.IgnoreBytes(2);
   SystemAddress sourceAddress;
   incomingBs.Read(sourceAddress);
-  if (sourceAddress == UNASSIGNED_SYSTEM_ADDRESS)
+  if (sourceAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     sourceAddress = packet->systemAddress;
+}
   SystemAddress targetAddress;
   RakNetGUID targetGuid;
   bool usesAddress = false;
@@ -181,8 +190,9 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
   incomingBs.Read(fw->timeoutOnNoDataMS);
   bool hasServerSelectionBitstream = false;
   incomingBs.Read(hasServerSelectionBitstream);
-  if (hasServerSelectionBitstream)
+  if (hasServerSelectionBitstream) {
     incomingBs.Read(&(fw->serverSelectionBitstream));
+}
 
   RakNet::BitStream outgoingBs;
   SenderAndTargetAddress sata;
@@ -242,7 +252,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
   }
 
   if (rakPeerInterface->GetConnectionState(targetAddress) != IS_CONNECTED &&
-      usesAddress == false) {
+      !usesAddress) {
     outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
     outgoingBs.Write(
         (MessageID)ID_UDP_PROXY_RECIPIENT_GUID_NOT_CONNECTED_TO_COORDINATOR);
@@ -273,8 +283,9 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     auto serverListSize = (unsigned short)serverList.Size();
     outgoingBs.Write(serverListSize);
     unsigned int idx;
-    for (idx = 0; idx < serverList.Size(); idx++)
+    for (idx = 0; idx < serverList.Size(); idx++) {
       outgoingBs.Write(serverList[idx]);
+}
     rakPeerInterface->Send(
         &outgoingBs,
         MEDIUM_PRIORITY,
@@ -291,8 +302,9 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
         false);
     fw->timeRequestedPings = RakNet::GetTimeMS();
     unsigned int copyIndex;
-    for (copyIndex = 0; copyIndex < serverList.Size(); copyIndex++)
+    for (copyIndex = 0; copyIndex < serverList.Size(); copyIndex++) {
       fw->remainingServersToTry.Push(serverList[copyIndex], _FILE_AND_LINE_);
+}
     forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_);
   } else {
     fw->timeRequestedPings = 0;
@@ -399,7 +411,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(
   bool objectExists;
   unsigned int index =
       forwardingRequestList.GetIndexFromKey(sata, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     // The guy disconnected before the request finished
     return;
   }
@@ -500,13 +512,15 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
   bool objectExists;
   unsigned int index =
       forwardingRequestList.GetIndexFromKey(sata, &objectExists);
-  if (objectExists == false)
+  if (!objectExists) {
     return;
+}
   unsigned short idx;
   ServerWithPing swp;
   ForwardingRequest* fw = forwardingRequestList[index];
-  if (fw->timeRequestedPings == 0)
+  if (fw->timeRequestedPings == 0) {
     return;
+}
 
   incomingBs.Read(serversToPingSize);
   if (packet->systemAddress == sata.senderClientAddress) {
@@ -515,8 +529,9 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
       incomingBs.Read(swp.ping);
       unsigned int index2;
       for (index2 = 0; index2 < fw->sourceServerPings.Size(); index2++) {
-        if (fw->sourceServerPings[index2].ping >= swp.ping)
+        if (fw->sourceServerPings[index2].ping >= swp.ping) {
           break;
+}
       }
       fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
     }
@@ -527,8 +542,9 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
 
       unsigned int index2;
       for (index2 = 0; index2 < fw->targetServerPings.Size(); index2++) {
-        if (fw->targetServerPings[index2].ping >= swp.ping)
+        if (fw->targetServerPings[index2].ping >= swp.ping) {
           break;
+}
       }
       fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
     }
@@ -554,7 +570,7 @@ void UDPProxyCoordinator::TryNextServer(
     }
   }
 
-  if (pickedGoodServer == false) {
+  if (!pickedGoodServer) {
     SendAllBusy(
         sata.senderClientAddress,
         sata.targetClientAddress,
@@ -606,22 +622,25 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry() {
       swpList;
   // swpList.SetSortOrder(true);
 
-  if (sourceServerPings.Size() == 0 && targetServerPings.Size() == 0)
+  if (sourceServerPings.Size() == 0 && targetServerPings.Size() == 0) {
     return;
+}
 
   unsigned int idx;
   UDPProxyCoordinator::ServerWithPing swp;
   for (idx = 0; idx < remainingServersToTry.Size(); idx++) {
     swp.serverAddress = remainingServersToTry[idx];
     swp.ping = 0;
-    if (sourceServerPings.Size())
+    if (sourceServerPings.Size()) {
       swp.ping += (unsigned short)(sourceServerPings[idx].ping);
-    else
+    } else {
       swp.ping += (unsigned short)(DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
-    if (targetServerPings.Size())
+}
+    if (targetServerPings.Size()) {
       swp.ping += (unsigned short)(targetServerPings[idx].ping);
-    else
+    } else {
       swp.ping += (unsigned short)(DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
+}
     swpList.Insert(swp.ping, swp, false, _FILE_AND_LINE_);
   }
   remainingServersToTry.Clear(_FILE_AND_LINE_);

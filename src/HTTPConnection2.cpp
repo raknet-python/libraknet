@@ -33,13 +33,12 @@ bool HTTPConnection2::TransmitRequest(
   request->chunked = false;
   if (useAddress != UNASSIGNED_SYSTEM_ADDRESS) {
     request->hostEstimatedAddress = useAddress;
-    if (IsConnected(useAddress) == false) {
+    if (!IsConnected(useAddress)) {
       RakNet::OP_DELETE(request, _FILE_AND_LINE_);
       return false;
     }
   } else {
-    if (request->hostEstimatedAddress.FromString(host, '|', ipVersion) ==
-        false) {
+    if (!request->hostEstimatedAddress.FromString(host, '|', ipVersion)) {
       RakNet::OP_DELETE(request, _FILE_AND_LINE_);
       return false;
     }
@@ -154,8 +153,9 @@ void ReadChunkBlock(
   do {
     bytesToRead = currentChunkSize - bytesReadSoFar;
     sLen = strlen(txtIn);
-    if (sLen < bytesToRead)
+    if (sLen < bytesToRead) {
       bytesToRead = sLen;
+}
     txtOut.AppendBytes(txtIn, bytesToRead);
     txtIn += bytesToRead;
     bytesReadSoFar += bytesToRead;
@@ -164,15 +164,18 @@ void ReadChunkBlock(
       return;
     }
     // char *newLine = strstr(txtIn, "\r\n");
-    if (txtIn[0] && txtIn[0] == '\r' && txtIn[1] && txtIn[1] == '\n')
+    if (txtIn[0] && txtIn[0] == '\r' && txtIn[1] && txtIn[1] == '\n') {
       txtIn += 2; // Newline
+}
     char* newLine;
     currentChunkSize = ReadChunkSize(txtIn, &newLine);
     RakAssert(currentChunkSize < 50000); // Sanity check
-    if (currentChunkSize == 0)
+    if (currentChunkSize == 0) {
       return;
-    if (newLine == nullptr)
+}
+    if (newLine == nullptr) {
       return;
+}
     bytesReadSoFar = 0;
     txtIn = newLine + 2;
   } while (txtIn);
@@ -304,8 +307,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet* packet) {
             for (clLength = 0;
                  length_header[clLength] && length_header[clLength] >= '0' &&
                  length_header[clLength] <= '9';
-                 clLength++)
+                 clLength++) {
               ;
+}
             if (clLength > 0 &&
                 (length_header[clLength] == '\r' ||
                  length_header[clLength] == '\n')) {
@@ -360,10 +364,11 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet* packet) {
           if (firstNewlineSet != nullptr) {
             int offset =
                 firstNewlineSet - sentRequest->stringReceived.C_String();
-            if (sentRequest->stringReceived.C_String()[offset + 4] == 0)
+            if (sentRequest->stringReceived.C_String()[offset + 4] == 0) {
               sentRequest->contentOffset = -1;
-            else
+            } else {
               sentRequest->contentOffset = offset + 4;
+}
             completedRequestsMutex.Lock();
             completedRequests.Push(sentRequest, _FILE_AND_LINE_);
             completedRequestsMutex.Unlock();
@@ -382,8 +387,9 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet* packet) {
     }
   }
 
-  if (locked == true)
+  if (locked) {
     sentRequestsMutex.Unlock();
+}
 
   return RR_CONTINUE_PROCESSING;
 }
@@ -398,8 +404,9 @@ void HTTPConnection2::OnNewConnection(
   SendPendingRequestToConnectedSystem(systemAddress);
 }
 void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa) {
-  if (sa == UNASSIGNED_SYSTEM_ADDRESS)
+  if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
 
   unsigned int requestsSent = 0;
 
@@ -470,8 +477,9 @@ void HTTPConnection2::RemovePendingRequest(SystemAddress sa) {
     if (request->hostEstimatedAddress == sa) {
       pendingRequests.RemoveAtIndex(i);
       RakNet::OP_DELETE(request, _FILE_AND_LINE_);
-    } else
+    } else {
       i++;
+}
   }
 
   pendingRequestsMutex.Unlock();
@@ -511,8 +519,9 @@ void HTTPConnection2::OnFailedConnectionAttempt(
     Packet* packet,
     PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {
   (void)failedConnectionAttemptReason;
-  if (packet->systemAddress == UNASSIGNED_SYSTEM_ADDRESS)
+  if (packet->systemAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
 
   RemovePendingRequest(packet->systemAddress);
 
@@ -525,8 +534,9 @@ void HTTPConnection2::OnClosedConnection(
   (void)lostConnectionReason;
   (void)rakNetGUID;
 
-  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS)
+  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
 
   // Update sent requests to completed requests
   unsigned int i;
@@ -535,8 +545,8 @@ void HTTPConnection2::OnClosedConnection(
   while (i < sentRequests.Size()) {
     if (sentRequests[i]->hostCompletedAddress == systemAddress) {
       Request* sentRequest = sentRequests[i];
-      if (sentRequest->chunked == false &&
-          sentRequest->stringReceived.IsEmpty() == false) {
+      if (!sentRequest->chunked &&
+          !sentRequest->stringReceived.IsEmpty()) {
         if (strstr(
                 sentRequest->stringReceived.C_String(), "Content-Length: ")) {
           char* body_header =

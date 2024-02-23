@@ -34,10 +34,11 @@ void CheckSum::Add(unsigned int value) {
   data;
   data.value = value;
 
-  for (unsigned int i = 0; i < sizeof(data.bytes); i++)
+  for (unsigned int i = 0; i < sizeof(data.bytes); i++) {
     Add(data.bytes[i])
 
         ;
+}
 } // CheckSum::add(unsigned int)
 
 /****************************************************************************
@@ -59,10 +60,11 @@ void CheckSum::Add(unsigned short value) {
   data;
   data.value = value;
 
-  for (unsigned int i = 0; i < sizeof(data.bytes); i++)
+  for (unsigned int i = 0; i < sizeof(data.bytes); i++) {
     Add(data.bytes[i])
 
         ;
+}
 } // CheckSum::add(unsigned short)
 
 /****************************************************************************
@@ -93,8 +95,9 @@ void CheckSum::Add(unsigned char value) {
 ****************************************************************************/
 
 void CheckSum::Add(unsigned char* b, unsigned int length) {
-  for (unsigned int i = 0; i < length; i++)
+  for (unsigned int i = 0; i < length; i++) {
     Add(b[i])
 
         ;
+}
 } // CheckSum::add(LPunsigned char, unsigned int)

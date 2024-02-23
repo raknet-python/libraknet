@@ -9,20 +9,21 @@
  */
 
 #include "EpochTimeToString.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include "FormatString.h"
 // localtime
-#include <time.h>
+#include <ctime>
 #include "LinuxStrings.h"
 
 char* EpochTimeToString(long long time) {
   static int textIndex = 0;
   static char text[4][64];
 
-  if (++textIndex == 4)
+  if (++textIndex == 4) {
     textIndex = 0;
+}
 
   struct tm* timeinfo;
   time_t t = time;

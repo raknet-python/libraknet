@@ -29,21 +29,25 @@ RelayPlugin::~RelayPlugin() {
   DataStructures::List<RakString> keyList;
   strToGuidHash.GetAsList(itemList, keyList, _FILE_AND_LINE_);
   guidToStrHash.Clear(_FILE_AND_LINE_);
-  for (unsigned int i = 0; i < itemList.Size(); i++)
+  for (unsigned int i = 0; i < itemList.Size(); i++) {
     RakNet::OP_DELETE(itemList[i], _FILE_AND_LINE_);
-  for (unsigned int i = 0; i < chatRooms.Size(); i++)
+}
+  for (unsigned int i = 0; i < chatRooms.Size(); i++) {
     RakNet::OP_DELETE(chatRooms[i], _FILE_AND_LINE_);
+}
 }
 
 RelayPluginEnums RelayPlugin::AddParticipantOnServer(
     const RakString& key,
     const RakNetGUID& guid) {
   ConnectionState cs = rakPeerInterface->GetConnectionState(guid);
-  if (cs != IS_CONNECTED)
+  if (cs != IS_CONNECTED) {
     return RPE_ADD_CLIENT_TARGET_NOT_CONNECTED;
+}
 
-  if (strToGuidHash.HasData(key) == true)
+  if (strToGuidHash.HasData(key)) {
     return RPE_ADD_CLIENT_NAME_ALREADY_IN_USE; // Name already in use
+}
 
   // If GUID is already in use, remove existing
   StrAndGuidAndRoom* strAndGuidExisting;
@@ -198,11 +202,12 @@ PluginReceiveResult RelayPlugin::OnReceive(Packet* packet) {
         bsIn.ReadCompressed(key);
         BitStream bsOut;
         bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN);
-        if (acceptAddParticipantRequests)
+        if (acceptAddParticipantRequests) {
           bsOut.WriteCasted<MessageID>(
               AddParticipantOnServer(key, packet->guid));
-        else
+        } else {
           bsOut.WriteCasted<MessageID>(RPE_ADD_CLIENT_NOT_ALLOWED);
+}
         bsOut.WriteCompressed(key);
         SendUnified(
             &bsOut,
@@ -253,8 +258,9 @@ void RelayPlugin::OnClosedConnection(
 RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     RP_Group* room,
     StrAndGuidAndRoom** strAndGuidSender) {
-  if (strAndGuidSender == nullptr)
+  if (strAndGuidSender == nullptr) {
     return nullptr;
+}
 
   NotifyUsersInRoom(room, RPE_USER_ENTERED_ROOM, (*strAndGuidSender)->str);
   StrAndGuid sag;
@@ -281,14 +287,17 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     RakString roomName) {
   StrAndGuidAndRoom** strAndGuidSender = guidToStrHash.Peek(userGuid);
   if (strAndGuidSender) {
-    if (roomName.IsEmpty())
+    if (roomName.IsEmpty()) {
       return nullptr;
+}
 
-    if ((*strAndGuidSender)->currentRoom == roomName)
+    if ((*strAndGuidSender)->currentRoom == roomName) {
       return nullptr;
+}
 
-    if ((*strAndGuidSender)->currentRoom.IsEmpty() == false)
+    if (!(*strAndGuidSender)->currentRoom.IsEmpty()) {
       LeaveGroup(strAndGuidSender);
+}
 
     RakString userName = (*strAndGuidSender)->str;
 
@@ -309,8 +318,9 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
   return nullptr;
 }
 void RelayPlugin::LeaveGroup(StrAndGuidAndRoom** strAndGuidSender) {
-  if (strAndGuidSender == nullptr)
+  if (strAndGuidSender == nullptr) {
     return;
+}
 
   RakString userName = (*strAndGuidSender)->str;
   for (unsigned int i = 0; i < chatRooms.Size(); i++) {
@@ -358,8 +368,9 @@ void RelayPlugin::NotifyUsersInRoom(
 void RelayPlugin::SendMessageToRoom(
     StrAndGuidAndRoom** strAndGuidSender,
     BitStream* message) {
-  if ((*strAndGuidSender)->currentRoom.IsEmpty())
+  if ((*strAndGuidSender)->currentRoom.IsEmpty()) {
     return;
+}
 
   for (unsigned int i = 0; i < chatRooms.Size(); i++) {
     if (chatRooms[i]->roomName == (*strAndGuidSender)->currentRoom) {
@@ -373,7 +384,7 @@ void RelayPlugin::SendMessageToRoom(
 
       RP_Group* room = chatRooms[i];
       for (unsigned int i = 0; i < room->usersInRoom.Size(); i++) {
-        if (room->usersInRoom[i].guid != (*strAndGuidSender)->guid)
+        if (room->usersInRoom[i].guid != (*strAndGuidSender)->guid) {
           SendUnified(
               &bsOut,
               HIGH_PRIORITY,
@@ -381,6 +392,7 @@ void RelayPlugin::SendMessageToRoom(
               0,
               room->usersInRoom[i].guid,
               false);
+}
       }
 
       break;
@@ -444,7 +456,8 @@ void RelayPlugin::OnLeaveGroupRequestFromClient(Packet* packet) {
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID) * 2);
   StrAndGuidAndRoom** strAndGuidSender = guidToStrHash.Peek(packet->guid);
-  if (strAndGuidSender)
+  if (strAndGuidSender) {
     LeaveGroup(strAndGuidSender);
+}
 }
 #endif // _RAKNET_SUPPORT_*

@@ -85,8 +85,9 @@ bool TwoWayAuthentication::NonceGenerator::GetNonceById(
 }
 void TwoWayAuthentication::NonceGenerator::Clear() {
   unsigned int i;
-  for (i = 0; i < generatedNonces.Size(); i++)
+  for (i = 0; i < generatedNonces.Size(); i++) {
     RakNet::OP_DELETE(generatedNonces[i], _FILE_AND_LINE_);
+}
   generatedNonces.Clear(true, _FILE_AND_LINE_);
 }
 void TwoWayAuthentication::NonceGenerator::ClearByAddress(
@@ -118,17 +119,21 @@ TwoWayAuthentication::~TwoWayAuthentication() {
 bool TwoWayAuthentication::AddPassword(
     RakNet::RakString identifier,
     RakNet::RakString password) {
-  if (password.IsEmpty())
+  if (password.IsEmpty()) {
     return false;
+}
 
-  if (identifier.IsEmpty())
+  if (identifier.IsEmpty()) {
     return false;
+}
 
-  if (password == identifier)
+  if (password == identifier) {
     return false; // Insecure
+}
 
-  if (passwords.GetIndexOf(identifier.C_String()).IsInvalid() == false)
+  if (!passwords.GetIndexOf(identifier.C_String()).IsInvalid()) {
     return false; // This identifier already in use
+}
 
   passwords.Push(identifier, password, _FILE_AND_LINE_);
   return true;
@@ -137,8 +142,9 @@ bool TwoWayAuthentication::Challenge(
     RakNet::RakString identifier,
     AddressOrGUID remoteSystem) {
   DataStructures::HashIndex skhi = passwords.GetIndexOf(identifier.C_String());
-  if (skhi.IsInvalid())
+  if (skhi.IsInvalid()) {
     return false;
+}
 
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_NEGOTIATION);
@@ -194,18 +200,20 @@ PluginReceiveResult TwoWayAuthentication::OnReceive(Packet* packet) {
     }
     case ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE:
     case ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS: {
-      if (packet->wasGeneratedLocally == false) {
+      if (!packet->wasGeneratedLocally) {
         OnPasswordResult(packet);
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
-      } else
+      } else {
         break;
+}
     } break;
     // These should only be generated locally
     case ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS:
     case ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE:
     case ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT:
-      if (packet->wasGeneratedLocally == false)
+      if (!packet->wasGeneratedLocally) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
       break;
   }
 
@@ -233,10 +241,11 @@ void TwoWayAuthentication::OnClosedConnection(
     }
   }
 
-  if (rakNetGUID != UNASSIGNED_RAKNET_GUID)
+  if (rakNetGUID != UNASSIGNED_RAKNET_GUID) {
     nonceGenerator.ClearByAddress(rakNetGUID);
-  else
+  } else {
     nonceGenerator.ClearByAddress(systemAddress);
+}
 }
 void TwoWayAuthentication::Clear() {
   outgoingChallenges.Clear(_FILE_AND_LINE_);
@@ -249,8 +258,9 @@ void TwoWayAuthentication::PushToUser(
     RakNet::AddressOrGUID remoteSystem) {
   RakNet::BitStream output;
   output.Write(messageId);
-  if (password.IsEmpty() == false)
+  if (!password.IsEmpty()) {
     output.Write(password);
+}
   Packet* p = AllocatePacketUnified(output.GetNumberOfBytesUsed());
   p->systemAddress = remoteSystem.systemAddress;
   p->systemAddress.systemIndex = (SystemIndex)-1;
@@ -290,13 +300,13 @@ void TwoWayAuthentication::OnNonceReply(Packet* packet) {
   unsigned int i;
   for (i = 0; i < outgoingChallenges.Size(); i++) {
     if (outgoingChallenges[i].remoteSystem == aog &&
-        outgoingChallenges[i].sentHash == false) {
+        !outgoingChallenges[i].sentHash) {
       outgoingChallenges[i].sentHash = true;
 
       // Get the password for this identifier
       DataStructures::HashIndex skhi =
           passwords.GetIndexOf(outgoingChallenges[i].identifier.C_String());
-      if (skhi.IsInvalid() == false) {
+      if (!skhi.IsInvalid()) {
         RakNet::RakString password = passwords.ItemAtIndex(skhi);
 
         // Hash their nonce with password and reply
@@ -335,12 +345,13 @@ PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(
 
   // Look up used nonce from requestId
   char usedNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH];
-  if (nonceGenerator.GetNonceById(usedNonce, requestId, packet, true) == false)
+  if (!nonceGenerator.GetNonceById(usedNonce, requestId, packet, true)) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
 
   DataStructures::HashIndex skhi =
       passwords.GetIndexOf(passwordIdentifier.C_String());
-  if (skhi.IsInvalid() == false) {
+  if (!skhi.IsInvalid()) {
     char hashedThisNonceAndPw[HASHED_NONCE_AND_PW_LENGTH];
     Hash(usedNonce, passwords.ItemAtIndex(skhi), hashedThisNonceAndPw);
     if (memcmp(
@@ -398,7 +409,7 @@ void TwoWayAuthentication::OnPasswordResult(Packet* packet) {
 
   DataStructures::HashIndex skhi =
       passwords.GetIndexOf(passwordIdentifier.C_String());
-  if (skhi.IsInvalid() == false) {
+  if (!skhi.IsInvalid()) {
     RakNet::RakString password = passwords.ItemAtIndex(skhi);
     char testHash[HASHED_NONCE_AND_PW_LENGTH];
     Hash(usedNonce, password, testHash);
@@ -409,7 +420,7 @@ void TwoWayAuthentication::OnPasswordResult(Packet* packet) {
       for (i = 0; i < outgoingChallenges.Size(); i++) {
         if (outgoingChallenges[i].identifier == passwordIdentifier &&
             outgoingChallenges[i].remoteSystem == aog &&
-            outgoingChallenges[i].sentHash == true) {
+            outgoingChallenges[i].sentHash) {
           outgoingChallenges.RemoveAtIndex(i);
 
           PushToUser(packet->data[0], passwordIdentifier, packet);

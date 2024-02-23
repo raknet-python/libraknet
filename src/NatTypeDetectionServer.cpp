@@ -77,8 +77,9 @@ void NatTypeDetectionServer::Startup(
   strcpy(s3p4Address, nonRakNetIP3);
 
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
-  if (s3p4->IsBerkleySocket())
+  if (s3p4->IsBerkleySocket()) {
     ((RNS2_Berkley*)s3p4)->CreateRecvPollingThread(0);
+}
 #endif
 }
 void NatTypeDetectionServer::Shutdown() {
@@ -92,8 +93,9 @@ void NatTypeDetectionServer::Shutdown() {
   }
   if (s3p4 != nullptr) {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
-    if (s3p4->IsBerkleySocket())
+    if (s3p4->IsBerkleySocket()) {
       ((RNS2_Berkley*)s3p4)->BlockOnStopRecvPollingThread();
+}
 #endif
 
     RakNet::OP_DELETE(s3p4, _FILE_AND_LINE_);
@@ -104,8 +106,9 @@ void NatTypeDetectionServer::Shutdown() {
     s4p5 = nullptr;
   }
   bufferedPacketsMutex.Lock();
-  while (bufferedPackets.Size())
+  while (bufferedPackets.Size()) {
     RakNet::OP_DELETE(bufferedPackets.Pop(), _FILE_AND_LINE_);
+}
   bufferedPacketsMutex.Unlock();
 }
 void NatTypeDetectionServer::Update() {
@@ -116,10 +119,11 @@ void NatTypeDetectionServer::Update() {
 
   RNS2RecvStruct* recvStruct;
   bufferedPacketsMutex.Lock();
-  if (bufferedPackets.Size() > 0)
+  if (bufferedPackets.Size() > 0) {
     recvStruct = bufferedPackets.Pop();
-  else
+  } else {
     recvStruct = nullptr;
+}
   bufferedPacketsMutex.Unlock();
   while (recvStruct) {
     SystemAddress senderAddr = recvStruct->systemAddress;
@@ -171,10 +175,11 @@ void NatTypeDetectionServer::Update() {
 
     DeallocRNS2RecvStruct(recvStruct, _FILE_AND_LINE_);
     bufferedPacketsMutex.Lock();
-    if (bufferedPackets.Size() > 0)
+    if (bufferedPackets.Size() > 0) {
       recvStruct = bufferedPackets.Pop();
-    else
+    } else {
       recvStruct = nullptr;
+}
     bufferedPacketsMutex.Unlock();
   }
 
@@ -360,8 +365,9 @@ void NatTypeDetectionServer::OnClosedConnection(
   (void)rakNetGUID;
 
   unsigned int i = GetDetectionAttemptIndex(systemAddress);
-  if (i == (unsigned int)-1)
+  if (i == (unsigned int)-1) {
     return;
+}
   natDetectionAttempts.RemoveAtIndexFast(i);
 }
 void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
@@ -372,8 +378,9 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
   bool isRequest = false;
   bsIn.Read(isRequest);
   if (isRequest) {
-    if (i != (unsigned int)-1)
+    if (i != (unsigned int)-1) {
       return; // Already in progress
+}
 
     NATDetectionAttempt nda;
     nda.detectionState = STATE_NONE;
@@ -385,8 +392,9 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
         rakPeerInterface->GetLastPing(nda.systemAddress) * 3 + 50;
     natDetectionAttempts.Push(nda, _FILE_AND_LINE_);
   } else {
-    if (i == (unsigned int)-1)
+    if (i == (unsigned int)-1) {
       return; // Unknown
+}
     // They are done
     natDetectionAttempts.RemoveAtIndexFast(i);
   }
@@ -394,15 +402,17 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
 unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(
     const SystemAddress& sa) {
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
-    if (natDetectionAttempts[i].systemAddress == sa)
+    if (natDetectionAttempts[i].systemAddress == sa) {
       return i;
+}
   }
   return (unsigned int)-1;
 }
 unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(RakNetGUID guid) {
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
-    if (natDetectionAttempts[i].guid == guid)
+    if (natDetectionAttempts[i].guid == guid) {
       return i;
+}
   }
   return (unsigned int)-1;
 }

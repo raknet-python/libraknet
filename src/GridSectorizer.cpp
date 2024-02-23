@@ -11,14 +11,15 @@
 #include "GridSectorizer.h"
 #include "RakAssert.h"
 //#include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 GridSectorizer::GridSectorizer() {
   grid = nullptr;
 }
 GridSectorizer::~GridSectorizer() {
-  if (grid)
+  if (grid) {
     RakNet::OP_DELETE_ARRAY(grid, _FILE_AND_LINE_);
+}
 }
 void GridSectorizer::Init(
     const float _maxCellWidth,
@@ -28,8 +29,9 @@ void GridSectorizer::Init(
     const float maxX,
     const float maxY) {
   RakAssert(_maxCellWidth > 0.0f && _maxCellHeight > 0.0f);
-  if (grid)
+  if (grid) {
     RakNet::OP_DELETE_ARRAY(grid, _FILE_AND_LINE_);
+}
 
   cellOriginX = minX;
   cellOriginY = minY;
@@ -174,8 +176,9 @@ void GridSectorizer::GetEntries(
   for (xCur = xStart; xCur <= xEnd; ++xCur) {
     for (yCur = yStart; yCur <= yEnd; ++yCur) {
       cell = grid + yCur * gridCellWidthCount + xCur;
-      for (index = 0; index < cell->Size(); ++index)
+      for (index = 0; index < cell->Size(); ++index) {
         intersectionList.Insert(cell->operator[](index), _FILE_AND_LINE_);
+}
     }
   }
 }
@@ -212,6 +215,7 @@ int GridSectorizer::WorldToCellYOffsetAndClamped(const float input) const {
 void GridSectorizer::Clear() {
   int cur;
   int count = gridCellWidthCount * gridCellHeightCount;
-  for (cur = 0; cur < count; cur++)
+  for (cur = 0; cur < count; cur++) {
     grid[cur].Clear(true, _FILE_AND_LINE_);
+}
 }

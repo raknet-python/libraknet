@@ -9,8 +9,8 @@
  */
 
 #include "StringTable.h"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include "BitStream.h"
 #include "RakAssert.h"
 #include "StringCompressor.h"
@@ -28,8 +28,9 @@ StringTable::StringTable() = default;
 StringTable::~StringTable() {
   unsigned i;
   for (i = 0; i < orderedStringList.Size(); i++) {
-    if (orderedStringList[i].b)
+    if (orderedStringList[i].b) {
       rakFree_Ex(orderedStringList[i].str, _FILE_AND_LINE_);
+}
   }
 }
 
@@ -94,16 +95,19 @@ bool StringTable::DecodeString(
   bool hasIndex = false;
   RakAssert(maxCharsToWrite > 0);
 
-  if (maxCharsToWrite == 0)
+  if (maxCharsToWrite == 0) {
     return false;
-  if (!input->Read(hasIndex))
+}
+  if (!input->Read(hasIndex)) {
     return false;
-  if (hasIndex == false) {
+}
+  if (!hasIndex) {
     StringCompressor::Instance()->DecodeString(output, maxCharsToWrite, input);
   } else {
     StringTableType index;
-    if (!input->Read(index))
+    if (!input->Read(index)) {
       return false;
+}
     if (index >= orderedStringList.Size()) {
 #ifdef _DEBUG
       // Critical error - got a string index out of range, which means AddString was called more times on the remote system than on this system.

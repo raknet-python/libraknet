@@ -11,9 +11,9 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_RakNetCommandParser == 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "BitStream.h"
 #include "RakAssert.h"
 #include "RakNetCommandParser.h"
@@ -117,8 +117,9 @@ bool RakNetCommandParser::OnCommand(
   (void)originalString;
   (void)numParameters;
 
-  if (peer == nullptr)
+  if (peer == nullptr) {
     return false;
+}
 
   if (strcmp(command, "Startup") == 0) {
     RakNet::SocketDescriptor socketDescriptor(
@@ -192,8 +193,9 @@ bool RakNetCommandParser::OnCommand(
           transport->Send(systemAddress, "%i %s\r\n", i, str1);
         }
       }
-    } else
+    } else {
       transport->Send(systemAddress, "GetConnectionList() returned false.\r\n");
+}
   } else if (strcmp(command, "CloseConnection") == 0) {
     peer->CloseConnection(
         SystemAddress(parameterList[0]),
@@ -314,10 +316,11 @@ bool RakNetCommandParser::OnCommand(
     char password[256];
     int passwordLength;
     peer->GetIncomingPassword(password, &passwordLength);
-    if (passwordLength)
+    if (passwordLength) {
       ReturnResult((char*)password, command, transport, systemAddress);
-    else
+    } else {
       ReturnResult(0, command, transport, systemAddress);
+}
   }
 
   return true;

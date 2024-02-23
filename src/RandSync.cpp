@@ -9,7 +9,7 @@
  */
 
 #include "RandSync.h"
-#include <limits.h>
+#include <climits>
 #include <limits>
 #include "BitStream.h"
 
@@ -49,8 +49,9 @@ unsigned int RakNetRandomSync::RandomMT() {
     // Get random number and store what it is
     usedValues.Push(rnr.RandomMT(), _FILE_AND_LINE_);
     ++callCount;
-    while (usedValues.Size() > 64)
+    while (usedValues.Size() > 64) {
       usedValues.Pop();
+}
     return usedValues[usedValues.Size() - 1];
   }
 }
@@ -74,8 +75,9 @@ bool RakNetRandomSync::DeserializeConstruction(
   uint32_t _skipValues;
   constructionBitstream->Read(_seed);
   bool success = constructionBitstream->Read(_skipValues);
-  if (success)
+  if (success) {
     SeedMT(_seed, _skipValues);
+}
   return success;
 }
 void RakNetRandomSync::Serialize(RakNet::BitStream* outputBitstream) {
@@ -91,15 +93,18 @@ void RakNetRandomSync::Deserialize(RakNet::BitStream* outputBitstream) {
   } else if (_callCount > callCount) {
     // Remote system read more values than us
     uint32_t diff = _callCount - callCount;
-    if (diff <= usedValueBufferCount)
+    if (diff <= usedValueBufferCount) {
       usedValueBufferCount -= diff;
-    if (diff > 0)
+}
+    if (diff > 0) {
       Skip(diff);
+}
   }
 }
 void RakNetRandomSync::Skip(uint32_t count) {
-  for (uint32_t i = 0; i < count; i++)
+  for (uint32_t i = 0; i < count; i++) {
     rnr.RandomMT();
+}
   callCount += count;
 }
 

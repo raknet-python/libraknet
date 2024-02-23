@@ -39,11 +39,13 @@ bool UDPProxyServer::LoginToCoordinator(
   bool objectExists;
   insertionIndex =
       loggingInCoordinators.GetIndexFromKey(coordinatorAddress, &objectExists);
-  if (objectExists == true)
+  if (objectExists) {
     return false;
+}
   loggedInCoordinators.GetIndexFromKey(coordinatorAddress, &objectExists);
-  if (objectExists == true)
+  if (objectExists) {
     return false;
+}
   RakNet::BitStream outgoingBs;
   outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
   outgoingBs.Write(
@@ -93,16 +95,19 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
           incomingBs.Read(password);
           switch (packet->data[1]) {
             case ID_UDP_PROXY_NO_PASSWORD_SET_FROM_COORDINATOR_TO_SERVER:
-              if (resultHandler)
+              if (resultHandler) {
                 resultHandler->OnNoPasswordSet(password, this);
+}
               break;
             case ID_UDP_PROXY_WRONG_PASSWORD_FROM_COORDINATOR_TO_SERVER:
-              if (resultHandler)
+              if (resultHandler) {
                 resultHandler->OnWrongPassword(password, this);
+}
               break;
             case ID_UDP_PROXY_ALREADY_LOGGED_IN_FROM_COORDINATOR_TO_SERVER:
-              if (resultHandler)
+              if (resultHandler) {
                 resultHandler->OnAlreadyLoggedIn(password, this);
+}
               break;
             case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
               // RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
@@ -111,8 +116,9 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
                   packet->systemAddress,
                   true,
                   _FILE_AND_LINE_);
-              if (resultHandler)
+              if (resultHandler) {
                 resultHandler->OnLoginSuccess(password, this);
+}
               break;
           }
         }
@@ -142,8 +148,9 @@ void UDPProxyServer::OnRakPeerShutdown() {
   loggedInCoordinators.Clear(true, _FILE_AND_LINE_);
 }
 void UDPProxyServer::OnAttach() {
-  if (rakPeerInterface->IsActive())
+  if (rakPeerInterface->IsActive()) {
     OnRakPeerStartup();
+}
 }
 void UDPProxyServer::OnDetach() {
   OnRakPeerShutdown();

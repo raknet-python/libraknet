@@ -15,9 +15,9 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_HTTPConnection == 1 && _RAKNET_SUPPORT_TCPInterface == 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "HTTPConnection.h"
 #include "RakAssert.h"
 #include "RakSleep.h"
@@ -62,13 +62,16 @@ void HTTPConnection::Get(const char* path) {
 }
 
 bool HTTPConnection::HasBadResponse(int* code, RakNet::RakString* data) {
-  if (badResponses.IsEmpty())
+  if (badResponses.IsEmpty()) {
     return false;
+}
 
-  if (code)
+  if (code) {
     *code = badResponses.Peek().code;
-  if (data)
+}
+  if (data) {
     *data = badResponses.Pop().data;
+}
   return true;
 }
 void HTTPConnection::CloseConnection() {
@@ -100,16 +103,17 @@ void HTTPConnection::Update() {
 
   switch (connectionState) {
     case CS_NONE: {
-      if (outgoingCommand.IsEmpty())
+      if (outgoingCommand.IsEmpty()) {
         return;
+}
 
       //printf("Connecting\n");
       server = tcp->Connect(host, port, false);
       connectionState = CS_CONNECTING;
     } break;
     case CS_DISCONNECTING: {
-      if (tcp->ReceiveHasPackets() == false) {
-        if (incomingData.IsEmpty() == false) {
+      if (!tcp->ReceiveHasPackets()) {
+        if (!incomingData.IsEmpty()) {
           results.Push(incomingData, _FILE_AND_LINE_);
         }
         incomingData.Clear();
@@ -174,20 +178,22 @@ void HTTPConnection::Update() {
   //		outgoingCommand.PushAtHead(currentProcessingCommand);
 }
 bool HTTPConnection::HasRead() const {
-  return results.IsEmpty() == false;
+  return !results.IsEmpty();
 }
 RakString HTTPConnection::Read() {
-  if (results.IsEmpty())
+  if (results.IsEmpty()) {
     return RakString();
+}
 
   RakNet::RakString resultStr = results.Pop();
   // const char *start_of_body = strstr(resultStr.C_String(), "\r\n\r\n");
   const char* start_of_body = strpbrk(resultStr.C_String(), "\001\002\003%");
 
-  if (start_of_body)
+  if (start_of_body) {
     return RakNet::RakString::NonVariadic(start_of_body);
-  else
+  } else {
     return resultStr;
+}
 }
 SystemAddress HTTPConnection::GetServerAddress() const {
   return server;
@@ -269,8 +275,9 @@ int HTTPConnection::GetState() const {
 }
 
 HTTPConnection::~HTTPConnection() {
-  if (tcp)
+  if (tcp) {
     tcp->CloseConnection(server);
+}
 }
 
 #endif // _RAKNET_SUPPORT_*

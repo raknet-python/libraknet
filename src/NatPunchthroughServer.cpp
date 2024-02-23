@@ -54,8 +54,9 @@ bool NatPunchthroughServer::User::HasConnectionAttemptToUser(User* user) {
   unsigned int index;
   for (index = 0; index < connectionAttempts.Size(); index++) {
     if (connectionAttempts[index]->recipient->guid == user->guid ||
-        connectionAttempts[index]->sender->guid == user->guid)
+        connectionAttempts[index]->sender->guid == user->guid) {
       return true;
+}
   }
   return false;
 }
@@ -70,19 +71,22 @@ void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString& rs) {
   for (index = 0; index < connectionAttempts.Size(); index++) {
     rs += RakNet::RakString(
         "%i. SessionID=%i ", index + 1, connectionAttempts[index]->sessionId);
-    if (connectionAttempts[index]->sender == this)
+    if (connectionAttempts[index]->sender == this) {
       rs += "(We are sender) ";
-    else
+    } else {
       rs += "(We are recipient) ";
-    if (isReady)
+}
+    if (isReady) {
       rs += "(READY TO START) ";
-    else
+    } else {
       rs += "(NOT READY TO START) ";
+}
     if (connectionAttempts[index]->attemptPhase ==
-        NatPunchthroughServer::ConnectionAttempt::NAT_ATTEMPT_PHASE_NOT_STARTED)
+        NatPunchthroughServer::ConnectionAttempt::NAT_ATTEMPT_PHASE_NOT_STARTED) {
       rs += "(NOT_STARTED). ";
-    else
+    } else {
       rs += "(GETTING_RECENT_PORTS). ";
+}
     if (connectionAttempts[index]->sender == this) {
       connectionAttempts[index]->recipient->guid.ToString(guidStr);
       connectionAttempts[index]->recipient->systemAddress.ToString(true, ipStr);
@@ -99,10 +103,12 @@ void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString& rs) {
 int RakNet::NatPunchthroughServer::NatPunchthroughUserComp(
     const RakNetGUID& key,
     User* const& data) {
-  if (key < data->guid)
+  if (key < data->guid) {
     return -1;
-  if (key > data->guid)
+}
+  if (key > data->guid) {
     return 1;
+}
   return 0;
 }
 
@@ -112,8 +118,9 @@ NatPunchthroughServer::NatPunchthroughServer() {
   lastUpdate = 0;
   sessionId = 0;
   natPunchthroughServerDebugInterface = nullptr;
-  for (int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
+  for (int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++) {
     boundAddresses[i] = UNASSIGNED_SYSTEM_ADDRESS;
+}
   boundAddressCount = 0;
 }
 NatPunchthroughServer::~NatPunchthroughServer() {
@@ -124,10 +131,11 @@ NatPunchthroughServer::~NatPunchthroughServer() {
     user = users[0];
     for (j = 0; j < user->connectionAttempts.Size(); j++) {
       connectionAttempt = user->connectionAttempts[j];
-      if (connectionAttempt->sender == user)
+      if (connectionAttempt->sender == user) {
         otherUser = connectionAttempt->recipient;
-      else
+      } else {
         otherUser = connectionAttempt->sender;
+}
       otherUser->DeleteConnectionAttempt(connectionAttempt);
     }
     RakNet::OP_DELETE(user, _FILE_AND_LINE_);
@@ -405,7 +413,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet* packet) {
   ca->sender = users[i];
   ca->sessionId = sessionId++;
   i = users.GetIndexFromKey(recipientGuid, &objectExists);
-  if (objectExists == false || ca->sender == ca->recipient) {
+  if (!objectExists || ca->sender == ca->recipient) {
     // 		printf("DEBUG %i\n", __LINE__);
     // 		printf("DEBUG recipientGuid=%s\n", recipientGuid.ToString());
     // 		printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
@@ -509,14 +517,15 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
             rakPeerInterface->GetAveragePing(recipientTargetAddress);
         int senderPing = rakPeerInterface->GetAveragePing(senderSystemAddress);
         RakNet::Time simultaneousAttemptTime;
-        if (targetPing == -1 || senderPing == -1)
+        if (targetPing == -1 || senderPing == -1) {
           simultaneousAttemptTime = time + 1500;
-        else {
+        } else {
           int largerPing = targetPing > senderPing ? targetPing : senderPing;
-          if (largerPing * 4 < 100)
+          if (largerPing * 4 < 100) {
             simultaneousAttemptTime = time + 100;
-          else
+          } else {
             simultaneousAttemptTime = time + (largerPing * 4);
+}
         }
 
         if (natPunchthroughServerDebugInterface) {
@@ -538,8 +547,9 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
         bsOut.Write((MessageID)ID_NAT_CONNECT_AT_TIME);
         bsOut.Write(connectionAttempt->sessionId);
         bsOut.Write(senderTargetAddress); // Public IP, using most recent port
-        for (j = 0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++) // Internal IP
+        for (j = 0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++) { // Internal IP
           bsOut.Write(rakPeerInterface->GetInternalID(senderSystemAddress, j));
+}
         bsOut.Write(connectionAttempt->sender->guid);
         bsOut.Write(false);
         rakPeerInterface->Send(
@@ -570,9 +580,10 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
         bsOut.Write(connectionAttempt->sessionId);
         bsOut.Write(
             recipientTargetAddress); // Public IP, using most recent port
-        for (j = 0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++) // Internal IP
+        for (j = 0; j < MAXIMUM_NUMBER_OF_INTERNAL_IDS; j++) { // Internal IP
           bsOut.Write(
               rakPeerInterface->GetInternalID(recipientSystemAddress, j));
+}
         bsOut.Write(connectionAttempt->recipient->guid);
         bsOut.Write(true);
         rakPeerInterface->Send(
@@ -605,8 +616,9 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
   }
 }
 void NatPunchthroughServer::StartPunchthroughForUser(User* user) {
-  if (user->isReady == false)
+  if (!user->isReady) {
     return;
+}
 
   ConnectionAttempt* connectionAttempt;
   User *sender, *recipient, *otherUser;

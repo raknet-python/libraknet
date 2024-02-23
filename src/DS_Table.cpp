@@ -9,7 +9,7 @@
  */
 
 #include "DS_Table.h"
-#include <string.h>
+#include <cstring>
 #include "DS_OrderedList.h"
 #include "Itoa.h"
 #include "RakAssert.h"
@@ -47,13 +47,15 @@ Table::Cell& Table::Cell::operator=(const Table::Cell& input) {
   isEmpty = input.isEmpty;
   i = input.i;
   ptr = input.ptr;
-  if (c)
+  if (c) {
     rakFree_Ex(c, _FILE_AND_LINE_);
+}
   if (input.c) {
     c = (char*)rakMalloc_Ex((int)i, _FILE_AND_LINE_);
     memcpy(c, input.c, (int)i);
-  } else
+  } else {
     c = nullptr;
+}
   return *this;
 }
 Table::Cell::Cell(const Table::Cell& input) {
@@ -61,8 +63,9 @@ Table::Cell::Cell(const Table::Cell& input) {
   i = input.i;
   ptr = input.ptr;
   if (input.c) {
-    if (c)
+    if (c) {
       rakFree_Ex(c, _FILE_AND_LINE_);
+}
     c = (char*)rakMalloc_Ex((int)i, _FILE_AND_LINE_);
     memcpy(c, input.c, (int)i);
   }
@@ -134,12 +137,14 @@ void Table::Cell::Get(char* output) {
 void Table::Cell::Get(char* output, int* outputLength) {
   RakAssert(isEmpty == false);
   memcpy(output, c, (int)i);
-  if (outputLength)
+  if (outputLength) {
     *outputLength = (int)i;
 }
+}
 RakNet::RakString Table::Cell::ToString(ColumnType columnType) {
-  if (isEmpty)
+  if (isEmpty) {
     return RakNet::RakString();
+}
 
   if (columnType == NUMERIC) {
     return RakNet::RakString("%f", i);
@@ -180,18 +185,20 @@ void Table::Cell::SetByType(
 }
 Table::ColumnType Table::Cell::EstimateColumnType() const {
   if (c) {
-    if (i != 0.0f)
+    if (i != 0.0f) {
       return BINARY;
-    else
+    } else {
       return STRING;
+}
   }
 
-  if (ptr)
+  if (ptr) {
     return POINTER;
+}
   return NUMERIC;
 }
 void Table::Cell::Clear() {
-  if (isEmpty == false && c) {
+  if (!isEmpty && c) {
     rakFree_Ex(c, _FILE_AND_LINE_);
     c = nullptr;
   }
@@ -231,8 +238,9 @@ Table::~Table() {
 unsigned Table::AddColumn(
     const char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH],
     ColumnType columnType) {
-  if (columnName[0] == 0)
+  if (columnName[0] == 0) {
     return (unsigned)-1;
+}
 
   // Add this column.
   columns.Insert(
@@ -244,8 +252,9 @@ unsigned Table::AddColumn(
   return columns.Size() - 1;
 }
 void Table::RemoveColumn(unsigned columnIndex) {
-  if (columnIndex >= columns.Size())
+  if (columnIndex >= columns.Size()) {
     return;
+}
 
   columns.RemoveAtIndex(columnIndex);
 
@@ -264,9 +273,11 @@ void Table::RemoveColumn(unsigned columnIndex) {
 }
 unsigned Table::ColumnIndex(const char* columnName) const {
   unsigned columnIndex;
-  for (columnIndex = 0; columnIndex < columns.Size(); columnIndex++)
-    if (strcmp(columnName, columns[columnIndex].columnName) == 0)
+  for (columnIndex = 0; columnIndex < columns.Size(); columnIndex++) {
+    if (strcmp(columnName, columns[columnIndex].columnName) == 0) {
       return columnIndex;
+}
+}
   return (unsigned)-1;
 }
 unsigned Table::ColumnIndex(
@@ -274,16 +285,18 @@ unsigned Table::ColumnIndex(
   return ColumnIndex((const char*)columnName);
 }
 char* Table::ColumnName(unsigned index) const {
-  if (index >= columns.Size())
+  if (index >= columns.Size()) {
     return nullptr;
-  else
+  } else {
     return (char*)columns[index].columnName;
 }
+}
 Table::ColumnType Table::GetColumnType(unsigned index) const {
-  if (index >= columns.Size())
+  if (index >= columns.Size()) {
     return (Table::ColumnType)0;
-  else
+  } else {
     return columns[index].columnType;
+}
 }
 unsigned Table::GetColumnCount() const {
   return columns.Size();
@@ -294,14 +307,15 @@ unsigned Table::GetRowCount() const {
 Table::Row* Table::AddRow(unsigned rowId) {
   Row* newRow;
   newRow = RakNet::OP_NEW<Row>(_FILE_AND_LINE_);
-  if (rows.Insert(rowId, newRow) == false) {
+  if (!rows.Insert(rowId, newRow)) {
     RakNet::OP_DELETE(newRow, _FILE_AND_LINE_);
     return nullptr; // Already exists
   }
   unsigned rowIndex;
-  for (rowIndex = 0; rowIndex < columns.Size(); rowIndex++)
+  for (rowIndex = 0; rowIndex < columns.Size(); rowIndex++) {
     newRow->cells.Insert(
         RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_);
+}
   return newRow;
 }
 Table::Row* Table::AddRow(
@@ -311,7 +325,7 @@ Table::Row* Table::AddRow(
   unsigned rowIndex;
   for (rowIndex = 0; rowIndex < columns.Size(); rowIndex++) {
     if (rowIndex < initialCellValues.Size() &&
-        initialCellValues[rowIndex].isEmpty == false) {
+        !initialCellValues[rowIndex].isEmpty) {
       Table::Cell* c;
       c = RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_);
       c->SetByType(
@@ -320,9 +334,10 @@ Table::Row* Table::AddRow(
           initialCellValues[rowIndex].ptr,
           columns[rowIndex].columnType);
       newRow->cells.Insert(c, _FILE_AND_LINE_);
-    } else
+    } else {
       newRow->cells.Insert(
           RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_);
+}
   }
   rows.Insert(rowId, newRow);
   return newRow;
@@ -335,8 +350,8 @@ Table::Row* Table::AddRow(
   unsigned rowIndex;
   for (rowIndex = 0; rowIndex < columns.Size(); rowIndex++) {
     if (rowIndex < initialCellValues.Size() && initialCellValues[rowIndex] &&
-        initialCellValues[rowIndex]->isEmpty == false) {
-      if (copyCells == false)
+        !initialCellValues[rowIndex]->isEmpty) {
+      if (!copyCells) {
         newRow->cells.Insert(
             RakNet::OP_NEW_4<Table::Cell>(
                 _FILE_AND_LINE_,
@@ -345,14 +360,15 @@ Table::Row* Table::AddRow(
                 initialCellValues[rowIndex]->ptr,
                 columns[rowIndex].columnType),
             _FILE_AND_LINE_);
-      else {
+      } else {
         auto* c = RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_);
         newRow->cells.Insert(c, _FILE_AND_LINE_);
         *c = *(initialCellValues[rowIndex]);
       }
-    } else
+    } else {
       newRow->cells.Insert(
           RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_), _FILE_AND_LINE_);
+}
   }
   rows.Insert(rowId, newRow);
   return newRow;
@@ -364,7 +380,7 @@ Table::Row* Table::AddRowColumns(
   Row* newRow = RakNet::OP_NEW<Row>(_FILE_AND_LINE_);
   unsigned columnIndex;
   for (columnIndex = 0; columnIndex < columnIndices.Size(); columnIndex++) {
-    if (row->cells[columnIndices[columnIndex]]->isEmpty == false) {
+    if (!row->cells[columnIndices[columnIndex]]->isEmpty) {
       newRow->cells.Insert(
           RakNet::OP_NEW_4<Table::Cell>(
               _FILE_AND_LINE_,
@@ -523,8 +539,9 @@ Table::FilterQuery::FilterQuery(
 }
 Table::Row* Table::GetRowByID(unsigned rowId) const {
   Row* row;
-  if (rows.Get(rowId, row))
+  if (rows.Get(rowId, row)) {
     return row;
+}
   return nullptr;
 }
 
@@ -533,14 +550,16 @@ Table::Row* Table::GetRowByIndex(unsigned rowIndex, unsigned* key) const {
       rows.GetListHead();
   while (cur) {
     if (rowIndex < (unsigned)cur->size) {
-      if (key)
+      if (key) {
         *key = cur->keys[rowIndex];
+}
       return cur->data[rowIndex];
     }
-    if (rowIndex <= (unsigned)cur->size)
+    if (rowIndex <= (unsigned)cur->size) {
       rowIndex -= cur->size;
-    else
+    } else {
       return nullptr;
+}
     cur = cur->next;
   }
   return nullptr;
@@ -562,16 +581,19 @@ void Table::QueryTable(
 
   if (columnIndicesSubset && numColumnSubset > 0) {
     for (i = 0; i < numColumnSubset; i++) {
-      if (columnIndicesSubset[i] < columns.Size())
+      if (columnIndicesSubset[i] < columns.Size()) {
         columnIndicesToReturn.Insert(columnIndicesSubset[i], _FILE_AND_LINE_);
+}
     }
   } else {
-    for (i = 0; i < columns.Size(); i++)
+    for (i = 0; i < columns.Size(); i++) {
       columnIndicesToReturn.Insert(i, _FILE_AND_LINE_);
+}
   }
 
-  if (columnIndicesToReturn.Size() == 0)
+  if (columnIndicesToReturn.Size() == 0) {
     return; // No valid columns specified
+}
 
   for (i = 0; i < columnIndicesToReturn.Size(); i++) {
     result->AddColumn(
@@ -583,14 +605,16 @@ void Table::QueryTable(
   DataStructures::List<unsigned> inclusionFilterColumnIndices;
   if (inclusionFilters && numInclusionFilters > 0) {
     for (i = 0; i < numInclusionFilters; i++) {
-      if (inclusionFilters[i].columnName[0])
+      if (inclusionFilters[i].columnName[0]) {
         inclusionFilters[i].columnIndex =
             ColumnIndex(inclusionFilters[i].columnName);
-      if (inclusionFilters[i].columnIndex < columns.Size())
+}
+      if (inclusionFilters[i].columnIndex < columns.Size()) {
         inclusionFilterColumnIndices.Insert(
             inclusionFilters[i].columnIndex, _FILE_AND_LINE_);
-      else
+      } else {
         inclusionFilterColumnIndices.Insert((unsigned)-1, _FILE_AND_LINE_);
+}
     }
   }
 
@@ -646,11 +670,12 @@ void Table::QueryRow(
     for (j = 0; j < inclusionFilterColumnIndices.Size(); j++) {
       columnIndex = inclusionFilterColumnIndices[j];
       if (columnIndex != (unsigned)-1 &&
-          row->cells[columnIndex]->isEmpty == false) {
+          !row->cells[columnIndex]->isEmpty) {
         if (columns[inclusionFilterColumnIndices[j]].columnType == STRING &&
             (row->cells[columnIndex]->c == nullptr ||
-             inclusionFilters[j].cellValue->c == nullptr))
+             inclusionFilters[j].cellValue->c == nullptr)) {
           continue;
+}
 
         switch (inclusionFilters[j].operation) {
           case QF_EQUAL:
@@ -791,14 +816,12 @@ void Table::QueryRow(
             break;
         }
       } else {
-        if (inclusionFilters[j].operation == QF_IS_EMPTY)
-          pass = true;
-        else
-          pass = false; // No value for this cell
+        pass = inclusionFilters[j].operation == QF_IS_EMPTY; // No value for this cell
       }
 
-      if (pass == false)
+      if (!pass) {
         break;
+}
     }
 
     if (pass) {
@@ -819,50 +842,61 @@ int RowSort(
   unsigned i, columnIndex;
   for (i = 0; i < _numSortQueries; i++) {
     columnIndex = (*_columnIndices)[i];
-    if (columnIndex == (unsigned)-1)
+    if (columnIndex == (unsigned)-1) {
       continue;
+}
 
-    if (first->cells[columnIndex]->isEmpty == true &&
-        second->cells[columnIndex]->isEmpty == false)
+    if (first->cells[columnIndex]->isEmpty &&
+        !second->cells[columnIndex]->isEmpty) {
       return 1; // Empty cells always go at the end
+}
 
-    if (first->cells[columnIndex]->isEmpty == false &&
-        second->cells[columnIndex]->isEmpty == true)
+    if (!first->cells[columnIndex]->isEmpty &&
+        second->cells[columnIndex]->isEmpty) {
       return -1; // Empty cells always go at the end
+}
 
     if (_sortQueries[i].operation == Table::QS_INCREASING_ORDER) {
       if ((*_columns)[columnIndex].columnType == Table::NUMERIC) {
-        if (first->cells[columnIndex]->i > second->cells[columnIndex]->i)
+        if (first->cells[columnIndex]->i > second->cells[columnIndex]->i) {
           return 1;
-        if (first->cells[columnIndex]->i < second->cells[columnIndex]->i)
+}
+        if (first->cells[columnIndex]->i < second->cells[columnIndex]->i) {
           return -1;
+}
       } else {
         // String
         if (strcmp(
                 first->cells[columnIndex]->c, second->cells[columnIndex]->c) >
-            0)
+            0) {
           return 1;
+}
         if (strcmp(
                 first->cells[columnIndex]->c, second->cells[columnIndex]->c) <
-            0)
+            0) {
           return -1;
+}
       }
     } else {
       if ((*_columns)[columnIndex].columnType == Table::NUMERIC) {
-        if (first->cells[columnIndex]->i < second->cells[columnIndex]->i)
+        if (first->cells[columnIndex]->i < second->cells[columnIndex]->i) {
           return 1;
-        if (first->cells[columnIndex]->i > second->cells[columnIndex]->i)
+}
+        if (first->cells[columnIndex]->i > second->cells[columnIndex]->i) {
           return -1;
+}
       } else {
         // String
         if (strcmp(
                 first->cells[columnIndex]->c, second->cells[columnIndex]->c) <
-            0)
+            0) {
           return 1;
+}
         if (strcmp(
                 first->cells[columnIndex]->c, second->cells[columnIndex]->c) >
-            0)
+            0) {
           return -1;
+}
       }
     }
   }
@@ -887,14 +921,15 @@ void Table::SortTable(
         columns[sortQueries[i].columnIndex].columnType != BINARY) {
       columnIndices.Insert(sortQueries[i].columnIndex, _FILE_AND_LINE_);
       anyValid = true;
-    } else
+    } else {
       columnIndices.Insert(
           (unsigned)-1, _FILE_AND_LINE_); // Means don't check this column
+}
   }
 
   DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>* cur;
   cur = rows.GetListHead();
-  if (anyValid == false) {
+  if (!anyValid) {
     outLength = 0;
     while (cur) {
       for (i = 0; i < (unsigned)cur->size; i++) {
@@ -916,13 +951,15 @@ void Table::SortTable(
   }
 
   outLength = 0;
-  for (i = 0; i < orderedList.Size(); i++)
+  for (i = 0; i < orderedList.Size(); i++) {
     out[(outLength)++] = orderedList[i];
+}
 }
 void Table::PrintColumnHeaders(char* out, int outLength, char columnDelineator)
     const {
-  if (outLength <= 0)
+  if (outLength <= 0) {
     return;
+}
   if (outLength == 1) {
     *out = 0;
     return;
@@ -934,17 +971,19 @@ void Table::PrintColumnHeaders(char* out, int outLength, char columnDelineator)
   for (i = 0; i < columns.Size(); i++) {
     if (i != 0) {
       len = (int)strlen(out);
-      if (len < outLength - 1)
+      if (len < outLength - 1) {
         sprintf(out + len, "%c", columnDelineator);
-      else
+      } else {
         return;
+}
     }
 
     len = (int)strlen(out);
-    if (len < outLength - (int)strlen(columns[i].columnName))
+    if (len < outLength - (int)strlen(columns[i].columnName)) {
       sprintf(out + len, "%s", columns[i].columnName);
-    else
+    } else {
       return;
+}
   }
 }
 void Table::PrintRow(
@@ -953,8 +992,9 @@ void Table::PrintRow(
     char columnDelineator,
     bool printDelineatorForBinary,
     Table::Row* inputRow) const {
-  if (outLength <= 0)
+  if (outLength <= 0) {
     return;
+}
   if (outLength == 1) {
     *out = 0;
     return;
@@ -972,45 +1012,54 @@ void Table::PrintRow(
   out[0] = 0;
   for (i = 0; i < columns.Size(); i++) {
     if (columns[i].columnType == NUMERIC) {
-      if (inputRow->cells[i]->isEmpty == false) {
+      if (!inputRow->cells[i]->isEmpty) {
         sprintf(buff, "%f", inputRow->cells[i]->i);
         len = (int)strlen(buff);
-      } else
+      } else {
         len = 0;
-      if (i + 1 != columns.Size())
+}
+      if (i + 1 != columns.Size()) {
         buff[len++] = columnDelineator;
+}
       buff[len] = 0;
     } else if (columns[i].columnType == STRING) {
-      if (inputRow->cells[i]->isEmpty == false && inputRow->cells[i]->c) {
+      if (!inputRow->cells[i]->isEmpty && inputRow->cells[i]->c) {
         strncpy(buff, inputRow->cells[i]->c, 512 - 2);
         buff[512 - 2] = 0;
         len = (int)strlen(buff);
-      } else
+      } else {
         len = 0;
-      if (i + 1 != columns.Size())
+}
+      if (i + 1 != columns.Size()) {
         buff[len++] = columnDelineator;
+}
       buff[len] = 0;
     } else if (columns[i].columnType == POINTER) {
-      if (inputRow->cells[i]->isEmpty == false && inputRow->cells[i]->ptr) {
+      if (!inputRow->cells[i]->isEmpty && inputRow->cells[i]->ptr) {
         sprintf(buff, "%p", inputRow->cells[i]->ptr);
         len = (int)strlen(buff);
-      } else
+      } else {
         len = 0;
-      if (i + 1 != columns.Size())
+}
+      if (i + 1 != columns.Size()) {
         buff[len++] = columnDelineator;
+}
       buff[len] = 0;
     } else {
       if (printDelineatorForBinary) {
-        if (i + 1 != columns.Size())
+        if (i + 1 != columns.Size()) {
           buff[0] = columnDelineator;
+}
         buff[1] = 0;
-      } else
+      } else {
         buff[0] = 0;
+}
     }
 
     len = (int)strlen(out);
-    if (outLength == len + 1)
+    if (outLength == len + 1) {
       break;
+}
     strncpy(out + len, buff, outLength - len);
     out[outLength - 1] = 0;
   }
@@ -1042,12 +1091,13 @@ unsigned Table::GetAvailableRowId() const {
 
   while (cur) {
     for (i = 0; i < cur->size; i++) {
-      if (setKey == false) {
+      if (!setKey) {
         key = cur->keys[i] + 1;
         setKey = true;
       } else {
-        if (key != cur->keys[i])
+        if (key != cur->keys[i]) {
           return key;
+}
         key++;
       }
     }
@@ -1067,8 +1117,9 @@ Table& Table::operator=(const Table& input) {
   Clear();
 
   unsigned int i;
-  for (i = 0; i < input.GetColumnCount(); i++)
+  for (i = 0; i < input.GetColumnCount(); i++) {
     AddColumn(input.ColumnName(i), input.GetColumnType(i));
+}
 
   DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>* cur =
       input.GetRows().GetListHead();

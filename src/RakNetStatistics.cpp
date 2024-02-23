@@ -12,7 +12,7 @@
 ///
 
 #include "RakNetStatistics.h"
-#include <stdio.h> // sprintf
+#include <cstdio> // sprintf
 #include "GetTime.h"
 #include "RakString.h"
 

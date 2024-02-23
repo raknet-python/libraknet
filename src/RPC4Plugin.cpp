@@ -117,13 +117,16 @@ enum RPC4Identifiers {
 int RPC4::LocalSlotObjectComp(
     const LocalSlotObject& key,
     const LocalSlotObject& data) {
-  if (key.callPriority > data.callPriority)
+  if (key.callPriority > data.callPriority) {
     return -1;
+}
   if (key.callPriority == data.callPriority) {
-    if (key.registrationCount < data.registrationCount)
+    if (key.registrationCount < data.registrationCount) {
       return -1;
-    if (key.registrationCount == data.registrationCount)
+}
+    if (key.registrationCount == data.registrationCount) {
       return 0;
+}
     return 1;
   }
 
@@ -132,10 +135,12 @@ int RPC4::LocalSlotObjectComp(
 int RPC4::LocalCallbackComp(
     const MessageID& key,
     RPC4::LocalCallback* const& data) {
-  if (key < data->messageId)
+  if (key < data->messageId) {
     return -1;
-  if (key > data->messageId)
+}
+  if (key > data->messageId) {
     return 1;
+}
   return 0;
 }
 
@@ -164,8 +169,9 @@ bool RPC4::RegisterFunction(
     void (*functionPointer)(RakNet::BitStream* userData, Packet* packet)) {
   DataStructures::HashIndex skhi =
       registeredNonblockingFunctions.GetIndexOf(uniqueID);
-  if (skhi.IsInvalid() == false)
+  if (!skhi.IsInvalid()) {
     return false;
+}
 
   registeredNonblockingFunctions.Push(
       uniqueID, functionPointer, _FILE_AND_LINE_);
@@ -195,8 +201,9 @@ bool RPC4::RegisterBlockingFunction(
         Packet* packet)) {
   DataStructures::HashIndex skhi =
       registeredBlockingFunctions.GetIndexOf(uniqueID);
-  if (skhi.IsInvalid() == false)
+  if (!skhi.IsInvalid()) {
     return false;
+}
 
   registeredBlockingFunctions.Push(uniqueID, functionPointer, _FILE_AND_LINE_);
   return true;
@@ -211,8 +218,9 @@ void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId) {
   if (objectExists) {
     lc = localCallbacks[index];
     index = lc->functions.GetIndexFromKey(str, &objectExists);
-    if (objectExists == false)
+    if (!objectExists) {
       lc->functions.InsertAtIndex(str, index, _FILE_AND_LINE_);
+}
   } else {
     lc = RakNet::OP_NEW<LocalCallback>(_FILE_AND_LINE_);
     lc->messageId = messageId;
@@ -251,7 +259,7 @@ bool RPC4::UnregisterLocalCallback(const char* uniqueID, MessageID messageId) {
 }
 bool RPC4::UnregisterSlot(const char* sharedIdentifier) {
   DataStructures::HashIndex hi = localSlots.GetIndexOf(sharedIdentifier);
-  if (hi.IsInvalid() == false) {
+  if (!hi.IsInvalid()) {
     LocalSlot* ls = localSlots.ItemAtIndex(hi);
     RakNet::OP_DELETE(ls, _FILE_AND_LINE_);
     localSlots.RemoveAtIndex(hi, _FILE_AND_LINE_);
@@ -266,24 +274,26 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
   DataStructures::HashIndex skhi =
       registeredNonblockingFunctions.GetIndexOf(uniqueID);
 
-  if (skhi.IsInvalid() == true) {
-    if (rakPeerInterface)
+  if (skhi.IsInvalid()) {
+    if (rakPeerInterface) {
       p = AllocatePacketUnified(
           sizeof(MessageID) + sizeof(unsigned char) +
           (unsigned int)strlen(uniqueID) + 1);
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
-    else
+    } else {
       p = tcpInterface->AllocatePacket(
           sizeof(MessageID) + sizeof(unsigned char) +
           (unsigned int)strlen(uniqueID) + 1);
+}
 #endif
 
-    if (rakPeerInterface)
+    if (rakPeerInterface) {
       p->guid =
           rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
-    else
+    } else {
       p->guid = UNASSIGNED_RAKNET_GUID;
+}
 #endif
 
     p->systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
@@ -307,19 +317,21 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
     out.AlignWriteToByteBoundary();
     out.Write(bitStream);
   }
-  if (rakPeerInterface)
+  if (rakPeerInterface) {
     p = AllocatePacketUnified(out.GetNumberOfBytesUsed());
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
-  else
+  } else {
     p = tcpInterface->AllocatePacket(out.GetNumberOfBytesUsed());
+}
 #endif
 
-  if (rakPeerInterface)
+  if (rakPeerInterface) {
     p->guid =
         rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
-  else
+  } else {
     p->guid = UNASSIGNED_RAKNET_GUID;
+}
 #endif
   p->systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
   p->systemAddress.systemIndex = (SystemIndex)-1;
@@ -375,8 +387,9 @@ bool RPC4::CallBlocking(
   RakAssert(rakPeerInterface);
   ConnectionState cs;
   cs = rakPeerInterface->GetConnectionState(systemIdentifier);
-  if (cs != IS_CONNECTED)
+  if (cs != IS_CONNECTED) {
     return false;
+}
 
   SendUnified(
       &out, priority, reliability, orderingChannel, systemIdentifier, false);
@@ -386,7 +399,7 @@ bool RPC4::CallBlocking(
   gotBlockingReturnValue = false;
   Packet* packet;
   DataStructures::Queue<Packet*> packetQueue;
-  while (gotBlockingReturnValue == false) {
+  while (!gotBlockingReturnValue) {
     // TODO - block, filter until gotBlockingReturnValue==true or ID_CONNECTION_LOST or ID_DISCONNECTION_NOTIFICXATION or ID_RPC_REMOTE_ERROR/RPC_ERROR_FUNCTION_NOT_REGISTERED
     RakSleep(30);
 
@@ -401,8 +414,9 @@ bool RPC4::CallBlocking(
             packet->systemAddress == systemIdentifier.systemAddress))) {
         // Push back to head in reverse order
         rakPeerInterface->PushBackPacket(packet, true);
-        while (packetQueue.Size())
+        while (packetQueue.Size()) {
           rakPeerInterface->PushBackPacket(packetQueue.Pop(), true);
+}
         return false;
       } else if (
           packet->data[0] == ID_RPC_REMOTE_ERROR &&
@@ -414,8 +428,9 @@ bool RPC4::CallBlocking(
         if (functionName == uniqueID) {
           // Push back to head in reverse order
           rakPeerInterface->PushBackPacket(packet, true);
-          while (packetQueue.Size())
+          while (packetQueue.Size()) {
             rakPeerInterface->PushBackPacket(packetQueue.Pop(), true);
+}
           return false;
         } else {
           packetQueue.PushAtHead(packet, 0, _FILE_AND_LINE_);
@@ -462,8 +477,9 @@ void RPC4::Signal(
     DataStructures::HashIndex functionIndex;
     functionIndex = localSlots.GetIndexOf(sharedIdentifier);
     //TimeUS t2 = GetTimeUS();
-    if (functionIndex.IsInvalid())
+    if (functionIndex.IsInvalid()) {
       return;
+}
 
     Packet p;
     p.guid = rakPeerInterface->GetMyGUID();
@@ -494,8 +510,9 @@ void RPC4::InvokeSignal(
     DataStructures::HashIndex functionIndex,
     RakNet::BitStream* serializedParameters,
     Packet* packet) {
-  if (functionIndex.IsInvalid())
+  if (functionIndex.IsInvalid()) {
     return;
+}
 
   //TimeUS t1 = GetTimeUS();
   //TimeUS t2=0;
@@ -513,8 +530,9 @@ void RPC4::InvokeSignal(
     //t3 = GetTimeUS();
 
     // Not threadsafe
-    if (interruptSignal == true)
+    if (interruptSignal) {
       break;
+}
 
     serializedParameters->ResetReadPointer();
 
@@ -534,23 +552,25 @@ void RPC4::OnAttach() {
   unsigned int i;
   for (i = 0; i < globalRegistrationIndex; i++) {
     if (globalRegistrationBuffer[i].registerFunctionPointer) {
-      if (globalRegistrationBuffer[i].callPriority == (int)0xFFFFFFFF)
+      if (globalRegistrationBuffer[i].callPriority == (int)0xFFFFFFFF) {
         RegisterFunction(
             globalRegistrationBuffer[i].functionName,
             globalRegistrationBuffer[i].registerFunctionPointer);
-      else
+      } else {
         RegisterSlot(
             globalRegistrationBuffer[i].functionName,
             globalRegistrationBuffer[i].registerFunctionPointer,
             globalRegistrationBuffer[i].callPriority);
-    } else if (globalRegistrationBuffer[i].registerBlockingFunctionPointer)
+}
+    } else if (globalRegistrationBuffer[i].registerBlockingFunctionPointer) {
       RegisterBlockingFunction(
           globalRegistrationBuffer[i].functionName,
           globalRegistrationBuffer[i].registerBlockingFunctionPointer);
-    else
+    } else {
       RegisterLocalCallback(
           globalRegistrationBuffer[i].functionName,
           globalRegistrationBuffer[i].messageId);
+}
   }
 }
 PluginReceiveResult RPC4::OnReceive(Packet* packet) {
@@ -563,7 +583,7 @@ PluginReceiveResult RPC4::OnReceive(Packet* packet) {
       bsIn.ReadCompressed(functionName);
       bool isBlocking = false;
       bsIn.Read(isBlocking);
-      if (isBlocking == false) {
+      if (!isBlocking) {
         DataStructures::HashIndex skhi =
             registeredNonblockingFunctions.GetIndexOf(functionName.C_String());
         if (skhi.IsInvalid()) {
@@ -658,7 +678,7 @@ PluginReceiveResult RPC4::OnReceive(Packet* packet) {
       DataStructures::HashIndex skhi =
           registeredNonblockingFunctions.GetIndexOf(
               lc->functions[index2].C_String());
-      if (skhi.IsInvalid() == false) {
+      if (!skhi.IsInvalid()) {
         void (*fp)(RakNet::BitStream*, Packet*);
         fp = registeredNonblockingFunctions.ItemAtIndex(skhi);
         bsIn.AlignReadToByteBoundary();

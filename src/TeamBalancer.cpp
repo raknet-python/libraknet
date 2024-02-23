@@ -37,8 +37,9 @@ TeamBalancer::TeamBalancer() {
 TeamBalancer::~TeamBalancer() = default;
 void TeamBalancer::SetTeamSizeLimit(TeamId team, unsigned short limit) {
   teamLimits.Replace(limit, 0, team, _FILE_AND_LINE_);
-  if (teamLimits.Size() > teamMemberCounts.Size())
+  if (teamLimits.Size() > teamMemberCounts.Size()) {
     teamMemberCounts.Replace(0, 0, teamLimits.Size() - 1, _FILE_AND_LINE_);
+}
 }
 void TeamBalancer::SetDefaultAssignmentAlgorithm(
     DefaultAssigmentAlgorithm daa) {
@@ -50,23 +51,25 @@ void TeamBalancer::SetForceEvenTeams(bool force) {
   forceTeamsToBeEven = force;
 
   // If teams are locked, just return.
-  if (lockTeams == true)
+  if (lockTeams) {
     return;
+}
 
-  if (forceTeamsToBeEven == true) {
+  if (forceTeamsToBeEven) {
     // Run the even team algorithm
     EvenTeams();
   }
 }
 void TeamBalancer::SetLockTeams(bool lock) {
-  if (lock == lockTeams)
+  if (lock == lockTeams) {
     return;
+}
 
   // Set flag to indicate that teams can no longer be changed.
   lockTeams = lock;
 
   // If lock is false, and teams were set to be forced as even, then run through the even team algorithm
-  if (lockTeams == false) {
+  if (!lockTeams) {
     // Process even swaps
     TeamId i, j;
     for (i = 0; i < teamMembers.Size(); i++) {
@@ -82,7 +85,7 @@ void TeamBalancer::SetLockTeams(bool lock) {
       }
     }
 
-    if (forceTeamsToBeEven == true) {
+    if (forceTeamsToBeEven) {
       EvenTeams();
     } else {
       // Process requested team changes
@@ -113,7 +116,7 @@ void TeamBalancer::RequestSpecificTeam(NetworkID memberId, TeamId desiredTeam) {
     }
   }
 
-  if (foundMatch == false) {
+  if (!foundMatch) {
     MyTeamMembers mtm;
     mtm.currentTeam = UNASSIGNED_TEAM_ID;
     mtm.memberId = memberId;
@@ -154,15 +157,16 @@ void TeamBalancer::RequestAnyTeam(NetworkID memberId) {
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
     if (myTeamMembers[i].memberId == memberId) {
       foundMatch = true;
-      if (myTeamMembers[i].currentTeam != UNASSIGNED_TEAM_ID)
+      if (myTeamMembers[i].currentTeam != UNASSIGNED_TEAM_ID) {
         return;
-      else
+      } else {
         myTeamMembers[i].requestedTeam = UNASSIGNED_TEAM_ID;
+}
       break;
     }
   }
 
-  if (foundMatch == false) {
+  if (!foundMatch) {
     MyTeamMembers mtm;
     mtm.currentTeam = UNASSIGNED_TEAM_ID;
     mtm.memberId = memberId;
@@ -291,7 +295,7 @@ void TeamBalancer::RemoveByGuid(RakNetGUID rakNetGUID) {
       if (teamMembers[droppedMemberIndex].memberGuid == rakNetGUID) {
         TeamId droppedTeam = teamMembers[droppedMemberIndex].currentTeam;
         RemoveTeamMember(droppedMemberIndex);
-        if (lockTeams == false) {
+        if (!lockTeams) {
           if (forceTeamsToBeEven) {
             // - teams were forced to be even, then run the even team algorithm
             EvenTeams();
@@ -309,8 +313,9 @@ void TeamBalancer::RemoveByGuid(RakNetGUID rakNetGUID) {
   }
 }
 void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
-  if (WeAreHost() == false)
+  if (!WeAreHost()) {
     return;
+}
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -340,8 +345,9 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
     }
 
     if (tm.currentTeam == UNASSIGNED_TEAM_ID &&
-        tm.requestedTeam == UNASSIGNED_TEAM_ID)
+        tm.requestedTeam == UNASSIGNED_TEAM_ID) {
       return;
+}
 
     unsigned int memberIndex = GetMemberIndex(tm.memberId, packet->guid);
     if (memberIndex == (unsigned int)-1) {
@@ -355,8 +361,8 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
           tm.currentTeam = GetNextDefaultTeam();
         } else {
           // Assign to requested team if possible. Otherwise, assign to a default team
-          if (TeamWouldBeOverpopulatedOnAddition(
-                  tm.requestedTeam, teamMembers.Size()) == false) {
+          if (!TeamWouldBeOverpopulatedOnAddition(
+                  tm.requestedTeam, teamMembers.Size())) {
             tm.currentTeam = tm.requestedTeam;
           } else {
             tm.currentTeam = GetNextDefaultTeam();
@@ -373,8 +379,9 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
   }
 }
 void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
-  if (WeAreHost() == false)
+  if (!WeAreHost()) {
     return;
+}
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -382,12 +389,14 @@ void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
   bsIn.Read(memberId);
 
   unsigned int memberIndex = GetMemberIndex(memberId, packet->guid);
-  if (memberIndex != (unsigned int)-1)
+  if (memberIndex != (unsigned int)-1) {
     teamMembers[memberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
 }
+}
 void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
-  if (WeAreHost() == false)
+  if (!WeAreHost()) {
     return;
+}
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -409,8 +418,9 @@ void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
   }
 }
 void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
-  if (WeAreHost() == false)
+  if (!WeAreHost()) {
     return;
+}
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -421,8 +431,9 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
   unsigned int memberIndex = GetMemberIndex(tm.memberId, packet->guid);
   if (tm.requestedTeam == UNASSIGNED_TEAM_ID) {
     NotifyNoTeam(tm.memberId, packet->guid);
-    if (memberIndex != (unsigned int)-1)
+    if (memberIndex != (unsigned int)-1) {
       RemoveTeamMember(memberIndex);
+}
     return;
   }
 
@@ -436,8 +447,8 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
     tm.memberGuid = packet->guid;
 
     // Assign to requested team if possible. Otherwise, assign to a default team
-    if (TeamWouldBeOverpopulatedOnAddition(
-            tm.requestedTeam, teamMembers.Size()) == false) {
+    if (!TeamWouldBeOverpopulatedOnAddition(
+            tm.requestedTeam, teamMembers.Size())) {
       tm.currentTeam = tm.requestedTeam;
       tm.requestedTeam = UNASSIGNED_TEAM_ID;
     } else {
@@ -458,8 +469,7 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
     }
 
     // Assign to requested team if possible. Otherwise, assign to a default team
-    if (TeamsWouldBeEvenOnSwitch(tm.requestedTeam, oldTeamThisUserWasOn) ==
-        true) {
+    if (TeamsWouldBeEvenOnSwitch(tm.requestedTeam, oldTeamThisUserWasOn)) {
       SwitchMemberTeam(memberIndex, tm.requestedTeam);
       NotifyTeamAssigment(memberIndex);
     } else {
@@ -469,8 +479,9 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
            swappableMemberIndex++) {
         if (teamMembers[swappableMemberIndex].currentTeam == tm.requestedTeam &&
             teamMembers[swappableMemberIndex].requestedTeam ==
-                oldTeamThisUserWasOn)
+                oldTeamThisUserWasOn) {
           break;
+}
       }
 
       if (swappableMemberIndex != teamMembers.Size()) {
@@ -488,8 +499,9 @@ unsigned int TeamBalancer::GetMemberIndex(NetworkID memberId, RakNetGUID guid)
     const {
   for (unsigned int i = 0; i < teamMembers.Size(); i++) {
     if (teamMembers[i].memberGuid == guid &&
-        teamMembers[i].memberId == memberId)
+        teamMembers[i].memberId == memberId) {
       return i;
+}
   }
   return (unsigned int)-1;
 }
@@ -502,10 +514,11 @@ unsigned int TeamBalancer::AddTeamMember(const TeamMember& tm) {
   RakAssert(tm.currentTeam != UNASSIGNED_TEAM_ID);
 
   teamMembers.Push(tm, _FILE_AND_LINE_);
-  if (teamMemberCounts.Size() < tm.currentTeam)
+  if (teamMemberCounts.Size() < tm.currentTeam) {
     teamMemberCounts.Replace(1, 0, tm.currentTeam, _FILE_AND_LINE_);
-  else
+  } else {
     teamMemberCounts[tm.currentTeam] = teamMemberCounts[tm.currentTeam] + 1;
+}
   return teamMembers.Size() - 1;
 }
 void TeamBalancer::RemoveTeamMember(unsigned int index) {
@@ -518,10 +531,11 @@ void TeamBalancer::GetMinMaxTeamMembers(
     int& minMembersOnASingleTeam,
     int& maxMembersOnASingleTeam) {
   minMembersOnASingleTeam = teamMembers.Size() / teamLimits.Size();
-  if ((teamMembers.Size() % teamLimits.Size()) == 0)
+  if ((teamMembers.Size() % teamLimits.Size()) == 0) {
     maxMembersOnASingleTeam = minMembersOnASingleTeam;
-  else
+  } else {
     maxMembersOnASingleTeam = minMembersOnASingleTeam + 1;
+}
 }
 void TeamBalancer::EvenTeams() {
   // Ensure all teams are even. If not, pick players at random from overpopulated teams, and move to underpopulated teams.
@@ -561,10 +575,11 @@ unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(
     RakAssert(sourceTeamNumbers[j] != targetTeamNumber);
     for (i = 0; i < teamMembers.Size(); i++) {
       if (teamMembers[i].currentTeam == sourceTeamNumbers[j]) {
-        if (teamMembers[i].requestedTeam == targetTeamNumber)
+        if (teamMembers[i].requestedTeam == targetTeamNumber) {
           preferredSwapIndices.Push(i, _FILE_AND_LINE_);
-        else
+        } else {
           potentialSwapIndices.Push(i, _FILE_AND_LINE_);
+}
       }
     }
   }
@@ -584,22 +599,25 @@ void TeamBalancer::SwitchMemberTeam(
       teamMemberCounts[teamMembers[teamMemberIndex].currentTeam] - 1;
   teamMemberCounts[destinationTeam] = teamMemberCounts[destinationTeam] + 1;
   teamMembers[teamMemberIndex].currentTeam = destinationTeam;
-  if (teamMembers[teamMemberIndex].requestedTeam == destinationTeam)
+  if (teamMembers[teamMemberIndex].requestedTeam == destinationTeam) {
     teamMembers[teamMemberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
+}
 }
 void TeamBalancer::GetOverpopulatedTeams(
     DataStructures::List<TeamId>& overpopulatedTeams,
     int maxTeamSize) {
   overpopulatedTeams.Clear(true, _FILE_AND_LINE_);
   for (TeamId i = 0; i < teamMemberCounts.Size(); i++) {
-    if (teamMemberCounts[i] >= maxTeamSize)
+    if (teamMemberCounts[i] >= maxTeamSize) {
       overpopulatedTeams.Push(i, _FILE_AND_LINE_);
+}
   }
 }
 void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex) {
   RakAssert(teamMemberIndex < teamMembers.Size());
-  if (teamMemberIndex >= teamMembers.Size())
+  if (teamMemberIndex >= teamMembers.Size()) {
     return;
+}
 
   BitStream bsOut;
   bsOut.Write((MessageID)ID_TEAM_BALANCER_TEAM_ASSIGNED);
@@ -618,8 +636,9 @@ bool TeamBalancer::WeAreHost() const {
       rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 }
 PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
-  if (packet->guid != hostGuid)
+  if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(1);
@@ -633,28 +652,31 @@ PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
     if (myTeamMembers[i].memberId == mtm.memberId) {
       foundMatch = true;
-      if (myTeamMembers[i].requestedTeam == mtm.currentTeam)
+      if (myTeamMembers[i].requestedTeam == mtm.currentTeam) {
         myTeamMembers[i].requestedTeam = UNASSIGNED_TEAM_ID;
+}
       myTeamMembers[i].currentTeam = mtm.currentTeam;
       break;
     }
   }
 
-  if (foundMatch == false) {
+  if (!foundMatch) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
   }
 
   return RR_CONTINUE_PROCESSING;
 }
 PluginReceiveResult TeamBalancer::OnRequestedTeamChangePending(Packet* packet) {
-  if (packet->guid != hostGuid)
+  if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
 
   return RR_CONTINUE_PROCESSING;
 }
 PluginReceiveResult TeamBalancer::OnTeamsLocked(Packet* packet) {
-  if (packet->guid != hostGuid)
+  if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
+}
 
   return RR_CONTINUE_PROCESSING;
 }
@@ -734,8 +756,9 @@ void TeamBalancer::MoveMemberThatWantsToJoinTeam(TeamId teamId) {
 TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId) {
   DataStructures::List<TeamId> membersThatWantToJoinTheTeam;
   for (TeamId i = 0; i < teamMembers.Size(); i++) {
-    if (teamMembers[i].requestedTeam == teamId)
+    if (teamMembers[i].requestedTeam == teamId) {
       membersThatWantToJoinTheTeam.Push(i, _FILE_AND_LINE_);
+}
   }
 
   if (membersThatWantToJoinTheTeam.Size() > 0) {
@@ -786,9 +809,8 @@ void TeamBalancer::NotifyNoTeam(NetworkID memberId, RakNetGUID target) {
 }
 bool TeamBalancer::TeamsWouldBeEvenOnSwitch(TeamId t1, TeamId t2) {
   RakAssert(teamMembers.Size() != 0);
-  return TeamWouldBeOverpopulatedOnAddition(t1, teamMembers.Size() - 1) ==
-      false &&
-      TeamWouldBeUnderpopulatedOnLeave(t2, teamMembers.Size() - 1) == false;
+  return !TeamWouldBeOverpopulatedOnAddition(t1, teamMembers.Size() - 1) &&
+      !TeamWouldBeUnderpopulatedOnLeave(t2, teamMembers.Size() - 1);
 }
 
 #endif // _RAKNET_SUPPORT_*

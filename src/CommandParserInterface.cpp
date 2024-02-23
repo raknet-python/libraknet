@@ -9,8 +9,8 @@
  */
 
 #include "CommandParserInterface.h"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include "RakAssert.h"
 #include "TransportInterface.h"
 
@@ -60,11 +60,13 @@ void CommandParserInterface::ParseConsoleString(
 
   // Replace every instance of delineator, \n, \r with 0
   for (strIndex = 0; strIndex < strLen; strIndex++) {
-    if (str[strIndex] == delineator && replaceDelineator)
+    if (str[strIndex] == delineator && replaceDelineator) {
       str[strIndex] = 0;
+}
 
-    if (str[strIndex] == '\n' || str[strIndex] == '\r')
+    if (str[strIndex] == '\n' || str[strIndex] == '\r') {
       str[strIndex] = 0;
+}
 
     if (str[strIndex] == delineatorToggle) {
       str[strIndex] = 0;
@@ -78,14 +80,17 @@ void CommandParserInterface::ParseConsoleString(
       parameterList[parameterListIndex] = str + strIndex;
       parameterListIndex++;
       RakAssert(parameterListIndex < parameterListLength);
-      if (parameterListIndex >= parameterListLength)
+      if (parameterListIndex >= parameterListLength) {
         break;
+}
 
       strIndex++;
-      while (str[strIndex] != 0 && strIndex < strLen)
+      while (str[strIndex] != 0 && strIndex < strLen) {
         strIndex++;
-    } else
+}
+    } else {
       strIndex++;
+}
   }
 
   parameterList[parameterListIndex] = nullptr;
@@ -98,12 +103,14 @@ void CommandParserInterface::SendCommandList(
   if (commandList.Size()) {
     for (i = 0; i < commandList.Size(); i++) {
       transport->Send(systemAddress, "%s", commandList[i].command);
-      if (i < commandList.Size() - 1)
+      if (i < commandList.Size() - 1) {
         transport->Send(systemAddress, ", ");
+}
     }
     transport->Send(systemAddress, "\r\n");
-  } else
+  } else {
     transport->Send(systemAddress, "No registered commands\r\n");
+}
 }
 void CommandParserInterface::RegisterCommand(
     unsigned char parameterCount,
@@ -121,8 +128,9 @@ bool CommandParserInterface::GetRegisteredCommand(
   bool objectExists;
   unsigned index;
   index = commandList.GetIndexFromKey(command, &objectExists);
-  if (objectExists)
+  if (objectExists) {
     *rc = commandList[index];
+}
   return objectExists;
 }
 void CommandParserInterface::OnTransportChange(TransportInterface* transport) {
@@ -145,10 +153,11 @@ void CommandParserInterface::ReturnResult(
     const char* command,
     TransportInterface* transport,
     const SystemAddress& systemAddress) {
-  if (res)
+  if (res) {
     transport->Send(systemAddress, "%s returned true.\r\n", command);
-  else
+  } else {
     transport->Send(systemAddress, "%s returned false.\r\n", command);
+}
 }
 void CommandParserInterface::ReturnResult(
     int res,

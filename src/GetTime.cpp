@@ -74,7 +74,7 @@ RakNet::TimeMS RakNet::GetTimeMS() {
 
 #if defined(_WIN32)
 RakNet::TimeUS GetTimeUS_Windows() {
-  if (initialized == false) {
+  if (!initialized) {
     initialized = true;
 
     // Save the current process

@@ -25,13 +25,15 @@ Rackspace::~Rackspace() = default;
 
 void Rackspace::AddEventCallback(Rackspace2EventCallback* callback) {
   unsigned int idx = eventCallbacks.GetIndexOf(callback);
-  if (idx == (unsigned int)-1)
+  if (idx == (unsigned int)-1) {
     eventCallbacks.Push(callback, _FILE_AND_LINE_);
+}
 }
 void Rackspace::RemoveEventCallback(Rackspace2EventCallback* callback) {
   unsigned int idx = eventCallbacks.GetIndexOf(callback);
-  if (idx != (unsigned int)-1)
+  if (idx != (unsigned int)-1) {
     eventCallbacks.RemoveAtIndex(idx);
+}
 }
 void Rackspace::ClearEventCallbacks() {
   eventCallbacks.Clear(true, _FILE_AND_LINE_);
@@ -61,9 +63,10 @@ SystemAddress Rackspace::Authenticate(
   RakAssert(tcpInterface->WasStarted());
   ro.connectionAddress = tcpInterface->Connect(_authenticationURL, 443, true);
   if (ro.connectionAddress == UNASSIGNED_SYSTEM_ADDRESS) {
-    for (i = 0; i < eventCallbacks.Size(); i++)
+    for (i = 0; i < eventCallbacks.Size(); i++) {
       eventCallbacks[i]->OnConnectionAttemptFailure(
           RO_CONNECT_AND_AUTHENTICATE, _authenticationURL);
+}
 
     return UNASSIGNED_SYSTEM_ADDRESS;
   }
@@ -138,11 +141,13 @@ void Rackspace::AddOperation(
   ro.operation = operation;
   ro.xml = xml;
   ro.isPendingAuthentication = HasOperationOfType(RO_CONNECT_AND_AUTHENTICATE);
-  if (ro.isPendingAuthentication == false) {
-    if (ExecuteOperation(ro))
+  if (!ro.isPendingAuthentication) {
+    if (ExecuteOperation(ro)) {
       operations.Insert(ro, _FILE_AND_LINE_);
-  } else
+}
+  } else {
     operations.Insert(ro, _FILE_AND_LINE_);
+}
 }
 void Rackspace::ListServers() {
   AddOperation(RO_LIST_SERVERS, "GET", "servers", "");
@@ -174,15 +179,18 @@ void Rackspace::UpdateServerNameOrPassword(
     RakNet::RakString serverId,
     RakNet::RakString newName,
     RakNet::RakString newPassword) {
-  if (newName.IsEmpty() && newPassword.IsEmpty())
+  if (newName.IsEmpty() && newPassword.IsEmpty()) {
     return;
+}
   RakNet::RakString xml(
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       "<server xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\"");
-  if (newName.IsEmpty() == false)
+  if (!newName.IsEmpty()) {
     xml += RakNet::RakString(" name=\"%s\"", newName.C_String());
-  if (newPassword.IsEmpty() == false)
+}
+  if (!newPassword.IsEmpty()) {
     xml += RakNet::RakString(" adminPass=\"%s\"", newPassword.C_String());
+}
   xml += " />";
   AddOperation(
       RO_UPDATE_SERVER_NAME_OR_PASSWORD,
@@ -351,9 +359,10 @@ void Rackspace::CreateSharedIPGroup(
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
       "<sharedIpGroup xmlns=\"http://docs.rackspacecloud.com/servers/api/v1.0\" name=\"%s\">",
       name.C_String());
-  if (optionalServerId.IsEmpty() == false)
+  if (!optionalServerId.IsEmpty()) {
     xml +=
         RakNet::RakString("<server id=\"%s\"/>", optionalServerId.C_String());
+}
   xml += "</sharedIpGroup>";
 
   AddOperation(RO_CREATE_SHARED_IP_GROUP, "POST", "shared_ip_groups", xml);
@@ -373,13 +382,14 @@ void Rackspace::DeleteSharedIPGroup(RakNet::RakString groupId) {
       "");
 }
 void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
-  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS)
+  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
 
   unsigned int i, operationsIndex;
   operationsIndex = 0;
   while (operationsIndex < operations.Size()) {
-    if (operations[operationsIndex].isPendingAuthentication == false &&
+    if (!operations[operationsIndex].isPendingAuthentication &&
         operations[operationsIndex].connectionAddress == systemAddress) {
       RackspaceOperation ro = operations[operationsIndex];
       operations.RemoveAtIndex(operationsIndex);
@@ -397,8 +407,9 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
         result += strlen("HTTP/1.1 ");
         for (i = 0; i < sizeof(resultCodeStr) - 1 && result[i] &&
              result[i] >= '0' && result[i] <= '9';
-             i++)
+             i++) {
           resultCodeStr[i] = result[i];
+}
         resultCodeStr[i] = 0;
         resultCodeInt = atoi(resultCodeStr);
 
@@ -471,176 +482,204 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
 
             operationsIndex = 0;
             while (operationsIndex < operations.Size()) {
-              if (operations[operationsIndex].isPendingAuthentication == true) {
+              if (operations[operationsIndex].isPendingAuthentication) {
                 operations[operationsIndex].isPendingAuthentication = false;
-                if (ExecuteOperation(operations[operationsIndex]) == false) {
+                if (!ExecuteOperation(operations[operationsIndex])) {
                   operations.RemoveAtIndex(operationsIndex);
-                } else
+                } else {
                   operationsIndex++;
-              } else
+}
+              } else {
                 operationsIndex++;
+}
             }
 
             // Restart in list
             operationsIndex = 0;
           }
 
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnAuthenticationResult(
                 rackspaceEventType, (const char*)packetData);
+}
 
           break;
         }
         case RO_LIST_SERVERS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListServersResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_LIST_SERVERS_WITH_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListServersWithDetailsResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_CREATE_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnCreateServerResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
 
         case RO_GET_SERVER_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnGetServerDetails(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_UPDATE_SERVER_NAME_OR_PASSWORD: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnUpdateServerNameOrPassword(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_DELETE_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnDeleteServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_LIST_SERVER_ADDRESSES: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListServerAddresses(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_SHARE_SERVER_ADDRESS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnShareServerAddress(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_DELETE_SERVER_ADDRESS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnDeleteServerAddress(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_REBOOT_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnRebootServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_REBUILD_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnRebuildServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_RESIZE_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnResizeServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_CONFIRM_RESIZED_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnConfirmResizedServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_REVERT_RESIZED_SERVER: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnRevertResizedServer(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
 
         case RO_LIST_FLAVORS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListFlavorsResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_GET_FLAVOR_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnGetFlavorDetailsResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_LIST_IMAGES: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListImagesResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_CREATE_IMAGE: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnCreateImageResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_GET_IMAGE_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnGetImageDetailsResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_DELETE_IMAGE: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnDeleteImageResult(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_LIST_SHARED_IP_GROUPS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListSharedIPGroups(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_LIST_SHARED_IP_GROUPS_WITH_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnListSharedIPGroupsWithDetails(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_CREATE_SHARED_IP_GROUP: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnCreateSharedIPGroup(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_GET_SHARED_IP_GROUP_DETAILS: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnGetSharedIPGroupDetails(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         case RO_DELETE_SHARED_IP_GROUP: {
-          for (i = 0; i < eventCallbacks.Size(); i++)
+          for (i = 0; i < eventCallbacks.Size(); i++) {
             eventCallbacks[i]->OnDeleteSharedIPGroup(
                 rackspaceEventType, (const char*)packetData);
+}
           break;
         }
         default:
@@ -655,7 +694,7 @@ void Rackspace::OnReceive(Packet* packet) {
   unsigned int operationsIndex;
   for (operationsIndex = 0; operationsIndex < operations.Size();
        operationsIndex++) {
-    if (operations[operationsIndex].isPendingAuthentication == false &&
+    if (!operations[operationsIndex].isPendingAuthentication &&
         operations[operationsIndex].connectionAddress ==
             packet->systemAddress) {
       operations[operationsIndex].incomingStream += packet->data;
@@ -663,8 +702,9 @@ void Rackspace::OnReceive(Packet* packet) {
   }
 }
 bool Rackspace::ExecuteOperation(RackspaceOperation& ro) {
-  if (ConnectToServerManagementDomain(ro) == false)
+  if (!ConnectToServerManagementDomain(ro)) {
     return false;
+}
 
   RakNet::RakString command(
       "%s %s/%s HTTP/1.1\n"
@@ -680,7 +720,7 @@ bool Rackspace::ExecuteOperation(RackspaceOperation& ro) {
       ro.xml.GetLength(),
       authToken.C_String());
 
-  if (ro.xml.IsEmpty() == false) {
+  if (!ro.xml.IsEmpty()) {
     command += "\n";
     command += ro.xml;
     command += "\n";
@@ -719,8 +759,9 @@ void Rackspace::ReadLine(
 
   output = result;
   resultEnd = result;
-  while (*resultEnd && (*resultEnd != '\r') && (*resultEnd != '\n'))
+  while (*resultEnd && (*resultEnd != '\r') && (*resultEnd != '\n')) {
     resultEnd++;
+}
   output.Truncate((unsigned int)(resultEnd - result));
 }
 
@@ -730,9 +771,10 @@ bool Rackspace::ConnectToServerManagementDomain(RackspaceOperation& ro) {
   ro.connectionAddress =
       tcpInterface->Connect(serverManagementDomain.C_String(), 443, true);
   if (ro.connectionAddress == UNASSIGNED_SYSTEM_ADDRESS) {
-    for (i = 0; i < eventCallbacks.Size(); i++)
+    for (i = 0; i < eventCallbacks.Size(); i++) {
       eventCallbacks[i]->OnConnectionAttemptFailure(
           ro.type, serverManagementURL);
+}
     return false;
   }
 
@@ -745,16 +787,18 @@ bool Rackspace::ConnectToServerManagementDomain(RackspaceOperation& ro) {
 bool Rackspace::HasOperationOfType(RackspaceOperationType t) {
   unsigned int i;
   for (i = 0; i < operations.Size(); i++) {
-    if (operations[i].type == t)
+    if (operations[i].type == t) {
       return true;
+}
   }
   return false;
 }
 unsigned int Rackspace::GetOperationOfTypeIndex(RackspaceOperationType t) {
   unsigned int i;
   for (i = 0; i < operations.Size(); i++) {
-    if (operations[i].type == t)
+    if (operations[i].type == t) {
       return i;
+}
   }
   return (unsigned int)-1;
 }

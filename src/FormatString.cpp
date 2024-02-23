@@ -9,9 +9,9 @@
  */
 
 #include "FormatString.h"
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 #include "LinuxStrings.h"
 
 char* FormatString(const char* format, ...) {
@@ -20,8 +20,9 @@ char* FormatString(const char* format, ...) {
   va_list ap;
   va_start(ap, format);
 
-  if (++textIndex == 4)
+  if (++textIndex == 4) {
     textIndex = 0;
+}
   _vsnprintf(text[textIndex], 8096, format, ap);
   va_end(ap);
   text[textIndex][8096 - 1] = 0;

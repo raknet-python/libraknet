@@ -51,7 +51,7 @@ void PluginInterface2::SendUnified(
 #endif
 
   // Offline mode
-  if (broadcast == false && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
+  if (!broadcast && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
     //		Packet *packet = AllocatePacketUnified(bitStream->GetNumberOfBytesUsed());
     //		memcpy(packet->data, bitStream->GetData(), bitStream->GetNumberOfBytesUsed());
     Packet packet;
@@ -95,7 +95,7 @@ void PluginInterface2::SendUnified(
 #endif
 
   // Offline mode
-  if (broadcast == false && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
+  if (!broadcast && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
     //		Packet *packet = AllocatePacketUnified(bitStream->GetNumberOfBytesUsed());
     //		memcpy(packet->data, bitStream->GetData(), bitStream->GetNumberOfBytesUsed());
     Packet packet;
@@ -192,16 +192,18 @@ bool PluginInterface2::SendListUnified(
   }
 #endif
 
-  if (broadcast == false && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
+  if (!broadcast && systemIdentifier.rakNetGuid == GetMyGUIDUnified()) {
     unsigned int totalLength = 0;
     unsigned int lengthOffset;
     int i;
     for (i = 0; i < numParameters; i++) {
-      if (lengths[i] > 0)
+      if (lengths[i] > 0) {
         totalLength += lengths[i];
+}
     }
-    if (totalLength == 0)
+    if (totalLength == 0) {
       return false;
+}
 
     char* dataAggregate;
     dataAggregate = (char*)rakMalloc_Ex((size_t)totalLength, _FILE_AND_LINE_);
@@ -239,7 +241,8 @@ void PluginInterface2::SetTCPInterface(TCPInterface* ptr) {
 }
 #endif
 RakNetGUID PluginInterface2::GetMyGUIDUnified() const {
-  if (rakPeerInterface)
+  if (rakPeerInterface) {
     return rakPeerInterface->GetMyGUID();
+}
   return UNASSIGNED_RAKNET_GUID;
 }

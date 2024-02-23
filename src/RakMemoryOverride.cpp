@@ -9,7 +9,7 @@
  */
 
 #include "RakMemoryOverride.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include "RakAssert.h"
 
 #ifdef _RAKNET_SUPPORT_DL_MALLOC

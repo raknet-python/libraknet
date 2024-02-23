@@ -31,8 +31,9 @@ PacketizedTCP::~PacketizedTCP() {
 void PacketizedTCP::Stop() {
   unsigned int i;
   TCPInterface::Stop();
-  for (i = 0; i < waitingPackets.Size(); i++)
+  for (i = 0; i < waitingPackets.Size(); i++) {
     DeallocatePacket(waitingPackets[i]);
+}
   ClearAllConnections();
 }
 
@@ -44,11 +45,12 @@ void PacketizedTCP::Send(
   PTCPHeader dataLength;
   dataLength = length;
 #ifndef __BITSTREAM_NATIVE_END
-  if (RakNet::BitStream::DoEndianSwap())
+  if (RakNet::BitStream::DoEndianSwap()) {
     RakNet::BitStream::ReverseBytes(
         (unsigned char*)&length,
         (unsigned char*)&dataLength,
         sizeof(dataLength));
+}
 #else
   dataLength = length;
 #endif
@@ -67,28 +69,34 @@ bool PacketizedTCP::SendList(
     const int numParameters,
     const SystemAddress& systemAddress,
     bool broadcast) {
-  if (isStarted.GetValue() == 0)
+  if (isStarted.GetValue() == 0) {
     return false;
-  if (data == nullptr)
+}
+  if (data == nullptr) {
     return false;
-  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && broadcast == false)
+}
+  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && !broadcast) {
     return false;
+}
   PTCPHeader totalLengthOfUserData = 0;
   int i;
   for (i = 0; i < numParameters; i++) {
-    if (lengths[i] > 0)
+    if (lengths[i] > 0) {
       totalLengthOfUserData += lengths[i];
+}
   }
-  if (totalLengthOfUserData == 0)
+  if (totalLengthOfUserData == 0) {
     return false;
+}
 
   PTCPHeader dataLength;
 #ifndef __BITSTREAM_NATIVE_END
-  if (RakNet::BitStream::DoEndianSwap())
+  if (RakNet::BitStream::DoEndianSwap()) {
     RakNet::BitStream::ReverseBytes(
         (unsigned char*)&totalLengthOfUserData,
         (unsigned char*)&dataLength,
         sizeof(dataLength));
+}
 #else
   dataLength = totalLengthOfUserData;
 #endif
@@ -133,29 +141,32 @@ Packet* PacketizedTCP::Receive() {
   PushNotificationsToQueues();
 
   unsigned int i;
-  for (i = 0; i < messageHandlerList.Size(); i++)
+  for (i = 0; i < messageHandlerList.Size(); i++) {
     messageHandlerList[i]->Update();
+}
 
   Packet* outgoingPacket = ReturnOutgoingPacket();
-  if (outgoingPacket)
+  if (outgoingPacket) {
     return outgoingPacket;
+}
 
   Packet* incomingPacket;
   incomingPacket = TCPInterface::ReceiveInt();
   unsigned int index;
 
   while (incomingPacket) {
-    if (connections.Has(incomingPacket->systemAddress))
+    if (connections.Has(incomingPacket->systemAddress)) {
       index = connections.GetIndexAtKey(incomingPacket->systemAddress);
-    else
+    } else {
       index = (unsigned int)-1;
+}
     if ((unsigned int)index == (unsigned int)-1) {
       DeallocatePacket(incomingPacket);
       incomingPacket = TCPInterface::ReceiveInt();
       continue;
     }
 
-    if (incomingPacket->deleteData == true) {
+    if (incomingPacket->deleteData) {
       // Came from network
       SystemAddress systemAddressFromPacket;
       if (index < connections.Size()) {
@@ -170,9 +181,10 @@ Packet* PacketizedTCP::Receive() {
 
         // Peek the header to see if a full message is waiting
         bq->ReadBytes((char*)&dataLength, sizeof(PTCPHeader), true);
-        if (RakNet::BitStream::DoEndianSwap())
+        if (RakNet::BitStream::DoEndianSwap()) {
           RakNet::BitStream::ReverseBytesInPlace(
               (unsigned char*)&dataLength, sizeof(dataLength));
+}
         // Header indicates packet length. If enough data is available, read out and return one packet
         if (bq->GetBytesWritten() >= dataLength + sizeof(PTCPHeader)) {
           do {
@@ -196,11 +208,13 @@ Packet* PacketizedTCP::Receive() {
 
             // Peek the header to see if a full message is waiting
             if (bq->ReadBytes((char*)&dataLength, sizeof(PTCPHeader), true)) {
-              if (RakNet::BitStream::DoEndianSwap())
+              if (RakNet::BitStream::DoEndianSwap()) {
                 RakNet::BitStream::ReverseBytesInPlace(
                     (unsigned char*)&dataLength, sizeof(dataLength));
-            } else
+}
+            } else {
               break;
+}
           } while (bq->GetBytesWritten() >= dataLength + sizeof(PTCPHeader));
         } else {
           unsigned int oldWritten =
@@ -257,8 +271,9 @@ Packet* PacketizedTCP::Receive() {
 
       DeallocatePacket(incomingPacket);
       incomingPacket = nullptr;
-    } else
+    } else {
       waitingPackets.Push(incomingPacket, _FILE_AND_LINE_);
+}
 
     incomingPacket = TCPInterface::ReceiveInt();
   }
@@ -268,7 +283,7 @@ Packet* PacketizedTCP::Receive() {
 Packet* PacketizedTCP::ReturnOutgoingPacket() {
   Packet* outgoingPacket = nullptr;
   unsigned int i;
-  while (outgoingPacket == nullptr && waitingPackets.IsEmpty() == false) {
+  while (outgoingPacket == nullptr && !waitingPackets.IsEmpty()) {
     outgoingPacket = waitingPackets.Pop();
     PluginReceiveResult pluginResult;
     for (i = 0; i < messageHandlerList.Size(); i++) {
@@ -291,8 +306,9 @@ void PacketizedTCP::CloseConnection(SystemAddress systemAddress) {
   TCPInterface::CloseConnection(systemAddress);
 }
 void PacketizedTCP::RemoveFromConnectionList(const SystemAddress& sa) {
-  if (sa == UNASSIGNED_SYSTEM_ADDRESS)
+  if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
   if (connections.Has(sa)) {
     unsigned int index = connections.GetIndexAtKey(sa);
     if (index != (unsigned int)-1) {
@@ -302,43 +318,49 @@ void PacketizedTCP::RemoveFromConnectionList(const SystemAddress& sa) {
   }
 }
 void PacketizedTCP::AddToConnectionList(const SystemAddress& sa) {
-  if (sa == UNASSIGNED_SYSTEM_ADDRESS)
+  if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
   connections.SetNew(
       sa, RakNet::OP_NEW<DataStructures::ByteQueue>(_FILE_AND_LINE_));
 }
 void PacketizedTCP::ClearAllConnections() {
   unsigned int i;
-  for (i = 0; i < connections.Size(); i++)
+  for (i = 0; i < connections.Size(); i++) {
     RakNet::OP_DELETE(connections[i], _FILE_AND_LINE_);
+}
   connections.Clear();
 }
 SystemAddress PacketizedTCP::HasCompletedConnectionAttempt() {
   PushNotificationsToQueues();
 
-  if (_completedConnectionAttempts.IsEmpty() == false)
+  if (!_completedConnectionAttempts.IsEmpty()) {
     return _completedConnectionAttempts.Pop();
+}
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 SystemAddress PacketizedTCP::HasFailedConnectionAttempt() {
   PushNotificationsToQueues();
 
-  if (_failedConnectionAttempts.IsEmpty() == false)
+  if (!_failedConnectionAttempts.IsEmpty()) {
     return _failedConnectionAttempts.Pop();
+}
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 SystemAddress PacketizedTCP::HasNewIncomingConnection() {
   PushNotificationsToQueues();
 
-  if (_newIncomingConnections.IsEmpty() == false)
+  if (!_newIncomingConnections.IsEmpty()) {
     return _newIncomingConnections.Pop();
+}
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 SystemAddress PacketizedTCP::HasLostConnection() {
   PushNotificationsToQueues();
 
-  if (_lostConnections.IsEmpty() == false)
+  if (!_lostConnections.IsEmpty()) {
     return _lostConnections.Pop();
+}
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 

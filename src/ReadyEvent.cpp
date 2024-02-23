@@ -26,23 +26,25 @@ using namespace RakNet;
 int RakNet::ReadyEvent::RemoteSystemCompByGuid(
     const RakNetGUID& key,
     const RemoteSystem& data) {
-  if (key < data.rakNetGuid)
+  if (key < data.rakNetGuid) {
     return -1;
-  else if (key == data.rakNetGuid)
+  } else if (key == data.rakNetGuid) {
     return 0;
-  else
+  } else {
     return 1;
+}
 }
 
 int RakNet::ReadyEvent::ReadyEventNodeComp(
     const int& key,
     ReadyEvent::ReadyEventNode* const& data) {
-  if (key < data->eventId)
+  if (key < data->eventId) {
     return -1;
-  else if (key == data->eventId)
+  } else if (key == data->eventId) {
     return 0;
-  else
+  } else {
     return 1;
+}
 }
 
 STATIC_FACTORY_DEFINITIONS(ReadyEvent, ReadyEvent);
@@ -59,7 +61,7 @@ bool ReadyEvent::SetEvent(int eventId, bool isReady) {
   bool objectExists;
   unsigned eventIndex =
       readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     // Totally new event
     CreateNewEvent(eventId, isReady);
   } else {
@@ -71,7 +73,7 @@ void ReadyEvent::ForceCompletion(int eventId) {
   bool objectExists;
   unsigned eventIndex =
       readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     // Totally new event
     CreateNewEvent(eventId, true);
     eventIndex = readyEventNodeList.GetIndexFromKey(eventId, &objectExists);
@@ -110,15 +112,17 @@ bool ReadyEvent::IsEventCompletionProcessing(int eventId) const {
     bool anyAllReady = false;
     bool allAllReady = true;
     ReadyEventNode* ren = readyEventNodeList[eventIndex];
-    if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET)
+    if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
       return false;
+}
     for (unsigned i = 0; i < ren->systemList.Size(); i++) {
-      if (ren->systemList[i].lastReceivedStatus == ID_READY_EVENT_ALL_SET)
+      if (ren->systemList[i].lastReceivedStatus == ID_READY_EVENT_ALL_SET) {
         anyAllReady = true;
-      else
+      } else {
         allAllReady = false;
+}
     }
-    return anyAllReady == true && allAllReady == false;
+    return anyAllReady && !allAllReady;
   }
   return false;
 }
@@ -148,8 +152,9 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid) {
   bool eventExists;
   unsigned eventIndex =
       readyEventNodeList.GetIndexFromKey(eventId, &eventExists);
-  if (eventExists == false)
+  if (!eventExists) {
     eventIndex = CreateNewEvent(eventId, false);
+}
 
   // Don't do this, otherwise if we are trying to start a 3 player game, it will not allow the 3rd player to hit ready if the first two players have already done so
   //if (IsLocked(eventIndex))
@@ -168,8 +173,9 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid) {
     numAdded = AddToWaitListInternal(eventIndex, guid);
   }
 
-  if (numAdded > 0)
+  if (numAdded > 0) {
     UpdateReadyStatus(eventIndex);
+}
   return numAdded > 0;
 }
 bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
@@ -190,8 +196,9 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
         bool isCompleted = IsEventCompletedByIndex(eventIndex);
         readyEventNodeList[eventIndex]->systemList.RemoveAtIndex(systemIndex);
 
-        if (isCompleted == false && IsEventCompletedByIndex(eventIndex))
+        if (!isCompleted && IsEventCompletedByIndex(eventIndex)) {
           PushCompletionPacket(readyEventNodeList[eventIndex]->eventId);
+}
 
         UpdateReadyStatus(eventIndex);
 
@@ -241,15 +248,19 @@ ReadyEventSystemStatus ReadyEvent::GetReadyStatus(
   if (objectExists) {
     ReadyEventNode* ren = readyEventNodeList[readyIndex];
     unsigned systemIndex = ren->systemList.GetIndexFromKey(guid, &objectExists);
-    if (objectExists == false)
+    if (!objectExists) {
       return RES_NOT_WAITING;
-    if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_SET)
+}
+    if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_SET) {
       return RES_READY;
-    if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_UNSET)
+}
+    if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_UNSET) {
       return RES_WAITING;
+}
     if (ren->systemList[systemIndex].lastReceivedStatus ==
-        ID_READY_EVENT_ALL_SET)
+        ID_READY_EVENT_ALL_SET) {
       return RES_ALL_READY;
+}
   }
 
   return RES_UNKNOWN_EVENT;
@@ -285,7 +296,7 @@ bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid) {
   ReadyEventNode* ren = readyEventNodeList[eventIndex];
   bool objectExists;
   unsigned systemIndex = ren->systemList.GetIndexFromKey(guid, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     RemoteSystem rs;
     rs.lastReceivedStatus = ID_READY_EVENT_UNSET;
     rs.lastSentStatus = ID_READY_EVENT_UNSET;
@@ -328,17 +339,20 @@ void ReadyEvent::OnReadyEventPacketUpdate(Packet* packet) {
         ren->systemList.GetIndexFromKey(packet->guid, &systemExists);
     if (systemExists) {
       // Just return if no change
-      if (ren->systemList[systemIndex].lastReceivedStatus == packet->data[0])
+      if (ren->systemList[systemIndex].lastReceivedStatus == packet->data[0]) {
         return;
+}
 
       bool wasCompleted = IsEventCompletedByIndex(readyIndex);
       ren->systemList[systemIndex].lastReceivedStatus = packet->data[0];
       // If forced all set, doesn't matter what the new packet is
-      if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET)
+      if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
         return;
+}
       UpdateReadyStatus(readyIndex);
-      if (wasCompleted == false && IsEventCompletedByIndex(readyIndex))
+      if (!wasCompleted && IsEventCompletedByIndex(readyIndex)) {
         PushCompletionPacket(readyIndex);
+}
     }
   }
 }
@@ -355,8 +369,9 @@ void ReadyEvent::OnReadyEventQuery(Packet* packet) {
         readyEventNodeList[readyIndex]->systemList.GetIndexFromKey(
             packet->guid, &objectExists);
     // Force the non-default send, because our initial send may have arrived at a system that didn't yet create the ready event
-    if (objectExists)
+    if (objectExists) {
       SendReadyUpdate(readyIndex, systemIndex, true);
+}
   }
 }
 void ReadyEvent::OnClosedConnection(
@@ -377,17 +392,21 @@ bool ReadyEvent::SetEventByIndex(int eventIndex, bool isReady) {
   ReadyEventNode* ren = readyEventNodeList[eventIndex];
   if ((ren->eventStatus == ID_READY_EVENT_ALL_SET ||
        ren->eventStatus == ID_READY_EVENT_SET) &&
-      isReady == true)
+      isReady) {
     return false; // Success - no change
-  if (ren->eventStatus == ID_READY_EVENT_UNSET && isReady == false)
+}
+  if (ren->eventStatus == ID_READY_EVENT_UNSET && !isReady) {
     return false; // Success - no change
-  if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET)
+}
+  if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
     return false; // Can't change
+}
 
-  if (isReady)
+  if (isReady) {
     ren->eventStatus = ID_READY_EVENT_SET;
-  else
+  } else {
     ren->eventStatus = ID_READY_EVENT_UNSET;
+}
 
   UpdateReadyStatus(eventIndex);
 
@@ -402,13 +421,17 @@ bool ReadyEvent::SetEventByIndex(int eventIndex, bool isReady) {
 bool ReadyEvent::IsEventCompletedByIndex(unsigned eventIndex) const {
   ReadyEventNode* ren = readyEventNodeList[eventIndex];
   unsigned i;
-  if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET)
+  if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
     return true;
-  if (ren->eventStatus != ID_READY_EVENT_ALL_SET)
+}
+  if (ren->eventStatus != ID_READY_EVENT_ALL_SET) {
     return false;
-  for (i = 0; i < ren->systemList.Size(); i++)
-    if (ren->systemList[i].lastReceivedStatus != ID_READY_EVENT_ALL_SET)
+}
+  for (i = 0; i < ren->systemList.Size(); i++) {
+    if (ren->systemList[i].lastReceivedStatus != ID_READY_EVENT_ALL_SET) {
       return false;
+}
+}
   return true;
 }
 
@@ -423,10 +446,11 @@ void ReadyEvent::Clear() {
 unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady) {
   auto* ren = RakNet::OP_NEW<ReadyEventNode>(_FILE_AND_LINE_);
   ren->eventId = eventId;
-  if (isReady == false)
+  if (!isReady) {
     ren->eventStatus = ID_READY_EVENT_UNSET;
-  else
+  } else {
     ren->eventStatus = ID_READY_EVENT_SET;
+}
   return readyEventNodeList.Insert(eventId, ren, true, _FILE_AND_LINE_);
 }
 void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
@@ -442,7 +466,7 @@ void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
         break;
       }
     }
-    if (anyUnset == false) {
+    if (!anyUnset) {
       ren->eventStatus = ID_READY_EVENT_ALL_SET;
     }
   } else if (ren->eventStatus == ID_READY_EVENT_ALL_SET) {
@@ -454,7 +478,7 @@ void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
         break;
       }
     }
-    if (anyUnset == true) {
+    if (anyUnset) {
       ren->eventStatus = ID_READY_EVENT_SET;
     }
   }
@@ -506,13 +530,15 @@ void ReadyEvent::RemoveFromAllLists(RakNetGUID guid) {
 
     systemIndex = readyEventNodeList[eventIndex]->systemList.GetIndexFromKey(
         guid, &systemExists);
-    if (systemExists)
+    if (systemExists) {
       readyEventNodeList[eventIndex]->systemList.RemoveAtIndex(systemIndex);
+}
 
     UpdateReadyStatus(eventIndex);
 
-    if (isCompleted == false && IsEventCompletedByIndex(eventIndex))
+    if (!isCompleted && IsEventCompletedByIndex(eventIndex)) {
       PushCompletionPacket(readyEventNodeList[eventIndex]->eventId);
+}
   }
 }
 void ReadyEvent::PushCompletionPacket(unsigned eventId) {

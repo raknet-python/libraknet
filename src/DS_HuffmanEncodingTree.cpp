@@ -28,8 +28,9 @@ HuffmanEncodingTree::~HuffmanEncodingTree() {
 }
 
 void HuffmanEncodingTree::FreeMemory() {
-  if (root == nullptr)
+  if (root == nullptr) {
     return;
+}
 
   // Use an in-order traversal to delete the tree
   DataStructures::Queue<HuffmanEncodingTreeNode*> nodeQueue;
@@ -41,18 +42,21 @@ void HuffmanEncodingTree::FreeMemory() {
   while (nodeQueue.Size() > 0) {
     node = nodeQueue.Pop();
 
-    if (node->left)
+    if (node->left) {
       nodeQueue.Push(node->left, _FILE_AND_LINE_);
+}
 
-    if (node->right)
+    if (node->right) {
       nodeQueue.Push(node->right, _FILE_AND_LINE_);
+}
 
     RakNet::OP_DELETE(node, _FILE_AND_LINE_);
   }
 
   // Delete the encoding table
-  for (int i = 0; i < 256; i++)
+  for (int i = 0; i < 256; i++) {
     rakFree_Ex(encodingTable[i].encoding, _FILE_AND_LINE_);
+}
 
   root = nullptr;
 }
@@ -79,8 +83,9 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
     node->value = (unsigned char)counter;
     node->weight = frequencyTable[counter];
 
-    if (node->weight == 0)
+    if (node->weight == 0) {
       node->weight = 1; // 0 weights are illegal
+}
 
     leafList[counter] = node; // Used later to generate the encryption table
 
@@ -136,10 +141,11 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
 
     do {
       if (currentNode->parent->left ==
-          currentNode) // We're storing the paths in reverse order.since we are going from the leaf to the root
+          currentNode) { // We're storing the paths in reverse order.since we are going from the leaf to the root
         tempPath[tempPathLength++] = false;
-      else
+      } else {
         tempPath[tempPathLength++] = true;
+}
 
       currentNode = currentNode->parent;
     }
@@ -149,10 +155,11 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
     // Write to the bitstream in the reverse order that we stored the path, which gives us the correct order from the root to the leaf
     while (tempPathLength-- > 0) {
       if (tempPath
-              [tempPathLength]) // Write 1's and 0's because writing a bool will write the BitStream TYPE_CHECKING validation bits if that is defined along with the actual data bit, which is not what we want
+              [tempPathLength]) { // Write 1's and 0's because writing a bool will write the BitStream TYPE_CHECKING validation bits if that is defined along with the actual data bit, which is not what we want
         bitStream.Write1();
-      else
+      } else {
         bitStream.Write0();
+}
     }
 
     // Read data from the bitstream, which is written to the encoding table in bits and bitlength. Note this function allocates the encodingTable[counter].encoding pointer
@@ -185,7 +192,7 @@ void HuffmanEncodingTree::EncodeArray(
     auto remainingBits =
         (unsigned char)(8 - (output->GetNumberOfBitsUsed() % 8));
 
-    for (counter = 0; counter < 256; counter++)
+    for (counter = 0; counter < 256; counter++) {
       if (encodingTable[counter].bitLength > remainingBits) {
         output->WriteBits(
             encodingTable[counter].encoding,
@@ -193,6 +200,7 @@ void HuffmanEncodingTree::EncodeArray(
             false); // Data is left aligned
         break;
       }
+}
 
 #ifdef _DEBUG
     RakAssert(
@@ -217,15 +225,17 @@ unsigned HuffmanEncodingTree::DecodeArray(
   // For each bit, go left if it is a 0 and right if it is a 1.  When we reach a leaf, that gives us the desired value and we restart from the root
 
   for (unsigned counter = 0; counter < sizeInBits; counter++) {
-    if (input->ReadBit() == false) // left!
+    if (!input->ReadBit()) { // left!
       currentNode = currentNode->left;
-    else
+    } else {
       currentNode = currentNode->right;
+}
 
     if (currentNode->left == nullptr && currentNode->right == nullptr) // Leaf
     {
-      if (outputWriteIndex < maxCharsToWrite)
+      if (outputWriteIndex < maxCharsToWrite) {
         output[outputWriteIndex] = currentNode->value;
+}
 
       outputWriteIndex++;
 
@@ -243,8 +253,9 @@ void HuffmanEncodingTree::DecodeArray(
     RakNet::BitStream* output) {
   HuffmanEncodingTreeNode* currentNode;
 
-  if (sizeInBits <= 0)
+  if (sizeInBits <= 0) {
     return;
+}
 
   RakNet::BitStream bitStream(input, BITS_TO_BYTES(sizeInBits), false);
 
@@ -252,10 +263,11 @@ void HuffmanEncodingTree::DecodeArray(
 
   // For each bit, go left if it is a 0 and right if it is a 1.  When we reach a leaf, that gives us the desired value and we restart from the root
   for (unsigned counter = 0; counter < sizeInBits; counter++) {
-    if (bitStream.ReadBit() == false) // left!
+    if (!bitStream.ReadBit()) { // left!
       currentNode = currentNode->left;
-    else
+    } else {
       currentNode = currentNode->right;
+}
 
     if (currentNode->left == nullptr && currentNode->right == nullptr) // Leaf
     {
@@ -286,9 +298,9 @@ void HuffmanEncodingTree::InsertNodeIntoSortedList(
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
   while (true) {
-    if (huffmanEncodingTreeNodeList->Peek()->weight < node->weight)
+    if (huffmanEncodingTreeNodeList->Peek()->weight < node->weight) {
       ++(*huffmanEncodingTreeNodeList);
-    else {
+    } else {
       huffmanEncodingTreeNodeList->Insert(node);
       break;
     }

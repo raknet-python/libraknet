@@ -15,7 +15,7 @@
 #include <ws2tcpip.h>
 
 #endif
-#include <stdio.h>
+#include <cstdio>
 #include "RakNetDefines.h"
 
 int WSAStartupSingleton::refCount = 0;
@@ -27,8 +27,9 @@ void WSAStartupSingleton::AddRef() {
 
   refCount++;
 
-  if (refCount != 1)
+  if (refCount != 1) {
     return;
+}
 
   WSADATA winsockInfo;
   if (WSAStartup(MAKEWORD(2, 2), &winsockInfo) != 0) {
@@ -56,8 +57,9 @@ void WSAStartupSingleton::AddRef() {
 }
 void WSAStartupSingleton::Deref() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
-  if (refCount == 0)
+  if (refCount == 0) {
     return;
+}
 
   if (refCount > 1) {
     refCount--;

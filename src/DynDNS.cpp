@@ -49,8 +49,9 @@ DynDNS::DynDNS() {
   tcp = nullptr;
 }
 DynDNS::~DynDNS() {
-  if (tcp)
+  if (tcp) {
     RakNet::OP_DELETE(tcp, _FILE_AND_LINE_);
+}
 }
 void DynDNS::Stop() {
   tcp->Stop();
@@ -66,12 +67,13 @@ void DynDNS::UpdateHostIPAsynch(
     const char* usernameAndPassword) {
   myIPStr[0] = 0;
 
-  if (tcp == nullptr)
+  if (tcp == nullptr) {
     tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
+}
   connectPhase = CP_IDLE;
   host = dnsHost;
 
-  if (tcp->Start(0, 1) == false) {
+  if (!tcp->Start(0, 1)) {
     SetCompleted(RC_TCP_FAILED_TO_START, "TCP failed to start");
     return;
   }
@@ -98,8 +100,9 @@ void DynDNS::UpdateHostIPAsynch(
   getString += "User-Agent: Jenkins Software LLC - PC - 1.0\n\n";
 }
 void DynDNS::Update() {
-  if (connectPhase == CP_IDLE)
+  if (connectPhase == CP_IDLE) {
     return;
+}
 
   serverAddress = tcp->HasFailedConnectionAttempt();
   if (serverAddress != UNASSIGNED_SYSTEM_ADDRESS) {
@@ -150,8 +153,9 @@ void DynDNS::Update() {
       if (result != nullptr) {
         result += strlen("Connection: close");
         while (*result &&
-               ((*result == '\r') || (*result == '\n') || (*result == ' ')))
+               ((*result == '\r') || (*result == '\n') || (*result == ' '))) {
           result++;
+}
         for (i = 0; i < 13; i++) {
           if (strncmp(
                   resultTable[i].code, result, strlen(resultTable[i].code)) ==
@@ -159,8 +163,9 @@ void DynDNS::Update() {
             if (resultTable[i].resultCode == RC_SUCCESS) {
               // Read my external IP into myIPStr
               // Advance until we hit a number
-              while (*result && ((*result < '0') || (*result > '9')))
+              while (*result && ((*result < '0') || (*result > '9'))) {
                 result++;
+}
               if (*result) {
                 SystemAddress parser;
                 parser.FromString(result);

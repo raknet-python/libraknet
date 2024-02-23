@@ -36,7 +36,7 @@ SimpleMutex::~SimpleMutex() {
 
 #ifdef _WIN32
 #ifdef _DEBUG
-#include <stdio.h>
+#include <cstdio>
 #endif
 #endif
 

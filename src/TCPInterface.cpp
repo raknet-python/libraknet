@@ -26,8 +26,8 @@ using socklen_t = int;
 #include <sys/time.h>
 #include <unistd.h>
 #endif
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include "Itoa.h"
 #include "RakAssert.h"
 #include "RakSleep.h"
@@ -97,8 +97,9 @@ bool TCPInterface::CreateListenSocket(
   (void)socketFamily;
 #if RAKNET_SUPPORT_IPV6 != 1
   listenSocket = socket__(AF_INET, SOCK_STREAM, 0);
-  if ((int)listenSocket == -1)
+  if ((int)listenSocket == -1) {
     return false;
+}
 
   struct sockaddr_in serverAddress;
   memset(&serverAddress, 0, sizeof(sockaddr_in));
@@ -106,8 +107,9 @@ bool TCPInterface::CreateListenSocket(
   if (bindAddress && bindAddress[0]) {
     serverAddress.sin_addr.s_addr = inet_addr__(bindAddress);
 
-  } else
+  } else {
     serverAddress.sin_addr.s_addr = INADDR_ANY;
+}
 
   serverAddress.sin_port = htons(port);
 
@@ -116,8 +118,9 @@ bool TCPInterface::CreateListenSocket(
   if (bind__(
           listenSocket,
           (struct sockaddr*)&serverAddress,
-          sizeof(serverAddress)) < 0)
+          sizeof(serverAddress)) < 0) {
     return false;
+}
 
   listen__(listenSocket, maxIncomingConnections);
 #else
@@ -180,8 +183,9 @@ bool TCPInterface::Start(
 #else
   (void)socketFamily;
 
-  if (isStarted.GetValue() > 0)
+  if (isStarted.GetValue() > 0) {
     return false;
+}
 
   threadPriority = _threadPriority;
 
@@ -196,10 +200,12 @@ bool TCPInterface::Start(
   }
 
   isStarted.Increment();
-  if (maxConnections == 0)
+  if (maxConnections == 0) {
     maxConnections = maxIncomingConnections;
-  if (maxConnections == 0)
+}
+  if (maxConnections == 0) {
     maxConnections = 1;
+}
   remoteClientsLength = maxConnections;
   remoteClients =
       RakNet::OP_NEW_ARRAY<RemoteClient>(maxConnections, _FILE_AND_LINE_);
@@ -220,27 +226,32 @@ bool TCPInterface::Start(
   errorCode =
       RakNet::RakThread::Create(UpdateTCPInterfaceLoop, this, threadPriority);
 
-  if (errorCode != 0)
+  if (errorCode != 0) {
     return false;
+}
 
-  while (threadRunning.GetValue() == 0)
+  while (threadRunning.GetValue() == 0) {
     RakSleep(0);
+}
 
   unsigned int i;
-  for (i = 0; i < messageHandlerList.Size(); i++)
+  for (i = 0; i < messageHandlerList.Size(); i++) {
     messageHandlerList[i]->OnRakPeerStartup();
+}
 
   return true;
 #endif // __native_client__
 }
 void TCPInterface::Stop() {
   unsigned int i;
-  for (i = 0; i < messageHandlerList.Size(); i++)
+  for (i = 0; i < messageHandlerList.Size(); i++) {
     messageHandlerList[i]->OnRakPeerShutdown();
+}
 
 #ifndef __native_client__
-  if (isStarted.GetValue() == 0)
+  if (isStarted.GetValue() == 0) {
     return;
+}
 
 #if OPEN_SSL_CLIENT_SUPPORT == 1
   for (i = 0; i < remoteClientsLength; i++)
@@ -270,8 +281,9 @@ void TCPInterface::Stop() {
   blockingSocketListMutex.Unlock();
 
   // Wait for the thread to stop
-  while (threadRunning.GetValue() > 0)
+  while (threadRunning.GetValue() > 0) {
     RakSleep(15);
+}
 
   RakSleep(100);
 
@@ -298,11 +310,13 @@ void TCPInterface::Stop() {
   failedConnectionAttempts.Clear(_FILE_AND_LINE_);
   completedConnectionAttempts.Clear(_FILE_AND_LINE_);
   failedConnectionAttempts.Clear(_FILE_AND_LINE_);
-  for (i = 0; i < headPush.Size(); i++)
+  for (i = 0; i < headPush.Size(); i++) {
     DeallocatePacket(headPush[i]);
+}
   headPush.Clear(_FILE_AND_LINE_);
-  for (i = 0; i < tailPush.Size(); i++)
+  for (i = 0; i < tailPush.Size(); i++) {
     DeallocatePacket(tailPush[i]);
+}
   tailPush.Clear(_FILE_AND_LINE_);
 
 #if OPEN_SSL_CLIENT_SUPPORT == 1
@@ -319,22 +333,24 @@ SystemAddress TCPInterface::Connect(
     bool block,
     unsigned short socketFamily,
     const char* bindAddress) {
-  if (threadRunning.GetValue() == 0)
+  if (threadRunning.GetValue() == 0) {
     return UNASSIGNED_SYSTEM_ADDRESS;
+}
 
   int newRemoteClientIndex = -1;
   for (newRemoteClientIndex = 0; newRemoteClientIndex < remoteClientsLength;
        newRemoteClientIndex++) {
     remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
-    if (remoteClients[newRemoteClientIndex].isActive == false) {
+    if (!remoteClients[newRemoteClientIndex].isActive) {
       remoteClients[newRemoteClientIndex].SetActive(true);
       remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
       break;
     }
     remoteClients[newRemoteClientIndex].isActiveMutex.Unlock();
   }
-  if (newRemoteClientIndex == -1)
+  if (newRemoteClientIndex == -1) {
     return UNASSIGNED_SYSTEM_ADDRESS;
+}
 
   if (block) {
     SystemAddress systemAddress;
@@ -375,10 +391,11 @@ SystemAddress TCPInterface::Connect(
     auto* s = RakNet::OP_NEW<ThisPtrPlusSysAddr>(_FILE_AND_LINE_);
     s->systemAddress.FromStringExplicitPort(host, remotePort);
     s->systemAddress.systemIndex = (SystemIndex)newRemoteClientIndex;
-    if (bindAddress)
+    if (bindAddress) {
       strcpy(s->bindAddress, bindAddress);
-    else
+    } else {
       s->bindAddress[0] = 0;
+}
     s->tcpInterface = this;
     s->socketFamily = socketFamily;
 
@@ -431,20 +448,25 @@ bool TCPInterface::SendList(
     const int numParameters,
     const SystemAddress& systemAddress,
     bool broadcast) {
-  if (isStarted.GetValue() == 0)
+  if (isStarted.GetValue() == 0) {
     return false;
-  if (data == nullptr)
+}
+  if (data == nullptr) {
     return false;
-  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && broadcast == false)
+}
+  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && !broadcast) {
     return false;
+}
   unsigned int totalLength = 0;
   int i;
   for (i = 0; i < numParameters; i++) {
-    if (lengths[i] > 0)
+    if (lengths[i] > 0) {
       totalLength += lengths[i];
+}
   }
-  if (totalLength == 0)
+  if (totalLength == 0) {
     return false;
+}
 
   if (broadcast) {
     // Send to all, possible exception system
@@ -472,13 +494,14 @@ bool TCPInterface::SendList(
   return true;
 }
 bool TCPInterface::ReceiveHasPackets() {
-  return headPush.IsEmpty() == false || incomingMessages.IsEmpty() == false ||
-      tailPush.IsEmpty() == false;
+  return !headPush.IsEmpty() || !incomingMessages.IsEmpty() ||
+      !tailPush.IsEmpty();
 }
 Packet* TCPInterface::Receive() {
   unsigned int i;
-  for (i = 0; i < messageHandlerList.Size(); i++)
+  for (i = 0; i < messageHandlerList.Size(); i++) {
     messageHandlerList[i]->Update();
+}
 
   Packet* outgoingPacket = ReceiveInt();
 
@@ -500,15 +523,19 @@ Packet* TCPInterface::Receive() {
   return outgoingPacket;
 }
 Packet* TCPInterface::ReceiveInt() {
-  if (isStarted.GetValue() == 0)
+  if (isStarted.GetValue() == 0) {
     return nullptr;
-  if (headPush.IsEmpty() == false)
+}
+  if (!headPush.IsEmpty()) {
     return headPush.Pop();
+}
   Packet* p = incomingMessages.PopInaccurate();
-  if (p)
+  if (p) {
     return p;
-  if (tailPush.IsEmpty() == false)
+}
+  if (!tailPush.IsEmpty()) {
     return tailPush.Pop();
+}
   return nullptr;
 }
 
@@ -520,8 +547,9 @@ void TCPInterface::AttachPlugin(PluginInterface2* plugin) {
   }
 }
 void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
-  if (plugin == nullptr)
+  if (plugin == nullptr) {
     return;
+}
 
   unsigned int index;
   index = messageHandlerList.GetIndexOf(plugin);
@@ -535,15 +563,18 @@ void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
   }
 }
 void TCPInterface::CloseConnection(SystemAddress systemAddress) {
-  if (isStarted.GetValue() == 0)
+  if (isStarted.GetValue() == 0) {
     return;
-  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS)
+}
+  if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
+}
 
   unsigned int i;
-  for (i = 0; i < messageHandlerList.Size(); i++)
+  for (i = 0; i < messageHandlerList.Size(); i++) {
     messageHandlerList[i]->OnClosedConnection(
         systemAddress, UNASSIGNED_RAKNET_GUID, LCR_CLOSED_BY_USER);
+}
 
   if (systemAddress.systemIndex < remoteClientsLength &&
       remoteClients[systemAddress.systemIndex].systemAddress == systemAddress) {
@@ -570,8 +601,9 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress) {
 #endif
 }
 void TCPInterface::DeallocatePacket(Packet* packet) {
-  if (packet == nullptr)
+  if (packet == nullptr) {
     return;
+}
   if (packet->deleteData) {
     rakFree_Ex(packet->data, _FILE_AND_LINE_);
     incomingMessages.Deallocate(packet, _FILE_AND_LINE_);
@@ -593,10 +625,11 @@ Packet* TCPInterface::AllocatePacket(unsigned dataSize) {
   return p;
 }
 void TCPInterface::PushBackPacket(Packet* packet, bool pushAtHead) {
-  if (pushAtHead)
+  if (pushAtHead) {
     headPush.Push(packet, _FILE_AND_LINE_);
-  else
+  } else {
     tailPush.Push(packet, _FILE_AND_LINE_);
+}
 }
 bool TCPInterface::WasStarted() const {
   return threadRunning.GetValue() > 0;
@@ -604,15 +637,17 @@ bool TCPInterface::WasStarted() const {
 SystemAddress TCPInterface::HasCompletedConnectionAttempt() {
   SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
   completedConnectionAttemptMutex.Lock();
-  if (completedConnectionAttempts.IsEmpty() == false)
+  if (!completedConnectionAttempts.IsEmpty()) {
     sysAddr = completedConnectionAttempts.Pop();
+}
   completedConnectionAttemptMutex.Unlock();
 
   if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS) {
     unsigned int i;
-    for (i = 0; i < messageHandlerList.Size(); i++)
+    for (i = 0; i < messageHandlerList.Size(); i++) {
       messageHandlerList[i]->OnNewConnection(
           sysAddr, UNASSIGNED_RAKNET_GUID, true);
+}
   }
 
   return sysAddr;
@@ -620,8 +655,9 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt() {
 SystemAddress TCPInterface::HasFailedConnectionAttempt() {
   SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
   failedConnectionAttemptMutex.Lock();
-  if (failedConnectionAttempts.IsEmpty() == false)
+  if (!failedConnectionAttempts.IsEmpty()) {
     sysAddr = failedConnectionAttempts.Pop();
+}
   failedConnectionAttemptMutex.Unlock();
 
   if (sysAddr != UNASSIGNED_SYSTEM_ADDRESS) {
@@ -647,9 +683,10 @@ SystemAddress TCPInterface::HasNewIncomingConnection() {
     newIncomingConnections.Deallocate(out, _FILE_AND_LINE_);
 
     unsigned int i;
-    for (i = 0; i < messageHandlerList.Size(); i++)
+    for (i = 0; i < messageHandlerList.Size(); i++) {
       messageHandlerList[i]->OnNewConnection(
           out2, UNASSIGNED_RAKNET_GUID, true);
+}
 
     return *out;
   } else {
@@ -664,9 +701,10 @@ SystemAddress TCPInterface::HasLostConnection() {
     lostConnections.Deallocate(out, _FILE_AND_LINE_);
 
     unsigned int i;
-    for (i = 0; i < messageHandlerList.Size(); i++)
+    for (i = 0; i < messageHandlerList.Size(); i++) {
       messageHandlerList[i]->OnClosedConnection(
           out2, UNASSIGNED_RAKNET_GUID, LCR_DISCONNECTION_NOTIFICATION);
+}
 
     return *out;
   } else {
@@ -680,8 +718,9 @@ void TCPInterface::GetConnectionList(
   unsigned short maxToWrite = *numberOfSystems;
   for (int i = 0; i < remoteClientsLength; i++) {
     if (remoteClients[i].isActive) {
-      if (systemCount < maxToWrite)
+      if (systemCount < maxToWrite) {
         remoteSystems[systemCount] = remoteClients[i].systemAddress;
+}
       systemCount++;
     }
   }
@@ -690,8 +729,9 @@ void TCPInterface::GetConnectionList(
 unsigned short TCPInterface::GetConnectionCount() const {
   unsigned short systemCount = 0;
   for (int i = 0; i < remoteClientsLength; i++) {
-    if (remoteClients[i].isActive)
+    if (remoteClients[i].isActive) {
       systemCount++;
+}
   }
   return systemCount;
 }
@@ -736,15 +776,17 @@ __TCPSOCKET__ TCPInterface::SocketConnect(
 
   struct hostent* server;
   server = gethostbyname(host);
-  if (server == nullptr)
+  if (server == nullptr) {
     return 0;
+}
 
 #if defined(WINDOWS_STORE_RT)
   __TCPSOCKET__ sockfd = WinRTCreateStreamSocket(AF_INET, SOCK_STREAM, 0);
 #else
   __TCPSOCKET__ sockfd = socket__(AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0)
+  if (sockfd < 0) {
     return 0;
+}
 #endif
 
   memset(&serverAddress, 0, sizeof(serverAddress));
@@ -754,8 +796,9 @@ __TCPSOCKET__ TCPInterface::SocketConnect(
   if (bindAddress && bindAddress[0]) {
     serverAddress.sin_addr.s_addr = inet_addr__(bindAddress);
 
-  } else
+  } else {
     serverAddress.sin_addr.s_addr = INADDR_ANY;
+}
 
   int sock_opt = 1024 * 256;
   setsockopt__(
@@ -797,8 +840,9 @@ __TCPSOCKET__ TCPInterface::SocketConnect(
     unsigned sockfdIndex;
     blockingSocketListMutex.Lock();
     sockfdIndex = blockingSocketList.GetIndexOf(sockfd);
-    if (sockfdIndex != (unsigned)-1)
+    if (sockfdIndex != (unsigned)-1) {
       blockingSocketList.RemoveAtIndexFast(sockfdIndex);
+}
     blockingSocketListMutex.Unlock();
 
     closesocket__(sockfd);
@@ -935,10 +979,12 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
           if (socketCopy != 0) {
             FD_SET(socketCopy, &readFD);
             FD_SET(socketCopy, &exceptionFD);
-            if (sts->remoteClients[i].outgoingData.GetBytesWritten() > 0)
+            if (sts->remoteClients[i].outgoingData.GetBytesWritten() > 0) {
               FD_SET(socketCopy, &writeFD);
-            if (socketCopy > largestDescriptor) // @see largestDescriptorDef
+}
+            if (socketCopy > largestDescriptor) { // @see largestDescriptorDef
               largestDescriptor = socketCopy;
+}
           }
         }
         sts->remoteClients[i].isActiveMutex.Unlock();
@@ -952,8 +998,9 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
       selectResult = (int)select__(
           largestDescriptor + 1, &readFD, &writeFD, &exceptionFD, &tv);
 
-      if (selectResult <= 0)
+      if (selectResult <= 0) {
         break;
+}
 
       if (sts->listenSocket != 0 && FD_ISSET(sts->listenSocket, &readFD)) {
         newSock = accept__(
@@ -965,7 +1012,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
                newRemoteClientIndex < sts->remoteClientsLength;
                newRemoteClientIndex++) {
             sts->remoteClients[newRemoteClientIndex].isActiveMutex.Lock();
-            if (sts->remoteClients[newRemoteClientIndex].isActive == false) {
+            if (!sts->remoteClients[newRemoteClientIndex].isActive) {
               sts->remoteClients[newRemoteClientIndex].socket = newSock;
 
 #if RAKNET_SUPPORT_IPV6 != 1
@@ -1029,7 +1076,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
       {
         i = 0;
         while (i < (unsigned int)sts->remoteClientsLength) {
-          if (sts->remoteClients[i].isActive == false) {
+          if (!sts->remoteClients[i].isActive) {
             i++;
             continue;
           }
@@ -1122,10 +1169,11 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
                     rc->outgoingData.PeekContiguousBytes(&contiguousLength);
                 if (contiguousLength < (unsigned int)BUFF_SIZE &&
                     contiguousLength < bytesInBuffer) {
-                  if (bytesInBuffer > BUFF_SIZE)
+                  if (bytesInBuffer > BUFF_SIZE) {
                     bytesAvailable = BUFF_SIZE;
-                  else
+                  } else {
                     bytesAvailable = bytesInBuffer;
+}
                   rc->outgoingData.ReadBytes(data, bytesAvailable, true);
                   bytesSent = rc->Send(data, bytesAvailable);
                 } else {
@@ -1133,8 +1181,9 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
                       rc->Send(contiguousBytesPointer, contiguousLength);
                 }
 
-                if (bytesSent > 0)
+                if (bytesSent > 0) {
                   rc->outgoingData.IncrementReadOffset(bytesSent);
+}
                 bytesInBuffer = rc->outgoingData.GetBytesWritten();
               }
               rc->outgoingDataMutex.Unlock();
@@ -1160,7 +1209,7 @@ void RemoteClient::SetActive(bool a) {
   if (isActive != a) {
     isActive = a;
     Reset();
-    if (isActive == false && socket != 0) {
+    if (!isActive && socket != 0) {
       closesocket__(socket);
       socket = 0;
     }
@@ -1175,8 +1224,9 @@ void RemoteClient::SendOrBuffer(
   const bool ALLOW_SEND_FROM_USER_THREAD = false;
 
   int parameterIndex;
-  if (isActive == false)
+  if (!isActive) {
     return;
+}
   parameterIndex = 0;
   for (; parameterIndex < numParameters; parameterIndex++) {
     outgoingDataMutex.Lock();

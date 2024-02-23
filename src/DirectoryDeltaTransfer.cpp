@@ -49,8 +49,9 @@ class DDTCallback : public FileListTransferCBInterface {
           fullPathToDir,
           (char*)onFileStruct->fileData,
           (unsigned int)onFileStruct->byteLengthOfThisFile);
-    } else
+    } else {
       fullPathToDir[0] = 0;
+}
 
     return onFileCallback->OnFile(onFileStruct);
   }
@@ -62,8 +63,9 @@ class DDTCallback : public FileListTransferCBInterface {
         subdirLen < strlen(fps->onFileStruct->fileName)) {
       strcpy(fullPathToDir, outputSubdir);
       strcat(fullPathToDir, fps->onFileStruct->fileName + subdirLen);
-    } else
+    } else {
       fullPathToDir[0] = 0;
+}
 
     onFileCallback->OnFileProgress(fps);
   }
@@ -90,8 +92,9 @@ void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
     DataStructures::List<FileListProgress*> fileListProgressList;
     fileListTransfer->GetCallbacks(fileListProgressList);
     unsigned int i;
-    for (i = 0; i < fileListProgressList.Size(); i++)
+    for (i = 0; i < fileListProgressList.Size(); i++) {
       availableUploads->RemoveCallback(fileListProgressList[i]);
+}
   }
 
   fileListTransfer = flt;
@@ -100,21 +103,23 @@ void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
     DataStructures::List<FileListProgress*> fileListProgressList;
     flt->GetCallbacks(fileListProgressList);
     unsigned int i;
-    for (i = 0; i < fileListProgressList.Size(); i++)
+    for (i = 0; i < fileListProgressList.Size(); i++) {
       availableUploads->AddCallback(fileListProgressList[i]);
+}
   } else {
     availableUploads->ClearCallbacks();
   }
 }
 void DirectoryDeltaTransfer::SetApplicationDirectory(
     const char* pathToApplication) {
-  if (pathToApplication == nullptr || pathToApplication[0] == 0)
+  if (pathToApplication == nullptr || pathToApplication[0] == 0) {
     applicationDirectory[0] = 0;
-  else {
+  } else {
     strncpy(applicationDirectory, pathToApplication, 510);
     if (applicationDirectory[strlen(applicationDirectory) - 1] != '/' &&
-        applicationDirectory[strlen(applicationDirectory) - 1] != '\\')
+        applicationDirectory[strlen(applicationDirectory) - 1] != '\\') {
       strcat(applicationDirectory, "/");
+}
     applicationDirectory[511] = 0;
   }
 }
@@ -154,23 +159,28 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
   if (subdir && subdir[0]) {
     transferCallback->subdirLen = (unsigned int)strlen(subdir);
     if (subdir[transferCallback->subdirLen - 1] != '/' &&
-        subdir[transferCallback->subdirLen - 1] != '\\')
+        subdir[transferCallback->subdirLen - 1] != '\\') {
       transferCallback->subdirLen++;
-  } else
+}
+  } else {
     transferCallback->subdirLen = 0;
-  if (prependAppDirToOutputSubdir)
+}
+  if (prependAppDirToOutputSubdir) {
     strcpy(transferCallback->outputSubdir, applicationDirectory);
-  else
+  } else {
     transferCallback->outputSubdir[0] = 0;
-  if (outputSubdir)
+}
+  if (outputSubdir) {
     strcat(transferCallback->outputSubdir, outputSubdir);
+}
   if (transferCallback
               ->outputSubdir[strlen(transferCallback->outputSubdir) - 1] !=
           '/' &&
       transferCallback
               ->outputSubdir[strlen(transferCallback->outputSubdir) - 1] !=
-          '\\')
+          '\\') {
     strcat(transferCallback->outputSubdir, "/");
+}
   transferCallback->onFileCallback = onFileCallback;
 
   // Setup the transfer plugin to get the response to this download request
@@ -249,7 +259,7 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
   inBitstream.Read(setId);
   StringCompressor::Instance()->DecodeString(subdir, 256, &inBitstream);
   StringCompressor::Instance()->DecodeString(remoteSubdir, 256, &inBitstream);
-  if (remoteFileHash.Deserialize(&inBitstream) == false) {
+  if (!remoteFileHash.Deserialize(&inBitstream)) {
 #ifdef _DEBUG
     RakAssert(0);
 #endif
@@ -258,10 +268,11 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
 
   availableUploads->GetDeltaToCurrent(
       &remoteFileHash, &delta, subdir, remoteSubdir);
-  if (incrementalReadInterface == nullptr)
+  if (incrementalReadInterface == nullptr) {
     delta.PopulateDataFromDisk(applicationDirectory, true, false, true);
-  else
+  } else {
     delta.FlagFilesAsReferences();
+}
 
   // This will call the ddtCallback interface that was passed to FileListTransfer::SetupReceive on the remote system
   fileListTransfer->Send(

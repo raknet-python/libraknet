@@ -11,7 +11,7 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_PacketLogger == 1
 
-#include <string.h>
+#include <cstring>
 #include "ThreadsafePacketLogger.h"
 
 using namespace RakNet;

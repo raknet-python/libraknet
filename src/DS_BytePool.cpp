@@ -12,7 +12,7 @@
 #include "RakAssert.h"
 #ifndef __APPLE__
 // Use stdlib and not malloc for compatibility
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 using namespace DataStructures;

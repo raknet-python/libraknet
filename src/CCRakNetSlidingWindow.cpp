@@ -20,9 +20,9 @@ static const CCTimeType SYN = 10;
 static const CCTimeType SYN = 10000;
 #endif
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include "MTUSize.h"
 #include "RakAlloca.h"
 #include "RakAssert.h"
@@ -82,10 +82,11 @@ int CCRakNetSlidingWindow::GetTransmissionBandwidth(
 
   _isContinuousSend = isContinuousSend;
 
-  if (unacknowledgedBytes <= cwnd)
+  if (unacknowledgedBytes <= cwnd) {
     return (int)(cwnd - unacknowledgedBytes);
-  else
+  } else {
     return 0;
+}
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::ShouldSendACKs(
@@ -139,8 +140,9 @@ bool CCRakNetSlidingWindow::OnGotPacket(
   (void)sizeInBytes;
   (void)isContinuousSend;
 
-  if (oldestUnsentAck == 0)
+  if (oldestUnsentAck == 0) {
     oldestUnsentAck = curTime;
+}
 
   if (datagramSequenceNumber == expectedNextSequenceNumber) {
     *skippedMessageCount = 0;
@@ -151,8 +153,9 @@ bool CCRakNetSlidingWindow::OnGotPacket(
     // Sanity check, just use timeout resend if this was really valid
     if (*skippedMessageCount > 1000) {
       // During testing, the nat punchthrough server got 51200 on the first packet. I have no idea where this comes from, but has happened twice
-      if (*skippedMessageCount > (uint32_t)50000)
+      if (*skippedMessageCount > (uint32_t)50000) {
         return false;
+}
       *skippedMessageCount = 1000;
     }
     expectedNextSequenceNumber =
@@ -170,13 +173,14 @@ void CCRakNetSlidingWindow::OnResend(
   (void)curTime;
   (void)nextActionTime;
 
-  if (_isContinuousSend && backoffThisBlock == false &&
+  if (_isContinuousSend && !backoffThisBlock &&
       cwnd > MAXIMUM_MTU_INCLUDING_UDP_HEADER * 2) {
     // Spec says 1/2 cwnd, but it never recovers because cwnd increases too slowly
     //ssThresh=cwnd-8.0 * (MAXIMUM_MTU_INCLUDING_UDP_HEADER*MAXIMUM_MTU_INCLUDING_UDP_HEADER/cwnd);
     ssThresh = cwnd / 2;
-    if (ssThresh < MAXIMUM_MTU_INCLUDING_UDP_HEADER)
+    if (ssThresh < MAXIMUM_MTU_INCLUDING_UDP_HEADER) {
       ssThresh = MAXIMUM_MTU_INCLUDING_UDP_HEADER;
+}
     cwnd = MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 
     // Only backoff once per period
@@ -194,7 +198,7 @@ void CCRakNetSlidingWindow::OnNAK(
   (void)nakSequenceNumber;
   (void)curTime;
 
-  if (_isContinuousSend && backoffThisBlock == false) {
+  if (_isContinuousSend && !backoffThisBlock) {
     // Start congestion avoidance
     ssThresh = cwnd / 2;
 
@@ -232,8 +236,9 @@ void CCRakNetSlidingWindow::OnAck(
 
   _isContinuousSend = isContinuousSend;
 
-  if (isContinuousSend == false)
+  if (!isContinuousSend) {
     return;
+}
 
   bool isNewCongestionControlPeriod;
   isNewCongestionControlPeriod =
@@ -247,10 +252,11 @@ void CCRakNetSlidingWindow::OnAck(
 
   if (IsInSlowStart()) {
     cwnd += MAXIMUM_MTU_INCLUDING_UDP_HEADER;
-    if (cwnd > ssThresh && ssThresh != 0)
+    if (cwnd > ssThresh && ssThresh != 0) {
       cwnd = ssThresh +
           MAXIMUM_MTU_INCLUDING_UDP_HEADER * MAXIMUM_MTU_INCLUDING_UDP_HEADER /
               cwnd;
+}
 
     // CC PRINTF
     //	printf("++ %.0f Slow start increase.\n", cwnd);
@@ -309,8 +315,9 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
   const CCTimeType additionalVariance = 30000;
 #endif
 
-  if (estimatedRTT == UNSET_TIME_US)
+  if (estimatedRTT == UNSET_TIME_US) {
     return maxThreshold;
+}
 
   //double u=1.0f;
   double u = 2.0f;
@@ -318,8 +325,9 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
 
   CCTimeType threshhold =
       (CCTimeType)(u * estimatedRTT + q * deviationRtt) + additionalVariance;
-  if (threshhold > maxThreshold)
+  if (threshhold > maxThreshold) {
     return maxThreshold;
+}
   return threshhold;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -340,8 +348,9 @@ BytesPerMicrosecond CCRakNetSlidingWindow::GetLocalReceiveRate(
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 double CCRakNetSlidingWindow::GetRTT() const {
-  if (lastRtt == UNSET_TIME_US)
+  if (lastRtt == UNSET_TIME_US) {
     return 0.0;
+}
   return lastRtt;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -371,8 +380,9 @@ uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl(
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK() const {
-  if (lastRtt == UNSET_TIME_US)
+  if (lastRtt == UNSET_TIME_US) {
     return (CCTimeType)UNSET_TIME_US;
+}
   return (CCTimeType)(lastRtt + SYN);
 }
 // ----------------------------------------------------------------------------------------------------------------------------

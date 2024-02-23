@@ -10,8 +10,8 @@
 
 #include "FileOperations.h"
 #if _RAKNET_SUPPORT_FileOperations == 1
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include "RakMemoryOverride.h"
 #include "_FindFirst.h" // For linux
 #ifdef _WIN32
@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include "_FindFirst.h"
 #endif
-#include "errno.h"
+#include <cerrno>
 
 #ifndef MAX_PATH
 #define MAX_PATH 260
@@ -46,8 +46,9 @@ bool WriteFileWithDirectories(
   char pathCopy[MAX_PATH];
   int res;
 
-  if (path == nullptr || path[0] == 0)
+  if (path == nullptr || path[0] == 0) {
     return false;
+}
 
   strcpy(pathCopy, path);
 
@@ -106,13 +107,14 @@ bool IsSlash(unsigned char c) {
 }
 
 void AddSlash(char* input) {
-  if (input == nullptr || input[0] == 0)
+  if (input == nullptr || input[0] == 0) {
     return;
+}
 
   int lastCharIndex = (int)strlen(input) - 1;
-  if (input[lastCharIndex] == '\\')
+  if (input[lastCharIndex] == '\\') {
     input[lastCharIndex] = '/';
-  else if (input[lastCharIndex] != '/') {
+  } else if (input[lastCharIndex] != '/') {
     input[lastCharIndex + 1] = '/';
     input[lastCharIndex + 2] = 0;
   }
@@ -125,8 +127,9 @@ bool DirectoryExists(const char* directory) {
   AddSlash(baseDirWithStars);
   strcat(baseDirWithStars, "*.*");
   dir = _findfirst(baseDirWithStars, &fileInfo);
-  if (dir == -1)
+  if (dir == -1) {
     return false;
+}
   _findclose(dir);
   return true;
 }
@@ -149,8 +152,9 @@ void QuoteIfSpaces(char* str) {
 }
 unsigned int GetFileLength(const char* path) {
   FILE* fp = fopen(path, "rb");
-  if (fp == nullptr)
+  if (fp == nullptr) {
     return 0;
+}
   fseek(fp, 0, SEEK_END);
   unsigned int fileLength = ftell(fp);
   fclose(fp);

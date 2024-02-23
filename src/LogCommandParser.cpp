@@ -16,9 +16,9 @@
 
 #include <memory.h>
 
-#include <stdarg.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdarg>
+#include <cstdio>
+#include <cstring>
 
 #include "LinuxStrings.h"
 
@@ -135,8 +135,9 @@ void LogCommandParser::WriteLog(
     const char* channelName,
     const char* format,
     ...) {
-  if (channelName == nullptr || format == nullptr)
+  if (channelName == nullptr || format == nullptr) {
     return;
+}
 
   unsigned channelIndex;
   channelIndex = GetChannelIndexFromName(channelName);
@@ -154,14 +155,15 @@ void LogCommandParser::WriteLog(
   // Make sure that text ends in \r\n
   int textLen;
   textLen = (int)strlen(text);
-  if (textLen == 0)
+  if (textLen == 0) {
     return;
+}
   if (text[textLen - 1] == '\n') {
     text[textLen - 1] = 0;
   }
-  if (textLen < REMOTE_MAX_TEXT_INPUT - 4)
+  if (textLen < REMOTE_MAX_TEXT_INPUT - 4) {
     strcat(text, "\r\n");
-  else {
+  } else {
     text[textLen - 3] = '\r';
     text[textLen - 2] = '\n';
     text[textLen - 1] = 0;
@@ -187,8 +189,9 @@ void LogCommandParser::PrintChannels(
       anyChannels = true;
     }
   }
-  if (anyChannels == false)
+  if (!anyChannels) {
     transport->Send(systemAddress, "None.\r\n");
+}
 }
 void LogCommandParser::OnNewIncomingConnection(
     const SystemAddress& systemAddress,
@@ -233,17 +236,19 @@ unsigned LogCommandParser::Subscribe(
   auto channelIndex = (unsigned)-1;
   if (channelName) {
     channelIndex = GetChannelIndexFromName(channelName);
-    if (channelIndex == (unsigned)-1)
+    if (channelIndex == (unsigned)-1) {
       return channelIndex;
+}
   }
 
   for (i = 0; i < remoteUsers.Size(); i++) {
     if (remoteUsers[i].systemAddress == systemAddress) {
-      if (channelName)
+      if (channelName) {
         remoteUsers[i].channels |= 1
             << channelIndex; // Set this bit for an existing user
-      else
+      } else {
         remoteUsers[i].channels = 0xFFFF;
+}
       return channelIndex;
     }
   }
@@ -251,21 +256,24 @@ unsigned LogCommandParser::Subscribe(
   // Make a new user
   SystemAddressAndChannel newUser;
   newUser.systemAddress = systemAddress;
-  if (channelName)
+  if (channelName) {
     newUser.channels = 1 << channelIndex;
-  else
+  } else {
     newUser.channels = 0xFFFF;
+}
   remoteUsers.Insert(newUser, _FILE_AND_LINE_);
   return channelIndex;
 }
 unsigned LogCommandParser::GetChannelIndexFromName(const char* channelName) {
   unsigned i;
   for (i = 0; i < 32; i++) {
-    if (channelNames[i] == nullptr)
+    if (channelNames[i] == nullptr) {
       return (unsigned)-1;
+}
 
-    if (_stricmp(channelNames[i], channelName) == 0)
+    if (_stricmp(channelNames[i], channelName) == 0) {
       return i;
+}
   }
   return (unsigned)-1;
 }

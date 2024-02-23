@@ -9,8 +9,8 @@
  */
 
 #include "RakNetSocket2.h"
-#include <stdio.h>
-#include <string.h> // memcpy
+#include <cstdio>
+#include <cstring> // memcpy
 #include "GetTime.h"
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
@@ -328,8 +328,9 @@ RNS2BindResult RNS2_Berkley::BindShared(
   br = BindSharedIPV4(bindParameters, file, line);
 #endif
 
-  if (br != BR_SUCCESS)
+  if (br != BR_SUCCESS) {
     return br;
+}
 
   unsigned long zero = 0;
   RNS2_SendParameters bsp;
@@ -338,8 +339,9 @@ RNS2BindResult RNS2_Berkley::BindShared(
   bsp.systemAddress = boundAddress;
   bsp.ttl = 0;
   RNS2SendResult sr = Send(&bsp, _FILE_AND_LINE_);
-  if (sr < 0)
+  if (sr < 0) {
     return BR_FAILED_SEND_TEST;
+}
 
   memcpy(&binding, bindParameters, sizeof(RNS2_BerkleyBindParameters));
 
@@ -362,7 +364,7 @@ RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop) {
 unsigned RNS2_Berkley::RecvFromLoopInt() {
   isRecvFromLoopThreadActive.Increment();
 
-  while (endThreads == false) {
+  while (!endThreads) {
     RNS2RecvStruct* recvFromStruct;
     recvFromStruct = binding.eventHandler->AllocRNS2RecvStruct(_FILE_AND_LINE_);
     if (recvFromStruct != nullptr) {
@@ -462,8 +464,9 @@ RNS2SendResult RNS2_Windows::Send(
         sendParameters->data,
         sendParameters->length,
         sendParameters->systemAddress);
-    if (len >= 0)
+    if (len >= 0) {
       return len;
+}
   }
   return Send_Windows_Linux_360NoVDP(rns2Socket, sendParameters, file, line);
 }

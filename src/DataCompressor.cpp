@@ -9,7 +9,7 @@
  */
 
 #include "DataCompressor.h"
-#include <string.h> // Use string.h rather than memory.h for a console
+#include <cstring> // Use string.h rather than memory.h for a console
 #include "DS_HuffmanEncodingTree.h"
 #include "RakAssert.h"
 
@@ -27,14 +27,16 @@ void DataCompressor::Compress(
   unsigned int frequencyTable[256];
   unsigned int i;
   memset(frequencyTable, 0, 256 * sizeof(unsigned int));
-  for (i = 0; i < sizeInBytes; i++)
+  for (i = 0; i < sizeInBytes; i++) {
     ++frequencyTable[userData[i]];
+}
   HuffmanEncodingTree tree;
   BitSize_t writeOffset1, writeOffset2, bitsUsed1, bitsUsed2;
   tree.GenerateFromFrequencyTable(frequencyTable);
   output->WriteCompressed(sizeInBytes);
-  for (i = 0; i < 256; i++)
+  for (i = 0; i < 256; i++) {
     output->WriteCompressed(frequencyTable[i]);
+}
   output->AlignWriteToByteBoundary();
   writeOffset1 = output->GetWriteOffset();
   output->Write((unsigned int)0); // Dummy value
@@ -59,10 +61,11 @@ unsigned DataCompressor::DecompressAndAllocate(
   unsigned i;
 
   input->ReadCompressed(destinationSizeInBytes);
-  for (i = 0; i < 256; i++)
+  for (i = 0; i < 256; i++) {
     input->ReadCompressed(frequencyTable[i]);
+}
   input->AlignReadToByteBoundary();
-  if (input->Read(bitsUsed) == false) {
+  if (!input->Read(bitsUsed)) {
     // Read error
 #ifdef _DEBUG
     RakAssert(0);

@@ -75,15 +75,16 @@ bool TableSerializer::DeserializeTable(
     DataStructures::Table* out) {
   unsigned rowSize;
   DeserializeColumns(in, out);
-  if (in->Read(rowSize) == false || rowSize > 100000) {
+  if (!in->Read(rowSize) || rowSize > 100000) {
     RakAssert(0);
     return false; // Hacker crash prevention
   }
 
   unsigned rowIndex;
   for (rowIndex = 0; rowIndex < rowSize; rowIndex++) {
-    if (DeserializeRow(in, out) == false)
+    if (!DeserializeRow(in, out)) {
       return false;
+}
   }
   return true;
 }
@@ -93,8 +94,9 @@ bool TableSerializer::DeserializeColumns(
   unsigned columnSize;
   unsigned char columnType;
   char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH];
-  if (in->Read(columnSize) == false || columnSize > 10000)
+  if (!in->Read(columnSize) || columnSize > 10000) {
     return false; // Hacker crash prevention
+}
 
   out->Clear();
   unsigned i;
@@ -152,17 +154,17 @@ bool TableSerializer::DeserializeRow(
   unsigned numEntries;
   DataStructures::Table::Row* row;
   unsigned key;
-  if (in->Read(key) == false)
+  if (!in->Read(key)) {
     return false;
+}
   row = out->AddRow(key);
   unsigned int cnt;
   in->Read(numEntries);
   for (cnt = 0; cnt < numEntries; cnt++) {
     unsigned cellIndex;
     in->Read(cellIndex);
-    if (DeserializeCell(
-            in, row->cells[cellIndex], columns[cellIndex].columnType) ==
-        false) {
+    if (!DeserializeCell(
+            in, row->cells[cellIndex], columns[cellIndex].columnType)) {
       out->RemoveRow(key);
       return false;
     }
@@ -174,7 +176,7 @@ void TableSerializer::SerializeCell(
     DataStructures::Table::Cell* cell,
     DataStructures::Table::ColumnType columnType) {
   out->Write(cell->isEmpty);
-  if (cell->isEmpty == false) {
+  if (!cell->isEmpty) {
     if (columnType == DataStructures::Table::NUMERIC) {
       out->Write(cell->i);
     } else if (columnType == DataStructures::Table::STRING) {
@@ -203,31 +205,36 @@ bool TableSerializer::DeserializeCell(
   char tempString[65535];
   cell->Clear();
 
-  if (in->Read(isEmpty) == false)
+  if (!in->Read(isEmpty)) {
     return false;
-  if (isEmpty == false) {
+}
+  if (!isEmpty) {
     if (columnType == DataStructures::Table::NUMERIC) {
-      if (in->Read(value) == false)
+      if (!in->Read(value)) {
         return false;
+}
       cell->Set(value);
     } else if (columnType == DataStructures::Table::STRING) {
-      if (StringCompressor::Instance()->DecodeString(tempString, 65535, in) ==
-          false)
+      if (!StringCompressor::Instance()->DecodeString(tempString, 65535, in)) {
         return false;
+}
       cell->Set(tempString);
     } else if (columnType == DataStructures::Table::POINTER) {
-      if (in->Read(ptr) == false)
+      if (!in->Read(ptr)) {
         return false;
+}
       cell->SetPtr(ptr);
     } else {
       unsigned binaryLength;
       // Binary
       RakAssert(columnType == DataStructures::Table::BINARY);
-      if (in->Read(binaryLength) == false || binaryLength > 10000000)
+      if (!in->Read(binaryLength) || binaryLength > 10000000) {
         return false; // Sanity check to max binary cell of 10 megabytes
+}
       in->AlignReadToByteBoundary();
-      if (BITS_TO_BYTES(in->GetNumberOfUnreadBits()) < (BitSize_t)binaryLength)
+      if (BITS_TO_BYTES(in->GetNumberOfUnreadBits()) < (BitSize_t)binaryLength) {
         return false;
+}
       cell->Set(
           (char*)in->GetData() + BITS_TO_BYTES(in->GetReadOffset()),
           (int)binaryLength);
@@ -244,7 +251,7 @@ void TableSerializer::SerializeFilterQuery(
   in->WriteCompressed(query->columnIndex);
   in->Write((unsigned char)query->operation);
   in->Write(query->cellValue->isEmpty);
-  if (query->cellValue->isEmpty == false) {
+  if (!query->cellValue->isEmpty) {
     in->Write(query->cellValue->i);
     in->WriteAlignedBytesSafe(
         (const char*)query->cellValue->c,
@@ -266,7 +273,7 @@ bool TableSerializer::DeserializeFilterQuery(
   query->operation = (DataStructures::Table::FilterQueryType)op;
   query->cellValue->Clear();
   b = out->Read(query->cellValue->isEmpty);
-  if (query->cellValue->isEmpty == false) {
+  if (!query->cellValue->isEmpty) {
     // HACK - cellValue->i is used for integer, character, and binary data. However, for character and binary c will be 0. So use that to determine if the data was integer or not.
     out->Read(query->cellValue->i);
     unsigned int inputLength;
@@ -274,8 +281,9 @@ bool TableSerializer::DeserializeFilterQuery(
         &query->cellValue->c,
         inputLength,
         10000000); // Sanity check to max binary cell of 10 megabytes
-    if (query->cellValue->c)
+    if (query->cellValue->c) {
       query->cellValue->i = inputLength;
+}
     b = out->Read(query->cellValue->ptr);
   }
   return b;
@@ -287,8 +295,9 @@ void TableSerializer::SerializeFilterQueryList(
     unsigned int maxQueries) {
   (void)maxQueries;
   in->Write((bool)(query && numQueries > 0));
-  if (query == nullptr || numQueries <= 0)
+  if (query == nullptr || numQueries <= 0) {
     return;
+}
 
   RakAssert(numQueries <= maxQueries);
   in->WriteCompressed(numQueries);
@@ -305,11 +314,12 @@ bool TableSerializer::DeserializeFilterQueryList(
     int allocateExtraQueries) {
   bool b, anyQueries = false;
   out->Read(anyQueries);
-  if (anyQueries == false) {
-    if (allocateExtraQueries <= 0)
+  if (!anyQueries) {
+    if (allocateExtraQueries <= 0) {
       *query = nullptr;
-    else
+    } else {
       *query = new DataStructures::Table::FilterQuery[allocateExtraQueries];
+}
 
     *numQueries = 0;
     return true;
@@ -319,8 +329,9 @@ bool TableSerializer::DeserializeFilterQueryList(
     RakAssert(0);
     *numQueries = maxQueries;
   }
-  if (*numQueries == 0)
+  if (*numQueries == 0) {
     return b;
+}
 
   *query = new DataStructures::Table::FilterQuery
       [*numQueries + allocateExtraQueries];
@@ -337,11 +348,13 @@ bool TableSerializer::DeserializeFilterQueryList(
 void TableSerializer::DeallocateQueryList(
     DataStructures::Table::FilterQuery* query,
     unsigned int numQueries) {
-  if (query == nullptr || numQueries == 0)
+  if (query == nullptr || numQueries == 0) {
     return;
+}
 
   unsigned i;
-  for (i = 0; i < numQueries; i++)
+  for (i = 0; i < numQueries; i++) {
     RakNet::OP_DELETE(query[i].cellValue, _FILE_AND_LINE_);
+}
   RakNet::OP_DELETE_ARRAY(query, _FILE_AND_LINE_);
 }

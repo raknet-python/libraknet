@@ -12,7 +12,7 @@
 ///
 
 #include "StringCompressor.h"
-#include <string.h>
+#include <cstring>
 #include "BitStream.h"
 #include "DS_HuffmanEncodingTree.h"
 #include "RakAssert.h"
@@ -93,15 +93,17 @@ void StringCompressor::GenerateTreeFromStrings(
   unsigned index;
   unsigned int frequencyTable[256];
 
-  if (inputLength == 0)
+  if (inputLength == 0) {
     return;
+}
 
   // Zero out the frequency table
   memset(frequencyTable, 0, sizeof(frequencyTable));
 
   // Generate the frequency table from the strings
-  for (index = 0; index < inputLength; index++)
+  for (index = 0; index < inputLength; index++) {
     frequencyTable[input[index]]++;
+}
 
   // Build the tree
   huffmanEncodingTree = RakNet::OP_NEW<HuffmanEncodingTree>(_FILE_AND_LINE_);
@@ -110,8 +112,9 @@ void StringCompressor::GenerateTreeFromStrings(
 }
 
 StringCompressor::~StringCompressor() {
-  for (unsigned i = 0; i < huffmanEncodingTrees.Size(); i++)
+  for (unsigned i = 0; i < huffmanEncodingTrees.Size(); i++) {
     RakNet::OP_DELETE(huffmanEncodingTrees[i], _FILE_AND_LINE_);
+}
 }
 
 void StringCompressor::EncodeString(
@@ -120,8 +123,9 @@ void StringCompressor::EncodeString(
     RakNet::BitStream* output,
     uint8_t languageId) {
   HuffmanEncodingTree* huffmanEncodingTree;
-  if (huffmanEncodingTrees.Has(languageId) == false)
+  if (!huffmanEncodingTrees.Has(languageId)) {
     return;
+}
   huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
 
   if (input == nullptr) {
@@ -135,10 +139,11 @@ void StringCompressor::EncodeString(
 
   int charsToWrite;
 
-  if (maxCharsToWrite <= 0 || (int)strlen(input) < maxCharsToWrite)
+  if (maxCharsToWrite <= 0 || (int)strlen(input) < maxCharsToWrite) {
     charsToWrite = (int)strlen(input);
-  else
+  } else {
     charsToWrite = maxCharsToWrite - 1;
+}
 
   huffmanEncodingTree->EncodeArray(
       (unsigned char*)input, charsToWrite, &encodedBitStream);
@@ -156,10 +161,12 @@ bool StringCompressor::DecodeString(
     RakNet::BitStream* input,
     uint8_t languageId) {
   HuffmanEncodingTree* huffmanEncodingTree;
-  if (huffmanEncodingTrees.Has(languageId) == false)
+  if (!huffmanEncodingTrees.Has(languageId)) {
     return false;
-  if (maxCharsToWrite <= 0)
+}
+  if (maxCharsToWrite <= 0) {
     return false;
+}
   huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
 
   uint32_t stringBitLength;
@@ -167,19 +174,22 @@ bool StringCompressor::DecodeString(
 
   output[0] = 0;
 
-  if (input->ReadCompressed(stringBitLength) == false)
+  if (!input->ReadCompressed(stringBitLength)) {
     return false;
+}
 
-  if ((unsigned)input->GetNumberOfUnreadBits() < stringBitLength)
+  if ((unsigned)input->GetNumberOfUnreadBits() < stringBitLength) {
     return false;
+}
 
   bytesInStream = huffmanEncodingTree->DecodeArray(
       input, stringBitLength, maxCharsToWrite, (unsigned char*)output);
 
-  if (bytesInStream < maxCharsToWrite)
+  if (bytesInStream < maxCharsToWrite) {
     output[bytesInStream] = 0;
-  else
+  } else {
     output[maxCharsToWrite - 1] = 0;
+}
 
   return true;
 }

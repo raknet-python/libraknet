@@ -35,18 +35,21 @@ NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
   unsigned int hashIndex = NetworkIDToHashIndex(x);
   NetworkIDObject* nio = networkIdHash[hashIndex];
   while (nio) {
-    if (nio->GetNetworkID() == x)
+    if (nio->GetNetworkID() == x) {
       return nio;
+}
     nio = nio->nextInstanceForNetworkIDManager;
   }
   return nullptr;
 }
 NetworkID NetworkIDManager::GetNewNetworkID() {
-  while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
+  while (GET_BASE_OBJECT_FROM_ID(++startingOffset)) {
     ;
+}
   if (startingOffset == UNASSIGNED_NETWORK_ID) {
-    while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
+    while (GET_BASE_OBJECT_FROM_ID(++startingOffset)) {
       ;
+}
   }
   return startingOffset;
 }

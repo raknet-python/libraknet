@@ -23,20 +23,24 @@ STATIC_FACTORY_DEFINITIONS(ConnectionGraph2, ConnectionGraph2)
 int RakNet::ConnectionGraph2::RemoteSystemComp(
     const RakNetGUID& key,
     RemoteSystem* const& data) {
-  if (key < data->guid)
+  if (key < data->guid) {
     return -1;
-  if (key > data->guid)
+}
+  if (key > data->guid) {
     return 1;
+}
   return 0;
 }
 
 int RakNet::ConnectionGraph2::SystemAddressAndGuidComp(
     const SystemAddressAndGuid& key,
     const SystemAddressAndGuid& data) {
-  if (key.guid < data.guid)
+  if (key.guid < data.guid) {
     return -1;
-  if (key.guid > data.guid)
+}
+  if (key.guid > data.guid) {
     return 1;
+}
   return 0;
 }
 ConnectionGraph2::ConnectionGraph2() {
@@ -57,29 +61,33 @@ bool ConnectionGraph2::GetConnectionListForRemoteSystem(
   bool objectExists;
   unsigned int idx =
       remoteSystems.GetIndexFromKey(remoteSystemGuid, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     *outLength = 0;
     return false;
   }
 
   unsigned int idx2;
-  if (remoteSystems[idx]->remoteConnections.Size() < *outLength)
+  if (remoteSystems[idx]->remoteConnections.Size() < *outLength) {
     *outLength = remoteSystems[idx]->remoteConnections.Size();
+}
   for (idx2 = 0; idx2 < *outLength; idx2++) {
-    if (guidOut)
+    if (guidOut) {
       guidOut[idx2] = remoteSystems[idx]->remoteConnections[idx2].guid;
-    if (saOut)
+}
+    if (saOut) {
       saOut[idx2] = remoteSystems[idx]->remoteConnections[idx2].systemAddress;
+}
   }
   return true;
 }
 bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2) {
-  if (g1 == g2)
+  if (g1 == g2) {
     return false;
+}
 
   bool objectExists;
   unsigned int idx = remoteSystems.GetIndexFromKey(g1, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     return false;
   }
   SystemAddressAndGuid sag;
@@ -88,17 +96,20 @@ bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2) {
 }
 uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
     const {
-  if (g1 == g2)
+  if (g1 == g2) {
     return 0;
+}
 
-  if (g1 == rakPeerInterface->GetMyGUID())
+  if (g1 == rakPeerInterface->GetMyGUID()) {
     return (uint16_t)rakPeerInterface->GetAveragePing(g2);
-  if (g2 == rakPeerInterface->GetMyGUID())
+}
+  if (g2 == rakPeerInterface->GetMyGUID()) {
     return (uint16_t)rakPeerInterface->GetAveragePing(g1);
+}
 
   bool objectExists;
   unsigned int idx = remoteSystems.GetIndexFromKey(g1, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     return (uint16_t)-1;
   }
 
@@ -106,7 +117,7 @@ uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
   sag.guid = g2;
   unsigned int idx2 =
       remoteSystems[idx]->remoteConnections.GetIndexFromKey(sag, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     return (uint16_t)-1;
   }
   return remoteSystems[idx]->remoteConnections[idx2].sendersPingToThatSystem;
@@ -154,8 +165,9 @@ RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem() const {
     }
   }
 
-  if (lowestPingIdx == (unsigned int)-1)
+  if (lowestPingIdx == (unsigned int)-1) {
     return rakPeerInterface->GetMyGUID();
+}
   return remoteSystems[lowestPingIdx]->guid;
 }
 
@@ -165,10 +177,11 @@ void ConnectionGraph2::OnClosedConnection(
     PI2_LostConnectionReason lostConnectionReason) {
   // Send notice to all existing connections
   RakNet::BitStream bs;
-  if (lostConnectionReason == LCR_CONNECTION_LOST)
+  if (lostConnectionReason == LCR_CONNECTION_LOST) {
     bs.Write((MessageID)ID_REMOTE_CONNECTION_LOST);
-  else
+  } else {
     bs.Write((MessageID)ID_REMOTE_DISCONNECTION_NOTIFICATION);
+}
   bs.Write(systemAddress);
   bs.Write(rakNetGUID);
   SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, true);
@@ -210,8 +223,9 @@ void ConnectionGraph2::AddParticipant(
   unsigned int i;
   uint32_t count = 0;
   for (i = 0; i < addresses.Size(); i++) {
-    if (addresses[i] == systemAddress)
+    if (addresses[i] == systemAddress) {
       continue;
+}
 
     bs.Write(addresses[i]);
     bs.Write(guids[i]);
@@ -229,7 +243,7 @@ void ConnectionGraph2::AddParticipant(
 
   bool objectExists;
   unsigned int ii = remoteSystems.GetIndexFromKey(rakNetGUID, &objectExists);
-  if (objectExists == false) {
+  if (!objectExists) {
     auto* remoteSystem = RakNet::OP_NEW<RemoteSystem>(_FILE_AND_LINE_);
     remoteSystem->guid = rakNetGUID;
     remoteSystems.InsertAtIndex(remoteSystem, ii, _FILE_AND_LINE_);
@@ -239,16 +253,18 @@ void ConnectionGraph2::GetParticipantList(
     DataStructures::OrderedList<RakNetGUID, RakNetGUID>& participantList) {
   participantList.Clear(true, _FILE_AND_LINE_);
   unsigned int i;
-  for (i = 0; i < remoteSystems.Size(); i++)
+  for (i = 0; i < remoteSystems.Size(); i++) {
     participantList.InsertAtEnd(remoteSystems[i]->guid, _FILE_AND_LINE_);
+}
 }
 void ConnectionGraph2::OnNewConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
     bool isIncoming) {
   (void)isIncoming;
-  if (autoProcessNewConnections)
+  if (autoProcessNewConnections) {
     AddParticipant(systemAddress, rakNetGUID);
+}
 }
 PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_REMOTE_CONNECTION_LOST ||
@@ -264,8 +280,9 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
       unsigned long idx2 =
           remoteSystems[idx]->remoteConnections.GetIndexFromKey(
               saag, &objectExists);
-      if (objectExists)
+      if (objectExists) {
         remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx2);
+}
     }
   } else if (packet->data[0] == ID_REMOTE_NEW_INCOMING_CONNECTION) {
     bool objectExists;
@@ -283,9 +300,10 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
         bool objectExists;
         unsigned int ii = remoteSystems[idx]->remoteConnections.GetIndexFromKey(
             saag, &objectExists);
-        if (objectExists == false)
+        if (!objectExists) {
           remoteSystems[idx]->remoteConnections.InsertAtIndex(
               saag, ii, _FILE_AND_LINE_);
+}
       }
     }
   }

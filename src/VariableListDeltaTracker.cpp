@@ -17,8 +17,9 @@ VariableListDeltaTracker::VariableListDeltaTracker() {
 }
 VariableListDeltaTracker::~VariableListDeltaTracker() {
   unsigned int i;
-  for (i = 0; i < variableList.Size(); i++)
+  for (i = 0; i < variableList.Size(); i++) {
     rakFree_Ex(variableList[i].lastData, _FILE_AND_LINE_);
+}
 }
 
 // Call before using a series of WriteVar
@@ -31,8 +32,9 @@ void VariableListDeltaTracker::FlagDirtyFromBitArray(unsigned char* bArray) {
   for (readOffset = 0; readOffset < variableList.Size(); readOffset++) {
     bool result = (bArray[readOffset >> 3] & (0x80 >> (readOffset & 7))) != 0;
 
-    if (result == true)
+    if (result) {
       variableList[readOffset].isDirty = true;
+}
   }
 }
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() {
