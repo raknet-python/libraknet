@@ -141,7 +141,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     RakSleep(0);
     startForwardingOutputMutex.Lock();
     for (unsigned int i = 0; i < startForwardingOutput.Size(); i++) {
@@ -238,12 +238,12 @@ void UDPForwarder::RecvFrom(
       FormatMessage(
           FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
               FORMAT_MESSAGE_IGNORE_INSERTS,
-          NULL,
+          nullptr,
           dwIOError,
           MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
           (LPTSTR)&messageBuffer,
           0,
-          NULL);
+          nullptr);
       // something has gone wrong here...
       RAKNET_DEBUG_PRINTF(
           "recvfrom failed:Error code - %lu\n%s", dwIOError, messageBuffer);
@@ -388,9 +388,9 @@ void UDPForwarder::UpdateUDPForwarder() {
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     sfis = startForwardingInput.Pop();
-    if (sfis == 0)
+    if (sfis == nullptr)
       break;
 
     if (GetUsedForwardEntries() > maxForwardEntries) {
@@ -415,7 +415,7 @@ void UDPForwarder::UpdateUDPForwarder() {
         int sock_opt;
         sockaddr_in listenerSocketAddress;
         listenerSocketAddress.sin_port = 0;
-        ForwardEntry* fe =
+        auto* fe =
             RakNet::OP_NEW<UDPForwarder::ForwardEntry>(_FILE_AND_LINE_);
         fe->addr1Unconfirmed = sfis->source;
         fe->addr2Unconfirmed = sfis->destination;
@@ -525,9 +525,9 @@ void UDPForwarder::UpdateUDPForwarder() {
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     sfs = stopForwardingCommands.Pop();
-    if (sfs == 0)
+    if (sfs == nullptr)
       break;
 
     ForwardEntry* fe;
@@ -570,7 +570,7 @@ void UDPForwarder::UpdateUDPForwarder() {
 
 namespace RakNet {
 RAK_THREAD_DECLARATION(UpdateUDPForwarderGlobal) {
-  UDPForwarder* udpForwarder = (UDPForwarder*)arguments;
+  auto* udpForwarder = (UDPForwarder*)arguments;
 
   udpForwarder->threadRunning.Increment();
   while (udpForwarder->isRunning.GetValue() > 0) {

@@ -20,8 +20,8 @@
 
 int WSAStartupSingleton::refCount = 0;
 
-WSAStartupSingleton::WSAStartupSingleton() {}
-WSAStartupSingleton::~WSAStartupSingleton() {}
+WSAStartupSingleton::WSAStartupSingleton() = default;
+WSAStartupSingleton::~WSAStartupSingleton() = default;
 void WSAStartupSingleton::AddRef() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
 
@@ -38,12 +38,12 @@ void WSAStartupSingleton::AddRef() {
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
+        nullptr,
         dwIOError,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         (LPTSTR)&messageBuffer,
         0,
-        NULL);
+        nullptr);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
         "WSAStartup failed:Error code - %lu\n%s", dwIOError, messageBuffer);

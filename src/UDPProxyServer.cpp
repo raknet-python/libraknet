@@ -22,10 +22,10 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(UDPProxyServer, UDPProxyServer);
 
 UDPProxyServer::UDPProxyServer() {
-  resultHandler = 0;
+  resultHandler = nullptr;
   socketFamily = AF_INET;
 }
-UDPProxyServer::~UDPProxyServer() {}
+UDPProxyServer::~UDPProxyServer() = default;
 void UDPProxyServer::SetSocketFamily(unsigned short _socketFamily) {
   socketFamily = _socketFamily;
 }
@@ -166,10 +166,10 @@ void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(
       sourceAddress,
       targetAddress,
       timeoutOnNoDataMS,
-      0,
+      nullptr,
       socketFamily,
       &forwardingPort,
-      0);
+      nullptr);
   RakNet::BitStream outgoingBs;
   outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
   outgoingBs.Write(

@@ -22,7 +22,7 @@
 
 using namespace RakNet;
 
-StringCompressor* StringCompressor::instance = 0;
+StringCompressor* StringCompressor::instance = nullptr;
 int StringCompressor::referenceCount = 0;
 
 void StringCompressor::AddReference() {
@@ -36,7 +36,7 @@ void StringCompressor::RemoveReference() {
   if (referenceCount > 0) {
     if (--referenceCount == 0) {
       RakNet::OP_DELETE(instance, _FILE_AND_LINE_);
-      instance = 0;
+      instance = nullptr;
     }
   }
 }
@@ -74,7 +74,7 @@ StringCompressor::StringCompressor() {
       IMPLEMENT_DEFAULT_COMPARISON();
 
   // Make a default tree immediately, since this is used for RPC possibly from multiple threads at the same time
-  HuffmanEncodingTree* huffmanEncodingTree =
+  auto* huffmanEncodingTree =
       RakNet::OP_NEW<HuffmanEncodingTree>(_FILE_AND_LINE_);
   huffmanEncodingTree->GenerateFromFrequencyTable(englishCharacterFrequencies);
 
@@ -124,7 +124,7 @@ void StringCompressor::EncodeString(
     return;
   huffmanEncodingTree = huffmanEncodingTrees.Get(languageId);
 
-  if (input == 0) {
+  if (input == nullptr) {
     output->WriteCompressed((uint32_t)0);
     return;
   }

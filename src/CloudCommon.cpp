@@ -45,8 +45,8 @@ void CloudKey::Serialize(bool writeToBitstream, BitStream* bitStream) {
   bitStream->Serialize(writeToBitstream, secondaryKey);
 }
 void CloudQuery::Serialize(bool writeToBitstream, BitStream* bitStream) {
-  bool startingRowIndexIsZero = 0;
-  bool maxRowsToReturnIsZero = 0;
+  bool startingRowIndexIsZero = false;
+  bool maxRowsToReturnIsZero = false;
   startingRowIndexIsZero = startingRowIndex == 0;
   maxRowsToReturnIsZero = maxRowsToReturn == 0;
   bitStream->Serialize(writeToBitstream, startingRowIndexIsZero);
@@ -57,7 +57,7 @@ void CloudQuery::Serialize(bool writeToBitstream, BitStream* bitStream) {
   if (maxRowsToReturnIsZero == false)
     bitStream->Serialize(writeToBitstream, maxRowsToReturn);
   RakAssert(keys.Size() < (uint16_t)-1);
-  uint16_t numKeys = (uint16_t)keys.Size();
+  auto numKeys = (uint16_t)keys.Size();
   bitStream->Serialize(writeToBitstream, numKeys);
   if (writeToBitstream) {
     for (uint16_t i = 0; i < numKeys; i++) {
@@ -92,7 +92,7 @@ void CloudQueryRow::Serialize(
         notifyOutOfMemory(_FILE_AND_LINE_);
       }
     } else
-      data = 0;
+      data = nullptr;
   }
 }
 void CloudQueryResult::SerializeHeader(
@@ -122,7 +122,7 @@ void CloudQueryResult::SerializeCloudQueryRows(
       cmdr = allocator->AllocateCloudQueryRow();
       if (cmdr) {
         cmdr->Serialize(false, bitStream, allocator);
-        if (cmdr->data == 0 && cmdr->length > 0) {
+        if (cmdr->data == nullptr && cmdr->length > 0) {
           allocator->DeallocateCloudQueryRow(cmdr);
           notifyOutOfMemory(_FILE_AND_LINE_);
           numRows = i;
@@ -142,7 +142,7 @@ void CloudQueryResult::Serialize(
     BitStream* bitStream,
     CloudAllocator* allocator) {
   SerializeHeader(writeToBitstream, bitStream);
-  uint32_t numRows = (uint32_t)rowsReturned.Size();
+  auto numRows = (uint32_t)rowsReturned.Size();
   SerializeNumRows(writeToBitstream, numRows, bitStream);
   SerializeCloudQueryRows(writeToBitstream, numRows, bitStream, allocator);
 }

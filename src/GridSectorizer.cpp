@@ -14,7 +14,7 @@
 #include <math.h>
 
 GridSectorizer::GridSectorizer() {
-  grid = 0;
+  grid = nullptr;
 }
 GridSectorizer::~GridSectorizer() {
   if (grid)

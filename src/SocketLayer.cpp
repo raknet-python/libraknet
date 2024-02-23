@@ -156,12 +156,12 @@ void SocketLayer::SetSocketOptions(
       FormatMessage(
           FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
               FORMAT_MESSAGE_IGNORE_INSERTS,
-          NULL,
+          nullptr,
           dwIOError,
           MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
           (LPTSTR)&messageBuffer,
           0,
-          NULL);
+          nullptr);
       // something has gone wrong here...
       RAKNET_DEBUG_PRINTF(
           "setsockopt__(SO_BROADCAST) failed:Error code - %lu\n%s",
@@ -192,13 +192,13 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(
   if (WSAIoctl(
           inSock,
           SIO_GET_INTERFACE_LIST,
-          0,
+          nullptr,
           0,
           &InterfaceList,
           sizeof(InterfaceList),
           &nBytesReturned,
-          0,
-          0) == SOCKET_ERROR) {
+          nullptr,
+          nullptr) == SOCKET_ERROR) {
     return "";
   }
 
@@ -283,12 +283,12 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
+        nullptr,
         dwIOError,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         (LPTSTR)&messageBuffer,
         0,
-        NULL);
+        nullptr);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
         "gethostname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
@@ -320,19 +320,19 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
 #else
   struct hostent* phe = gethostbyname(ac);
 
-  if (phe == 0) {
+  if (phe == nullptr) {
 #if defined(_WIN32) && !defined(WINDOWS_PHONE_8)
     DWORD dwIOError = GetLastError();
     LPVOID messageBuffer;
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
+        nullptr,
         dwIOError,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         (LPTSTR)&messageBuffer,
         0,
-        NULL);
+        nullptr);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
         "gethostbyname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
@@ -343,7 +343,7 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
     return;
   }
   for (idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx) {
-    if (phe->h_addr_list[idx] == 0)
+    if (phe->h_addr_list[idx] == nullptr)
       break;
 
     memcpy(
@@ -402,12 +402,12 @@ void SocketLayer::GetSystemAddress_Old(
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
+        nullptr,
         dwIOError,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         (LPTSTR)&messageBuffer,
         0,
-        NULL);
+        nullptr);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
         "getsockname failed:Error code - %lu\n%s", dwIOError, messageBuffer);

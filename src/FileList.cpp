@@ -105,7 +105,7 @@ void FLP_Printf::OnSendAborted(SystemAddress systemAddress) {
   systemAddress.ToString(true, (char*)str);
   RAKNET_DEBUG_PRINTF("Send aborted to %s\n", str);
 }
-FileList::FileList() {}
+FileList::FileList() = default;
 FileList::~FileList() {
   Clear();
 }
@@ -113,7 +113,7 @@ void FileList::AddFile(
     const char* filepath,
     const char* filename,
     FileListNodeContext context) {
-  if (filepath == 0 || filename == 0)
+  if (filepath == nullptr || filename == nullptr)
     return;
 
   char* data;
@@ -121,7 +121,7 @@ void FileList::AddFile(
   //file.open(filename, std::ios::in | std::ios::binary);
 
   FILE* fp = fopen(filepath, "rb");
-  if (fp == 0)
+  if (fp == nullptr)
     return;
   fseek(fp, 0, SEEK_END);
   int length = ftell(fp);
@@ -164,7 +164,7 @@ void FileList::AddFile(
     FileListNodeContext context,
     bool isAReference,
     bool takeDataPointer) {
-  if (filename == 0)
+  if (filename == nullptr)
     return;
   if (strlen(filename) > MAX_FILENAME_LENGTH) {
     // Should be enough for anyone
@@ -172,14 +172,14 @@ void FileList::AddFile(
     return;
   }
   // If adding a reference, do not send data
-  RakAssert(isAReference == false || data == 0);
+  RakAssert(isAReference == false || data == nullptr);
   // Avoid duplicate insertions unless the data is different, in which case overwrite the old data
   unsigned i;
   for (i = 0; i < fileList.Size(); i++) {
     if (strcmp(fileList[i].filename, filename) == 0) {
       if (fileList[i].fileLengthBytes == fileLength &&
           fileList[i].dataLengthBytes == dataLength &&
-          (dataLength == 0 || fileList[i].data == 0 ||
+          (dataLength == 0 || fileList[i].data == nullptr ||
            memcmp(fileList[i].data, data, dataLength) == 0))
         // Exact same file already here
         return;
@@ -202,12 +202,12 @@ void FileList::AddFile(
       memcpy(n.data, data, dataLength);
     }
   } else
-    n.data = 0;
+    n.data = nullptr;
   n.dataLengthBytes = dataLength;
   n.fileLengthBytes = fileLength;
   n.isAReference = isAReference;
   n.context = context;
-  if (n.context.dataPtr == 0)
+  if (n.context.dataPtr == nullptr)
     n.context.dataPtr = n.data;
   if (n.context.dataLength == 0)
     n.context.dataLength = dataLength;
@@ -288,7 +288,7 @@ void FileList::AddFilesFromDirectory(
       if ((fileInfo.attrib & (_A_HIDDEN | _A_SUBDIR | _A_SYSTEM)) == 0) {
         strcpy(fullPath, dirSoFar);
         strcat(fullPath, fileInfo.name);
-        fileData = 0;
+        fileData = nullptr;
 
         for (unsigned int flpcIndex = 0;
              flpcIndex < fileListProgressCallbacks.Size();
@@ -361,7 +361,7 @@ void FileList::AddFilesFromDirectory(
               context);
         } else {
           // Just the filename
-          AddFile(fullPath + rootLen, fullPath, 0, 0, fileInfo.size, context);
+          AddFile(fullPath + rootLen, fullPath, nullptr, 0, fileInfo.size, context);
         }
 
         if (fileData)
@@ -448,7 +448,7 @@ bool FileList::Deserialize(RakNet::BitStream* inBitStream) {
       inBitStream->Read(n.data, n.dataLengthBytes);
     } else {
       n.dataLengthBytes = 0;
-      n.data = 0;
+      n.data = nullptr;
     }
 
     b = inBitStream->Read(fileLenMatchesDataLen);
@@ -534,7 +534,7 @@ void FileList::GetDeltaToCurrent(
           output->AddFile(
               fileList[thisIndex].filename,
               fileList[thisIndex].fullPathToFile,
-              0,
+              nullptr,
               0,
               fileList[thisIndex].fileLengthBytes,
               FileListNodeContext(0, 0, 0, 0),
@@ -548,7 +548,7 @@ void FileList::GetDeltaToCurrent(
       output->AddFile(
           fileList[thisIndex].filename,
           fileList[thisIndex].fullPathToFile,
-          0,
+          nullptr,
           0,
           fileList[thisIndex].fileLengthBytes,
           FileListNodeContext(0, 0, 0, 0),
@@ -573,11 +573,11 @@ void FileList::ListMissingOrChangedFiles(
     FixEndingSlash(fullPath);
     strcat(fullPath, fileList[i].filename);
     fp = fopen(fullPath, "rb");
-    if (fp == 0) {
+    if (fp == nullptr) {
       missingOrChangedFiles->AddFile(
           fileList[i].filename,
           fileList[i].fullPathToFile,
-          0,
+          nullptr,
           0,
           0,
           FileListNodeContext(0, 0, 0, 0),
@@ -592,7 +592,7 @@ void FileList::ListMissingOrChangedFiles(
         missingOrChangedFiles->AddFile(
             fileList[i].filename,
             fileList[i].fullPathToFile,
-            0,
+            nullptr,
             0,
             fileLength,
             FileListNodeContext(0, 0, 0, 0),
@@ -629,7 +629,7 @@ void FileList::ListMissingOrChangedFiles(
             missingOrChangedFiles->AddFile(
                 (const char*)fileList[i].filename,
                 (const char*)fileList[i].fullPathToFile,
-                0,
+                nullptr,
                 0,
                 fileLength,
                 FileListNodeContext(0, 0, 0, 0),
@@ -717,7 +717,7 @@ void FileList::PopulateDataFromDisk(
         fclose(fp);
         i++;
       } else {
-        fileList[i].data = 0;
+        fileList[i].data = nullptr;
         fileList[i].dataLengthBytes = 0;
       }
     } else {
@@ -799,7 +799,7 @@ void FileList::DeleteFiles(const char* applicationDirectory) {
 }
 
 void FileList::AddCallback(FileListProgress* cb) {
-  if (cb == 0)
+  if (cb == nullptr)
     return;
 
   if ((unsigned int)fileListProgressCallbacks.GetIndexOf(cb) ==

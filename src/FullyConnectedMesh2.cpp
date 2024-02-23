@@ -130,7 +130,7 @@ bool FullyConnectedMesh2::AddParticipantInternal(
     }
   }
 
-  FCM2Participant* participant =
+  auto* participant =
       RakNet::OP_NEW<FCM2Participant>(_FILE_AND_LINE_);
   participant->rakNetGuid = rakNetGuid;
   participant->fcm2Guid = theirFCMGuid;
@@ -319,7 +319,7 @@ void FullyConnectedMesh2::OnClosedConnection(
 
       for (unsigned int j = 0; j < joinsInProgress[idx]->vjipMembers.Size();
            j++) {
-        if (joinsInProgress[idx]->vjipMembers[j].userData != 0) {
+        if (joinsInProgress[idx]->vjipMembers[j].userData != nullptr) {
           RakNet::OP_DELETE(
               joinsInProgress[idx]->vjipMembers[j].userData, _FILE_AND_LINE_);
         }
@@ -399,7 +399,7 @@ void FullyConnectedMesh2::Clear() {
 
   for (unsigned int i = 0; i < joinsInProgress.Size(); i++) {
     for (unsigned int j = 0; j < joinsInProgress[i]->vjipMembers.Size(); j++) {
-      if (joinsInProgress[i]->vjipMembers[j].userData != 0) {
+      if (joinsInProgress[i]->vjipMembers[j].userData != nullptr) {
         RakNet::OP_DELETE(
             joinsInProgress[i]->vjipMembers[j].userData, _FILE_AND_LINE_);
       }
@@ -995,7 +995,7 @@ PluginReceiveResult FullyConnectedMesh2::OnVerifiedJoinStart(Packet* packet) {
     return RR_CONTINUE_PROCESSING;
   }
 
-  VerifiedJoinInProgress* vjip =
+  auto* vjip =
       RakNet::OP_NEW<VerifiedJoinInProgress>(_FILE_AND_LINE_);
   vjip->requester = packet->guid;
   if (listSize == 0) {
@@ -1056,7 +1056,7 @@ void FullyConnectedMesh2::DecomposeJoinCapable(
     bsIn.Read(member.guid);
     bsIn.Read(member.systemAddress);
     bsIn.ReadCasted<unsigned char>(member.joinInProgressState);
-    member.userData = 0;
+    member.userData = nullptr;
     member.workingFlag = false;
     vjip->vjipMembers.Push(member, _FILE_AND_LINE_);
   }
@@ -1139,14 +1139,14 @@ void FullyConnectedMesh2::OnVerifiedJoinFailed(
         rakPeerInterface->CloseConnection(vjip->vjipMembers[j].guid, true);
       }
 
-      if (vjip->vjipMembers[j].userData != 0)
+      if (vjip->vjipMembers[j].userData != nullptr)
         RakNet::OP_DELETE(vjip->vjipMembers[j].userData, _FILE_AND_LINE_);
     }
   }
 
   for (unsigned int j = 0; j < joinsInProgress[curIndex]->vjipMembers.Size();
        j++) {
-    if (joinsInProgress[curIndex]->vjipMembers[j].userData != 0) {
+    if (joinsInProgress[curIndex]->vjipMembers[j].userData != nullptr) {
       RakNet::OP_DELETE(
           joinsInProgress[curIndex]->vjipMembers[j].userData, _FILE_AND_LINE_);
     }
@@ -1189,7 +1189,7 @@ void FullyConnectedMesh2::OnVerifiedJoinAccepted(Packet* packet) {
 
     for (unsigned int j = 0; j < joinsInProgress[curIndex]->vjipMembers.Size();
          j++) {
-      if (joinsInProgress[curIndex]->vjipMembers[j].userData != 0) {
+      if (joinsInProgress[curIndex]->vjipMembers[j].userData != nullptr) {
         RakNet::OP_DELETE(
             joinsInProgress[curIndex]->vjipMembers[j].userData,
             _FILE_AND_LINE_);
@@ -1308,7 +1308,7 @@ void FullyConnectedMesh2::ReadVerifiedJoinInProgressMember(
     vjipm->userData = RakNet::OP_NEW<BitStream>(_FILE_AND_LINE_);
     bsIn->Read(vjipm->userData, vjsUserDataSize);
   } else
-    vjipm->userData = 0;
+    vjipm->userData = nullptr;
   bsIn->AlignReadToByteBoundary();
 }
 

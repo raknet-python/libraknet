@@ -28,7 +28,7 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer, NatTypeDetectionServer);
 
 NatTypeDetectionServer::NatTypeDetectionServer() {
-  s1p2 = s2p3 = s3p4 = s4p5 = 0;
+  s1p2 = s2p3 = s3p4 = s4p5 = nullptr;
 }
 NatTypeDetectionServer::~NatTypeDetectionServer() {
   Shutdown();
@@ -82,26 +82,26 @@ void NatTypeDetectionServer::Startup(
 #endif
 }
 void NatTypeDetectionServer::Shutdown() {
-  if (s1p2 != 0) {
+  if (s1p2 != nullptr) {
     RakNet::OP_DELETE(s1p2, _FILE_AND_LINE_);
-    s1p2 = 0;
+    s1p2 = nullptr;
   }
-  if (s2p3 != 0) {
+  if (s2p3 != nullptr) {
     RakNet::OP_DELETE(s2p3, _FILE_AND_LINE_);
-    s2p3 = 0;
+    s2p3 = nullptr;
   }
-  if (s3p4 != 0) {
+  if (s3p4 != nullptr) {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
     if (s3p4->IsBerkleySocket())
       ((RNS2_Berkley*)s3p4)->BlockOnStopRecvPollingThread();
 #endif
 
     RakNet::OP_DELETE(s3p4, _FILE_AND_LINE_);
-    s3p4 = 0;
+    s3p4 = nullptr;
   }
-  if (s4p5 != 0) {
+  if (s4p5 != nullptr) {
     RakNet::OP_DELETE(s4p5, _FILE_AND_LINE_);
-    s4p5 = 0;
+    s4p5 = nullptr;
   }
   bufferedPacketsMutex.Lock();
   while (bufferedPackets.Size())
@@ -119,7 +119,7 @@ void NatTypeDetectionServer::Update() {
   if (bufferedPackets.Size() > 0)
     recvStruct = bufferedPackets.Pop();
   else
-    recvStruct = 0;
+    recvStruct = nullptr;
   bufferedPacketsMutex.Unlock();
   while (recvStruct) {
     SystemAddress senderAddr = recvStruct->systemAddress;
@@ -174,7 +174,7 @@ void NatTypeDetectionServer::Update() {
     if (bufferedPackets.Size() > 0)
       recvStruct = bufferedPackets.Pop();
     else
-      recvStruct = 0;
+      recvStruct = nullptr;
     bufferedPacketsMutex.Unlock();
   }
 

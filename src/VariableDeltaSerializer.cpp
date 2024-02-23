@@ -20,10 +20,10 @@ VariableDeltaSerializer::~VariableDeltaSerializer() {
 }
 
 VariableDeltaSerializer::SerializationContext::SerializationContext() {
-  variableHistoryIdentical = 0;
-  variableHistoryUnique = 0;
+  variableHistoryIdentical = nullptr;
+  variableHistoryUnique = nullptr;
 }
-VariableDeltaSerializer::SerializationContext::~SerializationContext() {}
+VariableDeltaSerializer::SerializationContext::~SerializationContext() = default;
 
 void VariableDeltaSerializer::OnMessageReceipt(
     RakNetGUID guid,
@@ -45,7 +45,7 @@ void VariableDeltaSerializer::BeginUnreliableAckedSerialize(
   context->anyVariablesWritten = false;
   context->guid = _guid;
   context->bitStream = _bitStream;
-  if (context->variableHistoryUnique == 0)
+  if (context->variableHistoryUnique == nullptr)
     context->variableHistoryUnique = StartVariableHistoryWrite(_guid);
   context->variableHistory = context->variableHistoryUnique;
   context->sendReceipt = _sendReceipt;
@@ -62,7 +62,7 @@ void VariableDeltaSerializer::BeginUniqueSerialize(
   context->anyVariablesWritten = false;
   context->guid = _guid;
   context->bitStream = _bitStream;
-  if (context->variableHistoryUnique == 0)
+  if (context->variableHistoryUnique == nullptr)
     context->variableHistoryUnique = StartVariableHistoryWrite(_guid);
   context->variableHistory = context->variableHistoryUnique;
   context->newSystemSend = false;
@@ -78,7 +78,7 @@ void VariableDeltaSerializer::BeginIdenticalSerialize(
   context->guid = UNASSIGNED_RAKNET_GUID;
   context->bitStream = _bitStream;
   context->serializationMode = RELIABLE;
-  if (context->variableHistoryIdentical == 0)
+  if (context->variableHistoryIdentical == nullptr)
     context->variableHistoryIdentical =
         StartVariableHistoryWrite(UNASSIGNED_RAKNET_GUID);
   context->variableHistory = context->variableHistoryIdentical;

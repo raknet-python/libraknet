@@ -240,7 +240,7 @@ FilterSet* MessageFilter::GetFilterSetByID(int filterSetID) {
   if (objectExists)
     return filterList[index];
   else {
-    FilterSet* newFilterSet = RakNet::OP_NEW<FilterSet>(_FILE_AND_LINE_);
+    auto* newFilterSet = RakNet::OP_NEW<FilterSet>(_FILE_AND_LINE_);
     memset(
         newFilterSet->allowedIDs,
         0,
@@ -252,9 +252,9 @@ FilterSet* MessageFilter::GetFilterSetByID(int filterSetID) {
     newFilterSet->timeExceedBanTimeMS = 0;
     newFilterSet->maxMemberTimeMS = 0;
     newFilterSet->filterSetID = filterSetID;
-    newFilterSet->invalidMessageCallback = 0;
-    newFilterSet->timeoutCallback = 0;
-    newFilterSet->timeoutUserData = 0;
+    newFilterSet->invalidMessageCallback = nullptr;
+    newFilterSet->timeoutCallback = nullptr;
+    newFilterSet->timeoutUserData = nullptr;
     filterList.Insert(filterSetID, newFilterSet, true, _FILE_AND_LINE_);
     return newFilterSet;
   }

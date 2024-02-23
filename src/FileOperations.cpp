@@ -46,7 +46,7 @@ bool WriteFileWithDirectories(
   char pathCopy[MAX_PATH];
   int res;
 
-  if (path == 0 || path[0] == 0)
+  if (path == nullptr || path[0] == 0)
     return false;
 
   strcpy(pathCopy, path);
@@ -78,7 +78,7 @@ bool WriteFileWithDirectories(
   if (data) {
     fp = fopen(path, "wb");
 
-    if (fp == 0) {
+    if (fp == nullptr) {
       return false;
     }
 
@@ -106,7 +106,7 @@ bool IsSlash(unsigned char c) {
 }
 
 void AddSlash(char* input) {
-  if (input == 0 || input[0] == 0)
+  if (input == nullptr || input[0] == 0)
     return;
 
   int lastCharIndex = (int)strlen(input) - 1;
@@ -149,7 +149,7 @@ void QuoteIfSpaces(char* str) {
 }
 unsigned int GetFileLength(const char* path) {
   FILE* fp = fopen(path, "rb");
-  if (fp == 0)
+  if (fp == nullptr)
     return 0;
   fseek(fp, 0, SEEK_END);
   unsigned int fileLength = ftell(fp);

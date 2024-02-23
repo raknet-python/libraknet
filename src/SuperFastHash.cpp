@@ -50,11 +50,11 @@ uint32_t SuperFastHash(const char* data, int length) {
 }
 uint32_t
 SuperFastHashIncremental(const char* data, int len, unsigned int lastHash) {
-  uint32_t hash = (uint32_t)lastHash;
+  auto hash = (uint32_t)lastHash;
   uint32_t tmp;
   int rem;
 
-  if (len <= 0 || data == NULL)
+  if (len <= 0 || data == nullptr)
     return 0;
 
   rem = len & 3;
@@ -101,7 +101,7 @@ SuperFastHashIncremental(const char* data, int len, unsigned int lastHash) {
 
 uint32_t SuperFastHashFile(const char* filename) {
   FILE* fp = fopen(filename, "rb");
-  if (fp == 0)
+  if (fp == nullptr)
     return 0;
   uint32_t hash = SuperFastHashFilePtr(fp);
   fclose(fp);

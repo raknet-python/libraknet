@@ -16,7 +16,7 @@
 using namespace RakNet;
 
 PacketFileLogger::PacketFileLogger() {
-  packetLogFile = 0;
+  packetLogFile = nullptr;
 }
 PacketFileLogger::~PacketFileLogger() {
   if (packetLogFile) {

@@ -221,15 +221,15 @@ void CSHA1::Update(const UINT_8* pbData, UINT_32 uLen) {
 
 #ifdef SHA1_UTILITY_FUNCTIONS
 bool CSHA1::HashFile(const TCHAR* tszFileName) {
-  if (tszFileName == NULL)
+  if (tszFileName == nullptr)
     return false;
 
   FILE* fpIn = _tfopen(tszFileName, _T("rb"));
-  if (fpIn == NULL)
+  if (fpIn == nullptr)
     return false;
 
-  UINT_8* pbData = new UINT_8[SHA1_MAX_FILE_BUFFER];
-  if (pbData == NULL) {
+  auto* pbData = new UINT_8[SHA1_MAX_FILE_BUFFER];
+  if (pbData == nullptr) {
     fclose(fpIn);
     return false;
   }
@@ -286,7 +286,7 @@ void CSHA1::Final() {
 
 #ifdef SHA1_UTILITY_FUNCTIONS
 bool CSHA1::ReportHash(TCHAR* tszReport, REPORT_TYPE rtReportType) const {
-  if (tszReport == NULL)
+  if (tszReport == nullptr)
     return false;
 
   TCHAR tszTemp[16];
@@ -329,7 +329,7 @@ bool CSHA1::ReportHashStl(
 #endif
 
 bool CSHA1::GetHash(UINT_8* pbDest20) const {
-  if (pbDest20 == NULL)
+  if (pbDest20 == nullptr)
     return false;
   memcpy(pbDest20, m_digest, 20);
   return true;

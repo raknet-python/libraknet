@@ -18,7 +18,7 @@
 #include "TCPInterface.h"
 #ifdef _WIN32
 #if !defined(WINDOWS_STORE_RT)
-typedef int socklen_t;
+using socklen_t = int;
 #endif
 
 #else
@@ -61,7 +61,7 @@ TCPInterface::TCPInterface() {
 #if !defined(WINDOWS_STORE_RT)
   listenSocket = 0;
 #endif
-  remoteClients = 0;
+  remoteClients = nullptr;
   remoteClientsLength = 0;
 
   StringCompressor::AddReference();
@@ -288,7 +288,7 @@ void TCPInterface::Stop() {
   }
   remoteClientsLength = 0;
   RakNet::OP_DELETE_ARRAY(remoteClients, _FILE_AND_LINE_);
-  remoteClients = 0;
+  remoteClients = nullptr;
 
   incomingMessages.Clear(_FILE_AND_LINE_);
   newIncomingConnections.Clear(_FILE_AND_LINE_);
@@ -372,7 +372,7 @@ SystemAddress TCPInterface::Connect(
 
     return remoteClients[newRemoteClientIndex].systemAddress;
   } else {
-    ThisPtrPlusSysAddr* s = RakNet::OP_NEW<ThisPtrPlusSysAddr>(_FILE_AND_LINE_);
+    auto* s = RakNet::OP_NEW<ThisPtrPlusSysAddr>(_FILE_AND_LINE_);
     s->systemAddress.FromStringExplicitPort(host, remotePort);
     s->systemAddress.systemIndex = (SystemIndex)newRemoteClientIndex;
     if (bindAddress)
@@ -433,7 +433,7 @@ bool TCPInterface::SendList(
     bool broadcast) {
   if (isStarted.GetValue() == 0)
     return false;
-  if (data == 0)
+  if (data == nullptr)
     return false;
   if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && broadcast == false)
     return false;
@@ -488,10 +488,10 @@ Packet* TCPInterface::Receive() {
       pluginResult = messageHandlerList[i]->OnReceive(outgoingPacket);
       if (pluginResult == RR_STOP_PROCESSING_AND_DEALLOCATE) {
         DeallocatePacket(outgoingPacket);
-        outgoingPacket = 0; // Will do the loop again and get another packet
+        outgoingPacket = nullptr; // Will do the loop again and get another packet
         break; // break out of the enclosing for
       } else if (pluginResult == RR_STOP_PROCESSING) {
-        outgoingPacket = 0;
+        outgoingPacket = nullptr;
         break;
       }
     }
@@ -501,7 +501,7 @@ Packet* TCPInterface::Receive() {
 }
 Packet* TCPInterface::ReceiveInt() {
   if (isStarted.GetValue() == 0)
-    return 0;
+    return nullptr;
   if (headPush.IsEmpty() == false)
     return headPush.Pop();
   Packet* p = incomingMessages.PopInaccurate();
@@ -509,7 +509,7 @@ Packet* TCPInterface::ReceiveInt() {
     return p;
   if (tailPush.IsEmpty() == false)
     return tailPush.Pop();
-  return 0;
+  return nullptr;
 }
 
 void TCPInterface::AttachPlugin(PluginInterface2* plugin) {
@@ -520,7 +520,7 @@ void TCPInterface::AttachPlugin(PluginInterface2* plugin) {
   }
 }
 void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
-  if (plugin == 0)
+  if (plugin == nullptr)
     return;
 
   unsigned int index;
@@ -531,7 +531,7 @@ void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
     messageHandlerList[index] =
         messageHandlerList[messageHandlerList.Size() - 1];
     messageHandlerList.RemoveFromEnd();
-    plugin->SetTCPInterface(0);
+    plugin->SetTCPInterface(nullptr);
   }
 }
 void TCPInterface::CloseConnection(SystemAddress systemAddress) {
@@ -570,7 +570,7 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress) {
 #endif
 }
 void TCPInterface::DeallocatePacket(Packet* packet) {
-  if (packet == 0)
+  if (packet == nullptr)
     return;
   if (packet->deleteData) {
     rakFree_Ex(packet->data, _FILE_AND_LINE_);
@@ -582,7 +582,7 @@ void TCPInterface::DeallocatePacket(Packet* packet) {
   }
 }
 Packet* TCPInterface::AllocatePacket(unsigned dataSize) {
-  Packet* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+  auto* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
   p->data = (unsigned char*)rakMalloc_Ex(dataSize, _FILE_AND_LINE_);
   p->length = dataSize;
   p->bitSize = BYTES_TO_BITS(dataSize);
@@ -629,7 +629,7 @@ SystemAddress TCPInterface::HasFailedConnectionAttempt() {
     for (i = 0; i < messageHandlerList.Size(); i++) {
       Packet p;
       p.systemAddress = sysAddr;
-      p.data = 0;
+      p.data = nullptr;
       p.length = 0;
       p.bitSize = 0;
       messageHandlerList[i]->OnFailedConnectionAttempt(
@@ -736,7 +736,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(
 
   struct hostent* server;
   server = gethostbyname(host);
-  if (server == NULL)
+  if (server == nullptr)
     return 0;
 
 #if defined(WINDOWS_STORE_RT)
@@ -810,7 +810,7 @@ __TCPSOCKET__ TCPInterface::SocketConnect(
 }
 
 RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop) {
-  TCPInterface::ThisPtrPlusSysAddr* s =
+  auto* s =
       (TCPInterface::ThisPtrPlusSysAddr*)arguments;
 
   SystemAddress systemAddress = s->systemAddress;
@@ -850,7 +850,7 @@ RAK_THREAD_DECLARATION(RakNet::ConnectionAttemptLoop) {
 }
 
 RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
-  TCPInterface* sts = (TCPInterface*)arguments;
+  auto* sts = (TCPInterface*)arguments;
 
   //	const int BUFF_SIZE=8096;
   const unsigned int BUFF_SIZE = 1048576;
@@ -914,7 +914,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop) {
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-    while (1) {
+    while (true) {
       // Reset readFD, writeFD, and exceptionFD since select seems to clear it
       FD_ZERO(&readFD);
       FD_ZERO(&exceptionFD);

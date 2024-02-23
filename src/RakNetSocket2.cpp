@@ -62,9 +62,9 @@ void RakNetSocket2Allocator::DeallocRNS2(RakNetSocket2* s) {
   RakNet::OP_DELETE(s, _FILE_AND_LINE_);
 }
 RakNetSocket2::RakNetSocket2() {
-  eventHandler = 0;
+  eventHandler = nullptr;
 }
-RakNetSocket2::~RakNetSocket2() {}
+RakNetSocket2::~RakNetSocket2() = default;
 void RakNetSocket2::SetRecvEventHandler(RNS2EventHandler* _eventHandler) {
   eventHandler = _eventHandler;
 }
@@ -299,7 +299,7 @@ bool IRNS2_Berkley::IsPortInUse(
   bbp.protocol = 0;
   bbp.setIPHdrIncl = false;
   SystemAddress boundAddress;
-  RNS2_Berkley* rns2 = (RNS2_Berkley*)RakNetSocket2Allocator::AllocRNS2();
+  auto* rns2 = (RNS2_Berkley*)RakNetSocket2Allocator::AllocRNS2();
   RNS2BindResult bindResult = rns2->Bind(&bbp, _FILE_AND_LINE_);
   RakNetSocket2Allocator::DeallocRNS2(rns2);
   return bindResult == BR_FAILED_TO_BIND_SOCKET;
@@ -354,7 +354,7 @@ RNS2BindResult RNS2_Berkley::BindShared(
 }
 
 RAK_THREAD_DECLARATION(RNS2_Berkley::RecvFromLoop) {
-  RNS2_Berkley* b = (RNS2_Berkley*)arguments;
+  auto* b = (RNS2_Berkley*)arguments;
 
   b->RecvFromLoopInt();
   return 0;
@@ -365,7 +365,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt() {
   while (endThreads == false) {
     RNS2RecvStruct* recvFromStruct;
     recvFromStruct = binding.eventHandler->AllocRNS2RecvStruct(_FILE_AND_LINE_);
-    if (recvFromStruct != NULL) {
+    if (recvFromStruct != nullptr) {
       recvFromStruct->socket = this;
       RecvFromBlocking(recvFromStruct);
 
@@ -437,9 +437,9 @@ RNS2Socket RNS2_Berkley::GetSocket() const {
 
 #if defined(_WIN32)
 RNS2_Windows::RNS2_Windows() {
-  slo = 0;
+  slo = nullptr;
 }
-RNS2_Windows::~RNS2_Windows() {}
+RNS2_Windows::~RNS2_Windows() = default;
 RNS2BindResult RNS2_Windows::Bind(
     RNS2_BerkleyBindParameters* bindParameters,
     const char* file,

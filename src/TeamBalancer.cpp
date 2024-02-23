@@ -34,7 +34,7 @@ TeamBalancer::TeamBalancer() {
   lockTeams = false;
   hostGuid = UNASSIGNED_RAKNET_GUID;
 }
-TeamBalancer::~TeamBalancer() {}
+TeamBalancer::~TeamBalancer() = default;
 void TeamBalancer::SetTeamSizeLimit(TeamId team, unsigned short limit) {
   teamLimits.Replace(limit, 0, team, _FILE_AND_LINE_);
   if (teamLimits.Size() > teamMemberCounts.Size())

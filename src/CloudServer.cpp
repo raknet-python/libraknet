@@ -243,13 +243,13 @@ void CloudServer::OnPostRequest(Packet* packet) {
   unsigned char* data;
   if (dataLengthBytes > CLOUD_SERVER_DATA_STACK_SIZE) {
     data = (unsigned char*)rakMalloc_Ex(dataLengthBytes, _FILE_AND_LINE_);
-    if (data == 0) {
+    if (data == nullptr) {
       notifyOutOfMemory(_FILE_AND_LINE_);
       return;
     }
     bsIn.ReadAlignedBytes(data, dataLengthBytes);
   } else
-    data = 0;
+    data = nullptr;
 
   // Add this system to remoteSystems if they aren't there already
   DataStructures::HashIndex remoteSystemsHashIndex =
@@ -374,7 +374,7 @@ void CloudServer::OnPostRequest(Packet* packet) {
       remoteCloudClient->uploadedBytes -= cloudData->dataLengthBytes;
     }
 
-    if (cloudData->allocatedData != 0)
+    if (cloudData->allocatedData != nullptr)
       rakFree_Ex(cloudData->allocatedData, _FILE_AND_LINE_);
   }
 
@@ -386,7 +386,7 @@ void CloudServer::OnPostRequest(Packet* packet) {
     // Read to stack
     if (dataLengthBytes > 0)
       bsIn.ReadAlignedBytes(cloudData->stackData, dataLengthBytes);
-    cloudData->allocatedData = 0;
+    cloudData->allocatedData = nullptr;
     cloudData->dataPtr = cloudData->stackData;
   }
   // Update how many bytes were written for this data
@@ -564,7 +564,7 @@ void CloudServer::OnGetRequest(Packet* packet) {
     for (unsigned int remoteServerIndex = 0;
          remoteServerIndex < remoteServersWithData.Size();
          remoteServerIndex++) {
-      BufferedGetResponseFromServer* bufferedGetResponseFromServer =
+      auto* bufferedGetResponseFromServer =
           RakNet::OP_NEW<BufferedGetResponseFromServer>(_FILE_AND_LINE_);
       bufferedGetResponseFromServer->serverAddress =
           remoteServersWithData[remoteServerIndex]->serverAddress;
@@ -670,9 +670,9 @@ void CloudServer::OnGetRequest(Packet* packet) {
           if (keyDataListExists == false) {
             cloudData = RakNet::OP_NEW<CloudData>(_FILE_AND_LINE_);
             cloudData->dataLengthBytes = 0;
-            cloudData->allocatedData = 0;
+            cloudData->allocatedData = nullptr;
             cloudData->isUploaded = false;
-            cloudData->dataPtr = 0;
+            cloudData->dataPtr = nullptr;
             cloudData->serverSystemAddress = UNASSIGNED_SYSTEM_ADDRESS;
             cloudData->clientSystemAddress = UNASSIGNED_SYSTEM_ADDRESS;
             cloudData->serverGUID = rakPeerInterface->GetMyGUID();
@@ -841,7 +841,7 @@ void CloudServer::OnServerToServerGetResponse(Packet* packet) {
     return;
 
   RemoteServer* remoteServer = remoteServers[remoteServerIndex];
-  if (remoteServer == 0)
+  if (remoteServer == nullptr)
     return;
 
   RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -1096,7 +1096,7 @@ void CloudServer::WriteCloudQueryRowFromResultList(
   cloudQueryRow.clientSystemAddress = cloudData->clientSystemAddress;
   cloudQueryRow.serverGUID = cloudData->serverGUID;
   cloudQueryRow.clientGUID = cloudData->clientGUID;
-  cloudQueryRow.Serialize(true, bsOut, 0);
+  cloudQueryRow.Serialize(true, bsOut, nullptr);
 }
 void CloudServer::NotifyClientSubscribersOfDataChange(
     CloudData* cloudData,
@@ -1114,7 +1114,7 @@ void CloudServer::NotifyClientSubscribersOfDataChange(
   row.clientSystemAddress = cloudData->clientSystemAddress;
   row.serverGUID = cloudData->serverGUID;
   row.clientGUID = cloudData->clientGUID;
-  row.Serialize(true, &bsOut, 0);
+  row.Serialize(true, &bsOut, nullptr);
 
   unsigned int i;
   for (i = 0; i < subscribers.Size(); i++) {
@@ -1129,7 +1129,7 @@ void CloudServer::NotifyClientSubscribersOfDataChange(
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_CLOUD_SUBSCRIPTION_NOTIFICATION);
   bsOut.Write(wasUpdated);
-  row->Serialize(true, &bsOut, 0);
+  row->Serialize(true, &bsOut, nullptr);
 
   unsigned int i;
   for (i = 0; i < subscribers.Size(); i++) {
@@ -1155,7 +1155,7 @@ void CloudServer::NotifyServerSubscribersOfDataChange(
   row.clientSystemAddress = cloudData->clientSystemAddress;
   row.serverGUID = cloudData->serverGUID;
   row.clientGUID = cloudData->clientGUID;
-  row.Serialize(true, &bsOut, 0);
+  row.Serialize(true, &bsOut, nullptr);
 
   unsigned int i;
   for (i = 0; i < remoteServers.Size(); i++) {
@@ -1179,7 +1179,7 @@ void CloudServer::AddServer(RakNetGUID systemIdentifier) {
   unsigned int index =
       remoteServers.GetIndexFromKey(systemIdentifier, &objectExists);
   if (objectExists == false) {
-    RemoteServer* remoteServer = RakNet::OP_NEW<RemoteServer>(_FILE_AND_LINE_);
+    auto* remoteServer = RakNet::OP_NEW<RemoteServer>(_FILE_AND_LINE_);
     remoteServer->gotSubscribedAndUploadedKeys = false;
     remoteServer->serverAddress = systemIdentifier;
     remoteServers.InsertAtIndex(remoteServer, index, _FILE_AND_LINE_);
@@ -1225,7 +1225,7 @@ void CloudServer::ProcessAndTransmitGetRequest(GetRequest* getRequest) {
   bool unlimitedRows =
       getRequest->cloudQueryWithAddresses.cloudQuery.maxRowsToReturn == 0;
 
-  uint32_t localNumRows = (uint32_t)cloudDataResultList.Size();
+  auto localNumRows = (uint32_t)cloudDataResultList.Size();
   if (unlimitedRows == false &&
       localNumRows >
           getRequest->cloudQueryWithAddresses.cloudQuery.startingRowIndex &&

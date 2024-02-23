@@ -28,7 +28,7 @@ static const int DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR = 1000;
 STATIC_FACTORY_DEFINITIONS(UDPProxyClient, UDPProxyClient);
 
 UDPProxyClient::UDPProxyClient() {
-  resultHandler = 0;
+  resultHandler = nullptr;
 }
 UDPProxyClient::~UDPProxyClient() {
   Clear();
@@ -48,8 +48,8 @@ bool UDPProxyClient::RequestForwarding(
     return false;
 
   // Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
-  RakAssert(resultHandler != 0);
-  if (resultHandler == 0)
+  RakAssert(resultHandler != nullptr);
+  if (resultHandler == nullptr)
     return false;
 
   BitStream outgoingBs;
@@ -89,8 +89,8 @@ bool UDPProxyClient::RequestForwarding(
     return false;
 
   // Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
-  RakAssert(resultHandler != 0);
-  if (resultHandler == 0)
+  RakAssert(resultHandler != nullptr);
+  if (resultHandler == nullptr)
     return false;
 
   BitStream outgoingBs;
@@ -273,7 +273,7 @@ void UDPProxyClient::OnPingServers(Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
   incomingBs.IgnoreBytes(2);
 
-  PingServerGroup* psg = RakNet::OP_NEW<PingServerGroup>(_FILE_AND_LINE_);
+  auto* psg = RakNet::OP_NEW<PingServerGroup>(_FILE_AND_LINE_);
 
   ServerWithPing swp;
   incomingBs.Read(psg->sata.senderClientAddress);
@@ -315,7 +315,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(
       (MessageID)ID_UDP_PROXY_PING_SERVERS_REPLY_FROM_CLIENT_TO_COORDINATOR);
   outgoingBs.Write(sata.senderClientAddress);
   outgoingBs.Write(sata.targetClientAddress);
-  unsigned short serversToPingSize = (unsigned short)serversToPing.Size();
+  auto serversToPingSize = (unsigned short)serversToPing.Size();
   outgoingBs.Write(serversToPingSize);
   unsigned int serversToPingIndex;
   for (serversToPingIndex = 0; serversToPingIndex < serversToPingSize;

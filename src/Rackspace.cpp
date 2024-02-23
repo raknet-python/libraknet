@@ -18,10 +18,10 @@
 using namespace RakNet;
 
 Rackspace::Rackspace() {
-  tcpInterface = 0;
+  tcpInterface = nullptr;
 }
 
-Rackspace::~Rackspace() {}
+Rackspace::~Rackspace() = default;
 
 void Rackspace::AddEventCallback(Rackspace2EventCallback* callback) {
   unsigned int idx = eventCallbacks.GetIndexOf(callback);
@@ -393,7 +393,7 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
       RackspaceEventType rackspaceEventType;
       char* result;
       result = strstr((char*)packetData, "HTTP/1.1 ");
-      if (result != 0) {
+      if (result != nullptr) {
         result += strlen("HTTP/1.1 ");
         for (i = 0; i < sizeof(resultCodeStr) - 1 && result[i] &&
              result[i] >= '0' && result[i] <= '9';
@@ -706,13 +706,13 @@ void Rackspace::ReadLine(
   char *result, *resultEnd;
 
   result = strstr((char*)data, stringStart);
-  if (result == 0) {
+  if (result == nullptr) {
     RakAssert(0);
     return;
   }
 
   result += strlen(stringStart);
-  if (result == 0) {
+  if (result == nullptr) {
     RakAssert(0);
     return;
   }

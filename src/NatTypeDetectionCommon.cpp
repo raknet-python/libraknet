@@ -131,10 +131,10 @@ RakNetSocket2* RakNet::CreateNonblockingBoundSocket(
 
     if (br == BR_FAILED_TO_BIND_SOCKET) {
       RakNetSocket2Allocator::DeallocRNS2(r2);
-      return 0;
+      return nullptr;
     } else if (br == BR_FAILED_SEND_TEST) {
       RakNetSocket2Allocator::DeallocRNS2(r2);
-      return 0;
+      return nullptr;
     } else {
       RakAssert(br == BR_SUCCESS);
     }

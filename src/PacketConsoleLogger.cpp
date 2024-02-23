@@ -17,7 +17,7 @@
 using namespace RakNet;
 
 PacketConsoleLogger::PacketConsoleLogger() {
-  logCommandParser = 0;
+  logCommandParser = nullptr;
 }
 
 void PacketConsoleLogger::SetLogCommandParser(LogCommandParser* lcp) {

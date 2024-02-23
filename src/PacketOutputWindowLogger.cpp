@@ -23,8 +23,8 @@
 
 using namespace RakNet;
 
-PacketOutputWindowLogger::PacketOutputWindowLogger() {}
-PacketOutputWindowLogger::~PacketOutputWindowLogger() {}
+PacketOutputWindowLogger::PacketOutputWindowLogger() = default;
+PacketOutputWindowLogger::~PacketOutputWindowLogger() = default;
 void PacketOutputWindowLogger::WriteLog(const char* str) {
 #if defined(_WIN32)
 

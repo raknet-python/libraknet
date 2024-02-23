@@ -20,7 +20,7 @@
 using namespace RakNet;
 
 HuffmanEncodingTree::HuffmanEncodingTree() {
-  root = 0;
+  root = nullptr;
 }
 
 HuffmanEncodingTree::~HuffmanEncodingTree() {
@@ -28,7 +28,7 @@ HuffmanEncodingTree::~HuffmanEncodingTree() {
 }
 
 void HuffmanEncodingTree::FreeMemory() {
-  if (root == 0)
+  if (root == nullptr)
     return;
 
   // Use an in-order traversal to delete the tree
@@ -54,7 +54,7 @@ void HuffmanEncodingTree::FreeMemory() {
   for (int i = 0; i < 256; i++)
     rakFree_Ex(encodingTable[i].encoding, _FILE_AND_LINE_);
 
-  root = 0;
+  root = nullptr;
 }
 
 ////#include <stdio.h>
@@ -74,8 +74,8 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
 
   for (counter = 0; counter < 256; counter++) {
     node = RakNet::OP_NEW<HuffmanEncodingTreeNode>(_FILE_AND_LINE_);
-    node->left = 0;
-    node->right = 0;
+    node->left = nullptr;
+    node->right = nullptr;
     node->value = (unsigned char)counter;
     node->weight = frequencyTable[counter];
 
@@ -94,7 +94,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     huffmanEncodingTreeNodeList.Beginning();
     HuffmanEncodingTreeNode *lesser, *greater;
     lesser = huffmanEncodingTreeNodeList.Pop();
@@ -111,7 +111,7 @@ void HuffmanEncodingTree::GenerateFromFrequencyTable(
     if (huffmanEncodingTreeNodeList.Size() == 0) {
       // 3. Assign the one remaining node in the list to the root node.
       root = node;
-      root->parent = 0;
+      root->parent = nullptr;
       break;
     }
 
@@ -182,7 +182,7 @@ void HuffmanEncodingTree::EncodeArray(
   // Byte align the output so the unassigned remaining bits don't equate to some actual value
   if (output->GetNumberOfBitsUsed() % 8 != 0) {
     // Find an input that is longer than the remaining bits.  Write out part of it to pad the output to be byte aligned.
-    unsigned char remainingBits =
+    auto remainingBits =
         (unsigned char)(8 - (output->GetNumberOfBitsUsed() % 8));
 
     for (counter = 0; counter < 256; counter++)
@@ -222,7 +222,7 @@ unsigned HuffmanEncodingTree::DecodeArray(
     else
       currentNode = currentNode->right;
 
-    if (currentNode->left == 0 && currentNode->right == 0) // Leaf
+    if (currentNode->left == nullptr && currentNode->right == nullptr) // Leaf
     {
       if (outputWriteIndex < maxCharsToWrite)
         output[outputWriteIndex] = currentNode->value;
@@ -257,7 +257,7 @@ void HuffmanEncodingTree::DecodeArray(
     else
       currentNode = currentNode->right;
 
-    if (currentNode->left == 0 && currentNode->right == 0) // Leaf
+    if (currentNode->left == nullptr && currentNode->right == nullptr) // Leaf
     {
       output->WriteBits(
           &(currentNode->value),
@@ -285,7 +285,7 @@ void HuffmanEncodingTree::InsertNodeIntoSortedList(
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     if (huffmanEncodingTreeNodeList->Peek()->weight < node->weight)
       ++(*huffmanEncodingTreeNodeList);
     else {

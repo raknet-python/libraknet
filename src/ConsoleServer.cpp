@@ -27,9 +27,9 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(ConsoleServer, ConsoleServer);
 
 ConsoleServer::ConsoleServer() {
-  transport = 0;
-  password[0] = 0;
-  prompt = 0;
+  transport = nullptr;
+  password[0] = nullptr;
+  prompt = nullptr;
 }
 ConsoleServer::~ConsoleServer() {
   if (prompt)
@@ -57,7 +57,7 @@ void ConsoleServer::SetTransportProvider(
 }
 void ConsoleServer::AddCommandParser(
     CommandParserInterface* commandParserInterface) {
-  if (commandParserInterface == 0)
+  if (commandParserInterface == nullptr)
     return;
 
   // Non-duplicate insertion
@@ -81,7 +81,7 @@ void ConsoleServer::AddCommandParser(
 }
 void ConsoleServer::RemoveCommandParser(
     CommandParserInterface* commandParserInterface) {
-  if (commandParserInterface == 0)
+  if (commandParserInterface == nullptr)
     return;
 
   // Overwrite the element we are removing from the back of the list and delete the back of the list
@@ -236,7 +236,7 @@ void ConsoleServer::Update() {
 
       if (numParameters >= 2) // At minimum <CommandParserName> <Command>
       {
-        unsigned commandParserIndex = (unsigned)-1;
+        auto commandParserIndex = (unsigned)-1;
         // Prefixing with numbers directs to a particular parser
         if (**parameterList >= '0' && **parameterList <= '9') {
           commandParserIndex = atoi(
@@ -347,7 +347,7 @@ void ConsoleServer::SetPrompt(const char* _prompt) {
     prompt = (char*)rakMalloc_Ex(len + 1, _FILE_AND_LINE_);
     strcpy(prompt, _prompt);
   } else
-    prompt = 0;
+    prompt = nullptr;
 }
 
 #endif // _RAKNET_SUPPORT_*

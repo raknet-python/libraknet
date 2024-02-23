@@ -52,7 +52,7 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(
     RakNet::OP_DELETE(strAndGuidExisting, _FILE_AND_LINE_);
   }
 
-  StrAndGuidAndRoom* strAndGuid =
+  auto* strAndGuid =
       RakNet::OP_NEW<StrAndGuidAndRoom>(_FILE_AND_LINE_);
   strAndGuid->guid = guid;
   strAndGuid->str = key;
@@ -253,8 +253,8 @@ void RelayPlugin::OnClosedConnection(
 RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     RP_Group* room,
     StrAndGuidAndRoom** strAndGuidSender) {
-  if (strAndGuidSender == 0)
-    return 0;
+  if (strAndGuidSender == nullptr)
+    return nullptr;
 
   NotifyUsersInRoom(room, RPE_USER_ENTERED_ROOM, (*strAndGuidSender)->str);
   StrAndGuid sag;
@@ -282,10 +282,10 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
   StrAndGuidAndRoom** strAndGuidSender = guidToStrHash.Peek(userGuid);
   if (strAndGuidSender) {
     if (roomName.IsEmpty())
-      return 0;
+      return nullptr;
 
     if ((*strAndGuidSender)->currentRoom == roomName)
-      return 0;
+      return nullptr;
 
     if ((*strAndGuidSender)->currentRoom.IsEmpty() == false)
       LeaveGroup(strAndGuidSender);
@@ -300,16 +300,16 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     }
 
     // Create new room
-    RP_Group* room = RakNet::OP_NEW<RP_Group>(_FILE_AND_LINE_);
+    auto* room = RakNet::OP_NEW<RP_Group>(_FILE_AND_LINE_);
     room->roomName = roomName;
     chatRooms.Push(room, _FILE_AND_LINE_);
     return JoinGroup(room, strAndGuidSender);
   }
 
-  return 0;
+  return nullptr;
 }
 void RelayPlugin::LeaveGroup(StrAndGuidAndRoom** strAndGuidSender) {
-  if (strAndGuidSender == 0)
+  if (strAndGuidSender == nullptr)
     return;
 
   RakString userName = (*strAndGuidSender)->str;

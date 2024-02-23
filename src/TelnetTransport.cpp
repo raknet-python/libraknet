@@ -31,9 +31,9 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(TelnetTransport, TelnetTransport);
 
 TelnetTransport::TelnetTransport() {
-  tcpInterface = 0;
-  sendSuffix = 0;
-  sendPrefix = 0;
+  tcpInterface = nullptr;
+  sendSuffix = nullptr;
+  sendPrefix = nullptr;
 }
 TelnetTransport::~TelnetTransport() {
   Stop();
@@ -49,7 +49,7 @@ bool TelnetTransport::Start(unsigned short port, bool serverMode) {
   return tcpInterface->Start(port, 64);
 }
 void TelnetTransport::Stop() {
-  if (tcpInterface == 0)
+  if (tcpInterface == nullptr)
     return;
   tcpInterface->Stop();
   unsigned i;
@@ -57,13 +57,13 @@ void TelnetTransport::Stop() {
     RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
   remoteClients.Clear(false, _FILE_AND_LINE_);
   RakNet::OP_DELETE(tcpInterface, _FILE_AND_LINE_);
-  tcpInterface = 0;
+  tcpInterface = nullptr;
 }
 void TelnetTransport::Send(SystemAddress systemAddress, const char* data, ...) {
-  if (tcpInterface == 0)
+  if (tcpInterface == nullptr)
     return;
 
-  if (data == 0 || data[0] == 0)
+  if (data == nullptr || data[0] == 0)
     return;
 
   char text[REMOTE_MAX_TEXT_INPUT];
@@ -94,11 +94,11 @@ void TelnetTransport::CloseConnection(SystemAddress systemAddress) {
   tcpInterface->CloseConnection(systemAddress);
 }
 Packet* TelnetTransport::Receive() {
-  if (tcpInterface == 0)
-    return 0;
+  if (tcpInterface == nullptr)
+    return nullptr;
   Packet* p = tcpInterface->Receive();
-  if (p == 0)
-    return 0;
+  if (p == nullptr)
+    return nullptr;
 
   /*
 	if (p->data[0]==255)
@@ -116,15 +116,15 @@ Packet* TelnetTransport::Receive() {
 
   // Get this guy's cursor buffer.  This is real bullcrap that I have to do this.
   unsigned i;
-  TelnetClient* remoteClient = 0;
+  TelnetClient* remoteClient = nullptr;
   for (i = 0; i < remoteClients.Size(); i++) {
     if (remoteClients[i]->systemAddress == p->systemAddress)
       remoteClient = remoteClients[i];
   }
   //RakAssert(remoteClient);
-  if (remoteClient == 0) {
+  if (remoteClient == nullptr) {
     tcpInterface->DeallocatePacket(p);
-    return 0;
+    return nullptr;
   }
 
   if (p->length == 3 && p->data[0] == 27 && p->data[1] == 91 &&
@@ -144,7 +144,7 @@ Packet* TelnetTransport::Receive() {
           (unsigned int)strlen(remoteClient->textInput);
     }
 
-    return 0;
+    return nullptr;
   }
 
   // 127 is delete - ignore that
@@ -152,7 +152,7 @@ Packet* TelnetTransport::Receive() {
   // 27 is escape
   if (p->data[0] >= 127 || p->data[0] == 9 || p->data[0] == 27) {
     tcpInterface->DeallocatePacket(p);
-    return 0;
+    return nullptr;
   }
 
   // Hack - I don't know what the hell this is about but cursor keys send 3 characters at a time.  I can block these
@@ -163,7 +163,7 @@ Packet* TelnetTransport::Receive() {
   if (p->length == 3 && p->data[0] == 27 && p->data[1] == 91 &&
       p->data[2] >= 65 && p->data[2] <= 68) {
     tcpInterface->DeallocatePacket(p);
-    return 0;
+    return nullptr;
   }
 
   // Echo
@@ -186,7 +186,7 @@ Packet* TelnetTransport::Receive() {
 
     gotLine = ReassembleLine(remoteClient, p->data[i]);
     if (gotLine && remoteClient->textInput[0]) {
-      Packet* reassembledLine =
+      auto* reassembledLine =
           (Packet*)rakMalloc_Ex(sizeof(Packet), _FILE_AND_LINE_);
       reassembledLine->length = (unsigned int)strlen(remoteClient->textInput);
       memcpy(
@@ -211,10 +211,10 @@ Packet* TelnetTransport::Receive() {
   }
 
   tcpInterface->DeallocatePacket(p);
-  return 0;
+  return nullptr;
 }
 void TelnetTransport::DeallocatePacket(Packet* packet) {
-  if (tcpInterface == 0)
+  if (tcpInterface == nullptr)
     return;
   rakFree_Ex(packet->data, _FILE_AND_LINE_);
   rakFree_Ex(packet, _FILE_AND_LINE_);
@@ -246,7 +246,7 @@ SystemAddress TelnetTransport::HasNewIncomingConnection() {
 
 	*/
 
-    TelnetClient* remoteClient = 0;
+    TelnetClient* remoteClient = nullptr;
     for (i = 0; i < remoteClients.Size(); i++) {
       if (remoteClients[i]->systemAddress == newConnection) {
         remoteClient = remoteClients[i];
@@ -254,7 +254,7 @@ SystemAddress TelnetTransport::HasNewIncomingConnection() {
       }
     }
 
-    if (remoteClient == 0) {
+    if (remoteClient == nullptr) {
       remoteClient = new TelnetClient;
       remoteClient->lastSentTextInput[0] = 0;
       remoteClient->cursorPosition = 0;
@@ -284,12 +284,12 @@ SystemAddress TelnetTransport::HasLostConnection() {
   return systemAddress;
 }
 CommandParserInterface* TelnetTransport::GetCommandParser() {
-  return 0;
+  return nullptr;
 }
 void TelnetTransport::SetSendSuffix(const char* suffix) {
   if (sendSuffix) {
     rakFree_Ex(sendSuffix, _FILE_AND_LINE_);
-    sendSuffix = 0;
+    sendSuffix = nullptr;
   }
   if (suffix) {
     sendSuffix = (char*)rakMalloc_Ex(strlen(suffix) + 1, _FILE_AND_LINE_);
@@ -299,7 +299,7 @@ void TelnetTransport::SetSendSuffix(const char* suffix) {
 void TelnetTransport::SetSendPrefix(const char* prefix) {
   if (sendPrefix) {
     rakFree_Ex(sendPrefix, _FILE_AND_LINE_);
-    sendPrefix = 0;
+    sendPrefix = nullptr;
   }
   if (prefix) {
     sendPrefix = (char*)rakMalloc_Ex(strlen(prefix) + 1, _FILE_AND_LINE_);
@@ -307,7 +307,7 @@ void TelnetTransport::SetSendPrefix(const char* prefix) {
   }
 }
 void TelnetTransport::AutoAllocate() {
-  if (tcpInterface == 0)
+  if (tcpInterface == nullptr)
     tcpInterface = new TCPInterface;
 }
 bool TelnetTransport::ReassembleLine(

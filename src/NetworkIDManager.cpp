@@ -27,7 +27,7 @@ NetworkIDManager::NetworkIDManager() {
   startingOffset = RakPeerInterface::Get64BitUniqueRandomNumber();
   Clear();
 }
-NetworkIDManager::~NetworkIDManager() {}
+NetworkIDManager::~NetworkIDManager() = default;
 void NetworkIDManager::Clear() {
   memset(networkIdHash, 0, sizeof(networkIdHash));
 }
@@ -39,7 +39,7 @@ NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
       return nio;
     nio = nio->nextInstanceForNetworkIDManager;
   }
-  return 0;
+  return nullptr;
 }
 NetworkID NetworkIDManager::GetNewNetworkID() {
   while (GET_BASE_OBJECT_FROM_ID(++startingOffset))
@@ -59,11 +59,11 @@ void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject* networkIdObject) {
   NetworkID rawId = networkIdObject->GetNetworkID();
   RakAssert(rawId != UNASSIGNED_NETWORK_ID);
 
-  networkIdObject->nextInstanceForNetworkIDManager = 0;
+  networkIdObject->nextInstanceForNetworkIDManager = nullptr;
 
   unsigned int hashIndex = NetworkIDToHashIndex(rawId);
   //	printf("TrackNetworkIDObject hashIndex=%i guid=%s\n",hashIndex, networkIdObject->GetNetworkID().guid.ToString()); // removeme
-  if (networkIdHash[hashIndex] == 0) {
+  if (networkIdHash[hashIndex] == nullptr) {
     networkIdHash[hashIndex] = networkIdObject;
     return;
   }
@@ -73,7 +73,7 @@ void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject* networkIdObject) {
   // Random GUID conflict?
   RakAssert(nio->GetNetworkID() != rawId);
 
-  while (nio->nextInstanceForNetworkIDManager != 0) {
+  while (nio->nextInstanceForNetworkIDManager != nullptr) {
     nio = nio->nextInstanceForNetworkIDManager;
 
     // Duplicate insertion?
@@ -94,7 +94,7 @@ void NetworkIDManager::StopTrackingNetworkIDObject(
   unsigned int hashIndex = NetworkIDToHashIndex(rawId);
   //	printf("hashIndex=%i\n",hashIndex); // removeme
   NetworkIDObject* nio = networkIdHash[hashIndex];
-  if (nio == 0) {
+  if (nio == nullptr) {
     RakAssert(
         "NetworkIDManager::StopTrackingNetworkIDObject didn't find object" &&
         0);

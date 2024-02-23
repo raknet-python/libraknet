@@ -421,7 +421,7 @@ void ReadyEvent::Clear() {
 }
 
 unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady) {
-  ReadyEventNode* ren = RakNet::OP_NEW<ReadyEventNode>(_FILE_AND_LINE_);
+  auto* ren = RakNet::OP_NEW<ReadyEventNode>(_FILE_AND_LINE_);
   ren->eventId = eventId;
   if (isReady == false)
     ren->eventStatus = ID_READY_EVENT_UNSET;

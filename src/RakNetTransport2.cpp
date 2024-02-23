@@ -29,7 +29,7 @@ using namespace RakNet;
 
 STATIC_FACTORY_DEFINITIONS(RakNetTransport2, RakNetTransport2);
 
-RakNetTransport2::RakNetTransport2() {}
+RakNetTransport2::RakNetTransport2() = default;
 RakNetTransport2::~RakNetTransport2() {
   Stop();
 }
@@ -51,7 +51,7 @@ void RakNetTransport2::Send(
     SystemAddress systemAddress,
     const char* data,
     ...) {
-  if (data == 0 || data[0] == 0)
+  if (data == nullptr || data[0] == 0)
     return;
 
   char text[REMOTE_MAX_TEXT_INPUT];
@@ -78,7 +78,7 @@ void RakNetTransport2::CloseConnection(SystemAddress systemAddress) {
 }
 Packet* RakNetTransport2::Receive() {
   if (packetQueue.Size() == 0)
-    return 0;
+    return nullptr;
   return packetQueue.Pop();
 }
 SystemAddress RakNetTransport2::HasNewIncomingConnection() {
@@ -101,7 +101,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet* packet) {
       if (packet->length == sizeof(MessageID))
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
 
-      Packet* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+      auto* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
       *p = *packet;
       p->bitSize -= 8;
       p->length--;

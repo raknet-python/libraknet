@@ -24,7 +24,7 @@ void RAK_DLL_EXPORT RakNet::StatisticsToString(
     RakNetStatistics* s,
     char* buffer,
     int verbosityLevel) {
-  if (s == 0) {
+  if (s == nullptr) {
     sprintf(buffer, "stats is a NULL pointer in statsToString\n");
     return;
   }

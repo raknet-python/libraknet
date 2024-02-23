@@ -59,7 +59,7 @@ int RakThread::Create(void* start_address(void*), void* arglist, int priority)
       (DWORD*)&threadID);
 #else
   threadHandle = (HANDLE)_beginthreadex(
-      NULL,
+      nullptr,
       MAX_ALLOCA_STACK_ALLOCATION * 2,
       start_address,
       arglist,
@@ -73,7 +73,7 @@ int RakThread::Create(void* start_address(void*), void* arglist, int priority)
   ResumeThread(threadHandle);
 #endif
 
-  if (threadHandle == 0) {
+  if (threadHandle == nullptr) {
     return 1;
   } else {
     CloseHandle(threadHandle);

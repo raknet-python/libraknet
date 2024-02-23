@@ -111,7 +111,7 @@ STATIC_FACTORY_DEFINITIONS(NatPunchthroughServer, NatPunchthroughServer);
 NatPunchthroughServer::NatPunchthroughServer() {
   lastUpdate = 0;
   sessionId = 0;
-  natPunchthroughServerDebugInterface = 0;
+  natPunchthroughServerDebugInterface = nullptr;
   for (int i = 0; i < MAXIMUM_NUMBER_OF_INTERNAL_IDS; i++)
     boundAddresses[i] = UNASSIGNED_SYSTEM_ADDRESS;
   boundAddressCount = 0;
@@ -401,7 +401,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet* packet) {
   i = users.GetIndexFromKey(senderGuid, &objectExists);
   RakAssert(objectExists);
 
-  ConnectionAttempt* ca = RakNet::OP_NEW<ConnectionAttempt>(_FILE_AND_LINE_);
+  auto* ca = RakNet::OP_NEW<ConnectionAttempt>(_FILE_AND_LINE_);
   ca->sender = users[i];
   ca->sessionId = sessionId++;
   i = users.GetIndexFromKey(recipientGuid, &objectExists);

@@ -110,7 +110,7 @@ BitStream::BitStream(
 #endif
       memcpy(data, _data, (size_t)lengthInBytes);
     } else
-      data = 0;
+      data = nullptr;
   } else
     data = (unsigned char*)_data;
 }
@@ -324,7 +324,7 @@ void BitStream::WriteAlignedBytesSafe(
     const char* inByteArray,
     const unsigned int inputLength,
     const unsigned int maxBytesToWrite) {
-  if (inByteArray == 0 || inputLength == 0) {
+  if (inByteArray == nullptr || inputLength == 0) {
     WriteCompressed((unsigned int)0);
     return;
   }
@@ -391,7 +391,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc(
     unsigned int& inputLength,
     const unsigned int maxBytesToRead) {
   rakFree_Ex(*outByteArray, _FILE_AND_LINE_);
-  *outByteArray = 0;
+  *outByteArray = nullptr;
   if (ReadCompressed(inputLength) == false)
     return false;
   if (inputLength > maxBytesToRead)
@@ -1010,7 +1010,7 @@ void BitStream::AssertCopyData() {
     copyData = true;
 
     if (numberOfBitsAllocated > 0) {
-      unsigned char* newdata = (unsigned char*)rakMalloc_Ex(
+      auto* newdata = (unsigned char*)rakMalloc_Ex(
           (size_t)BITS_TO_BYTES(numberOfBitsAllocated), _FILE_AND_LINE_);
 #ifdef _DEBUG
 
@@ -1022,7 +1022,7 @@ void BitStream::AssertCopyData() {
     }
 
     else
-      data = 0;
+      data = nullptr;
   }
 }
 bool BitStream::IsNetworkOrderInternal() {

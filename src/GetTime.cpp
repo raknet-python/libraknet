@@ -145,7 +145,7 @@ RakNet::TimeUS RakNet::GetTimeUS() {
 }
 bool RakNet::GreaterThan(RakNet::Time a, RakNet::Time b) {
   // a > b?
-  const RakNet::Time halfSpan =
+  const auto halfSpan =
       (RakNet::Time)(((RakNet::Time)(const RakNet::Time)-1) / (RakNet::Time)2);
   return b != a && b - a > halfSpan;
 }

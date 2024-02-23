@@ -22,10 +22,10 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(CloudClient, CloudClient);
 
 CloudClient::CloudClient() {
-  callback = 0;
+  callback = nullptr;
   allocator = &unsetDefaultAllocator;
 }
-CloudClient::~CloudClient() {}
+CloudClient::~CloudClient() = default;
 void CloudClient::SetDefaultCallbacks(
     CloudAllocator* _allocator,
     CloudClientCallback* _callback) {
@@ -42,7 +42,7 @@ void CloudClient::Post(
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_CLOUD_POST_REQUEST);
   cloudKey->Serialize(true, &bsOut);
-  if (data == 0)
+  if (data == nullptr)
     dataLengthBytes = 0;
   bsOut.Write(dataLengthBytes);
   if (dataLengthBytes > 0)
@@ -177,9 +177,9 @@ void CloudClient::OnGetReponse(
     Packet* packet,
     CloudClientCallback* _callback,
     CloudAllocator* _allocator) {
-  if (_callback == 0)
+  if (_callback == nullptr)
     _callback = callback;
-  if (_allocator == 0)
+  if (_allocator == nullptr)
     _allocator = allocator;
 
   CloudQueryResult cloudQueryResult;
@@ -201,7 +201,7 @@ void CloudClient::OnGetReponse(
     CloudQueryResult* cloudQueryResult,
     Packet* packet,
     CloudAllocator* _allocator) {
-  if (_allocator == 0)
+  if (_allocator == nullptr)
     _allocator = allocator;
 
   RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -212,9 +212,9 @@ void CloudClient::OnSubscriptionNotification(
     Packet* packet,
     CloudClientCallback* _callback,
     CloudAllocator* _allocator) {
-  if (_callback == 0)
+  if (_callback == nullptr)
     _callback = callback;
-  if (_allocator == 0)
+  if (_allocator == nullptr)
     _allocator = allocator;
 
   bool wasUpdated = false;
@@ -236,7 +236,7 @@ void CloudClient::OnSubscriptionNotification(
     CloudQueryRow* row,
     Packet* packet,
     CloudAllocator* _allocator) {
-  if (_allocator == 0)
+  if (_allocator == nullptr)
     _allocator = allocator;
 
   RakNet::BitStream bsIn(packet->data, packet->length, false);

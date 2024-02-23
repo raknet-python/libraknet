@@ -31,9 +31,9 @@ using namespace RakNet;
 
 // ****************************************************** PUBLIC METHODS ******************************************************
 
-CCRakNetSlidingWindow::CCRakNetSlidingWindow() {}
+CCRakNetSlidingWindow::CCRakNetSlidingWindow() = default;
 // ----------------------------------------------------------------------------------------------------------------------------
-CCRakNetSlidingWindow::~CCRakNetSlidingWindow() {}
+CCRakNetSlidingWindow::~CCRakNetSlidingWindow() = default;
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::Init(
     CCTimeType curTime,

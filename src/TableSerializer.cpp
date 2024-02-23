@@ -287,7 +287,7 @@ void TableSerializer::SerializeFilterQueryList(
     unsigned int maxQueries) {
   (void)maxQueries;
   in->Write((bool)(query && numQueries > 0));
-  if (query == 0 || numQueries <= 0)
+  if (query == nullptr || numQueries <= 0)
     return;
 
   RakAssert(numQueries <= maxQueries);
@@ -307,7 +307,7 @@ bool TableSerializer::DeserializeFilterQueryList(
   out->Read(anyQueries);
   if (anyQueries == false) {
     if (allocateExtraQueries <= 0)
-      *query = 0;
+      *query = nullptr;
     else
       *query = new DataStructures::Table::FilterQuery[allocateExtraQueries];
 
@@ -337,7 +337,7 @@ bool TableSerializer::DeserializeFilterQueryList(
 void TableSerializer::DeallocateQueryList(
     DataStructures::Table::FilterQuery* query,
     unsigned int numQueries) {
-  if (query == 0 || numQueries == 0)
+  if (query == nullptr || numQueries == 0)
     return;
 
   unsigned i;

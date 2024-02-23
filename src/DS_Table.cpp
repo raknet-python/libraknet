@@ -36,8 +36,8 @@ void FreeRow(Table::Row* input, int index) {
 }
 Table::Cell::Cell() {
   isEmpty = true;
-  c = 0;
-  ptr = 0;
+  c = nullptr;
+  ptr = nullptr;
   i = 0.0;
 }
 Table::Cell::~Cell() {
@@ -53,7 +53,7 @@ Table::Cell& Table::Cell::operator=(const Table::Cell& input) {
     c = (char*)rakMalloc_Ex((int)i, _FILE_AND_LINE_);
     memcpy(c, input.c, (int)i);
   } else
-    c = 0;
+    c = nullptr;
   return *this;
 }
 Table::Cell::Cell(const Table::Cell& input) {
@@ -70,8 +70,8 @@ Table::Cell::Cell(const Table::Cell& input) {
 void Table::Cell::Set(double input) {
   Clear();
   i = input;
-  c = 0;
-  ptr = 0;
+  c = nullptr;
+  ptr = nullptr;
   isEmpty = false;
 }
 void Table::Cell::Set(unsigned int input) {
@@ -80,8 +80,8 @@ void Table::Cell::Set(unsigned int input) {
 void Table::Cell::Set(int input) {
   Clear();
   i = (double)input;
-  c = 0;
-  ptr = 0;
+  c = nullptr;
+  ptr = nullptr;
   isEmpty = false;
 }
 
@@ -93,10 +93,10 @@ void Table::Cell::Set(const char* input) {
     c = (char*)rakMalloc_Ex((int)i, _FILE_AND_LINE_);
     strcpy(c, input);
   } else {
-    c = 0;
+    c = nullptr;
     i = 0;
   }
-  ptr = 0;
+  ptr = nullptr;
   isEmpty = false;
 }
 void Table::Cell::Set(const char* input, int inputLength) {
@@ -106,15 +106,15 @@ void Table::Cell::Set(const char* input, int inputLength) {
     i = inputLength;
     memcpy(c, input, inputLength);
   } else {
-    c = 0;
+    c = nullptr;
     i = 0;
   }
-  ptr = 0;
+  ptr = nullptr;
   isEmpty = false;
 }
 void Table::Cell::SetPtr(void* p) {
   Clear();
-  c = 0;
+  c = nullptr;
   ptr = p;
   isEmpty = false;
 }
@@ -193,12 +193,12 @@ Table::ColumnType Table::Cell::EstimateColumnType() const {
 void Table::Cell::Clear() {
   if (isEmpty == false && c) {
     rakFree_Ex(c, _FILE_AND_LINE_);
-    c = 0;
+    c = nullptr;
   }
   isEmpty = true;
 }
-Table::ColumnDescriptor::ColumnDescriptor() {}
-Table::ColumnDescriptor::~ColumnDescriptor() {}
+Table::ColumnDescriptor::ColumnDescriptor() = default;
+Table::ColumnDescriptor::~ColumnDescriptor() = default;
 Table::ColumnDescriptor::ColumnDescriptor(
     const char cn[_TABLE_MAX_COLUMN_NAME_LENGTH],
     ColumnType ct) {
@@ -224,7 +224,7 @@ void Table::Row::UpdateCell(
   cells[columnIndex]->Clear();
   cells[columnIndex]->Set(data, byteLength);
 }
-Table::Table() {}
+Table::Table() = default;
 Table::~Table() {
   Clear();
 }
@@ -275,7 +275,7 @@ unsigned Table::ColumnIndex(
 }
 char* Table::ColumnName(unsigned index) const {
   if (index >= columns.Size())
-    return 0;
+    return nullptr;
   else
     return (char*)columns[index].columnName;
 }
@@ -296,7 +296,7 @@ Table::Row* Table::AddRow(unsigned rowId) {
   newRow = RakNet::OP_NEW<Row>(_FILE_AND_LINE_);
   if (rows.Insert(rowId, newRow) == false) {
     RakNet::OP_DELETE(newRow, _FILE_AND_LINE_);
-    return 0; // Already exists
+    return nullptr; // Already exists
   }
   unsigned rowIndex;
   for (rowIndex = 0; rowIndex < columns.Size(); rowIndex++)
@@ -346,7 +346,7 @@ Table::Row* Table::AddRow(
                 columns[rowIndex].columnType),
             _FILE_AND_LINE_);
       else {
-        Table::Cell* c = RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_);
+        auto* c = RakNet::OP_NEW<Table::Cell>(_FILE_AND_LINE_);
         newRow->cells.Insert(c, _FILE_AND_LINE_);
         *c = *(initialCellValues[rowIndex]);
       }
@@ -441,7 +441,7 @@ bool Table::UpdateCellByIndex(
     int value) {
   RakAssert(columns[columnIndex].columnType == NUMERIC);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->UpdateCell(columnIndex, value);
     return true;
@@ -454,7 +454,7 @@ bool Table::UpdateCellByIndex(
     char* str) {
   RakAssert(columns[columnIndex].columnType == STRING);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->UpdateCell(columnIndex, str);
     return true;
@@ -468,7 +468,7 @@ bool Table::UpdateCellByIndex(
     char* data) {
   RakAssert(columns[columnIndex].columnType == BINARY);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->UpdateCell(columnIndex, byteLength, data);
     return true;
@@ -481,7 +481,7 @@ void Table::GetCellValueByIndex(
     int* output) {
   RakAssert(columns[columnIndex].columnType == NUMERIC);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->cells[columnIndex]->Get(output);
   }
@@ -492,7 +492,7 @@ void Table::GetCellValueByIndex(
     char* output) {
   RakAssert(columns[columnIndex].columnType == STRING);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->cells[columnIndex]->Get(output);
   }
@@ -504,7 +504,7 @@ void Table::GetCellValueByIndex(
     int* outputLength) {
   RakAssert(columns[columnIndex].columnType == BINARY);
 
-  Row* row = GetRowByIndex(rowIndex, 0);
+  Row* row = GetRowByIndex(rowIndex, nullptr);
   if (row) {
     row->cells[columnIndex]->Get(output, outputLength);
   }
@@ -512,7 +512,7 @@ void Table::GetCellValueByIndex(
 Table::FilterQuery::FilterQuery() {
   columnName[0] = 0;
 }
-Table::FilterQuery::~FilterQuery() {}
+Table::FilterQuery::~FilterQuery() = default;
 Table::FilterQuery::FilterQuery(
     unsigned column,
     Cell* cell,
@@ -525,7 +525,7 @@ Table::Row* Table::GetRowByID(unsigned rowId) const {
   Row* row;
   if (rows.Get(rowId, row))
     return row;
-  return 0;
+  return nullptr;
 }
 
 Table::Row* Table::GetRowByIndex(unsigned rowIndex, unsigned* key) const {
@@ -540,10 +540,10 @@ Table::Row* Table::GetRowByIndex(unsigned rowIndex, unsigned* key) const {
     if (rowIndex <= (unsigned)cur->size)
       rowIndex -= cur->size;
     else
-      return 0;
+      return nullptr;
     cur = cur->next;
   }
-  return 0;
+  return nullptr;
 }
 
 void Table::QueryTable(
@@ -594,7 +594,7 @@ void Table::QueryTable(
     }
   }
 
-  if (rowIds == 0 || numRowIDs == 0) {
+  if (rowIds == nullptr || numRowIDs == 0) {
     // All rows
     DataStructures::Page<unsigned, Row*, _TABLE_BPLUS_TREE_ORDER>* cur =
         rows.GetListHead();
@@ -648,8 +648,8 @@ void Table::QueryRow(
       if (columnIndex != (unsigned)-1 &&
           row->cells[columnIndex]->isEmpty == false) {
         if (columns[inclusionFilterColumnIndices[j]].columnType == STRING &&
-            (row->cells[columnIndex]->c == 0 ||
-             inclusionFilters[j].cellValue->c == 0))
+            (row->cells[columnIndex]->c == nullptr ||
+             inclusionFilters[j].cellValue->c == nullptr))
           continue;
 
         switch (inclusionFilters[j].operation) {

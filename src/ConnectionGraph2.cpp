@@ -42,13 +42,13 @@ int RakNet::ConnectionGraph2::SystemAddressAndGuidComp(
 ConnectionGraph2::ConnectionGraph2() {
   autoProcessNewConnections = true;
 }
-ConnectionGraph2::~ConnectionGraph2() {}
+ConnectionGraph2::~ConnectionGraph2() = default;
 bool ConnectionGraph2::GetConnectionListForRemoteSystem(
     RakNetGUID remoteSystemGuid,
     SystemAddress* saOut,
     RakNetGUID* guidOut,
     unsigned int* outLength) {
-  if ((saOut == 0 && guidOut == 0) || outLength == 0 || *outLength == 0 ||
+  if ((saOut == nullptr && guidOut == nullptr) || outLength == nullptr || *outLength == 0 ||
       remoteSystemGuid == UNASSIGNED_RAKNET_GUID) {
     *outLength = 0;
     return false;
@@ -115,7 +115,7 @@ uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
 /// Returns the system with the lowest total ping among all its connections. This can be used as the 'best host' for a peer to peer session
 RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem() const {
   float lowestPing = -1.0;
-  unsigned int lowestPingIdx = (unsigned int)-1;
+  auto lowestPingIdx = (unsigned int)-1;
   float thisAvePing = 0.0f;
   unsigned int idx, idx2;
   int ap, count = 0;
@@ -230,7 +230,7 @@ void ConnectionGraph2::AddParticipant(
   bool objectExists;
   unsigned int ii = remoteSystems.GetIndexFromKey(rakNetGUID, &objectExists);
   if (objectExists == false) {
-    RemoteSystem* remoteSystem = RakNet::OP_NEW<RemoteSystem>(_FILE_AND_LINE_);
+    auto* remoteSystem = RakNet::OP_NEW<RemoteSystem>(_FILE_AND_LINE_);
     remoteSystem->guid = rakNetGUID;
     remoteSystems.InsertAtIndex(remoteSystem, ii, _FILE_AND_LINE_);
   }

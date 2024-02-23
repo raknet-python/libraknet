@@ -19,11 +19,11 @@
 
 using namespace RakNet;
 
-typedef uint32_t PTCPHeader;
+using PTCPHeader = uint32_t;
 
 STATIC_FACTORY_DEFINITIONS(PacketizedTCP, PacketizedTCP);
 
-PacketizedTCP::PacketizedTCP() {}
+PacketizedTCP::PacketizedTCP() = default;
 PacketizedTCP::~PacketizedTCP() {
   ClearAllConnections();
 }
@@ -69,7 +69,7 @@ bool PacketizedTCP::SendList(
     bool broadcast) {
   if (isStarted.GetValue() == 0)
     return false;
-  if (data == 0)
+  if (data == nullptr)
     return false;
   if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS && broadcast == false)
     return false;
@@ -185,10 +185,10 @@ Packet* PacketizedTCP::Receive() {
             outgoingPacket->deleteData = false; // Did not come from the network
             outgoingPacket->data =
                 (unsigned char*)rakMalloc_Ex(dataLength, _FILE_AND_LINE_);
-            if (outgoingPacket->data == 0) {
+            if (outgoingPacket->data == nullptr) {
               notifyOutOfMemory(_FILE_AND_LINE_);
               RakNet::OP_DELETE(outgoingPacket, _FILE_AND_LINE_);
-              return 0;
+              return nullptr;
             }
             bq->ReadBytes((char*)outgoingPacket->data, dataLength, false);
 
@@ -218,10 +218,10 @@ Packet* PacketizedTCP::Receive() {
             outgoingPacket->deleteData = false;
             outgoingPacket->data = (unsigned char*)rakMalloc_Ex(
                 outgoingPacket->length, _FILE_AND_LINE_);
-            if (outgoingPacket->data == 0) {
+            if (outgoingPacket->data == nullptr) {
               notifyOutOfMemory(_FILE_AND_LINE_);
               RakNet::OP_DELETE(outgoingPacket, _FILE_AND_LINE_);
-              return 0;
+              return nullptr;
             }
 
             outgoingPacket->data[0] = (MessageID)ID_DOWNLOAD_PROGRESS;
@@ -256,7 +256,7 @@ Packet* PacketizedTCP::Receive() {
       }
 
       DeallocatePacket(incomingPacket);
-      incomingPacket = 0;
+      incomingPacket = nullptr;
     } else
       waitingPackets.Push(incomingPacket, _FILE_AND_LINE_);
 
@@ -266,19 +266,19 @@ Packet* PacketizedTCP::Receive() {
   return ReturnOutgoingPacket();
 }
 Packet* PacketizedTCP::ReturnOutgoingPacket() {
-  Packet* outgoingPacket = 0;
+  Packet* outgoingPacket = nullptr;
   unsigned int i;
-  while (outgoingPacket == 0 && waitingPackets.IsEmpty() == false) {
+  while (outgoingPacket == nullptr && waitingPackets.IsEmpty() == false) {
     outgoingPacket = waitingPackets.Pop();
     PluginReceiveResult pluginResult;
     for (i = 0; i < messageHandlerList.Size(); i++) {
       pluginResult = messageHandlerList[i]->OnReceive(outgoingPacket);
       if (pluginResult == RR_STOP_PROCESSING_AND_DEALLOCATE) {
         DeallocatePacket(outgoingPacket);
-        outgoingPacket = 0; // Will do the loop again and get another packet
+        outgoingPacket = nullptr; // Will do the loop again and get another packet
         break; // break out of the enclosing for
       } else if (pluginResult == RR_STOP_PROCESSING) {
-        outgoingPacket = 0;
+        outgoingPacket = nullptr;
         break;
       }
     }

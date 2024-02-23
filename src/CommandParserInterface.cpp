@@ -42,8 +42,8 @@ int RakNet::RegisteredCommandComp(
   return _stricmp(key, data.command);
 }
 
-CommandParserInterface::CommandParserInterface() {}
-CommandParserInterface::~CommandParserInterface() {}
+CommandParserInterface::CommandParserInterface() = default;
+CommandParserInterface::~CommandParserInterface() = default;
 
 void CommandParserInterface::ParseConsoleString(
     char* str,
@@ -88,7 +88,7 @@ void CommandParserInterface::ParseConsoleString(
       strIndex++;
   }
 
-  parameterList[parameterListIndex] = 0;
+  parameterList[parameterListIndex] = nullptr;
   *numParameters = parameterListIndex;
 }
 void CommandParserInterface::SendCommandList(

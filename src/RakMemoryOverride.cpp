@@ -243,11 +243,11 @@ void FreeRakNetFixedHeap(void) {
 #else
 void* RakNet::_DLMallocMMap(size_t size) {
   (void)size;
-  return 0;
+  return nullptr;
 }
 void* RakNet::_DLMallocDirectMMap(size_t size) {
   (void)size;
-  return 0;
+  return nullptr;
 }
 int RakNet::_DLMallocMUnmap(void* p, size_t size) {
   (void)size;
@@ -256,12 +256,12 @@ int RakNet::_DLMallocMUnmap(void* p, size_t size) {
 }
 void* _DLMalloc(size_t size) {
   (void)size;
-  return 0;
+  return nullptr;
 }
 void* _DLRealloc(void* p, size_t size) {
   (void)p;
   (void)size;
-  return 0;
+  return nullptr;
 }
 void _DLFree(void* p) {
   (void)p;
@@ -270,14 +270,14 @@ void* _DLMalloc_Ex(size_t size, const char* file, unsigned int line) {
   (void)size;
   (void)file;
   (void)line;
-  return 0;
+  return nullptr;
 }
 void* _DLRealloc_Ex(void* p, size_t size, const char* file, unsigned int line) {
   (void)p;
   (void)size;
   (void)file;
   (void)line;
-  return 0;
+  return nullptr;
 }
 void _DLFree_Ex(void* p, const char* file, unsigned int line) {
   (void)p;

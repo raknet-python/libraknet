@@ -58,7 +58,7 @@ int TimeAndValueQueueCompDesc(
     return 1;
   return 0;
 }
-StatisticsHistory::TrackedObjectData::TrackedObjectData() {}
+StatisticsHistory::TrackedObjectData::TrackedObjectData() = default;
 StatisticsHistory::TrackedObjectData::TrackedObjectData(
     uint64_t _objectId,
     int _objectType,
@@ -84,7 +84,7 @@ bool StatisticsHistory::AddObject(TrackedObjectData tod) {
   unsigned int idx = objects.GetIndexFromKey(tod.objectId, &objectExists);
   if (objectExists)
     return false;
-  TrackedObject* to = RakNet::OP_NEW<TrackedObject>(_FILE_AND_LINE_);
+  auto* to = RakNet::OP_NEW<TrackedObject>(_FILE_AND_LINE_);
   to->trackedObjectData = tod;
   objects.InsertAtIndex(to, idx, _FILE_AND_LINE_);
   return true;
@@ -177,7 +177,7 @@ StatisticsHistory::SHErrorCode StatisticsHistory::GetHistoryForKey(
     RakString key,
     StatisticsHistory::TimeAndValueQueue** values,
     Time curTime) const {
-  if (values == 0)
+  if (values == nullptr)
     return SH_INVALID_PARAMETER;
 
   unsigned int idx = GetObjectIndex(objectId);
@@ -313,7 +313,7 @@ void StatisticsHistory::GetUniqueKeyList(
 StatisticsHistory::TimeAndValueQueue::TimeAndValueQueue() {
   Clear();
 }
-StatisticsHistory::TimeAndValueQueue::~TimeAndValueQueue() {}
+StatisticsHistory::TimeAndValueQueue::~TimeAndValueQueue() = default;
 void StatisticsHistory::TimeAndValueQueue::SetTimeToTrackValues(Time t) {
   timeToTrackValues = t;
 }
@@ -727,7 +727,7 @@ StatisticsHistory::TimeAndValueQueue::operator=(
   longTermHighest = input.longTermHighest;
   return *this;
 }
-StatisticsHistory::TrackedObject::TrackedObject() {}
+StatisticsHistory::TrackedObject::TrackedObject() = default;
 StatisticsHistory::TrackedObject::~TrackedObject() {
   DataStructures::List<StatisticsHistory::TimeAndValueQueue*> itemList;
   DataStructures::List<RakString> keyList;
@@ -746,7 +746,7 @@ StatisticsHistoryPlugin::StatisticsHistoryPlugin() {
   removeLostConnections = true;
   newConnectionsObjectType = 0;
 }
-StatisticsHistoryPlugin::~StatisticsHistoryPlugin() {}
+StatisticsHistoryPlugin::~StatisticsHistoryPlugin() = default;
 void StatisticsHistoryPlugin::SetTrackConnections(
     bool _addNewConnections,
     int _newConnectionsObjectType,
@@ -858,7 +858,7 @@ void StatisticsHistoryPlugin::OnClosedConnection(
   (void)systemAddress;
 
   if (removeLostConnections) {
-    statistics.RemoveObject(rakNetGUID.g, 0);
+    statistics.RemoveObject(rakNetGUID.g, nullptr);
   }
 }
 void StatisticsHistoryPlugin::OnNewConnection(
@@ -870,7 +870,7 @@ void StatisticsHistoryPlugin::OnNewConnection(
 
   if (addNewConnections) {
     statistics.AddObject(StatisticsHistory::TrackedObjectData(
-        rakNetGUID.g, newConnectionsObjectType, 0));
+        rakNetGUID.g, newConnectionsObjectType, nullptr));
   }
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

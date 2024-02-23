@@ -102,7 +102,7 @@ RakNetCommandParser::RakNetCommandParser() {
   RegisterCommand(0, "GetIncomingPassword", "( void );");
   RegisterCommand(0, "IsNetworkSimulatorActive", "( void );");
 }
-RakNetCommandParser::~RakNetCommandParser() {}
+RakNetCommandParser::~RakNetCommandParser() = default;
 void RakNetCommandParser::SetRakPeerInterface(
     RakNet::RakPeerInterface* rakPeer) {
   peer = rakPeer;
@@ -117,7 +117,7 @@ bool RakNetCommandParser::OnCommand(
   (void)originalString;
   (void)numParameters;
 
-  if (peer == 0)
+  if (peer == nullptr)
     return false;
 
   if (strcmp(command, "Startup") == 0) {

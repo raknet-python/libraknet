@@ -656,11 +656,11 @@ void RakNetGUID::ToString(char* dest) const {
   // sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
 }
 bool RakNetGUID::FromString(const char* source) {
-  if (source == 0)
+  if (source == nullptr)
     return false;
 
 #if defined(WIN32)
-  g = _strtoui64(source, NULL, 10);
+  g = _strtoui64(source, nullptr, 10);
 
 #else
   // Changed from g=strtoull(source,0,10); for android

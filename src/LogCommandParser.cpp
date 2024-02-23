@@ -41,7 +41,7 @@ LogCommandParser::LogCommandParser() {
       "[<ChannelName>] - Unsubscribes from a named channel, or all channels");
   memset(channelNames, 0, sizeof(channelNames));
 }
-LogCommandParser::~LogCommandParser() {}
+LogCommandParser::~LogCommandParser() = default;
 bool LogCommandParser::OnCommand(
     const char* command,
     unsigned numParameters,
@@ -54,7 +54,7 @@ bool LogCommandParser::OnCommand(
   if (strcmp(command, "Subscribe") == 0) {
     unsigned channelIndex;
     if (numParameters == 0) {
-      Subscribe(systemAddress, 0);
+      Subscribe(systemAddress, nullptr);
       transport->Send(systemAddress, "Subscribed to all channels.\r\n");
     } else if (numParameters == 1) {
       if ((channelIndex = Subscribe(systemAddress, parameterList[0])) !=
@@ -75,7 +75,7 @@ bool LogCommandParser::OnCommand(
   } else if (strcmp(command, "Unsubscribe") == 0) {
     unsigned channelIndex;
     if (numParameters == 0) {
-      Unsubscribe(systemAddress, 0);
+      Unsubscribe(systemAddress, nullptr);
       transport->Send(systemAddress, "Unsubscribed from all channels.\r\n");
     } else if (numParameters == 1) {
       if ((channelIndex = Unsubscribe(systemAddress, parameterList[0])) !=
@@ -121,7 +121,7 @@ void LogCommandParser::AddChannel(const char* channelName) {
 
   unsigned i;
   for (i = 0; i < 32; i++) {
-    if (channelNames[i] == 0) {
+    if (channelNames[i] == nullptr) {
       // Assuming a persistent static string.
       channelNames[i] = channelName;
       return;
@@ -135,7 +135,7 @@ void LogCommandParser::WriteLog(
     const char* channelName,
     const char* format,
     ...) {
-  if (channelName == 0 || format == 0)
+  if (channelName == nullptr || format == nullptr)
     return;
 
   unsigned channelIndex;
@@ -200,7 +200,7 @@ void LogCommandParser::OnConnectionLost(
     const SystemAddress& systemAddress,
     TransportInterface* transport) {
   (void)transport;
-  Unsubscribe(systemAddress, 0);
+  Unsubscribe(systemAddress, nullptr);
 }
 unsigned LogCommandParser::Unsubscribe(
     const SystemAddress& systemAddress,
@@ -208,7 +208,7 @@ unsigned LogCommandParser::Unsubscribe(
   unsigned i;
   for (i = 0; i < remoteUsers.Size(); i++) {
     if (remoteUsers[i].systemAddress == systemAddress) {
-      if (channelName == 0) {
+      if (channelName == nullptr) {
         // Unsubscribe from all and delete this user.
         remoteUsers[i] = remoteUsers[remoteUsers.Size() - 1];
         remoteUsers.RemoveFromEnd();
@@ -230,7 +230,7 @@ unsigned LogCommandParser::Subscribe(
     const SystemAddress& systemAddress,
     const char* channelName) {
   unsigned i;
-  unsigned channelIndex = (unsigned)-1;
+  auto channelIndex = (unsigned)-1;
   if (channelName) {
     channelIndex = GetChannelIndexFromName(channelName);
     if (channelIndex == (unsigned)-1)
@@ -261,7 +261,7 @@ unsigned LogCommandParser::Subscribe(
 unsigned LogCommandParser::GetChannelIndexFromName(const char* channelName) {
   unsigned i;
   for (i = 0; i < 32; i++) {
-    if (channelNames[i] == 0)
+    if (channelNames[i] == nullptr)
       return (unsigned)-1;
 
     if (_stricmp(channelNames[i], channelName) == 0)

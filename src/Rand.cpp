@@ -229,7 +229,7 @@ float frandomMT(unsigned int* state, unsigned int*& next, int& left) {
 RakNetRandom::RakNetRandom() {
   left = -1;
 }
-RakNetRandom::~RakNetRandom() {}
+RakNetRandom::~RakNetRandom() = default;
 void RakNetRandom::SeedMT(unsigned int seed) {
   printf("%i\n", seed);
   seedMT(seed, state, next, left);

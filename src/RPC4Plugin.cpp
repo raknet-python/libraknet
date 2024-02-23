@@ -51,7 +51,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
   globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer =
       functionPointer;
   globalRegistrationBuffer[globalRegistrationIndex]
-      .registerBlockingFunctionPointer = 0;
+      .registerBlockingFunctionPointer = nullptr;
   globalRegistrationBuffer[globalRegistrationIndex].callPriority = 0xFFFFFFFF;
   globalRegistrationIndex++;
 }
@@ -69,7 +69,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
   globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer =
       functionPointer;
   globalRegistrationBuffer[globalRegistrationIndex]
-      .registerBlockingFunctionPointer = 0;
+      .registerBlockingFunctionPointer = nullptr;
   RakAssert(callPriority != (int)0xFFFFFFFF);
   globalRegistrationBuffer[globalRegistrationIndex].callPriority = callPriority;
   globalRegistrationIndex++;
@@ -87,7 +87,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
     globalRegistrationBuffer[globalRegistrationIndex].functionName[i] =
         uniqueID[i];
   }
-  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = 0;
+  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = nullptr;
   globalRegistrationBuffer[globalRegistrationIndex]
       .registerBlockingFunctionPointer = functionPointer;
   globalRegistrationIndex++;
@@ -102,9 +102,9 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
     globalRegistrationBuffer[globalRegistrationIndex].functionName[i] =
         uniqueID[i];
   }
-  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = 0;
+  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = nullptr;
   globalRegistrationBuffer[globalRegistrationIndex]
-      .registerBlockingFunctionPointer = 0;
+      .registerBlockingFunctionPointer = nullptr;
   globalRegistrationBuffer[globalRegistrationIndex].messageId = messageId;
   globalRegistrationIndex++;
 }
@@ -261,7 +261,7 @@ bool RPC4::UnregisterSlot(const char* sharedIdentifier) {
   return false;
 }
 void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
-  Packet* p = 0;
+  Packet* p = nullptr;
 
   DataStructures::HashIndex skhi =
       registeredNonblockingFunctions.GetIndexOf(uniqueID);

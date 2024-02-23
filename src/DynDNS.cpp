@@ -46,7 +46,7 @@ DynDnsResult resultTable[13] = {
     {"911", "911", RC_911}};
 DynDNS::DynDNS() {
   connectPhase = CP_IDLE;
-  tcp = 0;
+  tcp = nullptr;
 }
 DynDNS::~DynDNS() {
   if (tcp)
@@ -56,7 +56,7 @@ void DynDNS::Stop() {
   tcp->Stop();
   connectPhase = CP_IDLE;
   RakNet::OP_DELETE(tcp, _FILE_AND_LINE_);
-  tcp = 0;
+  tcp = nullptr;
 }
 
 // newIPAddress is optional - if left out, DynDNS will use whatever it receives
@@ -66,7 +66,7 @@ void DynDNS::UpdateHostIPAsynch(
     const char* usernameAndPassword) {
   myIPStr[0] = 0;
 
-  if (tcp == 0)
+  if (tcp == nullptr)
     tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
   connectPhase = CP_IDLE;
   host = dnsHost;
@@ -147,7 +147,7 @@ void DynDNS::Update() {
 
       char* result;
       result = strstr((char*)packet->data, "Connection: close");
-      if (result != 0) {
+      if (result != nullptr) {
         result += strlen("Connection: close");
         while (*result &&
                ((*result == '\r') || (*result == '\n') || (*result == ' ')))
@@ -203,7 +203,7 @@ void DynDNS::Update() {
 
       char* result;
       result = strstr((char*)packet->data, "Current IP Address: ");
-      if (result != 0) {
+      if (result != nullptr) {
         result += strlen("Current IP Address: ");
         SystemAddress myIp;
         myIp.FromString(result);

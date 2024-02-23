@@ -36,14 +36,14 @@ void NatPunchthroughDebugInterface_PacketLogger::OnClientMessage(
 STATIC_FACTORY_DEFINITIONS(NatPunchthroughClient, NatPunchthroughClient);
 
 NatPunchthroughClient::NatPunchthroughClient() {
-  natPunchthroughDebugInterface = 0;
+  natPunchthroughDebugInterface = nullptr;
   mostRecentExternalPort = 0;
   sp.nextActionTime = 0;
   portStride = 0;
   hasPortStride = UNKNOWN_PORT_STRIDE;
 }
 NatPunchthroughClient::~NatPunchthroughClient() {
-  rakPeerInterface = 0;
+  rakPeerInterface = nullptr;
   Clear();
 }
 void NatPunchthroughClient::FindRouterPortStride(
@@ -1085,7 +1085,7 @@ PunchthroughConfiguration* NatPunchthroughClient::GetPunchthroughConfiguration(
   return &pc;
 }
 void NatPunchthroughClient::OnReadyForNextPunchthrough() {
-  if (rakPeerInterface == 0)
+  if (rakPeerInterface == nullptr)
     return;
 
   sp.nextActionTime = 0;

@@ -68,15 +68,15 @@ enum Router2MessageIdentifiers {
   ID_ROUTER_2_REQUEST_FORWARDING,
   ID_ROUTER_2_INCREASE_TIMEOUT,
 };
-Router2::ConnnectRequest::ConnnectRequest() {}
-Router2::ConnnectRequest::~ConnnectRequest() {}
+Router2::ConnnectRequest::ConnnectRequest() = default;
+Router2::ConnnectRequest::~ConnnectRequest() = default;
 
 STATIC_FACTORY_DEFINITIONS(Router2, Router2);
 
 Router2::Router2() {
-  udpForwarder = 0;
+  udpForwarder = nullptr;
   maximumForwardingRequests = 0;
-  debugInterface = 0;
+  debugInterface = nullptr;
   socketFamily = AF_INET;
 }
 Router2::~Router2() {
@@ -136,7 +136,7 @@ bool Router2::ConnectInternal(
   connectionRequestsMutex.Unlock();
 
   // StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
-  Router2::ConnnectRequest* cr =
+  auto* cr =
       RakNet::OP_NEW<Router2::ConnnectRequest>(_FILE_AND_LINE_);
   DataStructures::List<SystemAddress> addresses;
   DataStructures::List<RakNetGUID> guids;
@@ -236,7 +236,7 @@ void Router2::SetMaximumForwardingRequests(int max) {
   } else if (max <= 0 && maximumForwardingRequests > 0) {
     udpForwarder->Shutdown();
     RakNet::OP_DELETE(udpForwarder, _FILE_AND_LINE_);
-    udpForwarder = 0;
+    udpForwarder = nullptr;
   }
 
   maximumForwardingRequests = max;
@@ -801,7 +801,7 @@ int Router2::ReturnFailureOnCannotForward(
     RakNetGUID sourceGuid,
     RakNetGUID endpointGuid) {
   // If the number of systems we are currently forwarding>=maxForwarding, return ID_ROUTER_2_REPLY_FORWARDING,endpointGuid,false
-  if (udpForwarder == 0 ||
+  if (udpForwarder == nullptr ||
       udpForwarder->GetUsedForwardEntries() / 2 > maximumForwardingRequests) {
     char buff[512];
     if (debugInterface)
@@ -1112,14 +1112,14 @@ void Router2::OnRequestForwarding(Packet* packet) {
   }
 
   unsigned short forwardingPort = 0;
-  __UDPSOCKET__ forwardingSocket = INVALID_SOCKET;
+  auto forwardingSocket = INVALID_SOCKET;
   SystemAddress endpointSystemAddress =
       rakPeerInterface->GetSystemAddressFromGuid(endpointGuid);
   UDPForwarderResult result = udpForwarder->StartForwarding(
       packet->systemAddress,
       endpointSystemAddress,
       30000,
-      0,
+      nullptr,
       socketFamily,
       &forwardingPort,
       &forwardingSocket);
@@ -1295,7 +1295,7 @@ void Router2::OnMiniPunchReply(Packet* packet) {
   bs.Read(routerGuid);
   SendOOBFromRakNetPort(
       ID_ROUTER_2_MINI_PUNCH_REPLY_BOUNCE,
-      0,
+      nullptr,
       rakPeerInterface->GetSystemAddressFromGuid(routerGuid));
 
   if (debugInterface) {

@@ -16,12 +16,12 @@
 using namespace RakNet;
 
 PluginInterface2::PluginInterface2() {
-  rakPeerInterface = 0;
+  rakPeerInterface = nullptr;
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
-  tcpInterface = 0;
+  tcpInterface = nullptr;
 #endif
 }
-PluginInterface2::~PluginInterface2() {}
+PluginInterface2::~PluginInterface2() = default;
 void PluginInterface2::SendUnified(
     const RakNet::BitStream* bitStream,
     PacketPriority priority,
@@ -122,7 +122,7 @@ Packet* PluginInterface2::AllocatePacketUnified(unsigned dataSize) {
   }
 #endif
 
-  Packet* packet = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
+  auto* packet = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
   packet->data = (unsigned char*)rakMalloc_Ex(dataSize, _FILE_AND_LINE_);
   packet->bitSize = BYTES_TO_BITS(dataSize);
   packet->deleteData = true;
@@ -205,7 +205,7 @@ bool PluginInterface2::SendListUnified(
 
     char* dataAggregate;
     dataAggregate = (char*)rakMalloc_Ex((size_t)totalLength, _FILE_AND_LINE_);
-    if (dataAggregate == 0) {
+    if (dataAggregate == nullptr) {
       notifyOutOfMemory(_FILE_AND_LINE_);
       return false;
     }

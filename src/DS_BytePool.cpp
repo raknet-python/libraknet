@@ -23,7 +23,7 @@ BytePool::BytePool() {
   pool2048.SetPageSize(8192 * 4);
   pool8192.SetPageSize(8192 * 4);
 }
-BytePool::~BytePool() {}
+BytePool::~BytePool() = default;
 void BytePool::SetPageSize(int size) {
   pool128.SetPageSize(size);
   pool512.SetPageSize(size);

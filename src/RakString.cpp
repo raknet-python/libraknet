@@ -24,7 +24,7 @@ using namespace RakNet;
 
 //DataStructures::MemoryPool<RakString::SharedString> RakString::pool;
 RakString::SharedString RakString::emptyString =
-    {0, 0, 0, (char*)"", (char*)""};
+    {nullptr, 0, 0, (char*)"", (char*)""};
 //RakString::SharedString *RakString::sharedStringFreeList=0;
 //unsigned int RakString::sharedStringFreeListAllocationCount=0;
 DataStructures::List<RakString::SharedString*> RakString::freeList;
@@ -167,7 +167,7 @@ RakString& RakString::operator+=(const RakString& rhs) {
   return *this;
 }
 RakString& RakString::operator+=(const char* str) {
-  if (str == 0 || str[0] == 0)
+  if (str == nullptr || str[0] == 0)
     return *this;
 
   if (IsEmpty()) {
@@ -393,7 +393,7 @@ WCHAR* RakString::ToWideChar() {
   //
   // Special case of NULL or empty input string
   //
-  if ((sharedString->c_str == NULL) || (*sharedString->c_str == '\0')) {
+  if ((sharedString->c_str == nullptr) || (*sharedString->c_str == '\0')) {
     // Return empty string
     return L"";
   }
@@ -407,19 +407,19 @@ WCHAR* RakString::ToWideChar() {
       sharedString->c_str, // source UTF-8 string
       GetLength() + 1, // total length of source UTF-8 string,
       // in CHAR's (= bytes), including end-of-string \0
-      NULL, // unused - no conversion done in this step
+      nullptr, // unused - no conversion done in this step
       0 // request size of destination buffer, in WCHAR's
   );
 
   if (cchUTF16 == 0) {
     RakAssert("RakString::ToWideChar exception from cchUTF16==0" && 0);
-    return 0;
+    return nullptr;
   }
 
   //
   // Allocate destination buffer to store UTF-16 string
   //
-  WCHAR* pszUTF16 = RakNet::OP_NEW_ARRAY<WCHAR>(cchUTF16, __FILE__, __LINE__);
+  auto* pszUTF16 = RakNet::OP_NEW_ARRAY<WCHAR>(cchUTF16, __FILE__, __LINE__);
 
   //
   // Do the conversion from UTF-8 to UTF-16
@@ -436,7 +436,7 @@ WCHAR* RakString::ToWideChar() {
 
   if (result == 0) {
     RakAssert("RakString::ToWideChar exception from MultiByteToWideChar" && 0);
-    return 0;
+    return nullptr;
   }
 
   return pszUTF16;
@@ -457,8 +457,8 @@ void RakString::FromWideChar(const wchar_t* source) {
       -1, // -1 means string is zero-terminated
       sharedString->c_str, // Destination char string
       bufSize, // Size of buffer
-      NULL, // No default character
-      NULL); // Don't care about this flag
+      nullptr, // No default character
+      nullptr); // Don't care about this flag
 }
 RakNet::RakString RakString::FromWideChar_S(const wchar_t* source) {
   RakNet::RakString rs;
@@ -468,7 +468,7 @@ RakNet::RakString RakString::FromWideChar_S(const wchar_t* source) {
 #endif
 size_t RakString::Find(const char* stringToFind, size_t pos) {
   size_t len = GetLength();
-  if (pos >= len || stringToFind == 0 || stringToFind[0] == 0) {
+  if (pos >= len || stringToFind == nullptr || stringToFind[0] == 0) {
     return (size_t)-1;
   }
   size_t matchLen = strlen(stringToFind);
@@ -641,7 +641,7 @@ void RakString::FPrintf(FILE* fp) {
 bool RakString::IPAddressMatch(const char* IP) {
   unsigned characterIndex;
 
-  if (IP == 0 || IP[0] == 0 || strlen(IP) > 15)
+  if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15)
     return false;
 
   characterIndex = 0;
@@ -894,7 +894,7 @@ RakNet::RakString RakString::FormatForPUTOrPost(
   //	RakString bodyEncoded = body;
   //	bodyEncoded.URLEncode();
 
-  if (extraHeaders != 0 && extraHeaders[0]) {
+  if (extraHeaders != nullptr && extraHeaders[0]) {
     out.Set(
         "%s %s HTTP/1.1\r\n"
         "%s\r\n"
@@ -1064,7 +1064,7 @@ void RakString::Serialize(BitStream* bs) const {
   Serialize(sharedString->c_str, bs);
 }
 void RakString::Serialize(const char* str, BitStream* bs) {
-  unsigned short l = (unsigned short)strlen(str);
+  auto l = (unsigned short)strlen(str);
   bs->Write(l);
   bs->WriteAlignedBytes((const unsigned char*)str, (const unsigned int)l);
 }
@@ -1199,7 +1199,7 @@ void RakString::Allocate(size_t len) {
   }
 }
 void RakString::Assign(const char* str) {
-  if (str == 0 || str[0] == 0) {
+  if (str == nullptr || str[0] == 0) {
     sharedString = &emptyString;
     return;
   }
@@ -1209,7 +1209,7 @@ void RakString::Assign(const char* str) {
   memcpy(sharedString->c_str, str, len);
 }
 void RakString::Assign(const char* str, va_list ap) {
-  if (str == 0 || str[0] == 0) {
+  if (str == nullptr || str[0] == 0) {
     sharedString = &emptyString;
     return;
   }
@@ -1224,13 +1224,13 @@ void RakString::Assign(const char* str, va_list ap) {
     Assign(stackBuff);
     return;
   }
-  char *buff = 0, *newBuff;
+  char *buff = nullptr, *newBuff;
   size_t buffSize = 8096;
-  while (1) {
+  while (true) {
     newBuff = (char*)rakRealloc_Ex(buff, buffSize, __FILE__, __LINE__);
-    if (newBuff == 0) {
+    if (newBuff == nullptr) {
       notifyOutOfMemory(_FILE_AND_LINE_);
-      if (buff != 0) {
+      if (buff != nullptr) {
         Assign(buff);
         rakFree_Ex(buff, __FILE__, __LINE__);
       } else {
@@ -1252,7 +1252,7 @@ RakNet::RakString RakString::Assign(const char* str, size_t pos, size_t n) {
 
   Clone();
 
-  if (str == 0 || str[0] == 0 || pos >= incomingLen) {
+  if (str == nullptr || str[0] == 0 || pos >= incomingLen) {
     sharedString = &emptyString;
     return (*this);
   }
@@ -1302,7 +1302,7 @@ void RakString::AppendBytes(const char* bytes, unsigned int count) {
     sharedString->c_str[count] = 0;
   } else {
     Clone();
-    unsigned int length = (unsigned int)GetLength();
+    auto length = (unsigned int)GetLength();
     Realloc(sharedString, count + length + 1);
     memcpy(sharedString->c_str + length, bytes, count);
     sharedString->c_str[length + count] = 0;

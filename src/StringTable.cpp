@@ -16,14 +16,14 @@
 #include "StringCompressor.h"
 using namespace RakNet;
 
-StringTable* StringTable::instance = 0;
+StringTable* StringTable::instance = nullptr;
 int StringTable::referenceCount = 0;
 
 int RakNet::StrAndBoolComp(char* const& key, const StrAndBool& data) {
   return strcmp(key, (const char*)data.str);
 }
 
-StringTable::StringTable() {}
+StringTable::StringTable() = default;
 
 StringTable::~StringTable() {
   unsigned i;
@@ -44,7 +44,7 @@ void StringTable::RemoveReference() {
   if (referenceCount > 0) {
     if (--referenceCount == 0) {
       RakNet::OP_DELETE(instance, _FILE_AND_LINE_);
-      instance = 0;
+      instance = nullptr;
     }
   }
 }

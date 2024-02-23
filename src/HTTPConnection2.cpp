@@ -18,8 +18,8 @@ using namespace RakNet;
 
 STATIC_FACTORY_DEFINITIONS(HTTPConnection2, HTTPConnection2);
 
-HTTPConnection2::HTTPConnection2() {}
-HTTPConnection2::~HTTPConnection2() {}
+HTTPConnection2::HTTPConnection2() = default;
+HTTPConnection2::~HTTPConnection2() = default;
 bool HTTPConnection2::TransmitRequest(
     const char* stringToTransmit,
     const char* host,
@@ -28,7 +28,7 @@ bool HTTPConnection2::TransmitRequest(
     int ipVersion,
     SystemAddress useAddress,
     void* userData) {
-  Request* request = RakNet::OP_NEW<Request>(_FILE_AND_LINE_);
+  auto* request = RakNet::OP_NEW<Request>(_FILE_AND_LINE_);
   request->host = host;
   request->chunked = false;
   if (useAddress != UNASSIGNED_SYSTEM_ADDRESS) {
@@ -171,7 +171,7 @@ void ReadChunkBlock(
     RakAssert(currentChunkSize < 50000); // Sanity check
     if (currentChunkSize == 0)
       return;
-    if (newLine == 0)
+    if (newLine == nullptr)
       return;
     bytesReadSoFar = 0;
     txtIn = newLine + 2;
@@ -357,7 +357,7 @@ PluginReceiveResult HTTPConnection2::OnReceive(Packet* packet) {
         } else {
           const char* firstNewlineSet =
               strstr(sentRequest->stringReceived.C_String(), "\r\n\r\n");
-          if (firstNewlineSet != 0) {
+          if (firstNewlineSet != nullptr) {
             int offset =
                 firstNewlineSet - sentRequest->stringReceived.C_String();
             if (sentRequest->stringReceived.C_String()[offset + 4] == 0)

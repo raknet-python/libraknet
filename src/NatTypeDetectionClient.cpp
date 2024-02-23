@@ -26,10 +26,10 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient, NatTypeDetectionClient);
 
 NatTypeDetectionClient::NatTypeDetectionClient() {
-  c2 = 0;
+  c2 = nullptr;
 }
 NatTypeDetectionClient::~NatTypeDetectionClient() {
-  if (c2 != 0) {
+  if (c2 != nullptr) {
     RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
   }
 }
@@ -37,7 +37,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress) {
   if (IsInProgress())
     return;
 
-  if (c2 == 0) {
+  if (c2 == nullptr) {
     DataStructures::List<RakNetSocket2*> sockets;
     rakPeerInterface->GetSockets(sockets);
     //SystemAddress sockAddr;
@@ -104,7 +104,7 @@ void NatTypeDetectionClient::Update() {
     if (bufferedPackets.Size() > 0)
       recvStruct = bufferedPackets.Pop();
     else
-      recvStruct = 0;
+      recvStruct = nullptr;
     bufferedPacketsMutex.Unlock();
     while (recvStruct) {
       if (recvStruct->bytesRead == 1 && recvStruct->data[0] == NAT_TYPE_NONE) {
@@ -117,7 +117,7 @@ void NatTypeDetectionClient::Update() {
       if (bufferedPackets.Size() > 0)
         recvStruct = bufferedPackets.Pop();
       else
-        recvStruct = 0;
+        recvStruct = nullptr;
       bufferedPacketsMutex.Unlock();
     }
   }
@@ -190,14 +190,14 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet* packet) {
 }
 void NatTypeDetectionClient::Shutdown() {
   serverAddress = UNASSIGNED_SYSTEM_ADDRESS;
-  if (c2 != 0) {
+  if (c2 != nullptr) {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
     if (c2->IsBerkleySocket())
       ((RNS2_Berkley*)c2)->BlockOnStopRecvPollingThread();
 #endif
 
     RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
-    c2 = 0;
+    c2 = nullptr;
   }
 
   bufferedPacketsMutex.Lock();

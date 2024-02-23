@@ -20,9 +20,9 @@ using namespace RakNet;
 
 NetworkIDObject::NetworkIDObject() {
   networkID = UNASSIGNED_NETWORK_ID;
-  parent = 0;
-  networkIDManager = 0;
-  nextInstanceForNetworkIDManager = 0;
+  parent = nullptr;
+  networkIDManager = nullptr;
+  nextInstanceForNetworkIDManager = nullptr;
 }
 NetworkIDObject::~NetworkIDObject() {
   if (networkIDManager)
@@ -36,7 +36,7 @@ void NetworkIDObject::SetNetworkIDManager(NetworkIDManager* manager) {
     networkIDManager->StopTrackingNetworkIDObject(this);
 
   networkIDManager = manager;
-  if (networkIDManager == 0) {
+  if (networkIDManager == nullptr) {
     networkID = UNASSIGNED_NETWORK_ID;
     return;
   }
@@ -59,7 +59,7 @@ void NetworkIDObject::SetNetworkID(NetworkID id) {
     return;
 
   if (id == UNASSIGNED_NETWORK_ID) {
-    SetNetworkIDManager(0);
+    SetNetworkIDManager(nullptr);
     return;
   }
 

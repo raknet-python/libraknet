@@ -200,9 +200,9 @@ void FileListTransfer::Send(
 
     for (i = 0; i < fileList->fileList.Size(); i++) {
       sendReference =
-          fileList->fileList[i].isAReference && _incrementalReadInterface != 0;
+          fileList->fileList[i].isAReference && _incrementalReadInterface != nullptr;
       if (sendReference) {
-        FileToPush* fileToPush = RakNet::OP_NEW<FileToPush>(_FILE_AND_LINE_);
+        auto* fileToPush = RakNet::OP_NEW<FileToPush>(_FILE_AND_LINE_);
         fileToPush->fileListNode.context = fileList->fileList[i].context;
         fileToPush->setIndex = i;
         fileToPush->fileListNode.filename = fileList->fileList[i].filename;
@@ -386,7 +386,7 @@ bool FileListTransfer::DecodeFile(Packet* packet, bool isTheFullFile) {
   unsigned int partCount = 0;
   unsigned int partTotal = 0;
   unsigned int partLength = 0;
-  onFileStruct.fileData = 0;
+  onFileStruct.fileData = nullptr;
   if (isTheFullFile == false) {
     // Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
     inBitStream.ReadBits(
@@ -507,7 +507,7 @@ bool FileListTransfer::DecodeFile(Packet* packet, bool isTheFullFile) {
     fps.partTotal = partTotal;
     fps.dataChunkLength = unreadBytes;
     fps.firstDataChunk = firstDataChunk;
-    fps.iriDataChunk = 0;
+    fps.iriDataChunk = nullptr;
     fps.allocateIrIDataChunkAutomatically = true;
     fps.iriWriteOffset = 0;
     fps.senderSystemAddress = packet->systemAddress;
@@ -651,7 +651,7 @@ bool FileListTransfer::IsHandlerActive(unsigned short setId) {
   return fileListReceivers.Has(setId);
 }
 void FileListTransfer::AddCallback(FileListProgress* cb) {
-  if (cb == 0)
+  if (cb == nullptr)
     return;
 
   if (fileListProgressCallbacks.GetIndexOf(cb) == (unsigned int)-1)
@@ -700,7 +700,7 @@ void FileListTransfer::OnReferencePush(Packet* packet, bool isTheFullFile) {
   unsigned int partCount = 0;
   unsigned int partTotal = 1;
   unsigned int partLength = 0;
-  onFileStruct.fileData = 0;
+  onFileStruct.fileData = nullptr;
   if (isTheFullFile == false) {
     // Disable endian swapping on reading this, as it's generated locally in ReliabilityLayer.cpp
     inBitStream.ReadBits(
@@ -887,7 +887,7 @@ void FileListTransfer::OnReferencePush(Packet* packet, bool isTheFullFile) {
                 .flrMemoryBlock,
             _FILE_AND_LINE_);
         fileListReceiver->pushedFiles.Get(onFileStruct.fileIndex)
-            .flrMemoryBlock = 0;
+            .flrMemoryBlock = nullptr;
       }
     } else {
       // This is a download progress notification for a file chunk using incremental read interface
@@ -911,7 +911,7 @@ void FileListTransfer::OnReferencePush(Packet* packet, bool isTheFullFile) {
       //			if (rakPeerInterface)
       {
         // Thus chunk is incomplete
-        fps.iriDataChunk = 0;
+        fps.iriDataChunk = nullptr;
 
         fileListReceiver->downloadHandler->OnFileProgress(&fps);
       }
@@ -977,7 +977,7 @@ int SendIRIToAddressCB(
 
       // Read and send chunk. If done, delete at this index
       void* buff = rakMalloc_Ex(ftp->chunkSize, _FILE_AND_LINE_);
-      if (buff == 0) {
+      if (buff == nullptr) {
         ////ftpr->filesToPushMutex.Lock();
         ftpr->filesToPush.PushAtHead(ftp, 0, _FILE_AND_LINE_);
         ////ftpr->filesToPushMutex.Unlock();
@@ -1154,7 +1154,7 @@ void FileListTransfer::SendIRIToAddress(
     threadPool.AddInput(SendIRIToAddressCB, threadData);
   } else {
     bool doesNothing;
-    SendIRIToAddressCB(threadData, &doesNothing, 0);
+    SendIRIToAddressCB(threadData, &doesNothing, nullptr);
   }
 }
 void FileListTransfer::OnReferencePushAck(Packet* packet) {

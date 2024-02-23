@@ -16,16 +16,16 @@
 
 using namespace RakNet;
 
-ThreadsafePacketLogger::ThreadsafePacketLogger() {}
+ThreadsafePacketLogger::ThreadsafePacketLogger() = default;
 ThreadsafePacketLogger::~ThreadsafePacketLogger() {
   char** msg;
-  while ((msg = logMessages.ReadLock()) != 0) {
+  while ((msg = logMessages.ReadLock()) != nullptr) {
     rakFree_Ex((*msg), _FILE_AND_LINE_);
   }
 }
 void ThreadsafePacketLogger::Update() {
   char** msg;
-  while ((msg = logMessages.ReadLock()) != 0) {
+  while ((msg = logMessages.ReadLock()) != nullptr) {
     WriteLog(*msg);
     rakFree_Ex((*msg), _FILE_AND_LINE_);
   }

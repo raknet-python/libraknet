@@ -73,7 +73,7 @@ int UDPProxyCoordinator::ForwardingRequestComp(
 
 STATIC_FACTORY_DEFINITIONS(UDPProxyCoordinator, UDPProxyCoordinator);
 
-UDPProxyCoordinator::UDPProxyCoordinator() {}
+UDPProxyCoordinator::UDPProxyCoordinator() = default;
 UDPProxyCoordinator::~UDPProxyCoordinator() {
   Clear();
 }
@@ -176,7 +176,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     incomingBs.Read(targetGuid);
     targetAddress = rakPeerInterface->GetSystemAddressFromGuid(targetGuid);
   }
-  ForwardingRequest* fw = RakNet::OP_NEW<ForwardingRequest>(_FILE_AND_LINE_);
+  auto* fw = RakNet::OP_NEW<ForwardingRequest>(_FILE_AND_LINE_);
   fw->timeoutAfterSuccess = 0;
   incomingBs.Read(fw->timeoutOnNoDataMS);
   bool hasServerSelectionBitstream = false;
@@ -270,7 +270,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     outgoingBs.Write(sourceAddress);
     outgoingBs.Write(targetAddress);
     outgoingBs.Write(targetGuid);
-    unsigned short serverListSize = (unsigned short)serverList.Size();
+    auto serverListSize = (unsigned short)serverList.Size();
     outgoingBs.Write(serverListSize);
     unsigned int idx;
     for (idx = 0; idx < serverList.Size(); idx++)

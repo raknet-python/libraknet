@@ -35,7 +35,7 @@ void SignaledEvent::InitEvent() {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
   eventList = CreateEventEx(0, 0, 0, 0);
 #elif defined(_WIN32)
-  eventList = CreateEvent(0, false, false, 0);
+  eventList = CreateEvent(nullptr, false, false, nullptr);
 
 #else
 

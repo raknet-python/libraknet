@@ -36,7 +36,7 @@ void VariableListDeltaTracker::FlagDirtyFromBitArray(unsigned char* bArray) {
   }
 }
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() {
-  lastData = 0;
+  lastData = nullptr;
 }
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(
     const unsigned char* data,
@@ -46,4 +46,4 @@ VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(
   byteLength = _byteLength;
   isDirty = false;
 }
-VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode() {}
+VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode() = default;

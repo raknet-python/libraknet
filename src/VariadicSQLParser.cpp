@@ -45,7 +45,7 @@ void VariadicSQLParser::GetTypeMappingIndices(
   unsigned int i;
   unsigned int typeMappingIndex;
   indices.Clear(false, _FILE_AND_LINE_);
-  unsigned int len = (unsigned int)strlen(format);
+  auto len = (unsigned int)strlen(format);
   previousCharWasPercentSign = false;
   for (i = 0; i < len; i++) {
     if (previousCharWasPercentSign == true) {

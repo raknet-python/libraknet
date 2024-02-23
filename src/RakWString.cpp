@@ -21,26 +21,26 @@ using namespace RakNet;
 #define MAX_BYTES_PER_UNICODE_CHAR sizeof(wchar_t)
 
 RakWString::RakWString() {
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
 }
 RakWString::RakWString(const RakString& right) {
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
   *this = right;
 }
 RakWString::RakWString(const char* input) {
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
   *this = input;
 }
 RakWString::RakWString(const wchar_t* input) {
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
   *this = input;
 }
 RakWString::RakWString(const RakWString& right) {
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
   *this = right;
 }
@@ -71,7 +71,7 @@ RakWString& RakWString::operator=(const RakString& right) {
 }
 RakWString& RakWString::operator=(const wchar_t* const str) {
   Clear();
-  if (str == 0)
+  if (str == nullptr)
     return *this;
   c_strCharLength = wcslen(str);
   if (c_strCharLength == 0)
@@ -96,12 +96,12 @@ RakWString& RakWString::operator=(const char* const str) {
 
 // Not supported on android
 #if !defined(ANDROID)
-  if (str == 0)
+  if (str == nullptr)
     return *this;
   if (str[0] == 0)
     return *this;
 
-  c_strCharLength = mbstowcs(NULL, str, 0);
+  c_strCharLength = mbstowcs(nullptr, str, 0);
   c_str = (wchar_t*)rakMalloc_Ex(
       (c_strCharLength + 1) * MAX_BYTES_PER_UNICODE_CHAR, _FILE_AND_LINE_);
   if (!c_str) {
@@ -160,7 +160,7 @@ RakWString& RakWString::operator+=(const RakWString& right) {
   return *this;
 }
 RakWString& RakWString::operator+=(const wchar_t* const right) {
-  if (right == 0)
+  if (right == nullptr)
     return *this;
   size_t rightLength = wcslen(right);
   size_t newCharLength = c_strCharLength + rightLength;
@@ -249,7 +249,7 @@ int RakWString::StrICmp(const RakWString& right) const {
 }
 void RakWString::Clear() {
   rakFree_Ex(c_str, _FILE_AND_LINE_);
-  c_str = 0;
+  c_str = nullptr;
   c_strCharLength = 0;
 }
 void RakWString::Printf() {

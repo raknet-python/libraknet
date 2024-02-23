@@ -20,7 +20,7 @@ RakNetRandomSync::RakNetRandomSync() {
   callCount = 0;
   usedValueBufferCount = 0;
 }
-RakNetRandomSync::~RakNetRandomSync() {}
+RakNetRandomSync::~RakNetRandomSync() = default;
 void RakNetRandomSync::SeedMT(uint32_t _seed) {
   seed = _seed;
   rnr.SeedMT(seed);

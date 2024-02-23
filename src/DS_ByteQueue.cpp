@@ -17,7 +17,7 @@ using namespace DataStructures;
 
 ByteQueue::ByteQueue() {
   readOffset = writeOffset = lengthAllocated = 0;
-  data = 0;
+  data = nullptr;
 }
 ByteQueue::~ByteQueue() {
   Clear(_FILE_AND_LINE_);
@@ -98,7 +98,7 @@ void ByteQueue::Clear(const char* file, unsigned int line) {
   if (lengthAllocated)
     rakFree_Ex(data, file, line);
   readOffset = writeOffset = lengthAllocated = 0;
-  data = 0;
+  data = nullptr;
 }
 unsigned ByteQueue::GetBytesWritten() const {
   if (writeOffset >= readOffset)

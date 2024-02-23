@@ -56,7 +56,7 @@ const char* EmailSender::Send(
   tcpInterface.StartSSLClient(emailServer);
 #endif
   RakNet::TimeMS timeoutTime = RakNet::GetTimeMS() + 3000;
-  packet = 0;
+  packet = nullptr;
   while (RakNet::GetTimeMS() < timeoutTime) {
     packet = tcpInterface.Receive();
     if (packet) {
@@ -69,7 +69,7 @@ const char* EmailSender::Send(
     RakSleep(250);
   }
 
-  if (packet == 0)
+  if (packet == nullptr)
     return "Timeout while waiting for initial data from server.";
 
   tcpInterface.Send("EHLO\r\n", 6, emailServer, false);
@@ -78,20 +78,20 @@ const char* EmailSender::Send(
 #ifdef _MSC_VER
 #pragma warning(disable : 4127) // conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     response = GetResponse(&tcpInterface, emailServer, doPrintf);
 
-    if (response != 0 && strcmp(response, "AUTHENTICATE") == 0) {
+    if (response != nullptr && strcmp(response, "AUTHENTICATE") == 0) {
       authenticate = true;
       break;
     }
 
     // Something other than continue?
-    if (response != 0 && strcmp(response, "CONTINUE") != 0)
+    if (response != nullptr && strcmp(response, "CONTINUE") != 0)
       return response;
 
     // Success?
-    if (response == 0)
+    if (response == nullptr)
       break;
   }
 
@@ -99,9 +99,9 @@ const char* EmailSender::Send(
     sprintf(query, "EHLO %s\r\n", sender);
     tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
     response = GetResponse(&tcpInterface, emailServer, doPrintf);
-    if (response != 0)
+    if (response != nullptr)
       return response;
-    if (password == 0)
+    if (password == nullptr)
       return "Password needed";
     char* outputData = RakNet::OP_NEW_ARRAY<char>(
         (const int)(strlen(sender) + strlen(password) + 2) * 3,
@@ -122,7 +122,7 @@ const char* EmailSender::Send(
     sprintf(query, "AUTH PLAIN %s", outputData);
     tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
     response = GetResponse(&tcpInterface, emailServer, doPrintf);
-    if (response != 0)
+    if (response != nullptr)
       return response;
   }
 
@@ -132,7 +132,7 @@ const char* EmailSender::Send(
     sprintf(query, "MAIL From: <>\r\n");
   tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
-  if (response != 0)
+  if (response != nullptr)
     return response;
 
   if (recipient)
@@ -141,7 +141,7 @@ const char* EmailSender::Send(
     sprintf(query, "RCPT TO: <>\r\n");
   tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
-  if (response != 0)
+  if (response != nullptr)
     return response;
 
   tcpInterface.Send(
@@ -150,7 +150,7 @@ const char* EmailSender::Send(
   // Wait for 354...
 
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
-  if (response != 0)
+  if (response != nullptr)
     return response;
 
   if (subject) {
@@ -295,7 +295,7 @@ const char* EmailSender::Send(
   sprintf(query, "\r\n.\r\n");
   tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
-  if (response != 0)
+  if (response != nullptr)
     return response;
 
   tcpInterface.Send(
@@ -311,7 +311,7 @@ const char* EmailSender::Send(
     }
   }
   tcpInterface.Stop();
-  return 0; // Success
+  return nullptr; // Success
 }
 
 const char* EmailSender::GetResponse(
@@ -325,7 +325,7 @@ const char* EmailSender::GetResponse(
 #pragma warning( \
     disable : 4127) // warning C4127: conditional expression is constant
 #endif
-  while (1) {
+  while (true) {
     if (tcpInterface->HasLostConnection() == emailServer)
       return "Connection to server lost.";
     packet = tcpInterface->Receive();
@@ -345,9 +345,9 @@ const char* EmailSender::GetResponse(
 // 			}
 #endif
       if (strstr((const char*)packet->data, "235"))
-        return 0; // Authentication accepted
+        return nullptr; // Authentication accepted
       if (strstr((const char*)packet->data, "354"))
-        return 0; // Go ahead
+        return nullptr; // Go ahead
 #if OPEN_SSL_CLIENT_SUPPORT == 1
       if (strstr((const char*)packet->data, "250-STARTTLS")) {
         tcpInterface->Send(
@@ -359,7 +359,7 @@ const char* EmailSender::GetResponse(
       }
 #endif
       if (strstr((const char*)packet->data, "250"))
-        return 0; // OK
+        return nullptr; // OK
       if (strstr((const char*)packet->data, "550"))
         return "Failed on error code 550";
       if (strstr((const char*)packet->data, "553"))
