@@ -66,265 +66,319 @@ IsInSecurityExceptionList //Disabled because of RakNetStatistics changes
 RemoveFromSecurityExceptionList //Disabled because of RakNetStatistics changes 	  
 
 */
-int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
-{
-
-	char thePassword[]="password";
-	server=RakPeerInterface::GetInstance();
-
-	client=RakPeerInterface::GetInstance();
-
-        SocketDescriptor sd;
-	client->Startup(1,&sd,1);
-        sd.port=60000;
-	server->Startup(1,&sd,1);
-	server->SetMaximumIncomingConnections(1);
-	server->SetIncomingPassword(thePassword,(int)strlen(thePassword));
-
-	char returnedPass[22];
-	int returnedLen=22;
-	server->GetIncomingPassword(returnedPass,&returnedLen);
-	returnedPass[returnedLen]=0;//Password is a data block convert to null terminated string to make the test easier
-
-	if (strcmp(returnedPass,thePassword)!=0)
-	{
-		if (isVerbose)
-		{
-
-			printf("%s was returned but %s is the password\n",returnedPass,thePassword);
-			DebugTools::ShowError("GetIncomingPassword returned wrong password\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		}
-		return 5;
-	}
-
-	SystemAddress serverAddress;
-
-	serverAddress.SetBinaryAddress("127.0.0.1");
-	serverAddress.SetPortHostOrder(60000);
-	TimeMS entryTime=GetTimeMS();
-
-	if (isVerbose)
-		printf("Testing if  no password is rejected\n");
-
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),0,0);
-		}
-
-		RakSleep(100);
-
-	}
-
-	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client connected with no password\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 1;
-	}
-
-	if (isVerbose)
-		printf("Testing if incorrect password is rejected\n");
-
-	char badPass[]="badpass";
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),badPass,(int)strlen(badPass));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client connected with wrong password\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 2;
-	}
-
-	if (isVerbose)
-		printf("Testing if correct password is accepted\n");
-
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client failed to connect with correct password\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 3;
-	}
-
-	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
-	{
-
-		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
-	}
-
-	if (isVerbose)
-		printf("Testing if connection is rejected after adding to ban list\n");
-
-	server->AddToBanList("127.0.0.1",0);
-
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if(!server->IsBanned("127.0.0.1"))
-	{
-
-		if (isVerbose)
-			DebugTools::ShowError("IsBanned does not show localhost as banned\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 6;
-
-	}
-
-	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client was banned but connected anyways\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 4;
-	}
-
-	if (isVerbose)
-		printf("Testing if connection is accepted after ban removal by RemoveFromBanList\n");
-
-	server->RemoveFromBanList("127.0.0.1");
-	if(server->IsBanned("127.0.0.1"))
-	{
-
-		if (isVerbose)
-			DebugTools::ShowError("Localhost was not unbanned\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 7;
-
-	}
-
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client failed to connect after banlist removal\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 8;
-	}
-
-	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
-	{
-
-		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
-	}
-
-	if (isVerbose)
-		printf("Testing if connection is rejected after adding to ban list\n");
-
-	server->AddToBanList("127.0.0.1",0);
-
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if(!server->IsBanned("127.0.0.1"))
-	{
-
-		if (isVerbose)
-			DebugTools::ShowError("IsBanned does not show localhost as banned\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 6;
-
-	}
-
-	if (CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client was banned but connected anyways\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 4;
-	}
-
-	if (isVerbose)
-		printf("Testing if connection is accepted after ban removal by ClearBanList\n");
-
-	server->ClearBanList();
-	if(server->IsBanned("127.0.0.1"))
-	{
-
-		if (isVerbose)
-			DebugTools::ShowError("Localhost was not unbanned\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 7;
-
-	}
-
-	entryTime=GetTimeMS();
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
-
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),thePassword,(int)strlen(thePassword));
-		}
-
-		RakSleep(100);
-
-	}
-
-	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client failed to connect after banlist removal with clear function\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 9;
-	}
-
-	while(CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))//disconnect client
-	{
-
-		client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
-	}
-
-/*//Disabled because of statistics changes
+int SecurityFunctionsTest::RunTest(
+    DataStructures::List<RakString> params,
+    bool isVerbose,
+    bool noPauses) {
+  char thePassword[] = "password";
+  server = RakPeerInterface::GetInstance();
+
+  client = RakPeerInterface::GetInstance();
+
+  SocketDescriptor sd;
+  client->Startup(1, &sd, 1);
+  sd.port = 60000;
+  server->Startup(1, &sd, 1);
+  server->SetMaximumIncomingConnections(1);
+  server->SetIncomingPassword(thePassword, (int)strlen(thePassword));
+
+  char returnedPass[22];
+  int returnedLen = 22;
+  server->GetIncomingPassword(returnedPass, &returnedLen);
+  returnedPass[returnedLen] =
+      0; //Password is a data block convert to null terminated string to make the test easier
+
+  if (strcmp(returnedPass, thePassword) != 0) {
+    if (isVerbose) {
+      printf(
+          "%s was returned but %s is the password\n",
+          returnedPass,
+          thePassword);
+      DebugTools::ShowError(
+          "GetIncomingPassword returned wrong password\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    }
+    return 5;
+  }
+
+  SystemAddress serverAddress;
+
+  serverAddress.SetBinaryAddress("127.0.0.1");
+  serverAddress.SetPortHostOrder(60000);
+  TimeMS entryTime = GetTimeMS();
+
+  if (isVerbose)
+    printf("Testing if  no password is rejected\n");
+
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect("127.0.0.1", serverAddress.GetPort(), 0, 0);
+    }
+
+    RakSleep(100);
+  }
+
+  if (CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client connected with no password\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 1;
+  }
+
+  if (isVerbose)
+    printf("Testing if incorrect password is rejected\n");
+
+  char badPass[] = "badpass";
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1", serverAddress.GetPort(), badPass, (int)strlen(badPass));
+    }
+
+    RakSleep(100);
+  }
+
+  if (CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client connected with wrong password\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 2;
+  }
+
+  if (isVerbose)
+    printf("Testing if correct password is accepted\n");
+
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1",
+          serverAddress.GetPort(),
+          thePassword,
+          (int)strlen(thePassword));
+    }
+
+    RakSleep(100);
+  }
+
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client failed to connect with correct password\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 3;
+  }
+
+  while (CommonFunctions::ConnectionStateMatchesOptions(
+      client, serverAddress, true, true, true, true)) //disconnect client
+  {
+    client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
+  }
+
+  if (isVerbose)
+    printf("Testing if connection is rejected after adding to ban list\n");
+
+  server->AddToBanList("127.0.0.1", 0);
+
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1",
+          serverAddress.GetPort(),
+          thePassword,
+          (int)strlen(thePassword));
+    }
+
+    RakSleep(100);
+  }
+
+  if (!server->IsBanned("127.0.0.1")) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "IsBanned does not show localhost as banned\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 6;
+  }
+
+  if (CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client was banned but connected anyways\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 4;
+  }
+
+  if (isVerbose)
+    printf(
+        "Testing if connection is accepted after ban removal by RemoveFromBanList\n");
+
+  server->RemoveFromBanList("127.0.0.1");
+  if (server->IsBanned("127.0.0.1")) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Localhost was not unbanned\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 7;
+  }
+
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1",
+          serverAddress.GetPort(),
+          thePassword,
+          (int)strlen(thePassword));
+    }
+
+    RakSleep(100);
+  }
+
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client failed to connect after banlist removal\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 8;
+  }
+
+  while (CommonFunctions::ConnectionStateMatchesOptions(
+      client, serverAddress, true, true, true, true)) //disconnect client
+  {
+    client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
+  }
+
+  if (isVerbose)
+    printf("Testing if connection is rejected after adding to ban list\n");
+
+  server->AddToBanList("127.0.0.1", 0);
+
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1",
+          serverAddress.GetPort(),
+          thePassword,
+          (int)strlen(thePassword));
+    }
+
+    RakSleep(100);
+  }
+
+  if (!server->IsBanned("127.0.0.1")) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "IsBanned does not show localhost as banned\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 6;
+  }
+
+  if (CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client was banned but connected anyways\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 4;
+  }
+
+  if (isVerbose)
+    printf(
+        "Testing if connection is accepted after ban removal by ClearBanList\n");
+
+  server->ClearBanList();
+  if (server->IsBanned("127.0.0.1")) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Localhost was not unbanned\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 7;
+  }
+
+  entryTime = GetTimeMS();
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect(
+          "127.0.0.1",
+          serverAddress.GetPort(),
+          thePassword,
+          (int)strlen(thePassword));
+    }
+
+    RakSleep(100);
+  }
+
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client failed to connect after banlist removal with clear function\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 9;
+  }
+
+  while (CommonFunctions::ConnectionStateMatchesOptions(
+      client, serverAddress, true, true, true, true)) //disconnect client
+  {
+    client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
+  }
+
+  /*//Disabled because of statistics changes
 
 	if (isVerbose)
 		printf("Testing InitializeSecurity on server\n");
@@ -511,93 +565,77 @@ class that handles RSA encryption/decryption internally
 
 */
 
-	return 0;
-
+  return 0;
 }
 
-RakString SecurityFunctionsTest::GetTestName()
-{
-
-	return "SecurityFunctionsTest";
-
+RakString SecurityFunctionsTest::GetTestName() {
+  return "SecurityFunctionsTest";
 }
 
-RakString SecurityFunctionsTest::ErrorCodeToString(int errorCode)
-{
+RakString SecurityFunctionsTest::ErrorCodeToString(int errorCode) {
+  switch (errorCode) {
+    case 0:
+      return "No error";
+      break;
 
-	switch (errorCode)
-	{
+    case 1:
+      return "Client connected with no password";
+      break;
 
-	case 0:
-		return "No error";
-		break;
+    case 2:
+      return "Client connected with wrong password";
+      break;
 
-	case 1:
-		return "Client connected with no password";
-		break;
+    case 3:
+      return "Client failed to connect with correct password";
+      break;
 
-	case 2:
-		return "Client connected with wrong password";
-		break;
+    case 4:
+      return "Client was banned but connected anyways";
+      break;
 
-	case 3:
-		return "Client failed to connect with correct password";
-		break;
+    case 5:
+      return "GetIncomingPassword returned wrong password";
+      break;
 
-	case 4:
-		return "Client was banned but connected anyways";
-		break;
+    case 6:
+      return "IsBanned does not show localhost as banned";
+      break;
 
-	case 5:
-		return "GetIncomingPassword returned wrong password";
-		break;
+    case 7:
+      return "Localhost was not unbanned";
+      break;
 
-	case 6:
-		return "IsBanned does not show localhost as banned";
-		break;
+    case 8:
+      return "Client failed to connect after banlist removal";
+      break;
 
-	case 7:
-		return "Localhost was not unbanned";
-		break;
+    case 9:
+      return "Client failed to connect after banlist removal with clear function";
+      break;
 
-	case 8:
-		return "Client failed to connect after banlist removal";
-		break;
+    case 10:
+      return "Client did not connect encrypted";
+      break;
 
-	case 9:
-		return "Client failed to connect after banlist removal with clear function";
-		break;
+    case 11:
+      return "Client connected encrypted but shouldn't have";
+      break;
 
-	case 10:
-		return "Client did not connect encrypted";
-		break;
+    case 12:
+      return "IsInSecurityExceptionList does not register localhost addition";
+      break;
 
-	case 11:
-		return "Client connected encrypted but shouldn't have";
-		break;
-
-	case 12:
-		return "IsInSecurityExceptionList does not register localhost addition";
-		break;
-
-	default:
-		return "Undefined Error";
-	}
-
+    default:
+      return "Undefined Error";
+  }
 }
 
-SecurityFunctionsTest::SecurityFunctionsTest(void)
-{
-}
+SecurityFunctionsTest::SecurityFunctionsTest(void) {}
 
-SecurityFunctionsTest::~SecurityFunctionsTest(void)
-{
-}
+SecurityFunctionsTest::~SecurityFunctionsTest(void) {}
 
-void SecurityFunctionsTest::DestroyPeers()
-{
-
-RakPeerInterface::DestroyInstance(client);
-RakPeerInterface::DestroyInstance(server);
-
+void SecurityFunctionsTest::DestroyPeers() {
+  RakPeerInterface::DestroyInstance(client);
+  RakPeerInterface::DestroyInstance(server);
 }

@@ -36,226 +36,200 @@ SetMaximumIncomingConnections
 GetMaximumIncomingConnections 
 
 */
-int MaximumConnectTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
-{
+int MaximumConnectTest::RunTest(
+    DataStructures::List<RakString> params,
+    bool isVerbose,
+    bool noPauses) {
+  const int peerNum = 8;
+  const int maxConnections = 4; //Max allowed connections for test
+  RakPeerInterface* peerList[peerNum]; //A list of 8 peers
 
-	const int peerNum= 8;
-	const int maxConnections=4;//Max allowed connections for test
-	RakPeerInterface *peerList[peerNum];//A list of 8 peers
+  Packet* packet;
+  destroyList.Clear(false, _FILE_AND_LINE_);
 
-	Packet *packet;
-	destroyList.Clear(false,_FILE_AND_LINE_);
+  int connReturn;
+  //Initializations of the arrays
+  for (int i = 0; i < peerNum; i++) {
+    peerList[i] = RakPeerInterface::GetInstance();
+    destroyList.Push(peerList[i], _FILE_AND_LINE_);
 
-	int connReturn;
-	//Initializations of the arrays
-	for (int i=0;i<peerNum;i++)
-	{
-		peerList[i]=RakPeerInterface::GetInstance();
-		destroyList.Push(peerList[i],_FILE_AND_LINE_);
+    SocketDescriptor sd(60000 + i, 0);
+    peerList[i]->Startup(maxConnections, &sd, 1);
+    peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
-                SocketDescriptor sd(60000+i,0);
-		peerList[i]->Startup(maxConnections, &sd, 1);
-		peerList[i]->SetMaximumIncomingConnections(maxConnections);
+    connReturn = peerList[i]->GetMaximumIncomingConnections();
+    if (connReturn != maxConnections) {
+      if (isVerbose) {
+        printf(
+            "Getmaxconnections wrong for peer %i, %i should be the value but the value is %i.Fail\n",
+            i,
+            maxConnections,
+            connReturn);
 
-		connReturn=peerList[i]->GetMaximumIncomingConnections();
-		if (connReturn!=maxConnections)
-		{
-			if (isVerbose)
-			{
-				printf("Getmaxconnections wrong for peer %i, %i should be the value but the value is %i.Fail\n",i,maxConnections,connReturn);
+        DebugTools::ShowError("", !noPauses && isVerbose, __LINE__, __FILE__);
+      }
+    }
+  }
 
-				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
+  //Connect all the peers together
 
-			}
+  for (int i = 0; i < peerNum; i++) {
+    for (int j = i + 1; j < peerNum;
+         j++) //Start at i+1 so don't connect two of the same together.
+    {
+      if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+          CONNECTION_ATTEMPT_STARTED) {
+        if (isVerbose)
+          DebugTools::ShowError(
+              "Problem while calling connect.\n",
+              !noPauses && isVerbose,
+              __LINE__,
+              __FILE__);
 
-		}
+        return 1; //This fails the test, don't bother going on.
+      }
+    }
+  }
 
-	}
+  TimeMS entryTime = GetTimeMS(); //Loop entry time
 
-	//Connect all the peers together
+  while (GetTimeMS() - entryTime < 20000) //Run for 20 Secoonds
+  {
+    for (int i = 0; i < peerNum; i++) //Receive for all peers
+    {
+      packet = peerList[i]->Receive();
 
-	for (int i=0;i<peerNum;i++)
-	{
+      if (isVerbose && packet)
+        printf("For peer %i\n", i);
 
-		for (int j=i+1;j<peerNum;j++)//Start at i+1 so don't connect two of the same together.
-		{
+      while (packet) {
+        switch (packet->data[0]) {
+          case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+            if (isVerbose)
+              printf("Another client has disconnected.\n");
 
-			if (peerList[i]->Connect("127.0.0.1", 60000+j, 0,0)!=CONNECTION_ATTEMPT_STARTED)
-			{
+            break;
+          case ID_REMOTE_CONNECTION_LOST:
+            if (isVerbose)
+              printf("Another client has lost the connection.\n");
 
-				if (isVerbose)
-					DebugTools::ShowError("Problem while calling connect.\n",!noPauses && isVerbose,__LINE__,__FILE__);
+            break;
+          case ID_REMOTE_NEW_INCOMING_CONNECTION:
+            if (isVerbose)
+              printf("Another client has connected.\n");
+            break;
+          case ID_CONNECTION_REQUEST_ACCEPTED:
+            if (isVerbose)
+              printf("Our connection request has been accepted.\n");
 
-				return 1;//This fails the test, don't bother going on.
+            break;
+          case ID_CONNECTION_ATTEMPT_FAILED:
+            if (isVerbose)
+              printf("A connection has failed.\n"); //Should happen in this test
 
-			}
+            break;
 
-		}	
+          case ID_NEW_INCOMING_CONNECTION:
+            if (isVerbose)
+              printf("A connection is incoming.\n");
 
-	}
+            break;
+          case ID_NO_FREE_INCOMING_CONNECTIONS:
+            if (isVerbose)
+              printf("The server is full.\n");
 
-	TimeMS entryTime=GetTimeMS();//Loop entry time
+            break;
 
-	while(GetTimeMS()-entryTime<20000)//Run for 20 Secoonds
-	{
+          case ID_ALREADY_CONNECTED:
+            if (isVerbose)
+              printf("Already connected\n"); //Shouldn't happen
 
-		for (int i=0;i<peerNum;i++)//Receive for all peers
-		{
+            break;
 
-			packet=peerList[i]->Receive();
+          case ID_DISCONNECTION_NOTIFICATION:
+            if (isVerbose)
+              printf("We have been disconnected.\n");
+            break;
+          case ID_CONNECTION_LOST:
+            if (isVerbose)
+              printf("Connection lost.\n");
 
-			if (isVerbose&&packet)
-				printf("For peer %i\n",i);
+            break;
+          default:
 
-			while(packet)
-			{
-				switch (packet->data[0])
-				{
-				case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-					if (isVerbose)
-						printf("Another client has disconnected.\n");
+            break;
+        }
 
-					break;
-				case ID_REMOTE_CONNECTION_LOST:
-					if (isVerbose)
-						printf("Another client has lost the connection.\n");
+        peerList[i]->DeallocatePacket(packet);
 
-					break;
-				case ID_REMOTE_NEW_INCOMING_CONNECTION:
-					if (isVerbose)              
-						printf("Another client has connected.\n");
-					break;
-				case ID_CONNECTION_REQUEST_ACCEPTED:
-					if (isVerbose)              
-						printf("Our connection request has been accepted.\n");
+        // Stay in the loop as long as there are more packets.
+        packet = peerList[i]->Receive();
+      }
+    }
+    RakSleep(0); //If needed for testing
+  }
 
-					break;
-				case ID_CONNECTION_ATTEMPT_FAILED:
-					if (isVerbose)
-						printf("A connection has failed.\n");//Should happen in this test
+  DataStructures::List<SystemAddress> systemList;
+  DataStructures::List<RakNetGUID> guidList;
 
-					break;
+  for (int i = 0; i < peerNum; i++) {
+    peerList[i]->GetSystemList(systemList, guidList);
+    int connNum =
+        guidList.Size(); //Get the number of connections for the current peer
+    if (connNum > maxConnections) //Did we connect to more?
+    {
+      if (isVerbose) {
+        printf(
+            "More connections were allowed to peer %i, %i total.Fail\n",
+            i,
+            connNum);
 
-				case ID_NEW_INCOMING_CONNECTION:
-					if (isVerbose)              
-						printf("A connection is incoming.\n");
+        DebugTools::ShowError("", !noPauses && isVerbose, __LINE__, __FILE__);
+      }
 
-					break;
-				case ID_NO_FREE_INCOMING_CONNECTIONS:
-					if (isVerbose)              
-						printf("The server is full.\n");
+      return 2;
+    }
+  }
 
-					break;
-
-				case ID_ALREADY_CONNECTED:
-					if (isVerbose)              
-						printf("Already connected\n");//Shouldn't happen
-
-					break;
-
-				case ID_DISCONNECTION_NOTIFICATION:
-					if (isVerbose)
-						printf("We have been disconnected.\n");
-					break;
-				case ID_CONNECTION_LOST:
-					if (isVerbose)
-						printf("Connection lost.\n");
-
-					break;
-				default:
-
-					break;
-				}
-
-				peerList[i]->DeallocatePacket(packet);
-
-				// Stay in the loop as long as there are more packets.
-				packet = peerList[i]->Receive();
-			}
-		}
-		RakSleep(0);//If needed for testing
-	}
-
-	DataStructures::List< SystemAddress  > systemList;
-	DataStructures::List< RakNetGUID > guidList;
-
-	for (int i=0;i<peerNum;i++)
-	{
-
-		peerList[i]->GetSystemList(systemList,guidList);
-		int connNum=guidList.Size();//Get the number of connections for the current peer
-		if (connNum>maxConnections)//Did we connect to more?
-		{
-
-			if (isVerbose)
-			{
-				printf("More connections were allowed to peer %i, %i total.Fail\n",i,connNum);
-
-				DebugTools::ShowError("",!noPauses && isVerbose,__LINE__,__FILE__);
-
-			}
-
-			return 2;
-
-		}
-
-	}
-
-	if (isVerbose)
-		printf("Pass\n");
-	return 0;
-
+  if (isVerbose)
+    printf("Pass\n");
+  return 0;
 }
 
-RakString MaximumConnectTest::GetTestName()
-{
-
-	return "MaximumConnectTest";
-
+RakString MaximumConnectTest::GetTestName() {
+  return "MaximumConnectTest";
 }
 
-RakString MaximumConnectTest::ErrorCodeToString(int errorCode)
-{
+RakString MaximumConnectTest::ErrorCodeToString(int errorCode) {
+  switch (errorCode) {
+    case 0:
+      return "No error";
+      break;
 
-	switch (errorCode)
-	{
+    case 1:
+      return "The connect function failed";
+      break;
 
-	case 0:
-		return "No error";
-		break;
+    case 2:
+      return "An extra connection was allowed";
+      break;
 
-	case 1:
-		return "The connect function failed";
-		break;
+    case 3:
+      return "GetMaximumIncomingConnectionsn returned wrong value";
+      break;
 
-	case 2:
-		return "An extra connection was allowed";
-		break;
-
-	case 3:
-		return "GetMaximumIncomingConnectionsn returned wrong value";
-		break;
-
-	default:
-		return "Undefined Error";
-	}
-
+    default:
+      return "Undefined Error";
+  }
 }
 
-MaximumConnectTest::MaximumConnectTest(void)
-{
-}
+MaximumConnectTest::MaximumConnectTest(void) {}
 
-MaximumConnectTest::~MaximumConnectTest(void)
-{
-}
+MaximumConnectTest::~MaximumConnectTest(void) {}
 
-void MaximumConnectTest::DestroyPeers()
-{
+void MaximumConnectTest::DestroyPeers() {
+  int theSize = destroyList.Size();
 
-	int theSize=destroyList.Size();
-
-	for (int i=0; i < theSize; i++)
-		RakPeerInterface::DestroyInstance(destroyList[i]);
-
+  for (int i = 0; i < theSize; i++)
+    RakPeerInterface::DestroyInstance(destroyList[i]);
 }

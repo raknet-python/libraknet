@@ -40,245 +40,254 @@ GetConnectionState
 GetLocalIP
 GetInternalID
 */
-int LocalIsConnectedTest::RunTest(DataStructures::List<RakString> params,bool isVerbose,bool noPauses)
-{
+int LocalIsConnectedTest::RunTest(
+    DataStructures::List<RakString> params,
+    bool isVerbose,
+    bool noPauses) {
+  RakPeerInterface *server, *client;
+  destroyList.Clear(false, _FILE_AND_LINE_);
 
-	RakPeerInterface *server,*client;
-	destroyList.Clear(false,_FILE_AND_LINE_);
+  server = RakPeerInterface::GetInstance();
+  destroyList.Push(server, _FILE_AND_LINE_);
+  client = RakPeerInterface::GetInstance();
+  destroyList.Push(client, _FILE_AND_LINE_);
 
-	server=RakPeerInterface::GetInstance();
-	destroyList.Push(server,_FILE_AND_LINE_);
-	client=RakPeerInterface::GetInstance();
-	destroyList.Push(client,_FILE_AND_LINE_);
+  SocketDescriptor sd;
+  client->Startup(1, &sd, 1);
+  sd.port = 60000;
+  server->Startup(1, &sd, 1);
+  server->SetMaximumIncomingConnections(1);
 
-        SocketDescriptor sd;
-	client->Startup(1,&sd,1);
-        sd.port=60000;
-	server->Startup(1,&sd,1);
-	server->SetMaximumIncomingConnections(1);
+  SystemAddress serverAddress;
 
-	SystemAddress serverAddress;
+  serverAddress.SetBinaryAddress("127.0.0.1");
+  serverAddress.SetPortHostOrder(60000);
+  TimeMS entryTime = GetTimeMS();
+  bool lastConnect = false;
+  if (isVerbose)
+    printf("Testing GetConnectionState\n");
 
-	serverAddress.SetBinaryAddress("127.0.0.1");
-        serverAddress.SetPortHostOrder(60000);
-	TimeMS entryTime=GetTimeMS();
-	bool lastConnect=false;
-	if (isVerbose)
-		printf("Testing GetConnectionState\n");
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      lastConnect =
+          client->Connect("127.0.0.1", serverAddress.GetPort(), 0, 0) ==
+          CONNECTION_ATTEMPT_STARTED;
+    }
 
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
+    RakSleep(100);
+  }
 
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			lastConnect=client->Connect("127.0.0.1",serverAddress.GetPort(),0,0)==CONNECTION_ATTEMPT_STARTED;
-		}
+  if (!lastConnect) //Use thise method to only check if the connect function fails, detecting connected client is done next
+  {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client could not connect after 5 seconds\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 1;
+  }
 
-		RakSleep(100);
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "IsConnected did not detect connected client",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 2;
+  }
+  client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
 
-	}
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true, false, false, true)) {
+    DebugTools::ShowError(
+        "IsConnected did not detect disconnecting client",
+        !noPauses && isVerbose,
+        __LINE__,
+        __FILE__);
+    return 3;
+  }
 
-	if (!lastConnect)//Use thise method to only check if the connect function fails, detecting connected client is done next
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client could not connect after 5 seconds\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 1;
-	}
+  RakSleep(1000);
+  client->Connect("127.0.0.1", serverAddress.GetPort(), 0, 0);
 
-	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("IsConnected did not detect connected client",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 2;
-	}
-	client->CloseConnection (serverAddress,true,0,LOW_PRIORITY); 
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true, true, true)) {
+    DebugTools::ShowError(
+        "IsConnected did not detect connecting client",
+        !noPauses && isVerbose,
+        __LINE__,
+        __FILE__);
 
-	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,false,false,true))
-	{
-		DebugTools::ShowError("IsConnected did not detect disconnecting client",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 3;
-	}
+    return 4;
+  }
 
-	RakSleep(1000);
-	client->Connect("127.0.0.1",serverAddress.GetPort(),0,0);
+  entryTime = GetTimeMS();
 
-	if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true))
-	{
-		DebugTools::ShowError("IsConnected did not detect connecting client",!noPauses && isVerbose,__LINE__,__FILE__);
+  while (!CommonFunctions::ConnectionStateMatchesOptions(
+             client, serverAddress, true) &&
+         GetTimeMS() - entryTime < 5000) {
+    if (!CommonFunctions::ConnectionStateMatchesOptions(
+            client, serverAddress, true, true, true, true)) {
+      client->Connect("127.0.0.1", serverAddress.GetPort(), 0, 0);
+    }
 
-		return 4;
+    RakSleep(100);
+  }
 
-	}
+  if (!CommonFunctions::ConnectionStateMatchesOptions(
+          client, serverAddress, true)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "Client could not connect after 5 seconds\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 1;
+  }
 
-	entryTime=GetTimeMS();
+  if (isVerbose)
+    printf("Testing IsLocalIP\n");
 
-	while(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true)&&GetTimeMS()-entryTime<5000)
-	{
+  if (!client->IsLocalIP("127.0.0.1")) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "IsLocalIP failed test\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 5;
+  }
 
-		if(!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true,true,true,true))
-		{
-			client->Connect("127.0.0.1",serverAddress.GetPort(),0,0);
-		}
+  if (isVerbose)
+    printf("Testing SendLoopback\n");
+  char str[] = "AAAAAAAAAA";
+  str[0] = (char)(ID_USER_PACKET_ENUM + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
+  client->SendLoopback(str, (int)strlen(str) + 1);
 
-		RakSleep(100);
+  bool recievedPacket = false;
+  Packet* packet;
 
-	}
+  TimeMS stopWaiting = GetTimeMS() + 1000;
+  while (GetTimeMS() < stopWaiting) {
+    for (packet = client->Receive(); packet;
+         client->DeallocatePacket(packet), packet = client->Receive()) {
+      if (packet->data[0] == ID_USER_PACKET_ENUM + 1) {
+        recievedPacket = true;
+      }
+    }
+  }
 
-	if (!CommonFunctions::ConnectionStateMatchesOptions (client,serverAddress,true))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("Client could not connect after 5 seconds\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 1;
-	}
+  if (!recievedPacket) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "SendLoopback failed test\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 6;
+  }
 
-	if (isVerbose)
-		printf("Testing IsLocalIP\n");
+  if (isVerbose)
+    printf("Testing GetLocalIP\n");
+  const char* localIp = client->GetLocalIP(0);
 
-	if (!client->IsLocalIP("127.0.0.1"))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("IsLocalIP failed test\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 5;
-	}
+  if (!client->IsLocalIP(localIp)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "GetLocalIP failed test\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 7;
+  }
 
-	if (isVerbose)
-		printf("Testing SendLoopback\n");
-	char str[]="AAAAAAAAAA";
-	str[0]=(char)(ID_USER_PACKET_ENUM+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
-	client->SendLoopback(str, (int) strlen(str)+1);
+  if (isVerbose)
+    printf("Testing GetInternalID\n");
 
-	bool recievedPacket=false;
-	Packet *packet;
+  SystemAddress localAddress = client->GetInternalID();
 
-	TimeMS	stopWaiting = GetTimeMS() + 1000;
-	while (GetTimeMS()<stopWaiting)
-	{
+  char convertedIp[39];
 
-		for (packet=client->Receive(); packet; client->DeallocatePacket(packet), packet=client->Receive())
-		{
+  localAddress.ToString(false, convertedIp);
 
-			if (packet->data[0]==ID_USER_PACKET_ENUM+1)
-			{
+  printf("GetInternalID returned %s\n", convertedIp);
 
-				recievedPacket=true;
+  if (!client->IsLocalIP(convertedIp)) {
+    if (isVerbose)
+      DebugTools::ShowError(
+          "GetInternalID failed test\n",
+          !noPauses && isVerbose,
+          __LINE__,
+          __FILE__);
+    return 8;
+  }
 
-			}
-		}
-
-	}
-
-	if (!recievedPacket)
-	{
-		if (isVerbose)
-			DebugTools::ShowError("SendLoopback failed test\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 6;
-	}
-
-	if (isVerbose)
-		printf("Testing GetLocalIP\n");
-	const char * localIp=client->GetLocalIP(0);
-
-	if (!client->IsLocalIP(localIp))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("GetLocalIP failed test\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 7;
-	}
-
-	if (isVerbose)
-		printf("Testing GetInternalID\n");
-
-	SystemAddress localAddress=client->GetInternalID();
-
-	char convertedIp[39];
-
-        localAddress.ToString(false, convertedIp);
-
-	printf("GetInternalID returned %s\n",convertedIp);
-
-	if (!client->IsLocalIP(convertedIp))
-	{
-		if (isVerbose)
-			DebugTools::ShowError("GetInternalID failed test\n",!noPauses && isVerbose,__LINE__,__FILE__);
-		return 8;
-	}
-
-	return 0;
-
+  return 0;
 }
 
-RakString LocalIsConnectedTest::GetTestName()
-{
-
-	return "LocalIsConnectedTest";
-
+RakString LocalIsConnectedTest::GetTestName() {
+  return "LocalIsConnectedTest";
 }
 
-RakString LocalIsConnectedTest::ErrorCodeToString(int errorCode)
-{
+RakString LocalIsConnectedTest::ErrorCodeToString(int errorCode) {
+  switch (errorCode) {
+    case 0:
+      return "No error";
+      break;
 
-	switch (errorCode)
-	{
+    case 1:
+      return "Client could not connect after 5 seconds";
+      break;
+    case 2:
+      return "IsConnected did not detect connected client";
+      break;
+    case 3:
+      return "IsConnected did not detect disconnecting client";
+      break;
+    case 4:
+      return "IsConnected did not detect connecting client";
+      break;
 
-	case 0:
-		return "No error";
-		break;
+    case 5:
+      return "IsLocalIP failed test";
+      break;
 
-	case 1:
-		return "Client could not connect after 5 seconds";
-		break;
-	case 2:
-		return "IsConnected did not detect connected client";
-		break;
-	case 3:
-		return "IsConnected did not detect disconnecting client";
-		break;
-	case 4:
-		return "IsConnected did not detect connecting client";
-		break;
+    case 6:
+      return "Sendloopback failed test";
+      break;
 
-	case 5:
-		return "IsLocalIP failed test";
-		break;
+    case 7:
+      return "GetLocalIP failed test";
+      break;
 
-	case 6:
-		return "Sendloopback failed test";
-		break;
+    case 8:
+      return "GetInternalID failed test";
+      break;
 
-	case 7:
-		return "GetLocalIP failed test";
-		break;
-
-	case 8:
-		return "GetInternalID failed test";
-		break;
-
-	default:
-		return "Undefined Error";
-	}
-
+    default:
+      return "Undefined Error";
+  }
 }
 
-LocalIsConnectedTest::LocalIsConnectedTest(void)
-{
-}
+LocalIsConnectedTest::LocalIsConnectedTest(void) {}
 
-LocalIsConnectedTest::~LocalIsConnectedTest(void)
-{
-}
+LocalIsConnectedTest::~LocalIsConnectedTest(void) {}
 
-void LocalIsConnectedTest::DestroyPeers()
-{
+void LocalIsConnectedTest::DestroyPeers() {
+  int theSize = destroyList.Size();
 
-	int theSize=destroyList.Size();
-
-	for (int i=0; i < theSize; i++)
-		RakPeerInterface::DestroyInstance(destroyList[i]);
-
+  for (int i = 0; i < theSize; i++)
+    RakPeerInterface::DestroyInstance(destroyList[i]);
 }

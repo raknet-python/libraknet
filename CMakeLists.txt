@@ -4,30 +4,8 @@ cmake_minimum_required(VERSION 3.5)
 project(raknet)
 
 
-# GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-
-option(RAKNET_CODE_COVERAGE "Enable code coverage reporting" OFF)
-option(RAKNET_BUILD_TESTING "Enable the building of tests" OFF)
-if (RAKNET_BUILD_TESTING)
-    enable_testing()
-
-    if (RAKNET_CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g --coverage")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g --coverage")
-    endif ()
-endif ()
 
 
 IF (WIN32 AND NOT UNIX)
@@ -52,8 +30,17 @@ add_library(raknet ${RAKNET_SOURCE_FILES})
 target_include_directories(raknet PUBLIC include)
 target_link_libraries(raknet ${RAKNET_LINK_LIBRARIES})
 
+option(BUILD_TESTING "Enable the building of tests" OFF)
+if (NOT BUILD_TESTING STREQUAL OFF)
+    include(FetchContent)
+    FetchContent_Declare(
+            googletest
+            URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    )
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
 
-if (RAKNET_BUILD_TESTING)
     file(GLOB RAKNET_TEST_FILES CONFIGURE_DEPENDS "tests/*.cpp")
     add_executable(raknet_test ${RAKNET_TEST_FILES})
     target_link_libraries(raknet_test raknet GTest::gtest_main)
