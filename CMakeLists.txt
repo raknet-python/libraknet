@@ -31,7 +31,13 @@ if (APPLE)
 endif ()
 
 
-file(GLOB_RECURSE RAKNET_SOURCE_FILES CONFIGURE_DEPENDS "src/*.cpp")
+file(GLOB RAKNET_SOURCE_FILES CONFIGURE_DEPENDS "src/*.cpp")
 add_library(raknet ${RAKNET_SOURCE_FILES})
 target_include_directories(raknet PUBLIC include)
-target_link_libraries(raknet PRIVATE ${RAKNET_LINK_LIBRARIES})
+target_link_libraries(raknet ${RAKNET_LINK_LIBRARIES})
+
+
+file(GLOB RAKNET_TEST_FILES CONFIGURE_DEPENDS "tests/*.cpp")
+add_executable(raknet_test ${RAKNET_TEST_FILES})
+target_link_libraries(raknet_test raknet GTest::gtest_main)
+add_test(NAME raknet_test COMMAND raknet_test)
