@@ -7,14 +7,6 @@ project(raknet)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-IF (WIN32 AND NOT UNIX)
-    list(APPEND RAKNET_LINK_LIBRARIES ws2_32.lib)
-ELSE ()
-    list(APPEND RAKNET_LINK_LIBRARIES pthread)
-ENDIF ()
-
-
 if (APPLE)
     # tell ranlib to ignore empty compilation units
     set(CMAKE_C_ARCHIVE_FINISH "<CMAKE_RANLIB> -no_warning_for_no_symbols <TARGET>")
@@ -25,10 +17,17 @@ if (APPLE)
 endif ()
 
 
+IF (WIN32 AND NOT UNIX)
+    list(APPEND RAKNET_LINK_LIBRARIES ws2_32.lib)
+ELSE ()
+    list(APPEND RAKNET_LINK_LIBRARIES pthread)
+ENDIF ()
+
 file(GLOB RAKNET_SOURCE_FILES CONFIGURE_DEPENDS "src/*.cpp")
 add_library(raknet ${RAKNET_SOURCE_FILES})
 target_include_directories(raknet PUBLIC include)
 target_link_libraries(raknet ${RAKNET_LINK_LIBRARIES})
+
 
 option(BUILD_TESTING "Enable the building of tests" OFF)
 if (NOT BUILD_TESTING STREQUAL OFF)
