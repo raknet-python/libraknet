@@ -74,8 +74,10 @@ int SecurityFunctionsTest::RunTest(DataStructures::List<RakString> params,bool i
 
 	client=RakPeerInterface::GetInstance();
 
-	client->Startup(1,&SocketDescriptor(),1);
-	server->Startup(1,&SocketDescriptor(60000,0),1);
+        SocketDescriptor sd;
+	client->Startup(1,&sd,1);
+        sd.port=60000;
+	server->Startup(1,&sd,1);
 	server->SetMaximumIncomingConnections(1);
 	server->SetIncomingPassword(thePassword,(int)strlen(thePassword));
 

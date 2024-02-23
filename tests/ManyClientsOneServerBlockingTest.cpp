@@ -221,13 +221,15 @@ int ManyClientsOneServerBlockingTest::RunTest(DataStructures::List<RakString> pa
 		clientList[i]=RakPeerInterface::GetInstance();
 		destroyList.Push(clientList[i],_FILE_AND_LINE_);
 
-		clientList[i]->Startup(1,&SocketDescriptor(), 1);
+                SocketDescriptor sd;
+		clientList[i]->Startup(1,&sd, 1);
 
 	}
 
 	server=RakPeerInterface::GetInstance();
 	destroyList.Push(server,_FILE_AND_LINE_);
-	server->Startup(clientNum, &SocketDescriptor(60000,0), 1);
+        SocketDescriptor sd(60000,0);
+	server->Startup(clientNum, &sd, 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
 	//Connect all the clients to the server

@@ -243,12 +243,14 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 
 		clientList[i]=RakPeerInterface::GetInstance();
 
-		clientList[i]->Startup(1,&SocketDescriptor(), 1);
+                SocketDescriptor sd;
+		clientList[i]->Startup(1,&sd, 1);
 
 	}
 
 	server=RakPeerInterface::GetInstance();
-	server->Startup(clientNum, &SocketDescriptor(60000,0), 1);
+        SocketDescriptor sd(60000,0);
+	server->Startup(clientNum, &sd, 1);
 	server->SetMaximumIncomingConnections(clientNum);
 
 	const int timeoutTime=1000;
@@ -307,7 +309,8 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(DataStructures::List<Rak
 				clientList[i]=RakPeerInterface::GetInstance();
 	
 
-				clientList[i]->Startup(1,&SocketDescriptor(), 1);
+                                SocketDescriptor sd;
+				clientList[i]->Startup(1,&sd, 1);
 			}
 
 		}

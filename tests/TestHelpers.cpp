@@ -22,7 +22,8 @@ void TestHelpers::StandardServerPrep(RakPeerInterface *&server)
 {
 
 	server=RakPeerInterface::GetInstance();
-	server->Startup(1,&SocketDescriptor(60000,0),1);
+        SocketDescriptor sd(60000,0);
+	server->Startup(1,&sd,1);
 	server->SetMaximumIncomingConnections(1);
 
 }
@@ -32,7 +33,8 @@ void TestHelpers::StandardClientPrep(RakPeerInterface *&client)
 
 	client=RakPeerInterface::GetInstance();
 
-	client->Startup(1,&SocketDescriptor(),1);
+        SocketDescriptor sd;
+	client->Startup(1,&sd,1);
 
 }
 
