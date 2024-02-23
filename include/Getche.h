@@ -8,12 +8,12 @@
  *
  */
 
-#if   defined(_WIN32)
+#if defined(_WIN32)
 #include <conio.h> /* getche() */
 
 #else
-#include <termios.h>
 #include <stdio.h>
+#include <termios.h>
 #include <unistd.h>
 char getche();
-#endif 
+#endif

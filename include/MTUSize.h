@@ -12,7 +12,6 @@
 /// \brief \b [Internal] Defines the default maximum transfer unit.
 ///
 
-
 #ifndef MAXIMUM_MTU_SIZE
 
 /// \li \em 17914 16 Mbit/Sec Token Ring
@@ -28,10 +27,7 @@
 /// \li \em 576. Typical value to connect to dial-up ISPs.
 /// The largest value for an UDP datagram
 
-
-
 #define MAXIMUM_MTU_SIZE 1492
-
 
 #define MINIMUM_MTU_SIZE 400
 

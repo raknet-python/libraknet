@@ -12,21 +12,19 @@
 /// \brief Contains HTTPConnection, used to communicate with web servers
 ///
 
-
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_HTTPConnection==1 && _RAKNET_SUPPORT_TCPInterface==1
+#if _RAKNET_SUPPORT_HTTPConnection == 1 && _RAKNET_SUPPORT_TCPInterface == 1
 
 #ifndef __HTTP_CONNECTION
 #define __HTTP_CONNECTION
 
+#include "DS_Queue.h"
 #include "Export.h"
-#include "RakString.h"
 #include "RakMemoryOverride.h"
 #include "RakNetTypes.h"
-#include "DS_Queue.h"
+#include "RakString.h"
 
-namespace RakNet
-{
+namespace RakNet {
 /// Forward declarations
 class TCPInterface;
 struct SystemAddress;
@@ -37,120 +35,125 @@ struct SystemAddress;
 /// Use Post() to send commands to the web server, and ProcessDataPacket() to update the connection with packets returned from TCPInterface that have the system address of the web server
 /// This class will handle connecting and reconnecting as necessary.
 ///
-/// Note that only one Post() can be handled at a time. 
+/// Note that only one Post() can be handled at a time.
 /// \deprecated, use HTTPConnection2
-class RAK_DLL_EXPORT HTTPConnection
-{
-public:
-	// GetInstance() and DestroyInstance(instance*)
-	STATIC_FACTORY_DECLARATIONS(HTTPConnection)
+class RAK_DLL_EXPORT HTTPConnection {
+ public:
+  // GetInstance() and DestroyInstance(instance*)
+  STATIC_FACTORY_DECLARATIONS(HTTPConnection)
 
-    /// Returns a HTTP object associated with this tcp connection
-    HTTPConnection();
-    virtual ~HTTPConnection();
+  /// Returns a HTTP object associated with this tcp connection
+  HTTPConnection();
+  virtual ~HTTPConnection();
 
-	/// \pre tcp should already be started
-	void Init(TCPInterface *_tcp, const char *host, unsigned short port=80);
+  /// \pre tcp should already be started
+  void Init(TCPInterface* _tcp, const char* host, unsigned short port = 80);
 
-    /// Submit data to the HTTP server
-    /// HTTP only allows one request at a time per connection
-    ///
-	/// \pre IsBusy()==false
-    /// \param path the path on the remote server you want to POST to. For example "index.html"
-    /// \param data A NULL terminated string to submit to the server
-	/// \param contentType "Content-Type:" passed to post.
-    void Post(const char *path, const char *data, const char *_contentType="application/x-www-form-urlencoded");
+  /// Submit data to the HTTP server
+  /// HTTP only allows one request at a time per connection
+  ///
+  /// \pre IsBusy()==false
+  /// \param path the path on the remote server you want to POST to. For example "index.html"
+  /// \param data A NULL terminated string to submit to the server
+  /// \param contentType "Content-Type:" passed to post.
+  void Post(
+      const char* path,
+      const char* data,
+      const char* _contentType = "application/x-www-form-urlencoded");
 
-	/// Get a file from a webserver
-	/// \param path the path on the remote server you want to GET from. For example "index.html"
-	void Get(const char *path);
-    
-	/// Is there a Read result ready?
-	bool HasRead(void) const;
+  /// Get a file from a webserver
+  /// \param path the path on the remote server you want to GET from. For example "index.html"
+  void Get(const char* path);
 
-    /// Get one result from the server
-	/// \pre HasResult must return true
-    RakNet::RakString Read(void);
+  /// Is there a Read result ready?
+  bool HasRead(void) const;
 
-	/// Call periodically to do time-based updates
-	void Update(void);
+  /// Get one result from the server
+  /// \pre HasResult must return true
+  RakNet::RakString Read(void);
 
-	/// Returns the address of the server we are connected to
-	SystemAddress GetServerAddress(void) const;
+  /// Call periodically to do time-based updates
+  void Update(void);
 
-	/// Process an HTTP data packet returned from TCPInterface
-	/// Returns true when we have gotten all the data from the HTTP server.
-    /// If this returns true then it's safe to Post() another request
-	/// Deallocate the packet as usual via TCPInterface
-    /// \param packet NULL or a packet associated with our host and port
-   void ProcessTCPPacket(Packet *packet);
+  /// Returns the address of the server we are connected to
+  SystemAddress GetServerAddress(void) const;
 
-    /// Results of HTTP requests.  Standard response codes are < 999
-    /// ( define HTTP codes and our internal codes as needed )
-    enum ResponseCodes { NoBody=1001, OK=200, Deleted=1002 };
+  /// Process an HTTP data packet returned from TCPInterface
+  /// Returns true when we have gotten all the data from the HTTP server.
+  /// If this returns true then it's safe to Post() another request
+  /// Deallocate the packet as usual via TCPInterface
+  /// \param packet NULL or a packet associated with our host and port
+  void ProcessTCPPacket(Packet* packet);
 
-	HTTPConnection& operator=(const HTTPConnection& rhs){(void) rhs; return *this;}
-   
-    /// Encapsulates a raw HTTP response and response code
-    struct BadResponse
-    {
-    public:
-		BadResponse() {code=0;}
-        
-        BadResponse(const unsigned char *_data, int _code)
-            : data((const char *)_data), code(_code) {}
-        
-        BadResponse(const char *_data, int _code)
-            : data(_data), code(_code) {}
+  /// Results of HTTP requests.  Standard response codes are < 999
+  /// ( define HTTP codes and our internal codes as needed )
+  enum ResponseCodes { NoBody = 1001, OK = 200, Deleted = 1002 };
 
-		operator int () const { return code; }
+  HTTPConnection& operator=(const HTTPConnection& rhs) {
+    (void)rhs;
+    return *this;
+  }
 
-		RakNet::RakString data;
-		int code;  // ResponseCodes
-    };
+  /// Encapsulates a raw HTTP response and response code
+  struct BadResponse {
+   public:
+    BadResponse() {
+      code = 0;
+    }
 
-    /// Queued events of failed exchanges with the HTTP server
-    bool HasBadResponse(int *code, RakNet::RakString *data);
+    BadResponse(const unsigned char* _data, int _code)
+        : data((const char*)_data), code(_code) {}
 
-	/// Returns false if the connection is not doing anything else
-	bool IsBusy(void) const;
+    BadResponse(const char* _data, int _code) : data(_data), code(_code) {}
 
-	/// \internal
-	int GetState(void) const;
+    operator int() const {
+      return code;
+    }
 
-	struct OutgoingCommand
-	{
-		RakNet::RakString remotePath;
-		RakNet::RakString data;
-		RakNet::RakString contentType;
-		bool isPost;
-	};
+    RakNet::RakString data;
+    int code; // ResponseCodes
+  };
 
-	 DataStructures::Queue<OutgoingCommand> outgoingCommand;
-	 OutgoingCommand currentProcessingCommand;
+  /// Queued events of failed exchanges with the HTTP server
+  bool HasBadResponse(int* code, RakNet::RakString* data);
 
-private:
-    SystemAddress server;
-    TCPInterface *tcp;
-	RakNet::RakString host;
-	unsigned short port;
-	DataStructures::Queue<BadResponse> badResponses;
+  /// Returns false if the connection is not doing anything else
+  bool IsBusy(void) const;
 
-	enum ConnectionState
-	{
-		CS_NONE,
-		CS_DISCONNECTING,
-		CS_CONNECTING,
-		CS_CONNECTED,
-		CS_PROCESSING,
-	} connectionState;
+  /// \internal
+  int GetState(void) const;
 
-	RakNet::RakString incomingData;
-	DataStructures::Queue<RakNet::RakString> results;
+  struct OutgoingCommand {
+    RakNet::RakString remotePath;
+    RakNet::RakString data;
+    RakNet::RakString contentType;
+    bool isPost;
+  };
 
-	void CloseConnection();
-	
-	/*
+  DataStructures::Queue<OutgoingCommand> outgoingCommand;
+  OutgoingCommand currentProcessingCommand;
+
+ private:
+  SystemAddress server;
+  TCPInterface* tcp;
+  RakNet::RakString host;
+  unsigned short port;
+  DataStructures::Queue<BadResponse> badResponses;
+
+  enum ConnectionState {
+    CS_NONE,
+    CS_DISCONNECTING,
+    CS_CONNECTING,
+    CS_CONNECTED,
+    CS_PROCESSING,
+  } connectionState;
+
+  RakNet::RakString incomingData;
+  DataStructures::Queue<RakNet::RakString> results;
+
+  void CloseConnection();
+
+  /*
 	enum { RAK_HTTP_INITIAL,
 		RAK_HTTP_STARTING,
 		RAK_HTTP_CONNECTING,
@@ -165,7 +168,6 @@ private:
 	typedef SystemAddress (TCPInterface::*StatusCheckFunction)(void);
 	bool InList(StatusCheckFunction func);
 	*/
-
 };
 
 } // namespace RakNet

@@ -12,13 +12,13 @@
 #ifndef __RAKNET_SOCKET_H
 #define __RAKNET_SOCKET_H
 
-#include "RakNetTypes.h"
-#include "RakNetDefines.h"
 #include "Export.h"
-#include "SocketIncludes.h"
-#include "RakAssert.h"
-#include "SocketDefines.h"
 #include "MTUSize.h"
+#include "RakAssert.h"
+#include "RakNetDefines.h"
+#include "RakNetTypes.h"
+#include "SocketDefines.h"
+#include "SocketIncludes.h"
 
 namespace RakNet
 {

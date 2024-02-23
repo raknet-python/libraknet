@@ -7,32 +7,27 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
- 
+
 #ifndef __GET_TIME_OF_DAY_H
 #define __GET_TIME_OF_DAY_H
 
-#if defined(_WIN32) && !defined(__GNUC__)  &&!defined(__GCCXML__)
+#if defined(_WIN32) && !defined(__GNUC__) && !defined(__GCCXML__)
 #include < time.h >
-struct timezone
-{
-  int  tz_minuteswest; /* minutes W of Greenwich */
-  int  tz_dsttime;     /* type of dst correction */
+struct timezone {
+  int tz_minuteswest; /* minutes W of Greenwich */
+  int tz_dsttime; /* type of dst correction */
 };
 
 #if defined(WINDOWS_STORE_RT)
 struct timeval {
-        long    tv_sec;
-        long    tv_usec;
+  long tv_sec;
+  long tv_usec;
 };
 #endif
 
-int gettimeofday(struct timeval *tv, struct timezone *tz);
-
+int gettimeofday(struct timeval* tv, struct timezone* tz);
 
 #else
-
-
-
 
 #include <sys/time.h>
 

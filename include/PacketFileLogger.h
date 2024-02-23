@@ -12,30 +12,28 @@
 /// \brief This will write all incoming and outgoing network messages to a file
 ///
 
-
 #include "NativeFeatureIncludes.h"
-#if _RAKNET_SUPPORT_PacketLogger==1
+#if _RAKNET_SUPPORT_PacketLogger == 1
 
 #ifndef __PACKET_FILE_LOGGER_H_
 #define __PACKET_FILE_LOGGER_H_
 
-#include "PacketLogger.h"
 #include <stdio.h>
+#include "PacketLogger.h"
 
-namespace RakNet
-{
+namespace RakNet {
 
 /// \ingroup PACKETLOGGER_GROUP
 /// \brief Packetlogger that outputs to a file
-class RAK_DLL_EXPORT  PacketFileLogger : public PacketLogger
-{
-public:
-	PacketFileLogger();
-	virtual ~PacketFileLogger();
-	void StartLog(const char *filenamePrefix);
-	virtual void WriteLog(const char *str);
-protected:
-	FILE *packetLogFile;
+class RAK_DLL_EXPORT PacketFileLogger : public PacketLogger {
+ public:
+  PacketFileLogger();
+  virtual ~PacketFileLogger();
+  void StartLog(const char* filenamePrefix);
+  virtual void WriteLog(const char* str);
+
+ protected:
+  FILE* packetLogFile;
 };
 
 } // namespace RakNet

@@ -8,8 +8,8 @@
  *
  */
 
-#define RAKNET_VERSION "4.081"
-#define RAKNET_VERSION_NUMBER 4.081
+#define RAKNET_VERSION            "4.081"
+#define RAKNET_VERSION_NUMBER     4.081
 #define RAKNET_VERSION_NUMBER_INT 4081
 
 #define RAKNET_DATE "5/28/2014"
