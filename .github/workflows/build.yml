@@ -58,4 +58,4 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: ctest --build-config ${{ matrix.build_type }}
+        run: ctest --output-on-failure --build-config ${{ matrix.build_type }}
