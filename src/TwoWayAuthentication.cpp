@@ -87,7 +87,7 @@ void TwoWayAuthentication::NonceGenerator::Clear() {
   unsigned int i;
   for (i = 0; i < generatedNonces.Size(); i++) {
     RakNet::OP_DELETE(generatedNonces[i], _FILE_AND_LINE_);
-}
+  }
   generatedNonces.Clear(true, _FILE_AND_LINE_);
 }
 void TwoWayAuthentication::NonceGenerator::ClearByAddress(
@@ -121,19 +121,19 @@ bool TwoWayAuthentication::AddPassword(
     RakNet::RakString password) {
   if (password.IsEmpty()) {
     return false;
-}
+  }
 
   if (identifier.IsEmpty()) {
     return false;
-}
+  }
 
   if (password == identifier) {
     return false; // Insecure
-}
+  }
 
   if (!passwords.GetIndexOf(identifier.C_String()).IsInvalid()) {
     return false; // This identifier already in use
-}
+  }
 
   passwords.Push(identifier, password, _FILE_AND_LINE_);
   return true;
@@ -144,7 +144,7 @@ bool TwoWayAuthentication::Challenge(
   DataStructures::HashIndex skhi = passwords.GetIndexOf(identifier.C_String());
   if (skhi.IsInvalid()) {
     return false;
-}
+  }
 
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_TWO_WAY_AUTHENTICATION_NEGOTIATION);
@@ -205,7 +205,7 @@ PluginReceiveResult TwoWayAuthentication::OnReceive(Packet* packet) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
       } else {
         break;
-}
+      }
     } break;
     // These should only be generated locally
     case ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS:
@@ -213,7 +213,7 @@ PluginReceiveResult TwoWayAuthentication::OnReceive(Packet* packet) {
     case ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT:
       if (!packet->wasGeneratedLocally) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+      }
       break;
   }
 
@@ -245,7 +245,7 @@ void TwoWayAuthentication::OnClosedConnection(
     nonceGenerator.ClearByAddress(rakNetGUID);
   } else {
     nonceGenerator.ClearByAddress(systemAddress);
-}
+  }
 }
 void TwoWayAuthentication::Clear() {
   outgoingChallenges.Clear(_FILE_AND_LINE_);
@@ -260,7 +260,7 @@ void TwoWayAuthentication::PushToUser(
   output.Write(messageId);
   if (!password.IsEmpty()) {
     output.Write(password);
-}
+  }
   Packet* p = AllocatePacketUnified(output.GetNumberOfBytesUsed());
   p->systemAddress = remoteSystem.systemAddress;
   p->systemAddress.systemIndex = (SystemIndex)-1;
@@ -347,7 +347,7 @@ PluginReceiveResult TwoWayAuthentication::OnHashedNonceAndPassword(
   char usedNonce[TWO_WAY_AUTHENTICATION_NONCE_LENGTH];
   if (!nonceGenerator.GetNonceById(usedNonce, requestId, packet, true)) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+  }
 
   DataStructures::HashIndex skhi =
       passwords.GetIndexOf(passwordIdentifier.C_String());

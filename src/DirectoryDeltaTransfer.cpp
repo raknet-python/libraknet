@@ -51,7 +51,7 @@ class DDTCallback : public FileListTransferCBInterface {
           (unsigned int)onFileStruct->byteLengthOfThisFile);
     } else {
       fullPathToDir[0] = 0;
-}
+    }
 
     return onFileCallback->OnFile(onFileStruct);
   }
@@ -65,7 +65,7 @@ class DDTCallback : public FileListTransferCBInterface {
       strcat(fullPathToDir, fps->onFileStruct->fileName + subdirLen);
     } else {
       fullPathToDir[0] = 0;
-}
+    }
 
     onFileCallback->OnFileProgress(fps);
   }
@@ -94,7 +94,7 @@ void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
     unsigned int i;
     for (i = 0; i < fileListProgressList.Size(); i++) {
       availableUploads->RemoveCallback(fileListProgressList[i]);
-}
+    }
   }
 
   fileListTransfer = flt;
@@ -105,7 +105,7 @@ void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
     unsigned int i;
     for (i = 0; i < fileListProgressList.Size(); i++) {
       availableUploads->AddCallback(fileListProgressList[i]);
-}
+    }
   } else {
     availableUploads->ClearCallbacks();
   }
@@ -119,7 +119,7 @@ void DirectoryDeltaTransfer::SetApplicationDirectory(
     if (applicationDirectory[strlen(applicationDirectory) - 1] != '/' &&
         applicationDirectory[strlen(applicationDirectory) - 1] != '\\') {
       strcat(applicationDirectory, "/");
-}
+    }
     applicationDirectory[511] = 0;
   }
 }
@@ -161,18 +161,18 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
     if (subdir[transferCallback->subdirLen - 1] != '/' &&
         subdir[transferCallback->subdirLen - 1] != '\\') {
       transferCallback->subdirLen++;
-}
+    }
   } else {
     transferCallback->subdirLen = 0;
-}
+  }
   if (prependAppDirToOutputSubdir) {
     strcpy(transferCallback->outputSubdir, applicationDirectory);
   } else {
     transferCallback->outputSubdir[0] = 0;
-}
+  }
   if (outputSubdir) {
     strcat(transferCallback->outputSubdir, outputSubdir);
-}
+  }
   if (transferCallback
               ->outputSubdir[strlen(transferCallback->outputSubdir) - 1] !=
           '/' &&
@@ -180,7 +180,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
               ->outputSubdir[strlen(transferCallback->outputSubdir) - 1] !=
           '\\') {
     strcat(transferCallback->outputSubdir, "/");
-}
+  }
   transferCallback->onFileCallback = onFileCallback;
 
   // Setup the transfer plugin to get the response to this download request
@@ -272,7 +272,7 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
     delta.PopulateDataFromDisk(applicationDirectory, true, false, true);
   } else {
     delta.FlagFilesAsReferences();
-}
+  }
 
   // This will call the ddtCallback interface that was passed to FileListTransfer::SetupReceive on the remote system
   fileListTransfer->Send(

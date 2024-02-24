@@ -51,7 +51,7 @@ DynDNS::DynDNS() {
 DynDNS::~DynDNS() {
   if (tcp) {
     RakNet::OP_DELETE(tcp, _FILE_AND_LINE_);
-}
+  }
 }
 void DynDNS::Stop() {
   tcp->Stop();
@@ -69,7 +69,7 @@ void DynDNS::UpdateHostIPAsynch(
 
   if (tcp == nullptr) {
     tcp = RakNet::OP_NEW<TCPInterface>(_FILE_AND_LINE_);
-}
+  }
   connectPhase = CP_IDLE;
   host = dnsHost;
 
@@ -102,7 +102,7 @@ void DynDNS::UpdateHostIPAsynch(
 void DynDNS::Update() {
   if (connectPhase == CP_IDLE) {
     return;
-}
+  }
 
   serverAddress = tcp->HasFailedConnectionAttempt();
   if (serverAddress != UNASSIGNED_SYSTEM_ADDRESS) {
@@ -155,7 +155,7 @@ void DynDNS::Update() {
         while (*result &&
                ((*result == '\r') || (*result == '\n') || (*result == ' '))) {
           result++;
-}
+        }
         for (i = 0; i < 13; i++) {
           if (strncmp(
                   resultTable[i].code, result, strlen(resultTable[i].code)) ==
@@ -165,7 +165,7 @@ void DynDNS::Update() {
               // Advance until we hit a number
               while (*result && ((*result < '0') || (*result > '9'))) {
                 result++;
-}
+              }
               if (*result) {
                 SystemAddress parser;
                 parser.FromString(result);

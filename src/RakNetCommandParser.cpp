@@ -119,7 +119,7 @@ bool RakNetCommandParser::OnCommand(
 
   if (peer == nullptr) {
     return false;
-}
+  }
 
   if (strcmp(command, "Startup") == 0) {
     RakNet::SocketDescriptor socketDescriptor(
@@ -195,7 +195,7 @@ bool RakNetCommandParser::OnCommand(
       }
     } else {
       transport->Send(systemAddress, "GetConnectionList() returned false.\r\n");
-}
+    }
   } else if (strcmp(command, "CloseConnection") == 0) {
     peer->CloseConnection(
         SystemAddress(parameterList[0]),
@@ -320,7 +320,7 @@ bool RakNetCommandParser::OnCommand(
       ReturnResult((char*)password, command, transport, systemAddress);
     } else {
       ReturnResult(0, command, transport, systemAddress);
-}
+    }
   }
 
   return true;

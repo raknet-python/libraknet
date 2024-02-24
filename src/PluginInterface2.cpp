@@ -199,11 +199,11 @@ bool PluginInterface2::SendListUnified(
     for (i = 0; i < numParameters; i++) {
       if (lengths[i] > 0) {
         totalLength += lengths[i];
-}
+      }
     }
     if (totalLength == 0) {
       return false;
-}
+    }
 
     char* dataAggregate;
     dataAggregate = (char*)rakMalloc_Ex((size_t)totalLength, _FILE_AND_LINE_);
@@ -243,6 +243,6 @@ void PluginInterface2::SetTCPInterface(TCPInterface* ptr) {
 RakNetGUID PluginInterface2::GetMyGUIDUnified() const {
   if (rakPeerInterface) {
     return rakPeerInterface->GetMyGUID();
-}
+  }
   return UNASSIGNED_RAKNET_GUID;
 }

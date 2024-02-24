@@ -45,16 +45,16 @@ int TM_World::JoinRequestHelperComp(
     const TM_World::JoinRequestHelper& data) {
   if (key.whenRequestMade < data.whenRequestMade) {
     return -1;
-}
+  }
   if (key.whenRequestMade > data.whenRequestMade) {
     return 1;
-}
+  }
   if (key.requestIndex < data.requestIndex) {
     return -1;
-}
+  }
   if (key.requestIndex > data.requestIndex) {
     return 1;
-}
+  }
   return 0;
 }
 
@@ -166,7 +166,7 @@ bool TM_TeamMember::RequestTeam(TeamSelection teamSelection) {
 
     if (!JoinAnyTeamCheck()) {
       return false;
-}
+    }
 
     UpdateTeamsRequestedToAny();
 
@@ -195,7 +195,7 @@ bool TM_TeamMember::RequestTeam(TeamSelection teamSelection) {
     if (!JoinSpecificTeamCheck(
             teamSelection.teamParameter.specificTeamToJoin, false)) {
       return false;
-}
+    }
 
     AddToRequestedTeams(teamSelection.teamParameter.specificTeamToJoin);
 
@@ -221,7 +221,7 @@ bool TM_TeamMember::RequestTeamSwitch(
     TM_Team* teamToLeave) {
   if (!SwitchSpecificTeamCheck(teamToJoin, teamToLeave, false)) {
     return false;
-}
+  }
 
   AddToRequestedTeams(teamToJoin, teamToLeave);
 
@@ -254,7 +254,7 @@ TeamSelection TM_TeamMember::GetRequestedTeam() const {
     return TeamSelection::NoTeam(noTeamSubcategory);
   } else {
     return TeamSelection::AnyAvailable();
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ void TM_TeamMember::GetRequestedSpecificTeams(
   requestedTeams.Clear(true, _FILE_AND_LINE_);
   for (unsigned int i = 0; i < teamsRequested.Size(); i++) {
     requestedTeams.Push(teamsRequested[i].requested, _FILE_AND_LINE_);
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -281,7 +281,7 @@ unsigned int TM_TeamMember::GetRequestedTeamIndex(TM_Team* team) const {
   for (i = 0; i < teamsRequested.Size(); i++) {
     if (teamsRequested[i].requested == team) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -297,7 +297,7 @@ unsigned int TM_TeamMember::GetRequestedTeamCount() const {
 bool TM_TeamMember::CancelTeamRequest(TM_Team* specificTeamToCancel) {
   if (!RemoveFromRequestedTeams(specificTeamToCancel)) {
     return false;
-}
+  }
 
   // Send request to host to execute JoinRequestedTeam()
   BitStream bsOut;
@@ -322,7 +322,7 @@ bool TM_TeamMember::CancelTeamRequest(TM_Team* specificTeamToCancel) {
 bool TM_TeamMember::LeaveTeam(TM_Team* team, NoTeamId _noTeamSubcategory) {
   if (!LeaveTeamCheck(team)) {
     return false;
-}
+  }
 
   RemoveFromSpecificTeamInternal(team);
   if (teams.Size() == 0) {
@@ -376,7 +376,7 @@ bool TM_TeamMember::LeaveAllTeams(NoTeamId noTeamSubcategory) {
 TM_Team* TM_TeamMember::GetCurrentTeam() const {
   if (teams.Size() > 0) {
     return teams[0];
-}
+  }
   return nullptr;
 }
 
@@ -412,7 +412,7 @@ bool TM_TeamMember::IsOnTeam(TM_Team* team) const {
   for (i = 0; i < teams.Size(); i++) {
     if (teams[i] == team) {
       return true;
-}
+    }
   }
   return false;
 }
@@ -488,7 +488,7 @@ bool TM_TeamMember::DeserializeConstruction(
       RakAssert(rt.teamToLeave);
     } else {
       rt.teamToLeave = nullptr;
-}
+    }
     bool hasTeamRequested = false;
     success = constructionBitstream->Read(hasTeamRequested);
     NetworkID teamRequestedId;
@@ -501,17 +501,15 @@ bool TM_TeamMember::DeserializeConstruction(
     rt.requestIndex =
         world
             ->teamRequestIndex++; // In case whenRequested is the same between two teams when sorting team requests
-    if ((!hasTeamToLeave ||
-         (hasTeamToLeave && rt.teamToLeave != nullptr)) &&
-        (!hasTeamRequested ||
-         (hasTeamRequested && rt.requested != nullptr))) {
+    if ((!hasTeamToLeave || (hasTeamToLeave && rt.teamToLeave != nullptr)) &&
+        (!hasTeamRequested || (hasTeamRequested && rt.requested != nullptr))) {
       teamsRequested.Push(rt, _FILE_AND_LINE_);
     }
   }
 
   if (success) {
     world->teamManager->ProcessTeamAssigned(constructionBitstream);
-}
+  }
   return success;
 }
 
@@ -563,12 +561,12 @@ bool TM_TeamMember::JoinAnyTeamCheck() const {
   // - - If already on a team, return false
   if (teams.Size() > 0) {
     return false;
-}
+  }
 
   // - - If any team is already in requested teams, return false.
   if (teamsRequested.Size() == 0 && joinTeamType == JOIN_ANY_AVAILABLE_TEAM) {
     return false;
-}
+  }
 
   return true;
 }
@@ -581,18 +579,18 @@ bool TM_TeamMember::JoinSpecificTeamCheck(
   // - If already on specific team, return false
   if (IsOnTeam(specificTeamToJoin)) {
     return false;
-}
+  }
 
   if (ignoreRequested) {
     return true;
-}
+  }
 
   unsigned int i;
   for (i = 0; i < teamsRequested.Size(); i++) {
     if (teamsRequested[i].requested == specificTeamToJoin) {
       if (teamsRequested[i].isTeamSwitch) {
         return true; // Turn off team switch
-}
+      }
 
       // Same thing
       return false;
@@ -614,30 +612,30 @@ bool TM_TeamMember::SwitchSpecificTeamCheck(
   // - If already on specific team, return false
   if (IsOnTeam(teamToJoin)) {
     return false;
-}
+  }
 
   if (teamToLeave != nullptr && !IsOnTeam(teamToLeave)) {
     return false;
-}
+  }
 
   if (teamToJoin == teamToLeave) {
     return false;
-}
+  }
 
   if (ignoreRequested) {
     return true;
-}
+  }
 
   unsigned int i;
   for (i = 0; i < teamsRequested.Size(); i++) {
     if (teamsRequested[i].requested == teamToJoin) {
       if (!teamsRequested[i].isTeamSwitch) {
         return true; // Different - leave team was off, turn on
-}
+      }
 
       if (teamsRequested[i].teamToLeave == teamToLeave) {
         return false; // Same thing - leave all or a specific team
-}
+      }
 
       // Change leave team
       return true;
@@ -798,7 +796,7 @@ TM_Team::TM_Team() {
 TM_Team::~TM_Team() {
   if (world) {
     world->DereferenceTeam(this, 0);
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -808,7 +806,7 @@ bool TM_Team::SetMemberLimit(
     NoTeamId noTeamId) {
   if (teamMemberLimit == _teamMemberLimit) {
     return false;
-}
+  }
 
   teamMemberLimit = _teamMemberLimit;
   // Network this as request to host
@@ -833,7 +831,7 @@ TeamMemberLimit TM_Team::GetMemberLimit() const {
     TeamMemberLimit limitWithBalancing = world->GetBalancedTeamLimit();
     if (limitWithBalancing < teamMemberLimit) {
       return limitWithBalancing;
-}
+    }
     return teamMemberLimit;
   }
 }
@@ -849,7 +847,7 @@ TeamMemberLimit TM_Team::GetMemberLimitSetting() const {
 bool TM_Team::SetJoinPermissions(JoinPermissions _joinPermissions) {
   if (joinPermissions == _joinPermissions) {
     return false;
-}
+  }
 
   joinPermissions = _joinPermissions;
 
@@ -990,7 +988,7 @@ unsigned int TM_Team::GetMemberWithRequestedSingleTeamSwitch(TM_Team* team) {
              teamMembers[i]->teamsRequested[j].teamToLeave ==
                  teamMembers[i]->teams[0])) {
           return i;
-}
+        }
       }
     }
   }
@@ -1048,7 +1046,7 @@ void TM_World::RemoveParticipant(RakNetGUID rakNetGUID) {
   i = participants.GetIndexOf(rakNetGUID);
   if (i != (unsigned int)-1) {
     participants.RemoveAtIndex(i);
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1074,7 +1072,7 @@ void TM_World::ReferenceTeam(
   for (i = 0; i < teams.Size(); i++) {
     if (teams[i] == team) {
       return;
-}
+    }
   }
 
   team->ID = networkId;
@@ -1130,7 +1128,7 @@ TM_Team* TM_World::GetTeamByNetworkID(NetworkID teamId) {
   DataStructures::HashIndex hi = teamsHash.GetIndexOf(teamId);
   if (hi.IsInvalid()) {
     return nullptr;
-}
+  }
   return teamsHash.ItemAtIndex(hi);
 }
 
@@ -1141,7 +1139,7 @@ unsigned int TM_World::GetTeamIndex(const TM_Team* team) const {
   for (i = 0; i < teams.Size(); i++) {
     if (teams[i] == team) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -1155,7 +1153,7 @@ void TM_World::ReferenceTeamMember(
   for (i = 0; i < teamMembers.Size(); i++) {
     if (teamMembers[i] == teamMember) {
       return;
-}
+    }
   }
 
   teamMember->world = this;
@@ -1204,7 +1202,7 @@ TM_TeamMember* TM_World::GetTeamMemberByNetworkID(NetworkID teamMemberId) {
   DataStructures::HashIndex hi = teamMembersHash.GetIndexOf(teamMemberId);
   if (hi.IsInvalid()) {
     return nullptr;
-}
+  }
   return teamMembersHash.ItemAtIndex(hi);
 }
 
@@ -1216,7 +1214,7 @@ unsigned int TM_World::GetTeamMemberIndex(
   for (i = 0; i < teamMembers.Size(); i++) {
     if (teamMembers[i] == teamMember) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -1226,7 +1224,7 @@ unsigned int TM_World::GetTeamMemberIndex(
 bool TM_World::SetBalanceTeams(bool balanceTeams, NoTeamId noTeamId) {
   if (balanceTeams == balanceTeamsIsActive) {
     return false;
-}
+  }
 
   balanceTeamsIsActive = balanceTeams;
 
@@ -1254,7 +1252,7 @@ bool TM_World::GetBalanceTeams() const {
 void TM_World::SetHost(RakNetGUID _hostGuid) {
   if (hostGuid == _hostGuid) {
     return;
-}
+  }
 
   RakAssert(_hostGuid != UNASSIGNED_RAKNET_GUID);
 
@@ -1262,7 +1260,7 @@ void TM_World::SetHost(RakNetGUID _hostGuid) {
 
   if (GetHost() == GetTeamManager()->GetMyGUIDUnified()) {
     FillRequestedSlots();
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1314,7 +1312,7 @@ void TM_World::OnNewConnection(
 
   if (autoAddParticipants) {
     AddParticipant(rakNetGUID);
-}
+  }
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1340,7 +1338,7 @@ void TM_World::KickExcessMembers(NoTeamId noTeamId) {
     balancedTeamLimit = GetBalancedTeamLimit();
   } else {
     balancedTeamLimit = (TeamMemberLimit)-1;
-}
+  }
 
   TM_Team *team, *teamToJoin;
   unsigned int i, teamIndex;
@@ -1391,7 +1389,7 @@ void TM_World::FillRequestedSlots() {
     balancedTeamLimit = GetBalancedTeamLimit();
   } else {
     balancedTeamLimit = (TeamMemberLimit)-1;
-}
+  }
 
   unsigned int teamIndex, indexIntoTeamsRequested = (unsigned int)-1;
   TM_Team* team;
@@ -1413,7 +1411,7 @@ void TM_World::FillRequestedSlots() {
             balancedTeamLimit, ALLOW_JOIN_ANY_AVAILABLE_TEAM);
       } else {
         teamIndex = (unsigned int)-1;
-}
+      }
     } else {
       indexIntoTeamsRequested =
           joinRequests[joinRequestIndex].indexIntoTeamsRequested;
@@ -1469,7 +1467,7 @@ void TM_World::FillRequestedSlots() {
           }
         } else {
           teamToLeave = nullptr;
-}
+        }
 
         int teamJoined = JoinSpecificTeam(
             teamMember, team, isSwitch, teamToLeave, teamsWeAreLeaving);
@@ -1488,7 +1486,7 @@ void TM_World::FillRequestedSlots() {
             bsOut.Write(teamToLeave->GetNetworkID());
           } else {
             bsOut.Write(false);
-}
+          }
           BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
         }
       }
@@ -1559,7 +1557,7 @@ void TM_World::BroadcastToParticipants(
   for (unsigned int i = 0; i < participants.Size(); i++) {
     if (participants[i] == exclusionGuid) {
       continue;
-}
+    }
     teamManager->SendUnified(
         bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, participants[i], false);
   }
@@ -1574,7 +1572,7 @@ void TM_World::BroadcastToParticipants(
   for (unsigned int i = 0; i < participants.Size(); i++) {
     if (participants[i] == exclusionGuid) {
       continue;
-}
+    }
     teamManager->SendUnified(
         (const char*)data,
         length,
@@ -1686,11 +1684,11 @@ int TM_World::JoinSpecificTeam(
 TeamMemberLimit TM_World::GetBalancedTeamLimit() const {
   if (teams.Size() == 0) {
     return 0;
-}
+  }
 
   if (!balanceTeamsIsActive) {
     return (TeamMemberLimit)-1;
-}
+  }
 
   unsigned int i;
   bool additionalTeamsExcluded;
@@ -1727,7 +1725,7 @@ TeamMemberLimit TM_World::GetBalancedTeamLimit() const {
 TeamManager::TeamManager() {
   for (unsigned int i = 0; i < 255; i++) {
     worldsArray[i] = nullptr;
-}
+  }
   autoAddParticipants = true;
   topology = TM_PEER_TO_PEER;
 }
@@ -2053,7 +2051,7 @@ void TeamManager::DecodeTeamAssigned(
       RakAssert(team);
       if (team) {
         newTeam.Push(team, _FILE_AND_LINE_);
-}
+      }
       // else probably didn't reference team first
     }
 
@@ -2062,7 +2060,7 @@ void TeamManager::DecodeTeamAssigned(
         TM_Team* team = (*teamMember)->teams[i];
         if (newTeam.GetIndexOf(team) == (unsigned int)-1) {
           teamsLeft.Push(team, _FILE_AND_LINE_);
-}
+        }
       }
     }
 
@@ -2070,7 +2068,7 @@ void TeamManager::DecodeTeamAssigned(
       TM_Team* team = newTeam[i];
       if ((*teamMember)->teams.GetIndexOf(team) == (unsigned int)-1) {
         teamsJoined.Push(team, _FILE_AND_LINE_);
-}
+      }
     }
 
     bsIn->Read(noTeamId);
@@ -2103,7 +2101,7 @@ PluginReceiveResult TeamManager::OnReceive(Packet* packet) {
       unsigned int i;
       for (i = 0; i < worldsList.Size(); i++) {
         worldsList[i]->SetHost(packet->guid);
-}
+      }
     } break;
     case ID_TEAM_BALANCER_TEAM_ASSIGNED: {
       BitStream bsIn(packet->data, packet->length, false);
@@ -2119,11 +2117,11 @@ PluginReceiveResult TeamManager::OnReceive(Packet* packet) {
       TM_World* world = GetWorldWithId(worldId);
       if (world == nullptr) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+      }
       bool validPacket = OnRemoveFromRequestedTeams(packet, world);
       if (!validPacket) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+      }
       break;
     }
     case ID_TEAM_BALANCER_INTERNAL: {
@@ -2135,7 +2133,7 @@ PluginReceiveResult TeamManager::OnReceive(Packet* packet) {
         TM_World* world = GetWorldWithId(worldId);
         if (world == nullptr) {
           return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+        }
 
         switch (packet->data[1]) {
           case ID_RUN_UpdateListsToNoTeam:
@@ -2366,7 +2364,7 @@ void TeamManager::OnJoinAnyTeam(Packet* packet, TM_World* world) {
       world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
       if (packet->guid != GetMyGUIDUnified()) {
         PushBitStream(&bsOut);
-}
+      }
     }
   }
 }
@@ -2394,7 +2392,7 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
       teamToLeave = world->GetTeamByNetworkID(teamToLeaveNetworkId);
       if (teamToLeave == nullptr) {
         isTeamSwitch = false;
-}
+      }
     }
   }
   if (teamToJoin && teamMember) {
@@ -2402,14 +2400,14 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
       if (!teamMember->SwitchSpecificTeamCheck(
               teamToJoin, teamToLeave, packet->guid == GetMyGUIDUnified())) {
         return;
-}
+      }
 
       teamMember->AddToRequestedTeams(teamToJoin, teamToLeave);
     } else {
       if (!teamMember->JoinSpecificTeamCheck(
               teamToJoin, packet->guid == GetMyGUIDUnified())) {
         return;
-}
+      }
 
       teamMember->AddToRequestedTeams(teamToJoin);
     }
@@ -2421,12 +2419,12 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
       } else {
         if (teamMember->IsOnTeam(teamToLeave)) {
           teamsWeAreLeaving.Push(teamToLeave, _FILE_AND_LINE_);
-}
+        }
       }
 
       if (teamsWeAreLeaving.Size() == 0) {
         isTeamSwitch = false;
-}
+      }
     }
 
     int resultCode = world->JoinSpecificTeam(
@@ -2446,7 +2444,7 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
         bsOut.Write(switchSpecificTeam);
         if (switchSpecificTeam) {
           bsOut.Write(teamToLeaveNetworkId);
-}
+        }
       }
       world->BroadcastToParticipants(&bsOut, packet->guid);
 
@@ -2476,7 +2474,7 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
         bsOut.Write(switchSpecificTeam);
         if (switchSpecificTeam) {
           bsOut.Write(teamToLeaveNetworkId);
-}
+        }
       }
       world->BroadcastToParticipants(&bsOut, packet->guid);
 
@@ -2491,7 +2489,7 @@ void TeamManager::OnJoinRequestedTeam(Packet* packet, TM_World* world) {
       world->BroadcastToParticipants(&bsOut, UNASSIGNED_RAKNET_GUID);
       if (packet->guid != GetMyGUIDUnified()) {
         PushBitStream(&bsOut);
-}
+      }
     }
   }
 }
@@ -2549,7 +2547,7 @@ void TeamManager::OnRemoveFromTeamsRequestedAndAddTeam(
       teamMember->RemoveFromSpecificTeamInternal(teamToLeave);
     } else if (isTeamSwitch && !switchSpecificTeam) {
       teamMember->RemoveFromAllTeamsInternal();
-}
+    }
     RemoveFromTeamsRequestedAndAddTeam(teamMember, team, false, nullptr);
   }
 }
@@ -2578,7 +2576,7 @@ void TeamManager::OnAddToRequestedTeams(Packet* packet, TM_World* world) {
       teamToLeave = world->GetTeamByNetworkID(teamToLeaveNetworkId);
       if (teamToLeave == nullptr) {
         isTeamSwitch = false;
-}
+      }
     }
   }
 
@@ -2587,7 +2585,7 @@ void TeamManager::OnAddToRequestedTeams(Packet* packet, TM_World* world) {
       teamMember->AddToRequestedTeams(team, teamToLeave);
     } else {
       teamMember->AddToRequestedTeams(team);
-}
+    }
   }
 }
 
@@ -2608,7 +2606,7 @@ bool TeamManager::OnRemoveFromRequestedTeams(Packet* packet, TM_World* world) {
     team = world->GetTeamByNetworkID(teamNetworkId);
     if (team == nullptr) {
       return false;
-}
+    }
   } else {
     team = nullptr;
   }
@@ -2645,7 +2643,7 @@ void TeamManager::OnLeaveTeam(Packet* packet, TM_World* world) {
   if (team && teamMember) {
     if (!teamMember->LeaveTeamCheck(team)) {
       return;
-}
+    }
 
     teamMember->StoreLastTeams();
     teamMember->RemoveFromSpecificTeamInternal(team);
@@ -2664,7 +2662,7 @@ void TeamManager::OnLeaveTeam(Packet* packet, TM_World* world) {
       if (topology == TM_CLIENT_SERVER) {
         world->BroadcastToParticipants(
             packet->data, packet->length, packet->guid);
-}
+      }
     }
   }
 }
@@ -2692,7 +2690,7 @@ void TeamManager::OnSetMemberLimit(Packet* packet, TM_World* world) {
       } else {
         world->BroadcastToParticipants(
             packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
-}
+      }
       world->FillRequestedSlots();
       world->KickExcessMembers(noTeamId);
     }
@@ -2720,7 +2718,7 @@ void TeamManager::OnSetJoinPermissions(Packet* packet, TM_World* world) {
       } else {
         world->BroadcastToParticipants(
             packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
-}
+      }
       world->FillRequestedSlots();
     }
   }
@@ -2744,13 +2742,13 @@ void TeamManager::OnSetBalanceTeams(Packet* packet, TM_World* world) {
     } else {
       world->BroadcastToParticipants(
           packet->data, packet->length, UNASSIGNED_RAKNET_GUID);
-}
+    }
 
     if (balanceTeams) {
       world->EnforceTeamBalance(noTeamId);
     } else {
       world->FillRequestedSlots();
-}
+    }
   }
 }
 

@@ -87,7 +87,8 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
     globalRegistrationBuffer[globalRegistrationIndex].functionName[i] =
         uniqueID[i];
   }
-  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = nullptr;
+  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer =
+      nullptr;
   globalRegistrationBuffer[globalRegistrationIndex]
       .registerBlockingFunctionPointer = functionPointer;
   globalRegistrationIndex++;
@@ -102,7 +103,8 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
     globalRegistrationBuffer[globalRegistrationIndex].functionName[i] =
         uniqueID[i];
   }
-  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer = nullptr;
+  globalRegistrationBuffer[globalRegistrationIndex].registerFunctionPointer =
+      nullptr;
   globalRegistrationBuffer[globalRegistrationIndex]
       .registerBlockingFunctionPointer = nullptr;
   globalRegistrationBuffer[globalRegistrationIndex].messageId = messageId;
@@ -119,14 +121,14 @@ int RPC4::LocalSlotObjectComp(
     const LocalSlotObject& data) {
   if (key.callPriority > data.callPriority) {
     return -1;
-}
+  }
   if (key.callPriority == data.callPriority) {
     if (key.registrationCount < data.registrationCount) {
       return -1;
-}
+    }
     if (key.registrationCount == data.registrationCount) {
       return 0;
-}
+    }
     return 1;
   }
 
@@ -137,10 +139,10 @@ int RPC4::LocalCallbackComp(
     RPC4::LocalCallback* const& data) {
   if (key < data->messageId) {
     return -1;
-}
+  }
   if (key > data->messageId) {
     return 1;
-}
+  }
   return 0;
 }
 
@@ -171,7 +173,7 @@ bool RPC4::RegisterFunction(
       registeredNonblockingFunctions.GetIndexOf(uniqueID);
   if (!skhi.IsInvalid()) {
     return false;
-}
+  }
 
   registeredNonblockingFunctions.Push(
       uniqueID, functionPointer, _FILE_AND_LINE_);
@@ -203,7 +205,7 @@ bool RPC4::RegisterBlockingFunction(
       registeredBlockingFunctions.GetIndexOf(uniqueID);
   if (!skhi.IsInvalid()) {
     return false;
-}
+  }
 
   registeredBlockingFunctions.Push(uniqueID, functionPointer, _FILE_AND_LINE_);
   return true;
@@ -220,7 +222,7 @@ void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId) {
     index = lc->functions.GetIndexFromKey(str, &objectExists);
     if (!objectExists) {
       lc->functions.InsertAtIndex(str, index, _FILE_AND_LINE_);
-}
+    }
   } else {
     lc = RakNet::OP_NEW<LocalCallback>(_FILE_AND_LINE_);
     lc->messageId = messageId;
@@ -284,7 +286,7 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
       p = tcpInterface->AllocatePacket(
           sizeof(MessageID) + sizeof(unsigned char) +
           (unsigned int)strlen(uniqueID) + 1);
-}
+    }
 #endif
 
     if (rakPeerInterface) {
@@ -293,7 +295,7 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
     } else {
       p->guid = UNASSIGNED_RAKNET_GUID;
-}
+    }
 #endif
 
     p->systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
@@ -322,7 +324,7 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
   } else {
     p = tcpInterface->AllocatePacket(out.GetNumberOfBytesUsed());
-}
+  }
 #endif
 
   if (rakPeerInterface) {
@@ -331,7 +333,7 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
   } else {
     p->guid = UNASSIGNED_RAKNET_GUID;
-}
+  }
 #endif
   p->systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
   p->systemAddress.systemIndex = (SystemIndex)-1;
@@ -389,7 +391,7 @@ bool RPC4::CallBlocking(
   cs = rakPeerInterface->GetConnectionState(systemIdentifier);
   if (cs != IS_CONNECTED) {
     return false;
-}
+  }
 
   SendUnified(
       &out, priority, reliability, orderingChannel, systemIdentifier, false);
@@ -416,7 +418,7 @@ bool RPC4::CallBlocking(
         rakPeerInterface->PushBackPacket(packet, true);
         while (packetQueue.Size()) {
           rakPeerInterface->PushBackPacket(packetQueue.Pop(), true);
-}
+        }
         return false;
       } else if (
           packet->data[0] == ID_RPC_REMOTE_ERROR &&
@@ -430,7 +432,7 @@ bool RPC4::CallBlocking(
           rakPeerInterface->PushBackPacket(packet, true);
           while (packetQueue.Size()) {
             rakPeerInterface->PushBackPacket(packetQueue.Pop(), true);
-}
+          }
           return false;
         } else {
           packetQueue.PushAtHead(packet, 0, _FILE_AND_LINE_);
@@ -479,7 +481,7 @@ void RPC4::Signal(
     //TimeUS t2 = GetTimeUS();
     if (functionIndex.IsInvalid()) {
       return;
-}
+    }
 
     Packet p;
     p.guid = rakPeerInterface->GetMyGUID();
@@ -512,7 +514,7 @@ void RPC4::InvokeSignal(
     Packet* packet) {
   if (functionIndex.IsInvalid()) {
     return;
-}
+  }
 
   //TimeUS t1 = GetTimeUS();
   //TimeUS t2=0;
@@ -532,7 +534,7 @@ void RPC4::InvokeSignal(
     // Not threadsafe
     if (interruptSignal) {
       break;
-}
+    }
 
     serializedParameters->ResetReadPointer();
 
@@ -561,7 +563,7 @@ void RPC4::OnAttach() {
             globalRegistrationBuffer[i].functionName,
             globalRegistrationBuffer[i].registerFunctionPointer,
             globalRegistrationBuffer[i].callPriority);
-}
+      }
     } else if (globalRegistrationBuffer[i].registerBlockingFunctionPointer) {
       RegisterBlockingFunction(
           globalRegistrationBuffer[i].functionName,
@@ -570,7 +572,7 @@ void RPC4::OnAttach() {
       RegisterLocalCallback(
           globalRegistrationBuffer[i].functionName,
           globalRegistrationBuffer[i].messageId);
-}
+    }
   }
 }
 PluginReceiveResult RPC4::OnReceive(Packet* packet) {

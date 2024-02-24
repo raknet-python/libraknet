@@ -86,7 +86,7 @@ int CCRakNetSlidingWindow::GetTransmissionBandwidth(
     return (int)(cwnd - unacknowledgedBytes);
   } else {
     return 0;
-}
+  }
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::ShouldSendACKs(
@@ -104,8 +104,8 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(
   return curTime >= oldestUnsentAck + SYN;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-DatagramSequenceNumberType CCRakNetSlidingWindow::GetNextDatagramSequenceNumber(
-    ) {
+DatagramSequenceNumberType
+CCRakNetSlidingWindow::GetNextDatagramSequenceNumber() {
   return nextDatagramSequenceNumber;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ bool CCRakNetSlidingWindow::OnGotPacket(
 
   if (oldestUnsentAck == 0) {
     oldestUnsentAck = curTime;
-}
+  }
 
   if (datagramSequenceNumber == expectedNextSequenceNumber) {
     *skippedMessageCount = 0;
@@ -155,7 +155,7 @@ bool CCRakNetSlidingWindow::OnGotPacket(
       // During testing, the nat punchthrough server got 51200 on the first packet. I have no idea where this comes from, but has happened twice
       if (*skippedMessageCount > (uint32_t)50000) {
         return false;
-}
+      }
       *skippedMessageCount = 1000;
     }
     expectedNextSequenceNumber =
@@ -180,7 +180,7 @@ void CCRakNetSlidingWindow::OnResend(
     ssThresh = cwnd / 2;
     if (ssThresh < MAXIMUM_MTU_INCLUDING_UDP_HEADER) {
       ssThresh = MAXIMUM_MTU_INCLUDING_UDP_HEADER;
-}
+    }
     cwnd = MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 
     // Only backoff once per period
@@ -238,7 +238,7 @@ void CCRakNetSlidingWindow::OnAck(
 
   if (!isContinuousSend) {
     return;
-}
+  }
 
   bool isNewCongestionControlPeriod;
   isNewCongestionControlPeriod =
@@ -256,7 +256,7 @@ void CCRakNetSlidingWindow::OnAck(
       cwnd = ssThresh +
           MAXIMUM_MTU_INCLUDING_UDP_HEADER * MAXIMUM_MTU_INCLUDING_UDP_HEADER /
               cwnd;
-}
+    }
 
     // CC PRINTF
     //	printf("++ %.0f Slow start increase.\n", cwnd);
@@ -317,7 +317,7 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
 
   if (estimatedRTT == UNSET_TIME_US) {
     return maxThreshold;
-}
+  }
 
   //double u=1.0f;
   double u = 2.0f;
@@ -327,7 +327,7 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
       (CCTimeType)(u * estimatedRTT + q * deviationRtt) + additionalVariance;
   if (threshhold > maxThreshold) {
     return maxThreshold;
-}
+  }
   return threshhold;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -350,7 +350,7 @@ BytesPerMicrosecond CCRakNetSlidingWindow::GetLocalReceiveRate(
 double CCRakNetSlidingWindow::GetRTT() const {
   if (lastRtt == UNSET_TIME_US) {
     return 0.0;
-}
+  }
   return lastRtt;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
@@ -374,15 +374,15 @@ bool CCRakNetSlidingWindow::LessThan(
   return b != a && b - a < halfSpan;
 }
 // ----------------------------------------------------------------------------------------------------------------------------
-uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl(
-    ) const {
+uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl()
+    const {
   return 0; // TODO
 }
 // ----------------------------------------------------------------------------------------------------------------------------
 CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK() const {
   if (lastRtt == UNSET_TIME_US) {
     return (CCTimeType)UNSET_TIME_US;
-}
+  }
   return (CCTimeType)(lastRtt + SYN);
 }
 // ----------------------------------------------------------------------------------------------------------------------------

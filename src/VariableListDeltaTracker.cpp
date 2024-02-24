@@ -19,7 +19,7 @@ VariableListDeltaTracker::~VariableListDeltaTracker() {
   unsigned int i;
   for (i = 0; i < variableList.Size(); i++) {
     rakFree_Ex(variableList[i].lastData, _FILE_AND_LINE_);
-}
+  }
 }
 
 // Call before using a series of WriteVar
@@ -34,7 +34,7 @@ void VariableListDeltaTracker::FlagDirtyFromBitArray(unsigned char* bArray) {
 
     if (result) {
       variableList[readOffset].isDirty = true;
-}
+    }
   }
 }
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() {
@@ -48,4 +48,5 @@ VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(
   byteLength = _byteLength;
   isDirty = false;
 }
-VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode() = default;
+VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode() =
+    default;

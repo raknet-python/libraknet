@@ -113,7 +113,7 @@ bool Router2::ConnectInternal(
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
 
     // Not connected to anyone
     return false;
@@ -131,15 +131,14 @@ bool Router2::ConnectInternal(
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
 
     return false;
   }
   connectionRequestsMutex.Unlock();
 
   // StoreRequest(endpointGuid, Largest(ping*2), systemsSentTo). Set state REQUEST_STATE_QUERY_FORWARDING
-  auto* cr =
-      RakNet::OP_NEW<Router2::ConnnectRequest>(_FILE_AND_LINE_);
+  auto* cr = RakNet::OP_NEW<Router2::ConnnectRequest>(_FILE_AND_LINE_);
   DataStructures::List<SystemAddress> addresses;
   DataStructures::List<RakNetGUID> guids;
   rakPeerInterface->GetSystemList(addresses, guids);
@@ -148,7 +147,7 @@ bool Router2::ConnectInternal(
     if (debugInterface) {
       debugInterface->ShowFailure(
           FormatStringTS(buff, "Router2 failed at %s:%i\n", _FILE_AND_LINE_));
-}
+    }
 
     return false;
   }
@@ -227,7 +226,7 @@ void Router2::EstablishRouting(RakNetGUID endpointGuid) {
           __FILE__,
           __LINE__,
           endpointGuid.g));
-}
+    }
     return;
   }
 
@@ -346,7 +345,7 @@ PluginReceiveResult Router2::OnReceive(Packet* packet) {
     //		printf("Got ID_ROUTER_2_FORWARDING_ESTABLISHED\n");
     if (!OnForwardingSuccess(packet)) {
       return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+    }
   } else if (packet->data[0] == ID_ROUTER_2_REROUTED) {
     OnRerouted(packet);
   } else if (packet->data[0] == ID_CONNECTION_REQUEST_ACCEPTED) {
@@ -358,7 +357,7 @@ PluginReceiveResult Router2::OnReceive(Packet* packet) {
               packet->guid &&
           forwardedConnectionList[forwardingIndex].weInitiatedForwarding) {
         break;
-}
+      }
     }
 
     if (forwardingIndex < forwardedConnectionList.Size()) {
@@ -395,7 +394,7 @@ PluginReceiveResult Router2::OnReceive(Packet* packet) {
   } else if (packet->data[0] == ID_ROUTER_2_FORWARDING_NO_PATH) {
     if (!packet->wasGeneratedLocally) {
       return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+    }
   }
 
   return RR_CONTINUE_PROCESSING;
@@ -462,7 +461,7 @@ void Router2::Update() {
       SendOOBMessages(&miniPunchesInProgress[i]);
     } else {
       i++;
-}
+    }
   }
   miniPunchesInProgressMutex.Unlock();
 }
@@ -524,7 +523,7 @@ void Router2::OnClosedConnection(
       //			forwardedConnectionList.RemoveAtIndexFast(forwardedConnectionIndex);
     } else {
       forwardedConnectionIndex++;
-}
+    }
   }
   forwardedConnectionListMutex.Unlock();
 
@@ -538,7 +537,8 @@ void Router2::OnClosedConnection(
       cr->connectionRequestSystems.RemoveAtIndexFast(
           connectionRequestGuidIndex);
       cr->connectionRequestSystemsMutex.Unlock();
-      if (!UpdateForwarding(cr)) // If returns false, no connection request systems left
+      if (!UpdateForwarding(
+              cr)) // If returns false, no connection request systems left
       {
         if (debugInterface) {
           char buff[512];
@@ -598,7 +598,7 @@ void Router2::OnClosedConnection(
       miniPunchesInProgress.RemoveAtIndexFast(i);
     } else {
       i++;
-}
+    }
   }
   miniPunchesInProgressMutex.Unlock();
 }
@@ -629,7 +629,7 @@ void Router2::OnFailedConnectionAttempt(
       forwardedConnectionList.RemoveAtIndexFast(forwardedConnectionIndex);
     } else {
       forwardedConnectionIndex++;
-}
+    }
   }
   forwardedConnectionListMutex.Unlock();
 }
@@ -661,7 +661,7 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest) {
           connectionRequest->endpointGuid,
           UNASSIGNED_SYSTEM_ADDRESS,
           false);
-}
+    }
 
     if (debugInterface) {
       char buff[512];
@@ -724,17 +724,17 @@ int ConnectionRequestSystemComp(
   if (key.pingToEndpoint * (key.usedForwardingEntries + 1) <
       data.pingToEndpoint * (data.usedForwardingEntries + 1)) {
     return -1;
-}
+  }
   if (key.pingToEndpoint * (key.usedForwardingEntries + 1) ==
       data.pingToEndpoint * (data.usedForwardingEntries + 1)) {
     return 1;
-}
+  }
   if (key.guid < data.guid) {
     return -1;
-}
+  }
   if (key.guid > data.guid) {
     return -1;
-}
+  }
   return 0;
 }
 // connectionRequestsMutex should already be locked
@@ -750,7 +750,7 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest) {
     if (debugInterface) {
       debugInterface->ShowFailure(
           FormatStringTS(buff, "Router2 failed at %s:%i\n", _FILE_AND_LINE_));
-}
+    }
     return;
   }
 
@@ -828,7 +828,7 @@ int Router2::ReturnFailureOnCannotForward(
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
     SendFailureOnCannotForward(sourceGuid, endpointGuid);
     return -1;
   }
@@ -846,7 +846,7 @@ int Router2::ReturnFailureOnCannotForward(
       if (debugInterface) {
         debugInterface->ShowFailure(FormatStringTS(
             buff, "Router2 failed at %s:%i\n", __FILE__, __LINE__));
-}
+      }
       SendFailureOnCannotForward(sourceGuid, endpointGuid);
       return -1;
     }
@@ -865,7 +865,7 @@ int Router2::ReturnFailureOnCannotForward(
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
 
     SendFailureOnCannotForward(sourceGuid, endpointGuid);
     return -1;
@@ -889,7 +889,7 @@ void Router2::OnQueryForwarding(Packet* packet) {
           packet->guid.g,
           __FILE__,
           __LINE__));
-}
+    }
     return;
   }
 
@@ -935,7 +935,7 @@ void Router2::OnQueryForwardingReply(Packet* packet) {
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
     return;
   }
 
@@ -955,7 +955,7 @@ void Router2::OnQueryForwardingReply(Packet* packet) {
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
     return;
   }
 
@@ -1020,7 +1020,7 @@ void Router2::SendForwardingSuccess(
     } else {
       debugInterface->ShowDiagnostic(FormatStringTS(
           buff, "Sending ID_ROUTER_2_REROUTED at %s:%i\n", _FILE_AND_LINE_));
-}
+    }
   }
 }
 void Router2::SendOOBFromRakNetPort(
@@ -1131,7 +1131,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
           endpointGuid.g,
           __FILE__,
           __LINE__));
-}
+    }
     return;
   }
 
@@ -1182,7 +1182,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
           buff3,
           forwardingPort,
           forwardingSocket));
-}
+    }
     SendFailureOnCannotForward(packet->guid, endpointGuid);
   } else if (result == UDPFORWARDER_INVALID_PARAMETERS) {
     char buff[512];
@@ -1200,7 +1200,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
           buff3,
           forwardingPort,
           forwardingSocket));
-}
+    }
     SendFailureOnCannotForward(packet->guid, endpointGuid);
   } else if (result == UDPFORWARDER_BIND_FAILED) {
     char buff[512];
@@ -1218,7 +1218,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
           buff3,
           forwardingPort,
           forwardingSocket));
-}
+    }
     SendFailureOnCannotForward(packet->guid, endpointGuid);
   } else {
     if (debugInterface) {
@@ -1254,7 +1254,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
       miniPunchRequest.timeout = RakNet::GetTimeMS() + ping1 * 8 + 300;
     } else {
       miniPunchRequest.timeout = RakNet::GetTimeMS() + ping2 * 8 + 300;
-}
+    }
     miniPunchRequest.nextAction = RakNet::GetTimeMS() + 100;
     SendOOBMessages(&miniPunchRequest);
     miniPunchesInProgressMutex.Lock();
@@ -1281,10 +1281,10 @@ void Router2::OnMiniPunchReplyBounce(Packet* packet) {
         miniPunchesInProgress[i].endpointGuid == packet->guid) {
       if (miniPunchesInProgress[i].sourceGuid == packet->guid) {
         miniPunchesInProgress[i].gotReplyFromSource = true;
-}
+      }
       if (miniPunchesInProgress[i].endpointGuid == packet->guid) {
         miniPunchesInProgress[i].gotReplyFromEndpoint = true;
-}
+      }
 
       if (debugInterface) {
         char buff[512];
@@ -1315,7 +1315,7 @@ void Router2::OnMiniPunchReplyBounce(Packet* packet) {
       }
     } else {
       i++;
-}
+    }
   }
   miniPunchesInProgressMutex.Unlock();
 }
@@ -1364,7 +1364,7 @@ void Router2::OnRerouted(Packet* packet) {
        forwardingIndex++) {
     if (forwardedConnectionList[forwardingIndex].endpointGuid == endpointGuid) {
       break;
-}
+    }
   }
 
   if (forwardingIndex < forwardedConnectionList.Size()) {
@@ -1425,7 +1425,7 @@ bool Router2::OnForwardingSuccess(Packet* packet) {
        forwardingIndex++) {
     if (forwardedConnectionList[forwardingIndex].endpointGuid == endpointGuid) {
       break;
-}
+    }
   }
 
   if (forwardingIndex < forwardedConnectionList.Size()) {
@@ -1493,7 +1493,7 @@ int Router2::GetLargestPingAmongConnectedSystems() const {
   unsigned int maxPeers = rakPeerInterface->GetMaximumNumberOfPeers();
   if (maxPeers == 0) {
     return 9999;
-}
+  }
   unsigned int index;
   for (index = 0; index < rakPeerInterface->GetMaximumNumberOfPeers();
        index++) {
@@ -1503,7 +1503,7 @@ int Router2::GetLargestPingAmongConnectedSystems() const {
           rakPeerInterface->GetGUIDFromIndex(index));
       if (avePing > largestPing) {
         largestPing = avePing;
-}
+      }
     }
   }
   return largestPing;
@@ -1514,7 +1514,7 @@ unsigned int Router2::GetConnectionRequestIndex(RakNetGUID endpointGuid) {
   for (i = 0; i < connectionRequests.Size(); i++) {
     if (connectionRequests[i]->endpointGuid == endpointGuid) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -1523,7 +1523,7 @@ unsigned int Router2::ConnnectRequest::GetGuidIndex(RakNetGUID guid) {
   for (i = 0; i < connectionRequestSystems.Size(); i++) {
     if (connectionRequestSystems[i].guid == guid) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }

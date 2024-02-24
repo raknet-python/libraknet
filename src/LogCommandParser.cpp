@@ -137,7 +137,7 @@ void LogCommandParser::WriteLog(
     ...) {
   if (channelName == nullptr || format == nullptr) {
     return;
-}
+  }
 
   unsigned channelIndex;
   channelIndex = GetChannelIndexFromName(channelName);
@@ -157,7 +157,7 @@ void LogCommandParser::WriteLog(
   textLen = (int)strlen(text);
   if (textLen == 0) {
     return;
-}
+  }
   if (text[textLen - 1] == '\n') {
     text[textLen - 1] = 0;
   }
@@ -191,7 +191,7 @@ void LogCommandParser::PrintChannels(
   }
   if (!anyChannels) {
     transport->Send(systemAddress, "None.\r\n");
-}
+  }
 }
 void LogCommandParser::OnNewIncomingConnection(
     const SystemAddress& systemAddress,
@@ -238,7 +238,7 @@ unsigned LogCommandParser::Subscribe(
     channelIndex = GetChannelIndexFromName(channelName);
     if (channelIndex == (unsigned)-1) {
       return channelIndex;
-}
+    }
   }
 
   for (i = 0; i < remoteUsers.Size(); i++) {
@@ -248,7 +248,7 @@ unsigned LogCommandParser::Subscribe(
             << channelIndex; // Set this bit for an existing user
       } else {
         remoteUsers[i].channels = 0xFFFF;
-}
+      }
       return channelIndex;
     }
   }
@@ -260,7 +260,7 @@ unsigned LogCommandParser::Subscribe(
     newUser.channels = 1 << channelIndex;
   } else {
     newUser.channels = 0xFFFF;
-}
+  }
   remoteUsers.Insert(newUser, _FILE_AND_LINE_);
   return channelIndex;
 }
@@ -269,11 +269,11 @@ unsigned LogCommandParser::GetChannelIndexFromName(const char* channelName) {
   for (i = 0; i < 32; i++) {
     if (channelNames[i] == nullptr) {
       return (unsigned)-1;
-}
+    }
 
     if (_stricmp(channelNames[i], channelName) == 0) {
       return i;
-}
+    }
   }
   return (unsigned)-1;
 }

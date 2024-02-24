@@ -29,7 +29,7 @@ void WSAStartupSingleton::AddRef() {
 
   if (refCount != 1) {
     return;
-}
+  }
 
   WSADATA winsockInfo;
   if (WSAStartup(MAKEWORD(2, 2), &winsockInfo) != 0) {
@@ -59,7 +59,7 @@ void WSAStartupSingleton::Deref() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
   if (refCount == 0) {
     return;
-}
+  }
 
   if (refCount > 1) {
     refCount--;

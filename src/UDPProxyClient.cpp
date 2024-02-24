@@ -46,13 +46,13 @@ bool UDPProxyClient::RequestForwarding(
   ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
   if (cs != IS_CONNECTED) {
     return false;
-}
+  }
 
   // Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
   RakAssert(resultHandler != nullptr);
   if (resultHandler == nullptr) {
     return false;
-}
+  }
 
   BitStream outgoingBs;
   outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
@@ -89,13 +89,13 @@ bool UDPProxyClient::RequestForwarding(
   ConnectionState cs = rakPeerInterface->GetConnectionState(proxyCoordinator);
   if (cs != IS_CONNECTED) {
     return false;
-}
+  }
 
   // Pretty much a bug not to set the result handler, as otherwise you won't know if the operation succeeed or not
   RakAssert(resultHandler != nullptr);
   if (resultHandler == nullptr) {
     return false;
-}
+  }
 
   BitStream outgoingBs;
   outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
@@ -137,7 +137,7 @@ void UDPProxyClient::Update() {
       pingServerGroups.RemoveAtIndex(idx1);
     } else {
       idx1++;
-}
+    }
   }
 }
 PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
@@ -158,7 +158,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
             ping = (int)(curTime - sentTime);
           } else {
             ping = 0;
-}
+          }
           psg->serversToPing[idx2].ping = (unsigned short)ping;
 
           // If all servers to ping are now pinged, reply to coordinator
@@ -209,7 +209,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                     targetAddress,
                     targetGuid,
                     this);
-}
+              }
             } else if (packet->data[1] == ID_UDP_PROXY_IN_PROGRESS) {
               if (resultHandler) {
                 resultHandler->OnForwardingInProgress(
@@ -220,7 +220,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                     targetAddress,
                     targetGuid,
                     this);
-}
+              }
             } else {
               // Send a datagram to the proxy, so if we are behind a router, that router adds an entry to the routing table.
               // Otherwise the router would block the incoming datagrams from source
@@ -237,7 +237,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                     targetAddress,
                     targetGuid,
                     this);
-}
+              }
             }
           } break;
           case ID_UDP_PROXY_ALL_SERVERS_BUSY:
@@ -248,7 +248,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                   targetAddress,
                   targetGuid,
                   this);
-}
+            }
             break;
           case ID_UDP_PROXY_NO_SERVERS_ONLINE:
             if (resultHandler) {
@@ -258,7 +258,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                   targetAddress,
                   targetGuid,
                   this);
-}
+            }
             break;
           case ID_UDP_PROXY_RECIPIENT_GUID_NOT_CONNECTED_TO_COORDINATOR: {
             if (resultHandler) {
@@ -268,7 +268,7 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
                   targetAddress,
                   targetGuid,
                   this);
-}
+            }
             break;
           }
         }
@@ -315,7 +315,7 @@ bool UDPProxyClient::PingServerGroup::AreAllServersPinged() const {
     if (serversToPing[serversToPingIndex].ping ==
         DEFAULT_UNRESPONSIVE_PING_TIME_COORDINATOR) {
       return false;
-}
+    }
   }
   return true;
 }
@@ -347,7 +347,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(
 void UDPProxyClient::Clear() {
   for (unsigned int i = 0; i < pingServerGroups.Size(); i++) {
     RakNet::OP_DELETE(pingServerGroups[i], _FILE_AND_LINE_);
-}
+  }
   pingServerGroups.Clear(false, _FILE_AND_LINE_);
 }
 

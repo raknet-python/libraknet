@@ -23,7 +23,7 @@ char* EpochTimeToString(long long time) {
 
   if (++textIndex == 4) {
     textIndex = 0;
-}
+  }
 
   struct tm* timeinfo;
   time_t t = time;

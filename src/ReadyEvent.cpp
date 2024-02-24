@@ -32,7 +32,7 @@ int RakNet::ReadyEvent::RemoteSystemCompByGuid(
     return 0;
   } else {
     return 1;
-}
+  }
 }
 
 int RakNet::ReadyEvent::ReadyEventNodeComp(
@@ -44,7 +44,7 @@ int RakNet::ReadyEvent::ReadyEventNodeComp(
     return 0;
   } else {
     return 1;
-}
+  }
 }
 
 STATIC_FACTORY_DEFINITIONS(ReadyEvent, ReadyEvent);
@@ -114,13 +114,13 @@ bool ReadyEvent::IsEventCompletionProcessing(int eventId) const {
     ReadyEventNode* ren = readyEventNodeList[eventIndex];
     if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
       return false;
-}
+    }
     for (unsigned i = 0; i < ren->systemList.Size(); i++) {
       if (ren->systemList[i].lastReceivedStatus == ID_READY_EVENT_ALL_SET) {
         anyAllReady = true;
       } else {
         allAllReady = false;
-}
+      }
     }
     return anyAllReady && !allAllReady;
   }
@@ -154,7 +154,7 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid) {
       readyEventNodeList.GetIndexFromKey(eventId, &eventExists);
   if (!eventExists) {
     eventIndex = CreateNewEvent(eventId, false);
-}
+  }
 
   // Don't do this, otherwise if we are trying to start a 3 player game, it will not allow the 3rd player to hit ready if the first two players have already done so
   //if (IsLocked(eventIndex))
@@ -175,7 +175,7 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid) {
 
   if (numAdded > 0) {
     UpdateReadyStatus(eventIndex);
-}
+  }
   return numAdded > 0;
 }
 bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
@@ -198,7 +198,7 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
 
         if (!isCompleted && IsEventCompletedByIndex(eventIndex)) {
           PushCompletionPacket(readyEventNodeList[eventIndex]->eventId);
-}
+        }
 
         UpdateReadyStatus(eventIndex);
 
@@ -250,17 +250,18 @@ ReadyEventSystemStatus ReadyEvent::GetReadyStatus(
     unsigned systemIndex = ren->systemList.GetIndexFromKey(guid, &objectExists);
     if (!objectExists) {
       return RES_NOT_WAITING;
-}
+    }
     if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_SET) {
       return RES_READY;
-}
-    if (ren->systemList[systemIndex].lastReceivedStatus == ID_READY_EVENT_UNSET) {
+    }
+    if (ren->systemList[systemIndex].lastReceivedStatus ==
+        ID_READY_EVENT_UNSET) {
       return RES_WAITING;
-}
+    }
     if (ren->systemList[systemIndex].lastReceivedStatus ==
         ID_READY_EVENT_ALL_SET) {
       return RES_ALL_READY;
-}
+    }
   }
 
   return RES_UNKNOWN_EVENT;
@@ -341,18 +342,18 @@ void ReadyEvent::OnReadyEventPacketUpdate(Packet* packet) {
       // Just return if no change
       if (ren->systemList[systemIndex].lastReceivedStatus == packet->data[0]) {
         return;
-}
+      }
 
       bool wasCompleted = IsEventCompletedByIndex(readyIndex);
       ren->systemList[systemIndex].lastReceivedStatus = packet->data[0];
       // If forced all set, doesn't matter what the new packet is
       if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
         return;
-}
+      }
       UpdateReadyStatus(readyIndex);
       if (!wasCompleted && IsEventCompletedByIndex(readyIndex)) {
         PushCompletionPacket(readyIndex);
-}
+      }
     }
   }
 }
@@ -371,7 +372,7 @@ void ReadyEvent::OnReadyEventQuery(Packet* packet) {
     // Force the non-default send, because our initial send may have arrived at a system that didn't yet create the ready event
     if (objectExists) {
       SendReadyUpdate(readyIndex, systemIndex, true);
-}
+    }
   }
 }
 void ReadyEvent::OnClosedConnection(
@@ -394,19 +395,19 @@ bool ReadyEvent::SetEventByIndex(int eventIndex, bool isReady) {
        ren->eventStatus == ID_READY_EVENT_SET) &&
       isReady) {
     return false; // Success - no change
-}
+  }
   if (ren->eventStatus == ID_READY_EVENT_UNSET && !isReady) {
     return false; // Success - no change
-}
+  }
   if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
     return false; // Can't change
-}
+  }
 
   if (isReady) {
     ren->eventStatus = ID_READY_EVENT_SET;
   } else {
     ren->eventStatus = ID_READY_EVENT_UNSET;
-}
+  }
 
   UpdateReadyStatus(eventIndex);
 
@@ -423,15 +424,15 @@ bool ReadyEvent::IsEventCompletedByIndex(unsigned eventIndex) const {
   unsigned i;
   if (ren->eventStatus == ID_READY_EVENT_FORCE_ALL_SET) {
     return true;
-}
+  }
   if (ren->eventStatus != ID_READY_EVENT_ALL_SET) {
     return false;
-}
+  }
   for (i = 0; i < ren->systemList.Size(); i++) {
     if (ren->systemList[i].lastReceivedStatus != ID_READY_EVENT_ALL_SET) {
       return false;
-}
-}
+    }
+  }
   return true;
 }
 
@@ -450,7 +451,7 @@ unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady) {
     ren->eventStatus = ID_READY_EVENT_UNSET;
   } else {
     ren->eventStatus = ID_READY_EVENT_SET;
-}
+  }
   return readyEventNodeList.Insert(eventId, ren, true, _FILE_AND_LINE_);
 }
 void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
@@ -532,13 +533,13 @@ void ReadyEvent::RemoveFromAllLists(RakNetGUID guid) {
         guid, &systemExists);
     if (systemExists) {
       readyEventNodeList[eventIndex]->systemList.RemoveAtIndex(systemIndex);
-}
+    }
 
     UpdateReadyStatus(eventIndex);
 
     if (!isCompleted && IsEventCompletedByIndex(eventIndex)) {
       PushCompletionPacket(readyEventNodeList[eventIndex]->eventId);
-}
+    }
   }
 }
 void ReadyEvent::PushCompletionPacket(unsigned eventId) {

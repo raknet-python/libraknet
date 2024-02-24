@@ -39,7 +39,7 @@ void TeamBalancer::SetTeamSizeLimit(TeamId team, unsigned short limit) {
   teamLimits.Replace(limit, 0, team, _FILE_AND_LINE_);
   if (teamLimits.Size() > teamMemberCounts.Size()) {
     teamMemberCounts.Replace(0, 0, teamLimits.Size() - 1, _FILE_AND_LINE_);
-}
+  }
 }
 void TeamBalancer::SetDefaultAssignmentAlgorithm(
     DefaultAssigmentAlgorithm daa) {
@@ -53,7 +53,7 @@ void TeamBalancer::SetForceEvenTeams(bool force) {
   // If teams are locked, just return.
   if (lockTeams) {
     return;
-}
+  }
 
   if (forceTeamsToBeEven) {
     // Run the even team algorithm
@@ -63,7 +63,7 @@ void TeamBalancer::SetForceEvenTeams(bool force) {
 void TeamBalancer::SetLockTeams(bool lock) {
   if (lock == lockTeams) {
     return;
-}
+  }
 
   // Set flag to indicate that teams can no longer be changed.
   lockTeams = lock;
@@ -161,7 +161,7 @@ void TeamBalancer::RequestAnyTeam(NetworkID memberId) {
         return;
       } else {
         myTeamMembers[i].requestedTeam = UNASSIGNED_TEAM_ID;
-}
+      }
       break;
     }
   }
@@ -315,7 +315,7 @@ void TeamBalancer::RemoveByGuid(RakNetGUID rakNetGUID) {
 void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
   if (!WeAreHost()) {
     return;
-}
+  }
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -347,7 +347,7 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
     if (tm.currentTeam == UNASSIGNED_TEAM_ID &&
         tm.requestedTeam == UNASSIGNED_TEAM_ID) {
       return;
-}
+    }
 
     unsigned int memberIndex = GetMemberIndex(tm.memberId, packet->guid);
     if (memberIndex == (unsigned int)-1) {
@@ -381,7 +381,7 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
 void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
   if (!WeAreHost()) {
     return;
-}
+  }
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -391,12 +391,12 @@ void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
   unsigned int memberIndex = GetMemberIndex(memberId, packet->guid);
   if (memberIndex != (unsigned int)-1) {
     teamMembers[memberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
-}
+  }
 }
 void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
   if (!WeAreHost()) {
     return;
-}
+  }
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -420,7 +420,7 @@ void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
 void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
   if (!WeAreHost()) {
     return;
-}
+  }
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(2);
@@ -433,7 +433,7 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
     NotifyNoTeam(tm.memberId, packet->guid);
     if (memberIndex != (unsigned int)-1) {
       RemoveTeamMember(memberIndex);
-}
+    }
     return;
   }
 
@@ -481,7 +481,7 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
             teamMembers[swappableMemberIndex].requestedTeam ==
                 oldTeamThisUserWasOn) {
           break;
-}
+        }
       }
 
       if (swappableMemberIndex != teamMembers.Size()) {
@@ -501,7 +501,7 @@ unsigned int TeamBalancer::GetMemberIndex(NetworkID memberId, RakNetGUID guid)
     if (teamMembers[i].memberGuid == guid &&
         teamMembers[i].memberId == memberId) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -518,7 +518,7 @@ unsigned int TeamBalancer::AddTeamMember(const TeamMember& tm) {
     teamMemberCounts.Replace(1, 0, tm.currentTeam, _FILE_AND_LINE_);
   } else {
     teamMemberCounts[tm.currentTeam] = teamMemberCounts[tm.currentTeam] + 1;
-}
+  }
   return teamMembers.Size() - 1;
 }
 void TeamBalancer::RemoveTeamMember(unsigned int index) {
@@ -535,7 +535,7 @@ void TeamBalancer::GetMinMaxTeamMembers(
     maxMembersOnASingleTeam = minMembersOnASingleTeam;
   } else {
     maxMembersOnASingleTeam = minMembersOnASingleTeam + 1;
-}
+  }
 }
 void TeamBalancer::EvenTeams() {
   // Ensure all teams are even. If not, pick players at random from overpopulated teams, and move to underpopulated teams.
@@ -579,7 +579,7 @@ unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(
           preferredSwapIndices.Push(i, _FILE_AND_LINE_);
         } else {
           potentialSwapIndices.Push(i, _FILE_AND_LINE_);
-}
+        }
       }
     }
   }
@@ -601,7 +601,7 @@ void TeamBalancer::SwitchMemberTeam(
   teamMembers[teamMemberIndex].currentTeam = destinationTeam;
   if (teamMembers[teamMemberIndex].requestedTeam == destinationTeam) {
     teamMembers[teamMemberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
-}
+  }
 }
 void TeamBalancer::GetOverpopulatedTeams(
     DataStructures::List<TeamId>& overpopulatedTeams,
@@ -610,14 +610,14 @@ void TeamBalancer::GetOverpopulatedTeams(
   for (TeamId i = 0; i < teamMemberCounts.Size(); i++) {
     if (teamMemberCounts[i] >= maxTeamSize) {
       overpopulatedTeams.Push(i, _FILE_AND_LINE_);
-}
+    }
   }
 }
 void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex) {
   RakAssert(teamMemberIndex < teamMembers.Size());
   if (teamMemberIndex >= teamMembers.Size()) {
     return;
-}
+  }
 
   BitStream bsOut;
   bsOut.Write((MessageID)ID_TEAM_BALANCER_TEAM_ASSIGNED);
@@ -638,7 +638,7 @@ bool TeamBalancer::WeAreHost() const {
 PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+  }
 
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(1);
@@ -654,7 +654,7 @@ PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
       foundMatch = true;
       if (myTeamMembers[i].requestedTeam == mtm.currentTeam) {
         myTeamMembers[i].requestedTeam = UNASSIGNED_TEAM_ID;
-}
+      }
       myTeamMembers[i].currentTeam = mtm.currentTeam;
       break;
     }
@@ -669,14 +669,14 @@ PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
 PluginReceiveResult TeamBalancer::OnRequestedTeamChangePending(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+  }
 
   return RR_CONTINUE_PROCESSING;
 }
 PluginReceiveResult TeamBalancer::OnTeamsLocked(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+  }
 
   return RR_CONTINUE_PROCESSING;
 }
@@ -758,7 +758,7 @@ TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId) {
   for (TeamId i = 0; i < teamMembers.Size(); i++) {
     if (teamMembers[i].requestedTeam == teamId) {
       membersThatWantToJoinTheTeam.Push(i, _FILE_AND_LINE_);
-}
+    }
   }
 
   if (membersThatWantToJoinTheTeam.Size() > 0) {

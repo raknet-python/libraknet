@@ -155,9 +155,8 @@ void seedMT(
   int j;
 
   for (left = 0, *s++ = x, j = N; --j; *s++ = (x *= 69069U) & 0xFFFFFFFFU) {
-
     ;
-}
+  }
 }
 
 unsigned int reloadMT(unsigned int* state, unsigned int*& next, int& left) {
@@ -166,17 +165,17 @@ unsigned int reloadMT(unsigned int* state, unsigned int*& next, int& left) {
 
   if (left < -1) {
     seedMT(4357U);
-}
+  }
 
   left = N - 1, next = state + 1;
 
   for (s0 = state[0], s1 = state[1], j = N - M + 1; --j; s0 = s1, s1 = *p2++) {
     *p0++ = *pM++ ^ (mixBits(s0, s1) >> 1) ^ (loBit(s1) ? K : 0U);
-}
+  }
 
   for (pM = state, j = M; --j; s0 = s1, s1 = *p2++) {
     *p0++ = *pM++ ^ (mixBits(s0, s1) >> 1) ^ (loBit(s1) ? K : 0U);
-}
+  }
 
   s1 = state[0], *p0 = *pM ^ (mixBits(s0, s1) >> 1) ^ (loBit(s1) ? K : 0U);
 
@@ -194,7 +193,7 @@ unsigned int randomMT(unsigned int* state, unsigned int*& next, int& left) {
 
   if (--left < 0) {
     return (reloadMT(state, next, left));
-}
+  }
 
   y = *next++;
 

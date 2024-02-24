@@ -37,10 +37,10 @@ int UDPProxyCoordinator::ServerWithPingComp(
     const UDPProxyCoordinator::ServerWithPing& data) {
   if (key < data.ping) {
     return -1;
-}
+  }
   if (key > data.ping) {
     return 1;
-}
+  }
   return 0;
 }
 
@@ -49,16 +49,16 @@ int UDPProxyCoordinator::ForwardingRequestComp(
     ForwardingRequest* const& data) {
   if (key.senderClientAddress < data->sata.senderClientAddress) {
     return -1;
-}
+  }
   if (key.senderClientAddress > data->sata.senderClientAddress) {
     return -1;
-}
+  }
   if (key.targetClientAddress < data->sata.targetClientAddress) {
     return -1;
-}
+  }
   if (key.targetClientAddress > data->sata.targetClientAddress) {
     return 1;
-}
+  }
   return 0;
 }
 //
@@ -107,7 +107,7 @@ void UDPProxyCoordinator::Update() {
       forwardingRequestList.RemoveAtIndex(idx);
     } else {
       idx++;
-}
+    }
   }
 }
 PluginReceiveResult UDPProxyCoordinator::OnReceive(Packet* packet) {
@@ -146,7 +146,7 @@ void UDPProxyCoordinator::OnClosedConnection(
       forwardingRequestList.RemoveAtIndex(idx);
     } else {
       idx++;
-}
+    }
   }
 
   idx = serverList.GetIndexOf(systemAddress);
@@ -173,7 +173,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
   incomingBs.Read(sourceAddress);
   if (sourceAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     sourceAddress = packet->systemAddress;
-}
+  }
   SystemAddress targetAddress;
   RakNetGUID targetGuid;
   bool usesAddress = false;
@@ -192,7 +192,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
   incomingBs.Read(hasServerSelectionBitstream);
   if (hasServerSelectionBitstream) {
     incomingBs.Read(&(fw->serverSelectionBitstream));
-}
+  }
 
   RakNet::BitStream outgoingBs;
   SenderAndTargetAddress sata;
@@ -285,7 +285,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     unsigned int idx;
     for (idx = 0; idx < serverList.Size(); idx++) {
       outgoingBs.Write(serverList[idx]);
-}
+    }
     rakPeerInterface->Send(
         &outgoingBs,
         MEDIUM_PRIORITY,
@@ -304,7 +304,7 @@ void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     unsigned int copyIndex;
     for (copyIndex = 0; copyIndex < serverList.Size(); copyIndex++) {
       fw->remainingServersToTry.Push(serverList[copyIndex], _FILE_AND_LINE_);
-}
+    }
     forwardingRequestList.InsertAtIndex(fw, insertionIndex, _FILE_AND_LINE_);
   } else {
     fw->timeRequestedPings = 0;
@@ -514,13 +514,13 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
       forwardingRequestList.GetIndexFromKey(sata, &objectExists);
   if (!objectExists) {
     return;
-}
+  }
   unsigned short idx;
   ServerWithPing swp;
   ForwardingRequest* fw = forwardingRequestList[index];
   if (fw->timeRequestedPings == 0) {
     return;
-}
+  }
 
   incomingBs.Read(serversToPingSize);
   if (packet->systemAddress == sata.senderClientAddress) {
@@ -531,7 +531,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
       for (index2 = 0; index2 < fw->sourceServerPings.Size(); index2++) {
         if (fw->sourceServerPings[index2].ping >= swp.ping) {
           break;
-}
+        }
       }
       fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
     }
@@ -544,7 +544,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
       for (index2 = 0; index2 < fw->targetServerPings.Size(); index2++) {
         if (fw->targetServerPings[index2].ping >= swp.ping) {
           break;
-}
+        }
       }
       fw->sourceServerPings.Insert(swp, index2, _FILE_AND_LINE_);
     }
@@ -624,7 +624,7 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry() {
 
   if (sourceServerPings.Size() == 0 && targetServerPings.Size() == 0) {
     return;
-}
+  }
 
   unsigned int idx;
   UDPProxyCoordinator::ServerWithPing swp;
@@ -635,12 +635,12 @@ void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry() {
       swp.ping += (unsigned short)(sourceServerPings[idx].ping);
     } else {
       swp.ping += (unsigned short)(DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
-}
+    }
     if (targetServerPings.Size()) {
       swp.ping += (unsigned short)(targetServerPings[idx].ping);
     } else {
       swp.ping += (unsigned short)(DEFAULT_CLIENT_UNRESPONSIVE_PING_TIME);
-}
+    }
     swpList.Insert(swp.ping, swp, false, _FILE_AND_LINE_);
   }
   remainingServersToTry.Clear(_FILE_AND_LINE_);

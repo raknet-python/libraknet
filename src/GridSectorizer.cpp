@@ -19,7 +19,7 @@ GridSectorizer::GridSectorizer() {
 GridSectorizer::~GridSectorizer() {
   if (grid) {
     RakNet::OP_DELETE_ARRAY(grid, _FILE_AND_LINE_);
-}
+  }
 }
 void GridSectorizer::Init(
     const float _maxCellWidth,
@@ -31,7 +31,7 @@ void GridSectorizer::Init(
   RakAssert(_maxCellWidth > 0.0f && _maxCellHeight > 0.0f);
   if (grid) {
     RakNet::OP_DELETE_ARRAY(grid, _FILE_AND_LINE_);
-}
+  }
 
   cellOriginX = minX;
   cellOriginY = minY;
@@ -178,7 +178,7 @@ void GridSectorizer::GetEntries(
       cell = grid + yCur * gridCellWidthCount + xCur;
       for (index = 0; index < cell->Size(); ++index) {
         intersectionList.Insert(cell->operator[](index), _FILE_AND_LINE_);
-}
+      }
     }
   }
 }
@@ -217,5 +217,5 @@ void GridSectorizer::Clear() {
   int count = gridCellWidthCount * gridCellHeightCount;
   for (cur = 0; cur < count; cur++) {
     grid[cur].Clear(true, _FILE_AND_LINE_);
-}
+  }
 }

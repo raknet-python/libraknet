@@ -51,7 +51,7 @@ unsigned int RakNetRandomSync::RandomMT() {
     ++callCount;
     while (usedValues.Size() > 64) {
       usedValues.Pop();
-}
+    }
     return usedValues[usedValues.Size() - 1];
   }
 }
@@ -77,7 +77,7 @@ bool RakNetRandomSync::DeserializeConstruction(
   bool success = constructionBitstream->Read(_skipValues);
   if (success) {
     SeedMT(_seed, _skipValues);
-}
+  }
   return success;
 }
 void RakNetRandomSync::Serialize(RakNet::BitStream* outputBitstream) {
@@ -95,16 +95,16 @@ void RakNetRandomSync::Deserialize(RakNet::BitStream* outputBitstream) {
     uint32_t diff = _callCount - callCount;
     if (diff <= usedValueBufferCount) {
       usedValueBufferCount -= diff;
-}
+    }
     if (diff > 0) {
       Skip(diff);
-}
+    }
   }
 }
 void RakNetRandomSync::Skip(uint32_t count) {
   for (uint32_t i = 0; i < count; i++) {
     rnr.RandomMT();
-}
+  }
   callCount += count;
 }
 

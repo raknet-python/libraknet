@@ -79,7 +79,7 @@ void NatTypeDetectionServer::Startup(
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
   if (s3p4->IsBerkleySocket()) {
     ((RNS2_Berkley*)s3p4)->CreateRecvPollingThread(0);
-}
+  }
 #endif
 }
 void NatTypeDetectionServer::Shutdown() {
@@ -95,7 +95,7 @@ void NatTypeDetectionServer::Shutdown() {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
     if (s3p4->IsBerkleySocket()) {
       ((RNS2_Berkley*)s3p4)->BlockOnStopRecvPollingThread();
-}
+    }
 #endif
 
     RakNet::OP_DELETE(s3p4, _FILE_AND_LINE_);
@@ -108,7 +108,7 @@ void NatTypeDetectionServer::Shutdown() {
   bufferedPacketsMutex.Lock();
   while (bufferedPackets.Size()) {
     RakNet::OP_DELETE(bufferedPackets.Pop(), _FILE_AND_LINE_);
-}
+  }
   bufferedPacketsMutex.Unlock();
 }
 void NatTypeDetectionServer::Update() {
@@ -123,7 +123,7 @@ void NatTypeDetectionServer::Update() {
     recvStruct = bufferedPackets.Pop();
   } else {
     recvStruct = nullptr;
-}
+  }
   bufferedPacketsMutex.Unlock();
   while (recvStruct) {
     SystemAddress senderAddr = recvStruct->systemAddress;
@@ -179,7 +179,7 @@ void NatTypeDetectionServer::Update() {
       recvStruct = bufferedPackets.Pop();
     } else {
       recvStruct = nullptr;
-}
+    }
     bufferedPacketsMutex.Unlock();
   }
 
@@ -367,7 +367,7 @@ void NatTypeDetectionServer::OnClosedConnection(
   unsigned int i = GetDetectionAttemptIndex(systemAddress);
   if (i == (unsigned int)-1) {
     return;
-}
+  }
   natDetectionAttempts.RemoveAtIndexFast(i);
 }
 void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
@@ -380,7 +380,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
   if (isRequest) {
     if (i != (unsigned int)-1) {
       return; // Already in progress
-}
+    }
 
     NATDetectionAttempt nda;
     nda.detectionState = STATE_NONE;
@@ -394,7 +394,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
   } else {
     if (i == (unsigned int)-1) {
       return; // Unknown
-}
+    }
     // They are done
     natDetectionAttempts.RemoveAtIndexFast(i);
   }
@@ -404,7 +404,7 @@ unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
     if (natDetectionAttempts[i].systemAddress == sa) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }
@@ -412,7 +412,7 @@ unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(RakNetGUID guid) {
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
     if (natDetectionAttempts[i].guid == guid) {
       return i;
-}
+    }
   }
   return (unsigned int)-1;
 }

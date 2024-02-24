@@ -64,14 +64,14 @@ void HTTPConnection::Get(const char* path) {
 bool HTTPConnection::HasBadResponse(int* code, RakNet::RakString* data) {
   if (badResponses.IsEmpty()) {
     return false;
-}
+  }
 
   if (code) {
     *code = badResponses.Peek().code;
-}
+  }
   if (data) {
     *data = badResponses.Pop().data;
-}
+  }
   return true;
 }
 void HTTPConnection::CloseConnection() {
@@ -105,7 +105,7 @@ void HTTPConnection::Update() {
     case CS_NONE: {
       if (outgoingCommand.IsEmpty()) {
         return;
-}
+      }
 
       //printf("Connecting\n");
       server = tcp->Connect(host, port, false);
@@ -183,7 +183,7 @@ bool HTTPConnection::HasRead() const {
 RakString HTTPConnection::Read() {
   if (results.IsEmpty()) {
     return RakString();
-}
+  }
 
   RakNet::RakString resultStr = results.Pop();
   // const char *start_of_body = strstr(resultStr.C_String(), "\r\n\r\n");
@@ -193,7 +193,7 @@ RakString HTTPConnection::Read() {
     return RakNet::RakString::NonVariadic(start_of_body);
   } else {
     return resultStr;
-}
+  }
 }
 SystemAddress HTTPConnection::GetServerAddress() const {
   return server;
@@ -277,7 +277,7 @@ int HTTPConnection::GetState() const {
 HTTPConnection::~HTTPConnection() {
   if (tcp) {
     tcp->CloseConnection(server);
-}
+  }
 }
 
 #endif // _RAKNET_SUPPORT_*

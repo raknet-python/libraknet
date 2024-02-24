@@ -39,10 +39,10 @@ TelnetTransport::~TelnetTransport() {
   Stop();
   if (sendSuffix) {
     rakFree_Ex(sendSuffix, _FILE_AND_LINE_);
-}
+  }
   if (sendPrefix) {
     rakFree_Ex(sendPrefix, _FILE_AND_LINE_);
-}
+  }
 }
 bool TelnetTransport::Start(unsigned short port, bool serverMode) {
   (void)serverMode;
@@ -53,12 +53,12 @@ bool TelnetTransport::Start(unsigned short port, bool serverMode) {
 void TelnetTransport::Stop() {
   if (tcpInterface == nullptr) {
     return;
-}
+  }
   tcpInterface->Stop();
   unsigned i;
   for (i = 0; i < remoteClients.Size(); i++) {
     RakNet::OP_DELETE(remoteClients[i], _FILE_AND_LINE_);
-}
+  }
   remoteClients.Clear(false, _FILE_AND_LINE_);
   RakNet::OP_DELETE(tcpInterface, _FILE_AND_LINE_);
   tcpInterface = nullptr;
@@ -66,11 +66,11 @@ void TelnetTransport::Stop() {
 void TelnetTransport::Send(SystemAddress systemAddress, const char* data, ...) {
   if (tcpInterface == nullptr) {
     return;
-}
+  }
 
   if (data == nullptr || data[0] == 0) {
     return;
-}
+  }
 
   char text[REMOTE_MAX_TEXT_INPUT];
   size_t prefixLength;
@@ -102,11 +102,11 @@ void TelnetTransport::CloseConnection(SystemAddress systemAddress) {
 Packet* TelnetTransport::Receive() {
   if (tcpInterface == nullptr) {
     return nullptr;
-}
+  }
   Packet* p = tcpInterface->Receive();
   if (p == nullptr) {
     return nullptr;
-}
+  }
 
   /*
 	if (p->data[0]==255)
@@ -128,7 +128,7 @@ Packet* TelnetTransport::Receive() {
   for (i = 0; i < remoteClients.Size(); i++) {
     if (remoteClients[i]->systemAddress == p->systemAddress) {
       remoteClient = remoteClients[i];
-}
+    }
   }
   //RakAssert(remoteClient);
   if (remoteClient == nullptr) {
@@ -142,7 +142,7 @@ Packet* TelnetTransport::Receive() {
       // Up arrow, return last string
       for (int i = 0; remoteClient->textInput[i]; i++) {
         remoteClient->textInput[i] = 8;
-}
+      }
       strcat(remoteClient->textInput, remoteClient->lastSentTextInput);
       tcpInterface->Send(
           (const char*)remoteClient->textInput,
@@ -226,7 +226,7 @@ Packet* TelnetTransport::Receive() {
 void TelnetTransport::DeallocatePacket(Packet* packet) {
   if (tcpInterface == nullptr) {
     return;
-}
+  }
   rakFree_Ex(packet->data, _FILE_AND_LINE_);
   rakFree_Ex(packet, _FILE_AND_LINE_);
 }
@@ -320,7 +320,7 @@ void TelnetTransport::SetSendPrefix(const char* prefix) {
 void TelnetTransport::AutoAllocate() {
   if (tcpInterface == nullptr) {
     tcpInterface = new TCPInterface;
-}
+  }
 }
 bool TelnetTransport::ReassembleLine(
     TelnetTransport::TelnetClient* remoteClient,

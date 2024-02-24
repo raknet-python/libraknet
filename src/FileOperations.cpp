@@ -48,7 +48,7 @@ bool WriteFileWithDirectories(
 
   if (path == nullptr || path[0] == 0) {
     return false;
-}
+  }
 
   strcpy(pathCopy, path);
 
@@ -109,7 +109,7 @@ bool IsSlash(unsigned char c) {
 void AddSlash(char* input) {
   if (input == nullptr || input[0] == 0) {
     return;
-}
+  }
 
   int lastCharIndex = (int)strlen(input) - 1;
   if (input[lastCharIndex] == '\\') {
@@ -129,7 +129,7 @@ bool DirectoryExists(const char* directory) {
   dir = _findfirst(baseDirWithStars, &fileInfo);
   if (dir == -1) {
     return false;
-}
+  }
   _findclose(dir);
   return true;
 }
@@ -154,7 +154,7 @@ unsigned int GetFileLength(const char* path) {
   FILE* fp = fopen(path, "rb");
   if (fp == nullptr) {
     return 0;
-}
+  }
   fseek(fp, 0, SEEK_END);
   unsigned int fileLength = ftell(fp);
   fclose(fp);

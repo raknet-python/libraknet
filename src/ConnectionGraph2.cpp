@@ -25,10 +25,10 @@ int RakNet::ConnectionGraph2::RemoteSystemComp(
     RemoteSystem* const& data) {
   if (key < data->guid) {
     return -1;
-}
+  }
   if (key > data->guid) {
     return 1;
-}
+  }
   return 0;
 }
 
@@ -37,10 +37,10 @@ int RakNet::ConnectionGraph2::SystemAddressAndGuidComp(
     const SystemAddressAndGuid& data) {
   if (key.guid < data.guid) {
     return -1;
-}
+  }
   if (key.guid > data.guid) {
     return 1;
-}
+  }
   return 0;
 }
 ConnectionGraph2::ConnectionGraph2() {
@@ -52,8 +52,8 @@ bool ConnectionGraph2::GetConnectionListForRemoteSystem(
     SystemAddress* saOut,
     RakNetGUID* guidOut,
     unsigned int* outLength) {
-  if ((saOut == nullptr && guidOut == nullptr) || outLength == nullptr || *outLength == 0 ||
-      remoteSystemGuid == UNASSIGNED_RAKNET_GUID) {
+  if ((saOut == nullptr && guidOut == nullptr) || outLength == nullptr ||
+      *outLength == 0 || remoteSystemGuid == UNASSIGNED_RAKNET_GUID) {
     *outLength = 0;
     return false;
   }
@@ -69,21 +69,21 @@ bool ConnectionGraph2::GetConnectionListForRemoteSystem(
   unsigned int idx2;
   if (remoteSystems[idx]->remoteConnections.Size() < *outLength) {
     *outLength = remoteSystems[idx]->remoteConnections.Size();
-}
+  }
   for (idx2 = 0; idx2 < *outLength; idx2++) {
     if (guidOut) {
       guidOut[idx2] = remoteSystems[idx]->remoteConnections[idx2].guid;
-}
+    }
     if (saOut) {
       saOut[idx2] = remoteSystems[idx]->remoteConnections[idx2].systemAddress;
-}
+    }
   }
   return true;
 }
 bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2) {
   if (g1 == g2) {
     return false;
-}
+  }
 
   bool objectExists;
   unsigned int idx = remoteSystems.GetIndexFromKey(g1, &objectExists);
@@ -98,14 +98,14 @@ uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
     const {
   if (g1 == g2) {
     return 0;
-}
+  }
 
   if (g1 == rakPeerInterface->GetMyGUID()) {
     return (uint16_t)rakPeerInterface->GetAveragePing(g2);
-}
+  }
   if (g2 == rakPeerInterface->GetMyGUID()) {
     return (uint16_t)rakPeerInterface->GetAveragePing(g1);
-}
+  }
 
   bool objectExists;
   unsigned int idx = remoteSystems.GetIndexFromKey(g1, &objectExists);
@@ -167,7 +167,7 @@ RakNetGUID ConnectionGraph2::GetLowestAveragePingSystem() const {
 
   if (lowestPingIdx == (unsigned int)-1) {
     return rakPeerInterface->GetMyGUID();
-}
+  }
   return remoteSystems[lowestPingIdx]->guid;
 }
 
@@ -181,7 +181,7 @@ void ConnectionGraph2::OnClosedConnection(
     bs.Write((MessageID)ID_REMOTE_CONNECTION_LOST);
   } else {
     bs.Write((MessageID)ID_REMOTE_DISCONNECTION_NOTIFICATION);
-}
+  }
   bs.Write(systemAddress);
   bs.Write(rakNetGUID);
   SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemAddress, true);
@@ -225,7 +225,7 @@ void ConnectionGraph2::AddParticipant(
   for (i = 0; i < addresses.Size(); i++) {
     if (addresses[i] == systemAddress) {
       continue;
-}
+    }
 
     bs.Write(addresses[i]);
     bs.Write(guids[i]);
@@ -255,7 +255,7 @@ void ConnectionGraph2::GetParticipantList(
   unsigned int i;
   for (i = 0; i < remoteSystems.Size(); i++) {
     participantList.InsertAtEnd(remoteSystems[i]->guid, _FILE_AND_LINE_);
-}
+  }
 }
 void ConnectionGraph2::OnNewConnection(
     const SystemAddress& systemAddress,
@@ -264,7 +264,7 @@ void ConnectionGraph2::OnNewConnection(
   (void)isIncoming;
   if (autoProcessNewConnections) {
     AddParticipant(systemAddress, rakNetGUID);
-}
+  }
 }
 PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_REMOTE_CONNECTION_LOST ||
@@ -282,7 +282,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
               saag, &objectExists);
       if (objectExists) {
         remoteSystems[idx]->remoteConnections.RemoveAtIndex(idx2);
-}
+      }
     }
   } else if (packet->data[0] == ID_REMOTE_NEW_INCOMING_CONNECTION) {
     bool objectExists;
@@ -303,7 +303,7 @@ PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
         if (!objectExists) {
           remoteSystems[idx]->remoteConnections.InsertAtIndex(
               saag, ii, _FILE_AND_LINE_);
-}
+        }
       }
     }
   }

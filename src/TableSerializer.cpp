@@ -84,7 +84,7 @@ bool TableSerializer::DeserializeTable(
   for (rowIndex = 0; rowIndex < rowSize; rowIndex++) {
     if (!DeserializeRow(in, out)) {
       return false;
-}
+    }
   }
   return true;
 }
@@ -96,7 +96,7 @@ bool TableSerializer::DeserializeColumns(
   char columnName[_TABLE_MAX_COLUMN_NAME_LENGTH];
   if (!in->Read(columnSize) || columnSize > 10000) {
     return false; // Hacker crash prevention
-}
+  }
 
   out->Clear();
   unsigned i;
@@ -156,7 +156,7 @@ bool TableSerializer::DeserializeRow(
   unsigned key;
   if (!in->Read(key)) {
     return false;
-}
+  }
   row = out->AddRow(key);
   unsigned int cnt;
   in->Read(numEntries);
@@ -207,22 +207,22 @@ bool TableSerializer::DeserializeCell(
 
   if (!in->Read(isEmpty)) {
     return false;
-}
+  }
   if (!isEmpty) {
     if (columnType == DataStructures::Table::NUMERIC) {
       if (!in->Read(value)) {
         return false;
-}
+      }
       cell->Set(value);
     } else if (columnType == DataStructures::Table::STRING) {
       if (!StringCompressor::Instance()->DecodeString(tempString, 65535, in)) {
         return false;
-}
+      }
       cell->Set(tempString);
     } else if (columnType == DataStructures::Table::POINTER) {
       if (!in->Read(ptr)) {
         return false;
-}
+      }
       cell->SetPtr(ptr);
     } else {
       unsigned binaryLength;
@@ -230,11 +230,12 @@ bool TableSerializer::DeserializeCell(
       RakAssert(columnType == DataStructures::Table::BINARY);
       if (!in->Read(binaryLength) || binaryLength > 10000000) {
         return false; // Sanity check to max binary cell of 10 megabytes
-}
+      }
       in->AlignReadToByteBoundary();
-      if (BITS_TO_BYTES(in->GetNumberOfUnreadBits()) < (BitSize_t)binaryLength) {
+      if (BITS_TO_BYTES(in->GetNumberOfUnreadBits()) <
+          (BitSize_t)binaryLength) {
         return false;
-}
+      }
       cell->Set(
           (char*)in->GetData() + BITS_TO_BYTES(in->GetReadOffset()),
           (int)binaryLength);
@@ -283,7 +284,7 @@ bool TableSerializer::DeserializeFilterQuery(
         10000000); // Sanity check to max binary cell of 10 megabytes
     if (query->cellValue->c) {
       query->cellValue->i = inputLength;
-}
+    }
     b = out->Read(query->cellValue->ptr);
   }
   return b;
@@ -297,7 +298,7 @@ void TableSerializer::SerializeFilterQueryList(
   in->Write((bool)(query && numQueries > 0));
   if (query == nullptr || numQueries <= 0) {
     return;
-}
+  }
 
   RakAssert(numQueries <= maxQueries);
   in->WriteCompressed(numQueries);
@@ -319,7 +320,7 @@ bool TableSerializer::DeserializeFilterQueryList(
       *query = nullptr;
     } else {
       *query = new DataStructures::Table::FilterQuery[allocateExtraQueries];
-}
+    }
 
     *numQueries = 0;
     return true;
@@ -331,7 +332,7 @@ bool TableSerializer::DeserializeFilterQueryList(
   }
   if (*numQueries == 0) {
     return b;
-}
+  }
 
   *query = new DataStructures::Table::FilterQuery
       [*numQueries + allocateExtraQueries];
@@ -350,11 +351,11 @@ void TableSerializer::DeallocateQueryList(
     unsigned int numQueries) {
   if (query == nullptr || numQueries == 0) {
     return;
-}
+  }
 
   unsigned i;
   for (i = 0; i < numQueries; i++) {
     RakNet::OP_DELETE(query[i].cellValue, _FILE_AND_LINE_);
-}
+  }
   RakNet::OP_DELETE_ARRAY(query, _FILE_AND_LINE_);
 }

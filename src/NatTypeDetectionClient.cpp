@@ -36,7 +36,7 @@ NatTypeDetectionClient::~NatTypeDetectionClient() {
 void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress) {
   if (IsInProgress()) {
     return;
-}
+  }
 
   if (c2 == nullptr) {
     DataStructures::List<RakNetSocket2*> sockets;
@@ -60,7 +60,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress) {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
   if (c2->IsBerkleySocket()) {
     ((RNS2_Berkley*)c2)->CreateRecvPollingThread(0);
-}
+  }
 #endif
 
   serverAddress = _serverAddress;
@@ -107,7 +107,7 @@ void NatTypeDetectionClient::Update() {
       recvStruct = bufferedPackets.Pop();
     } else {
       recvStruct = nullptr;
-}
+    }
     bufferedPacketsMutex.Unlock();
     while (recvStruct) {
       if (recvStruct->bytesRead == 1 && recvStruct->data[0] == NAT_TYPE_NONE) {
@@ -121,7 +121,7 @@ void NatTypeDetectionClient::Update() {
         recvStruct = bufferedPackets.Pop();
       } else {
         recvStruct = nullptr;
-}
+      }
       bufferedPacketsMutex.Unlock();
     }
   }
@@ -141,7 +141,7 @@ PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet* packet) {
           return RR_STOP_PROCESSING_AND_DEALLOCATE;
         } else {
           break;
-}
+        }
       case ID_NAT_TYPE_DETECTION_REQUEST:
         OnTestPortRestricted(packet);
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -159,7 +159,7 @@ void NatTypeDetectionClient::OnClosedConnection(
 
   if (IsInProgress() && systemAddress == serverAddress) {
     Shutdown();
-}
+  }
 }
 void NatTypeDetectionClient::OnRakPeerShutdown() {
   Shutdown();
@@ -200,7 +200,7 @@ void NatTypeDetectionClient::Shutdown() {
 #if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
     if (c2->IsBerkleySocket()) {
       ((RNS2_Berkley*)c2)->BlockOnStopRecvPollingThread();
-}
+    }
 #endif
 
     RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
@@ -210,7 +210,7 @@ void NatTypeDetectionClient::Shutdown() {
   bufferedPacketsMutex.Lock();
   while (bufferedPackets.Size()) {
     RakNet::OP_DELETE(bufferedPackets.Pop(), _FILE_AND_LINE_);
-}
+  }
   bufferedPacketsMutex.Unlock();
 }
 

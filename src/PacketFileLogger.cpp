@@ -31,7 +31,7 @@ void PacketFileLogger::StartLog(const char* filenamePrefix) {
     sprintf(filename, "%s_%i.csv", filenamePrefix, (int)RakNet::GetTimeMS());
   } else {
     sprintf(filename, "PacketLog_%i.csv", (int)RakNet::GetTimeMS());
-}
+  }
   packetLogFile = fopen(filename, "wt");
   LogHeader();
   if (packetLogFile) {

@@ -62,11 +62,11 @@ void CommandParserInterface::ParseConsoleString(
   for (strIndex = 0; strIndex < strLen; strIndex++) {
     if (str[strIndex] == delineator && replaceDelineator) {
       str[strIndex] = 0;
-}
+    }
 
     if (str[strIndex] == '\n' || str[strIndex] == '\r') {
       str[strIndex] = 0;
-}
+    }
 
     if (str[strIndex] == delineatorToggle) {
       str[strIndex] = 0;
@@ -82,15 +82,15 @@ void CommandParserInterface::ParseConsoleString(
       RakAssert(parameterListIndex < parameterListLength);
       if (parameterListIndex >= parameterListLength) {
         break;
-}
+      }
 
       strIndex++;
       while (str[strIndex] != 0 && strIndex < strLen) {
         strIndex++;
-}
+      }
     } else {
       strIndex++;
-}
+    }
   }
 
   parameterList[parameterListIndex] = nullptr;
@@ -105,12 +105,12 @@ void CommandParserInterface::SendCommandList(
       transport->Send(systemAddress, "%s", commandList[i].command);
       if (i < commandList.Size() - 1) {
         transport->Send(systemAddress, ", ");
-}
+      }
     }
     transport->Send(systemAddress, "\r\n");
   } else {
     transport->Send(systemAddress, "No registered commands\r\n");
-}
+  }
 }
 void CommandParserInterface::RegisterCommand(
     unsigned char parameterCount,
@@ -130,7 +130,7 @@ bool CommandParserInterface::GetRegisteredCommand(
   index = commandList.GetIndexFromKey(command, &objectExists);
   if (objectExists) {
     *rc = commandList[index];
-}
+  }
   return objectExists;
 }
 void CommandParserInterface::OnTransportChange(TransportInterface* transport) {
@@ -157,7 +157,7 @@ void CommandParserInterface::ReturnResult(
     transport->Send(systemAddress, "%s returned true.\r\n", command);
   } else {
     transport->Send(systemAddress, "%s returned false.\r\n", command);
-}
+  }
 }
 void CommandParserInterface::ReturnResult(
     int res,

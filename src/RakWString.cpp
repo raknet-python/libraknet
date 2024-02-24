@@ -51,7 +51,7 @@ RakWString& RakWString::operator=(const RakWString& right) {
   Clear();
   if (right.IsEmpty()) {
     return *this;
-}
+  }
   c_str = (wchar_t*)rakMalloc_Ex(
       (right.GetLength() + 1) * MAX_BYTES_PER_UNICODE_CHAR, _FILE_AND_LINE_);
   if (!c_str) {
@@ -74,11 +74,11 @@ RakWString& RakWString::operator=(const wchar_t* const str) {
   Clear();
   if (str == nullptr) {
     return *this;
-}
+  }
   c_strCharLength = wcslen(str);
   if (c_strCharLength == 0) {
     return *this;
-}
+  }
   c_str = (wchar_t*)rakMalloc_Ex(
       (c_strCharLength + 1) * MAX_BYTES_PER_UNICODE_CHAR, _FILE_AND_LINE_);
   if (!c_str) {
@@ -101,10 +101,10 @@ RakWString& RakWString::operator=(const char* const str) {
 #if !defined(ANDROID)
   if (str == nullptr) {
     return *this;
-}
+  }
   if (str[0] == 0) {
     return *this;
-}
+  }
 
   c_strCharLength = mbstowcs(nullptr, str, 0);
   c_str = (wchar_t*)rakMalloc_Ex(
@@ -136,7 +136,7 @@ RakWString& RakWString::operator=(char* str) {
 RakWString& RakWString::operator+=(const RakWString& right) {
   if (right.IsEmpty()) {
     return *this;
-}
+  }
   size_t newCharLength = c_strCharLength + right.GetLength();
   wchar_t* newCStr;
   bool isEmpty = IsEmpty();
@@ -148,7 +148,7 @@ RakWString& RakWString::operator+=(const RakWString& right) {
         c_str,
         (newCharLength + 1) * MAX_BYTES_PER_UNICODE_CHAR,
         _FILE_AND_LINE_);
-}
+  }
   if (!newCStr) {
     notifyOutOfMemory(_FILE_AND_LINE_);
     return *this;
@@ -169,7 +169,7 @@ RakWString& RakWString::operator+=(const RakWString& right) {
 RakWString& RakWString::operator+=(const wchar_t* const right) {
   if (right == nullptr) {
     return *this;
-}
+  }
   size_t rightLength = wcslen(right);
   size_t newCharLength = c_strCharLength + rightLength;
   wchar_t* newCStr;
@@ -182,7 +182,7 @@ RakWString& RakWString::operator+=(const wchar_t* const right) {
         c_str,
         (newCharLength + 1) * MAX_BYTES_PER_UNICODE_CHAR,
         _FILE_AND_LINE_);
-}
+  }
   if (!newCStr) {
     notifyOutOfMemory(_FILE_AND_LINE_);
     return *this;
@@ -203,7 +203,7 @@ RakWString& RakWString::operator+=(wchar_t* right) {
 bool RakWString::operator==(const RakWString& right) const {
   if (GetLength() != right.GetLength()) {
     return false;
-}
+  }
   return wcscmp(C_String(), right.C_String()) == 0;
 }
 bool RakWString::operator<(const RakWString& right) const {
@@ -221,7 +221,7 @@ bool RakWString::operator>=(const RakWString& right) const {
 bool RakWString::operator!=(const RakWString& right) const {
   if (GetLength() != right.GetLength()) {
     return true;
-}
+  }
   return wcscmp(C_String(), right.C_String()) != 0;
 }
 void RakWString::Set(wchar_t* str) {

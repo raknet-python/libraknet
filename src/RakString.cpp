@@ -99,7 +99,7 @@ RakString& RakString::operator=(const RakString& rhs) {
   Free();
   if (rhs.sharedString == &emptyString) {
     return *this;
-}
+  }
 
   rhs.sharedString->refCountMutex->Lock();
   if (rhs.sharedString->refCount == 0) {
@@ -134,7 +134,7 @@ RakString& RakString::operator=(const char c) {
 void RakString::Realloc(SharedString* sharedString, size_t bytes) {
   if (bytes <= sharedString->bytesUsed) {
     return;
-}
+  }
 
   RakAssert(bytes > 0);
   size_t oldBytes = sharedString->bytesUsed;
@@ -157,7 +157,7 @@ void RakString::Realloc(SharedString* sharedString, size_t bytes) {
 RakString& RakString::operator+=(const RakString& rhs) {
   if (rhs.IsEmpty()) {
     return *this;
-}
+  }
 
   if (IsEmpty()) {
     return operator=(rhs);
@@ -172,7 +172,7 @@ RakString& RakString::operator+=(const RakString& rhs) {
 RakString& RakString::operator+=(const char* str) {
   if (str == nullptr || str[0] == 0) {
     return *this;
-}
+  }
 
   if (IsEmpty()) {
     Assign(str);
@@ -310,7 +310,7 @@ const char* RakString::ToLower() {
   unsigned i;
   for (i = 0; i < strLen; i++) {
     sharedString->c_str[i] = ToLower(sharedString->c_str[i]);
-}
+  }
   return sharedString->c_str;
 }
 const char* RakString::ToUpper() {
@@ -320,7 +320,7 @@ const char* RakString::ToUpper() {
   unsigned i;
   for (i = 0; i < strLen; i++) {
     sharedString->c_str[i] = ToUpper(sharedString->c_str[i]);
-}
+  }
   return sharedString->c_str;
 }
 void RakString::Set(const char* format, ...) {
@@ -344,7 +344,7 @@ int porges_strlen2(char* s) {
   while (s[i] > 0) {
   ascii:
     i++;
-}
+  }
 
   count += i - iBefore;
   while (s[i]) {
@@ -363,7 +363,7 @@ int porges_strlen2(char* s) {
           i += 2;
           break;
       }
-}
+    }
     ++count;
   }
   return count;
@@ -539,17 +539,17 @@ RakString RakString::SubStr(unsigned int index, unsigned int count) const {
   size_t length = GetLength();
   if (index >= length || count == 0) {
     return RakString();
-}
+  }
   RakString copy;
   size_t numBytes = length - index;
   if (count < numBytes) {
     numBytes = count;
-}
+  }
   copy.Allocate(numBytes + 1);
   size_t i;
   for (i = 0; i < numBytes; i++) {
     copy.sharedString->c_str[i] = sharedString->c_str[index + i];
-}
+  }
   copy.sharedString->c_str[i] = 0;
   return copy;
 }
@@ -622,7 +622,7 @@ int RakString::GetCharacterCount(char c) {
 void RakString::RemoveCharacter(char c) {
   if (c == 0) {
     return;
-}
+  }
 
   unsigned int readIndex, writeIndex = 0;
   for (readIndex = 0; sharedString->c_str[readIndex]; readIndex++) {
@@ -630,12 +630,12 @@ void RakString::RemoveCharacter(char c) {
       sharedString->c_str[writeIndex++] = sharedString->c_str[readIndex];
     } else {
       Clone();
-}
+    }
   }
   sharedString->c_str[writeIndex] = 0;
   if (writeIndex == 0) {
     Clear();
-}
+  }
 }
 int RakString::StrCmp(const RakString& rhs) const {
   return strcmp(sharedString->c_str, rhs.C_String());
@@ -657,7 +657,7 @@ bool RakString::IPAddressMatch(const char* IP) {
 
   if (IP == nullptr || IP[0] == 0 || strlen(IP) > 15) {
     return false;
-}
+  }
 
   characterIndex = 0;
 
@@ -703,28 +703,28 @@ bool RakString::ContainsNonprintableExceptSpaces() const {
   for (i = 0; i < strLen; i++) {
     if (sharedString->c_str[i] < ' ' || sharedString->c_str[i] > 126) {
       return true;
-}
+    }
   }
   return false;
 }
 bool RakString::IsEmailAddress() const {
   if (IsEmpty()) {
     return false;
-}
+  }
   size_t strLen = strlen(sharedString->c_str);
   if (strLen < 6) { // a@b.de
     return false;
-}
+  }
   if (sharedString->c_str[strLen - 4] != '.' &&
       sharedString->c_str[strLen - 3] != '.') { // .com, .net., .org, .de
     return false;
-}
+  }
   unsigned i;
   // Has non-printable?
   for (i = 0; i < strLen; i++) {
     if (sharedString->c_str[i] <= ' ' || sharedString->c_str[i] > 126) {
       return false;
-}
+    }
   }
   int atCount = 0;
   for (i = 0; i < strLen; i++) {
@@ -734,7 +734,7 @@ bool RakString::IsEmailAddress() const {
   }
   if (atCount != 1) {
     return false;
-}
+  }
   int dotCount = 0;
   for (i = 0; i < strLen; i++) {
     if (sharedString->c_str[i] == '.') {
@@ -743,7 +743,7 @@ bool RakString::IsEmailAddress() const {
   }
   if (dotCount == 0) {
     return false;
-}
+  }
 
   // There's more I could check, but this is good enough
   return true;
@@ -793,25 +793,25 @@ RakNet::RakString& RakString::URLDecode() {
 
       if (hexDigits[0] == ' ') {
         hexValues[0] = 0;
-}
+      }
 
       if (hexDigits[0] >= 'A' && hexDigits[0] <= 'F') {
         hexValues[0] = hexDigits[0] - 'A' + 10;
-}
+      }
       if (hexDigits[0] >= 'a' && hexDigits[0] <= 'f') {
         hexValues[0] = hexDigits[0] - 'a' + 10;
       } else {
         hexValues[0] = hexDigits[0] - '0';
-}
+      }
 
       if (hexDigits[1] >= 'A' && hexDigits[1] <= 'F') {
         hexValues[1] = hexDigits[1] - 'A' + 10;
-}
+      }
       if (hexDigits[1] >= 'a' && hexDigits[1] <= 'f') {
         hexValues[1] = hexDigits[1] - 'a' + 10;
       } else {
         hexValues[1] = hexDigits[1] - '0';
-}
+      }
 
       output[outputIndex++] = hexValues[0] * 16 + hexValues[1];
     } else {
@@ -840,11 +840,11 @@ void RakString::SplitURI(
     i += (unsigned int)strlen("http://");
   } else if (strncmp(sharedString->c_str, "https://", 8) == 0) {
     i += (unsigned int)strlen("https://");
-}
+  }
 
   if (strncmp(sharedString->c_str, "www.", 4) == 0) {
     i += (unsigned int)strlen("www.");
-}
+  }
 
   if (i != 0) {
     header.Allocate(i + 1);
@@ -880,13 +880,14 @@ RakNet::RakString& RakString::SQLEscape() {
   int index;
   for (index = 0; index < strLen; index++) {
     if (sharedString->c_str[index] == '\'' ||
-        sharedString->c_str[index] == '"' || sharedString->c_str[index] == '\\') {
+        sharedString->c_str[index] == '"' ||
+        sharedString->c_str[index] == '\\') {
       escapedCharacterCount++;
-}
+    }
   }
   if (escapedCharacterCount == 0) {
     return *this;
-}
+  }
 
   Clone();
   Realloc(sharedString, strLen + escapedCharacterCount);
@@ -921,7 +922,7 @@ RakNet::RakString RakString::FormatForPUTOrPost(
 
   if (host.IsEmpty() || remotePath.IsEmpty()) {
     return out;
-}
+  }
 
   //	RakString bodyEncoded = body;
   //	bodyEncoded.URLEncode();
@@ -989,7 +990,7 @@ RakString RakString::FormatForGET(const char* uri, const char* extraHeaders) {
   uriRs.SplitURI(header, host, remotePath);
   if (host.IsEmpty() || remotePath.IsEmpty()) {
     return out;
-}
+  }
 
   if (extraHeaders && extraHeaders[0]) {
     out.Set(
@@ -1024,7 +1025,7 @@ RakString RakString::FormatForDELETE(
   uriRs.SplitURI(header, host, remotePath);
   if (host.IsEmpty() || remotePath.IsEmpty()) {
     return out;
-}
+  }
 
   if (extraHeaders && extraHeaders[0]) {
     out.Set(
@@ -1053,7 +1054,7 @@ RakString RakString::FormatForDELETE(
 RakNet::RakString& RakString::MakeFilePath() {
   if (IsEmpty()) {
     return *this;
-}
+  }
 
   RakNet::RakString fixedString = *this;
   fixedString.Clone();
@@ -1061,7 +1062,7 @@ RakNet::RakString& RakString::MakeFilePath() {
 #ifdef _WIN32
     if (fixedString.sharedString->c_str[i] == '/') {
       fixedString.sharedString->c_str[i] = '\\';
-}
+    }
 #else
     if (fixedString.sharedString->c_str[i] == '\\')
       fixedString.sharedString->c_str[i] = '/';
@@ -1082,7 +1083,7 @@ RakNet::RakString& RakString::MakeFilePath() {
 
   if (fixedString != *this) {
     *this = fixedString;
-}
+  }
   return *this;
 }
 void RakString::FreeMemory() {
@@ -1118,7 +1119,7 @@ void RakString::SerializeCompressed(
     bool writeLanguageId) {
   if (writeLanguageId) {
     bs->WriteCompressed(languageId);
-}
+  }
   StringCompressor::Instance()->EncodeString(str, 0xFFFF, bs, languageId);
 }
 bool RakString::Deserialize(BitStream* bs) {
@@ -1134,10 +1135,10 @@ bool RakString::Deserialize(BitStream* bs) {
       sharedString->c_str[l] = 0;
     } else {
       Clear();
-}
+    }
   } else {
     bs->AlignReadToByteBoundary();
-}
+  }
   return b;
 }
 bool RakString::Deserialize(char* str, BitStream* bs) {
@@ -1146,11 +1147,11 @@ bool RakString::Deserialize(char* str, BitStream* bs) {
   b = bs->Read(l);
   if (b && l > 0) {
     b = bs->ReadAlignedBytes((unsigned char*)str, l);
-}
+  }
 
   if (!b) {
     str[0] = 0;
-}
+  }
 
   str[l] = 0;
   return b;
@@ -1161,7 +1162,7 @@ bool RakString::DeserializeCompressed(BitStream* bs, bool readLanguageId) {
     bs->ReadCompressed(languageId);
   } else {
     languageId = 0;
-}
+  }
   return StringCompressor::Instance()->DecodeString(
       this, 0xFFFF, bs, languageId);
 }
@@ -1174,7 +1175,7 @@ bool RakString::DeserializeCompressed(
     bs->ReadCompressed(languageId);
   } else {
     languageId = 0;
-}
+  }
   return StringCompressor::Instance()->DecodeString(
       str, 0xFFFF, bs, languageId);
 }
@@ -1189,7 +1190,7 @@ const char* RakString::ToString(int64_t i) {
   int lastIndex = index;
   if (++index == 64) {
     index = 0;
-}
+  }
   return buff[lastIndex];
 }
 const char* RakString::ToString(uint64_t i) {
@@ -1203,7 +1204,7 @@ const char* RakString::ToString(uint64_t i) {
   int lastIndex = index;
   if (++index == 64) {
     index = 0;
-}
+  }
   return buff[lastIndex];
 }
 void RakString::Clear() {
@@ -1327,7 +1328,7 @@ unsigned long RakString::ToInteger(const char* str) {
 
   while ((c = *str++)) {
     hash = c + (hash << 6) + (hash << 16) - hash;
-}
+  }
 
   return hash;
 }
@@ -1338,10 +1339,10 @@ int RakString::ReadIntFromSubstring(const char* str, size_t pos, size_t n) {
   char tmp[32];
   if (n >= 32) {
     return 0;
-}
+  }
   for (size_t i = 0; i < n; i++) {
     tmp[i] = str[i + pos];
-}
+  }
   return atoi(tmp);
 }
 void RakString::AppendBytes(const char* bytes, unsigned int count) {
@@ -1377,7 +1378,7 @@ void RakString::Clone() {
 void RakString::Free() {
   if (sharedString == &emptyString) {
     return;
-}
+  }
   sharedString->refCountMutex->Lock();
   sharedString->refCount--;
   if (sharedString->refCount == 0) {
@@ -1386,7 +1387,7 @@ void RakString::Free() {
         128 - sizeof(unsigned int) - sizeof(size_t) - sizeof(char*) * 2;
     if (sharedString->bytesUsed > smallStringSize) {
       rakFree_Ex(sharedString->bigString, _FILE_AND_LINE_);
-}
+    }
     /*
 		poolMutex->Lock();
 		pool.Release(sharedString);
@@ -1406,13 +1407,13 @@ void RakString::Free() {
 unsigned char RakString::ToLower(unsigned char c) {
   if (c >= 'A' && c <= 'Z') {
     return c - 'A' + 'a';
-}
+  }
   return c;
 }
 unsigned char RakString::ToUpper(unsigned char c) {
   if (c >= 'a' && c <= 'z') {
     return c - 'a' + 'A';
-}
+  }
   return c;
 }
 void RakString::LockMutex() {

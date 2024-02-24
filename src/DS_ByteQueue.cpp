@@ -35,7 +35,7 @@ void ByteQueue::WriteBytes(
     unsigned newAmountToAllocate = length + oldLengthAllocated + 1;
     if (newAmountToAllocate < 256) {
       newAmountToAllocate = 256;
-}
+    }
     lengthAllocated = lengthAllocated + newAmountToAllocate;
     data = (char*)rakRealloc_Ex(data, lengthAllocated, file, line);
     if (writeOffset < readOffset) {
@@ -71,7 +71,7 @@ bool ByteQueue::ReadBytes(char* out, unsigned maxLengthToRead, bool peek) {
       bytesWritten < maxLengthToRead ? bytesWritten : maxLengthToRead;
   if (bytesToRead == 0) {
     return false;
-}
+  }
   if (writeOffset >= readOffset) {
     memcpy(out, data + readOffset, bytesToRead);
   } else {
@@ -86,7 +86,7 @@ bool ByteQueue::ReadBytes(char* out, unsigned maxLengthToRead, bool peek) {
 
   if (!peek) {
     IncrementReadOffset(bytesToRead);
-}
+  }
 
   return true;
 }
@@ -95,13 +95,13 @@ char* ByteQueue::PeekContiguousBytes(unsigned int* outLength) const {
     *outLength = writeOffset - readOffset;
   } else {
     *outLength = lengthAllocated - readOffset;
-}
+  }
   return data + readOffset;
 }
 void ByteQueue::Clear(const char* file, unsigned int line) {
   if (lengthAllocated) {
     rakFree_Ex(data, file, line);
-}
+  }
   readOffset = writeOffset = lengthAllocated = 0;
   data = nullptr;
 }
@@ -110,7 +110,7 @@ unsigned ByteQueue::GetBytesWritten() const {
     return writeOffset - readOffset;
   } else {
     return writeOffset + (lengthAllocated - readOffset);
-}
+  }
 }
 void ByteQueue::IncrementReadOffset(unsigned length) {
   readOffset = (readOffset + length) % lengthAllocated;
@@ -120,12 +120,12 @@ void ByteQueue::DecrementReadOffset(unsigned length) {
     readOffset = lengthAllocated - (length - readOffset);
   } else {
     readOffset -= length;
-}
+  }
 }
 void ByteQueue::Print() {
   unsigned i;
   for (i = readOffset; i != writeOffset; i++) {
     RAKNET_DEBUG_PRINTF("%i ", data[i]);
-}
+  }
   RAKNET_DEBUG_PRINTF("\n");
 }

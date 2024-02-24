@@ -199,7 +199,7 @@ void CSHA1::Update(const UINT_8* pbData, UINT_32 uLen) {
 
   if ((m_count[0] += (uLen << 3)) < (uLen << 3)) {
     ++m_count[1]; // Overflow
-}
+  }
 
   m_count[1] += (uLen >> 29);
 
@@ -211,28 +211,28 @@ void CSHA1::Update(const UINT_8* pbData, UINT_32 uLen) {
 
     for (; (i + 63) < uLen; i += 64) {
       Transform(m_state, &pbData[i]);
-}
+    }
 
     j = 0;
   } else {
     i = 0;
-}
+  }
 
   if ((uLen - i) != 0) {
     memcpy(&m_buffer[j], &pbData[i], uLen - i);
-}
+  }
 }
 
 #ifdef SHA1_UTILITY_FUNCTIONS
 bool CSHA1::HashFile(const TCHAR* tszFileName) {
   if (tszFileName == nullptr) {
     return false;
-}
+  }
 
   FILE* fpIn = _tfopen(tszFileName, _T("rb"));
   if (fpIn == nullptr) {
     return false;
-}
+  }
 
   auto* pbData = new UINT_8[SHA1_MAX_FILE_BUFFER];
   if (pbData == nullptr) {
@@ -246,12 +246,12 @@ bool CSHA1::HashFile(const TCHAR* tszFileName) {
 
     if (uRead > 0) {
       Update(pbData, static_cast<UINT_32>(uRead));
-}
+    }
 
     if (uRead < SHA1_MAX_FILE_BUFFER) {
       if (feof(fpIn) == 0) {
         bSuccess = false;
-}
+      }
       break;
     }
   }
@@ -270,22 +270,22 @@ void CSHA1::Final() {
     pbFinalCount[i] = static_cast<UINT_8>(
         (m_count[((i >= 4) ? 0 : 1)] >> ((3 - (i & 3)) * 8)) &
         0xFF); // Endian independent
-}
+  }
 
   Update((UINT_8*)"\200", 1);
 
   while ((m_count[0] & 504) != 448) {
     Update((UINT_8*)"\0", 1);
-}
+  }
 
   Update(pbFinalCount, 8); // Cause a Transform()
 
   for (i = 0; i < 20; ++i) {
     m_digest[i] =
         static_cast<UINT_8>((m_state[i >> 2] >> ((3 - (i & 3)) * 8)) & 0xFF);
-}
+  }
 
-    // Wipe variables for security reasons
+  // Wipe variables for security reasons
 #ifdef SHA1_WIPE_VARIABLES
   memset(m_buffer, 0, 64);
   memset(m_state, 0, 20);
@@ -299,7 +299,7 @@ void CSHA1::Final() {
 bool CSHA1::ReportHash(TCHAR* tszReport, REPORT_TYPE rtReportType) const {
   if (tszReport == nullptr) {
     return false;
-}
+  }
 
   TCHAR tszTemp[16];
 
@@ -323,7 +323,7 @@ bool CSHA1::ReportHash(TCHAR* tszReport, REPORT_TYPE rtReportType) const {
     }
   } else {
     return false;
-}
+  }
 
   return true;
 }
@@ -337,7 +337,7 @@ bool CSHA1::ReportHashStl(
   const bool bResult = ReportHash(tszOut, rtReportType);
   if (bResult) {
     strOut = tszOut;
-}
+  }
   return bResult;
 }
 #endif
@@ -345,7 +345,7 @@ bool CSHA1::ReportHashStl(
 bool CSHA1::GetHash(UINT_8* pbDest20) const {
   if (pbDest20 == nullptr) {
     return false;
-}
+  }
   memcpy(pbDest20, m_digest, 20);
   return true;
 }
@@ -369,7 +369,7 @@ void CSHA1::HMAC(
 
   if (sharedKeyLength > sha1BlockLength) {
     sharedKeyLength = sha1BlockLength;
-}
+  }
 
   // ipad = the byte 0x36 repeated 64 times
   // opad = the byte 0x5C repeated 64 times

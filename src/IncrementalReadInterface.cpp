@@ -22,7 +22,7 @@ unsigned int IncrementalReadInterface::GetFilePart(
   FILE* fp = fopen(filename, "rb");
   if (fp == nullptr) {
     return 0;
-}
+  }
   fseek(fp, startReadBytes, SEEK_SET);
   auto numRead =
       (unsigned int)fread(preallocatedDestination, 1, numBytesToRead, fp);

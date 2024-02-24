@@ -330,7 +330,7 @@ RNS2BindResult RNS2_Berkley::BindShared(
 
   if (br != BR_SUCCESS) {
     return br;
-}
+  }
 
   unsigned long zero = 0;
   RNS2_SendParameters bsp;
@@ -341,7 +341,7 @@ RNS2BindResult RNS2_Berkley::BindShared(
   RNS2SendResult sr = Send(&bsp, _FILE_AND_LINE_);
   if (sr < 0) {
     return BR_FAILED_SEND_TEST;
-}
+  }
 
   memcpy(&binding, bindParameters, sizeof(RNS2_BerkleyBindParameters));
 
@@ -466,7 +466,7 @@ RNS2SendResult RNS2_Windows::Send(
         sendParameters->systemAddress);
     if (len >= 0) {
       return len;
-}
+    }
   }
   return Send_Windows_Linux_360NoVDP(rns2Socket, sendParameters, file, line);
 }

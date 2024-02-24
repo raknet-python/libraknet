@@ -34,7 +34,7 @@ ConsoleServer::ConsoleServer() {
 ConsoleServer::~ConsoleServer() {
   if (prompt) {
     rakFree_Ex(prompt, _FILE_AND_LINE_);
-}
+  }
 }
 void ConsoleServer::SetTransportProvider(
     TransportInterface* transportInterface,
@@ -51,7 +51,7 @@ void ConsoleServer::SetTransportProvider(
     unsigned i;
     for (i = 0; i < commandParserList.Size(); i++) {
       commandParserList[i]->OnTransportChange(transport);
-}
+    }
 
     //  The transport itself might have a command parser - for example password for the RakNet transport
     AddCommandParser(transport->GetCommandParser());
@@ -61,14 +61,14 @@ void ConsoleServer::AddCommandParser(
     CommandParserInterface* commandParserInterface) {
   if (commandParserInterface == nullptr) {
     return;
-}
+  }
 
   // Non-duplicate insertion
   unsigned i;
   for (i = 0; i < commandParserList.Size(); i++) {
     if (commandParserList[i] == commandParserInterface) {
       return;
-}
+    }
 
     if (_stricmp(
             commandParserList[i]->GetName(),
@@ -82,13 +82,13 @@ void ConsoleServer::AddCommandParser(
   commandParserList.Insert(commandParserInterface, _FILE_AND_LINE_);
   if (transport) {
     commandParserInterface->OnTransportChange(transport);
-}
+  }
 }
 void ConsoleServer::RemoveCommandParser(
     CommandParserInterface* commandParserInterface) {
   if (commandParserInterface == nullptr) {
     return;
-}
+  }
 
   // Overwrite the element we are removing from the back of the list and delete the back of the list
   unsigned i;
@@ -128,7 +128,7 @@ void ConsoleServer::Update() {
   if (newOrLostConnectionId != UNASSIGNED_SYSTEM_ADDRESS) {
     for (i = 0; i < commandParserList.Size(); i++) {
       commandParserList[i]->OnConnectionLost(newOrLostConnectionId, transport);
-}
+    }
   }
 
   while (p) {
@@ -206,7 +206,8 @@ void ConsoleServer::Update() {
             if (commandParserList[i]->GetRegisteredCommand(
                     parameterList[1], &rc)) {
               if (rc.parameterCount ==
-                  RakNet::CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS) {
+                  RakNet::CommandParserInterface::
+                      VARIABLE_NUMBER_OF_PARAMETERS) {
                 transport->Send(
                     p->systemAddress,
                     "(Variable parms): %s %s\r\n",
@@ -219,7 +220,7 @@ void ConsoleServer::Update() {
                     rc.parameterCount,
                     rc.command,
                     rc.commandHelp);
-}
+              }
               commandParsed = true;
               break;
             }
@@ -290,7 +291,7 @@ void ConsoleServer::Update() {
                     rc.parameterCount,
                     rc.command,
                     rc.commandHelp);
-}
+              }
             }
           }
         }
@@ -321,7 +322,7 @@ void ConsoleServer::Update() {
                   rc.parameterCount,
                   rc.command,
                   rc.commandHelp);
-}
+            }
           }
         }
       }
@@ -352,14 +353,14 @@ void ConsoleServer::ShowPrompt(SystemAddress systemAddress) {
 void ConsoleServer::SetPrompt(const char* _prompt) {
   if (prompt) {
     rakFree_Ex(prompt, _FILE_AND_LINE_);
-}
+  }
   if (_prompt && _prompt[0]) {
     size_t len = strlen(_prompt);
     prompt = (char*)rakMalloc_Ex(len + 1, _FILE_AND_LINE_);
     strcpy(prompt, _prompt);
   } else {
     prompt = nullptr;
-}
+  }
 }
 
 #endif // _RAKNET_SUPPORT_*

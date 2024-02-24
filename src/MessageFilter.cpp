@@ -36,7 +36,7 @@ int RakNet::FilterSetComp(const int& key, FilterSet* const& data) {
     return 0;
   } else {
     return 1;
-}
+  }
 }
 STATIC_FACTORY_DEFINITIONS(MessageFilter, MessageFilter);
 
@@ -59,7 +59,7 @@ void MessageFilter::SetAllowMessageID(
   int i;
   for (i = messageIDStart; i <= messageIDEnd; ++i) {
     filterSet->allowedIDs[i] = allow;
-}
+  }
 }
 void MessageFilter::SetAllowRPC4(
     bool allow,
@@ -141,7 +141,7 @@ int MessageFilter::GetSystemFilterSet(AddressOrGUID systemAddress) {
     return -1;
   } else {
     return systemList.ItemAtIndex(index).filter->filterSetID;
-}
+  }
 }
 void MessageFilter::SetSystemFilterSet(
     AddressOrGUID addressOrGUID,
@@ -155,7 +155,7 @@ void MessageFilter::SetSystemFilterSet(
   if (index.IsInvalid()) {
     if (filterSetID < 0) {
       return;
-}
+    }
 
     FilteredSystem filteredSystem;
     filteredSystem.filter = GetFilterSetByID(filterSetID);
@@ -185,8 +185,8 @@ unsigned MessageFilter::GetSystemCount(int filterSetID) const {
     for (i = 0; i < itemList.Size(); i++) {
       if (itemList[i].filter->filterSetID == filterSetID) {
         ++count;
-}
-}
+      }
+    }
     return count;
   }
 }
@@ -233,7 +233,7 @@ void MessageFilter::Clear() {
   systemList.Clear(_FILE_AND_LINE_);
   for (i = 0; i < filterList.Size(); i++) {
     DeallocateFilterSet(filterList[i]);
-}
+  }
   filterList.Clear(false, _FILE_AND_LINE_);
 }
 void MessageFilter::DeallocateFilterSet(FilterSet* filterSet) {
@@ -277,7 +277,7 @@ void MessageFilter::OnInvalidMessage(
         filterSet->filterSetID,
         filterSet->disallowedCallbackUserData,
         messageID);
-}
+  }
   if (filterSet->banOnDisallowedMessage && rakPeerInterface) {
     char str1[64];
     systemAddress.systemAddress.ToString(false, str1);
@@ -289,7 +289,7 @@ void MessageFilter::OnInvalidMessage(
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
     } else {
       tcpInterface->CloseConnection(systemAddress.systemAddress);
-}
+    }
 #endif
   }
 }
@@ -313,7 +313,7 @@ void MessageFilter::Update() {
               keyList[index],
               itemList[index].filter->filterSetID,
               itemList[index].filter->timeoutUserData);
-}
+        }
 
         if (itemList[index].filter->banOnFilterTimeExceed && rakPeerInterface) {
           char str1[64];
@@ -326,7 +326,7 @@ void MessageFilter::Update() {
 #if _RAKNET_SUPPORT_PacketizedTCP == 1 && _RAKNET_SUPPORT_TCPInterface == 1
         } else {
           tcpInterface->CloseConnection(keyList[index].systemAddress);
-}
+        }
 #endif
 
         systemList.Remove(keyList[index], _FILE_AND_LINE_);
@@ -351,7 +351,7 @@ void MessageFilter::OnNewConnection(
   // New system, automatically assign to filter set if appropriate
   if (autoAddNewConnectionsToFilter >= 0 && !systemList.HasData(aog)) {
     SetSystemFilterSet(aog, autoAddNewConnectionsToFilter);
-}
+  }
 }
 void MessageFilter::OnClosedConnection(
     const SystemAddress& systemAddress,
@@ -393,17 +393,17 @@ PluginReceiveResult MessageFilter::OnReceive(Packet* packet) {
       if (packet->data[0] == ID_TIMESTAMP) {
         if (packet->length < sizeof(MessageID) + sizeof(RakNet::TimeMS)) {
           return RR_STOP_PROCESSING_AND_DEALLOCATE; // Invalid message
-}
+        }
         messageId = packet->data[sizeof(MessageID) + sizeof(RakNet::TimeMS)];
       } else {
         messageId = packet->data[0];
-}
+      }
       // If this system is filtered, check if this message is allowed.  If not allowed, return RR_STOP_PROCESSING_AND_DEALLOCATE
       // index = systemList.GetIndexFromKey(packet->addressOrGUID, &objectExists);
       index = systemList.GetIndexOf(packet);
       if (index.IsInvalid()) {
         break;
-}
+      }
       if (!systemList.ItemAtIndex(index).filter->allowedIDs[messageId]) {
         OnInvalidMessage(
             systemList.ItemAtIndex(index).filter, packet, packet->data[0]);

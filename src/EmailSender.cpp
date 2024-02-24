@@ -49,11 +49,11 @@ const char* EmailSender::Send(
   SystemAddress emailServer;
   if (!tcpInterface.Start(0, 0)) {
     return "Unknown error starting TCP";
-}
+  }
   emailServer = tcpInterface.Connect(hostAddress, hostPort, true);
   if (emailServer == UNASSIGNED_SYSTEM_ADDRESS) {
     return "Failed to connect to host";
-}
+  }
 #if OPEN_SSL_CLIENT_SUPPORT == 1
   tcpInterface.StartSSLClient(emailServer);
 #endif
@@ -73,7 +73,7 @@ const char* EmailSender::Send(
 
   if (packet == nullptr) {
     return "Timeout while waiting for initial data from server.";
-}
+  }
 
   tcpInterface.Send("EHLO\r\n", 6, emailServer, false);
   const char* response;
@@ -92,12 +92,12 @@ const char* EmailSender::Send(
     // Something other than continue?
     if (response != nullptr && strcmp(response, "CONTINUE") != 0) {
       return response;
-}
+    }
 
     // Success?
     if (response == nullptr) {
       break;
-}
+    }
   }
 
   if (authenticate) {
@@ -106,10 +106,10 @@ const char* EmailSender::Send(
     response = GetResponse(&tcpInterface, emailServer, doPrintf);
     if (response != nullptr) {
       return response;
-}
+    }
     if (password == nullptr) {
       return "Password needed";
-}
+    }
     char* outputData = RakNet::OP_NEW_ARRAY<char>(
         (const int)(strlen(sender) + strlen(password) + 2) * 3,
         _FILE_AND_LINE_);
@@ -131,30 +131,30 @@ const char* EmailSender::Send(
     response = GetResponse(&tcpInterface, emailServer, doPrintf);
     if (response != nullptr) {
       return response;
-}
+    }
   }
 
   if (sender) {
     sprintf(query, "MAIL From: <%s>\r\n", sender);
   } else {
     sprintf(query, "MAIL From: <>\r\n");
-}
+  }
   tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
   if (response != nullptr) {
     return response;
-}
+  }
 
   if (recipient) {
     sprintf(query, "RCPT TO: <%s>\r\n", recipient);
   } else {
     sprintf(query, "RCPT TO: <>\r\n");
-}
+  }
   tcpInterface.Send(query, (unsigned int)strlen(query), emailServer, false);
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
   if (response != nullptr) {
     return response;
-}
+  }
 
   tcpInterface.Send(
       "DATA\r\n", (unsigned int)strlen("DATA\r\n"), emailServer, false);
@@ -164,7 +164,7 @@ const char* EmailSender::Send(
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
   if (response != nullptr) {
     return response;
-}
+  }
 
   if (subject) {
     sprintf(query, "Subject: %s\r\n", subject);
@@ -187,7 +187,7 @@ const char* EmailSender::Send(
     // Random multipart message boundary
     for (i = 0; i < boundarySize; i++) {
       boundary[i] = Base64Map()[rakNetRandom.RandomMT() % 64];
-}
+    }
     boundary[boundarySize] = 0;
   }
 
@@ -218,7 +218,7 @@ const char* EmailSender::Send(
   newBody = (char*)rakMalloc_Ex(bodyLength * 3, _FILE_AND_LINE_);
   if (bodyLength >= 0) {
     newBody[0] = body[0];
-}
+  }
   for (i = 1, j = 1; i < bodyLength; i++) {
     // Transform \n . \r \n into \n . . \r \n
     if (i < bodyLength - 2 && body[i - 1] == '\n' && body[i + 0] == '.' &&
@@ -264,7 +264,7 @@ const char* EmailSender::Send(
       i += 2;
     } else {
       newBody[j++] = body[i];
-}
+    }
   }
 
   newBody[j++] = '\r';
@@ -313,7 +313,7 @@ const char* EmailSender::Send(
   response = GetResponse(&tcpInterface, emailServer, doPrintf);
   if (response != nullptr) {
     return response;
-}
+  }
 
   tcpInterface.Send(
       "QUIT\r\n", (unsigned int)strlen("QUIT\r\n"), emailServer, false);
@@ -345,7 +345,7 @@ const char* EmailSender::GetResponse(
   while (true) {
     if (tcpInterface->HasLostConnection() == emailServer) {
       return "Connection to server lost.";
-}
+    }
     packet = tcpInterface->Receive();
     if (packet) {
       if (doPrintf) {
@@ -364,10 +364,10 @@ const char* EmailSender::GetResponse(
 #endif
       if (strstr((const char*)packet->data, "235")) {
         return nullptr; // Authentication accepted
-}
+      }
       if (strstr((const char*)packet->data, "354")) {
         return nullptr; // Go ahead
-}
+      }
 #if OPEN_SSL_CLIENT_SUPPORT == 1
       if (strstr((const char*)packet->data, "250-STARTTLS")) {
         tcpInterface->Send(
@@ -380,17 +380,17 @@ const char* EmailSender::GetResponse(
 #endif
       if (strstr((const char*)packet->data, "250")) {
         return nullptr; // OK
-}
+      }
       if (strstr((const char*)packet->data, "550")) {
         return "Failed on error code 550";
-}
+      }
       if (strstr((const char*)packet->data, "553")) {
         return "Failed on error code 553";
-}
+      }
     }
     if (RakNet::GetTimeMS() > timeout) {
       return "Timed out";
-}
+    }
     RakSleep(100);
   }
 }

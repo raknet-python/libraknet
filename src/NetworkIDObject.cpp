@@ -27,16 +27,16 @@ NetworkIDObject::NetworkIDObject() {
 NetworkIDObject::~NetworkIDObject() {
   if (networkIDManager) {
     networkIDManager->StopTrackingNetworkIDObject(this);
-}
+  }
 }
 void NetworkIDObject::SetNetworkIDManager(NetworkIDManager* manager) {
   if (manager == networkIDManager) {
     return;
-}
+  }
 
   if (networkIDManager) {
     networkIDManager->StopTrackingNetworkIDObject(this);
-}
+  }
 
   networkIDManager = manager;
   if (networkIDManager == nullptr) {
@@ -60,7 +60,7 @@ NetworkID NetworkIDObject::GetNetworkID() {
 void NetworkIDObject::SetNetworkID(NetworkID id) {
   if (networkID == id) {
     return;
-}
+  }
 
   if (id == UNASSIGNED_NETWORK_ID) {
     SetNetworkIDManager(nullptr);
@@ -69,13 +69,13 @@ void NetworkIDObject::SetNetworkID(NetworkID id) {
 
   if (networkIDManager) {
     networkIDManager->StopTrackingNetworkIDObject(this);
-}
+  }
 
   networkID = id;
 
   if (networkIDManager) {
     networkIDManager->TrackNetworkIDObject(this);
-}
+  }
 }
 void NetworkIDObject::SetParent(void* _parent) {
   parent = _parent;

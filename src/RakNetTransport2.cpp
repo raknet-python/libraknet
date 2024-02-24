@@ -53,7 +53,7 @@ void RakNetTransport2::Send(
     ...) {
   if (data == nullptr || data[0] == 0) {
     return;
-}
+  }
 
   char text[REMOTE_MAX_TEXT_INPUT];
   va_list ap;
@@ -80,19 +80,19 @@ void RakNetTransport2::CloseConnection(SystemAddress systemAddress) {
 Packet* RakNetTransport2::Receive() {
   if (packetQueue.Size() == 0) {
     return nullptr;
-}
+  }
   return packetQueue.Pop();
 }
 SystemAddress RakNetTransport2::HasNewIncomingConnection() {
   if (newConnections.Size()) {
     return newConnections.Pop();
-}
+  }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 SystemAddress RakNetTransport2::HasLostConnection() {
   if (lostConnections.Size()) {
     return lostConnections.Pop();
-}
+  }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
 void RakNetTransport2::DeallocatePacket(Packet* packet) {
@@ -104,7 +104,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet* packet) {
     case ID_TRANSPORT_STRING: {
       if (packet->length == sizeof(MessageID)) {
         return RR_STOP_PROCESSING_AND_DEALLOCATE;
-}
+      }
 
       auto* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
       *p = *packet;

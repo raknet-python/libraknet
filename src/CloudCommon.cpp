@@ -19,16 +19,16 @@ using namespace RakNet;
 int RakNet::CloudKeyComp(const CloudKey& key, const CloudKey& data) {
   if (key.primaryKey < data.primaryKey) {
     return -1;
-}
+  }
   if (key.primaryKey > data.primaryKey) {
     return 1;
-}
+  }
   if (key.secondaryKey < data.secondaryKey) {
     return -1;
-}
+  }
   if (key.secondaryKey > data.secondaryKey) {
     return 1;
-}
+  }
   return 0;
 }
 
@@ -58,10 +58,10 @@ void CloudQuery::Serialize(bool writeToBitstream, BitStream* bitStream) {
   bitStream->Serialize(writeToBitstream, subscribeToResults);
   if (!startingRowIndexIsZero) {
     bitStream->Serialize(writeToBitstream, startingRowIndex);
-}
+  }
   if (!maxRowsToReturnIsZero) {
     bitStream->Serialize(writeToBitstream, maxRowsToReturn);
-}
+  }
   RakAssert(keys.Size() < (uint16_t)-1);
   auto numKeys = (uint16_t)keys.Size();
   bitStream->Serialize(writeToBitstream, numKeys);
@@ -99,7 +99,7 @@ void CloudQueryRow::Serialize(
       }
     } else {
       data = nullptr;
-}
+    }
   }
 }
 void CloudQueryResult::SerializeHeader(

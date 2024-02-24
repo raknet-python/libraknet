@@ -31,10 +31,10 @@ RelayPlugin::~RelayPlugin() {
   guidToStrHash.Clear(_FILE_AND_LINE_);
   for (unsigned int i = 0; i < itemList.Size(); i++) {
     RakNet::OP_DELETE(itemList[i], _FILE_AND_LINE_);
-}
+  }
   for (unsigned int i = 0; i < chatRooms.Size(); i++) {
     RakNet::OP_DELETE(chatRooms[i], _FILE_AND_LINE_);
-}
+  }
 }
 
 RelayPluginEnums RelayPlugin::AddParticipantOnServer(
@@ -43,11 +43,11 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(
   ConnectionState cs = rakPeerInterface->GetConnectionState(guid);
   if (cs != IS_CONNECTED) {
     return RPE_ADD_CLIENT_TARGET_NOT_CONNECTED;
-}
+  }
 
   if (strToGuidHash.HasData(key)) {
     return RPE_ADD_CLIENT_NAME_ALREADY_IN_USE; // Name already in use
-}
+  }
 
   // If GUID is already in use, remove existing
   StrAndGuidAndRoom* strAndGuidExisting;
@@ -56,8 +56,7 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(
     RakNet::OP_DELETE(strAndGuidExisting, _FILE_AND_LINE_);
   }
 
-  auto* strAndGuid =
-      RakNet::OP_NEW<StrAndGuidAndRoom>(_FILE_AND_LINE_);
+  auto* strAndGuid = RakNet::OP_NEW<StrAndGuidAndRoom>(_FILE_AND_LINE_);
   strAndGuid->guid = guid;
   strAndGuid->str = key;
 
@@ -207,7 +206,7 @@ PluginReceiveResult RelayPlugin::OnReceive(Packet* packet) {
               AddParticipantOnServer(key, packet->guid));
         } else {
           bsOut.WriteCasted<MessageID>(RPE_ADD_CLIENT_NOT_ALLOWED);
-}
+        }
         bsOut.WriteCompressed(key);
         SendUnified(
             &bsOut,
@@ -260,7 +259,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     StrAndGuidAndRoom** strAndGuidSender) {
   if (strAndGuidSender == nullptr) {
     return nullptr;
-}
+  }
 
   NotifyUsersInRoom(room, RPE_USER_ENTERED_ROOM, (*strAndGuidSender)->str);
   StrAndGuid sag;
@@ -289,15 +288,15 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
   if (strAndGuidSender) {
     if (roomName.IsEmpty()) {
       return nullptr;
-}
+    }
 
     if ((*strAndGuidSender)->currentRoom == roomName) {
       return nullptr;
-}
+    }
 
     if (!(*strAndGuidSender)->currentRoom.IsEmpty()) {
       LeaveGroup(strAndGuidSender);
-}
+    }
 
     RakString userName = (*strAndGuidSender)->str;
 
@@ -320,7 +319,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
 void RelayPlugin::LeaveGroup(StrAndGuidAndRoom** strAndGuidSender) {
   if (strAndGuidSender == nullptr) {
     return;
-}
+  }
 
   RakString userName = (*strAndGuidSender)->str;
   for (unsigned int i = 0; i < chatRooms.Size(); i++) {
@@ -370,7 +369,7 @@ void RelayPlugin::SendMessageToRoom(
     BitStream* message) {
   if ((*strAndGuidSender)->currentRoom.IsEmpty()) {
     return;
-}
+  }
 
   for (unsigned int i = 0; i < chatRooms.Size(); i++) {
     if (chatRooms[i]->roomName == (*strAndGuidSender)->currentRoom) {
@@ -392,7 +391,7 @@ void RelayPlugin::SendMessageToRoom(
               0,
               room->usersInRoom[i].guid,
               false);
-}
+        }
       }
 
       break;
@@ -458,6 +457,6 @@ void RelayPlugin::OnLeaveGroupRequestFromClient(Packet* packet) {
   StrAndGuidAndRoom** strAndGuidSender = guidToStrHash.Peek(packet->guid);
   if (strAndGuidSender) {
     LeaveGroup(strAndGuidSender);
-}
+  }
 }
 #endif // _RAKNET_SUPPORT_*

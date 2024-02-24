@@ -51,19 +51,19 @@ AddressOrGUID::AddressOrGUID(Packet* packet) {
 unsigned long AddressOrGUID::ToInteger(const AddressOrGUID& aog) {
   if (aog.rakNetGuid != UNASSIGNED_RAKNET_GUID) {
     return RakNetGUID::ToUint32(aog.rakNetGuid);
-}
+  }
   return SystemAddress::ToInteger(aog.systemAddress);
 }
 const char* AddressOrGUID::ToString(bool writePort) const {
   if (rakNetGuid != UNASSIGNED_RAKNET_GUID) {
     return rakNetGuid.ToString();
-}
+  }
   return systemAddress.ToString(writePort);
 }
 void AddressOrGUID::ToString(bool writePort, char* dest) const {
   if (rakNetGuid != UNASSIGNED_RAKNET_GUID) {
     return rakNetGuid.ToString(dest);
-}
+  }
   return systemAddress.ToString(writePort, dest);
 }
 bool RakNet::NonNumericHostString(const char* host) {
@@ -75,7 +75,7 @@ bool RakNet::NonNumericHostString(const char* host) {
     if ((host[i] >= 'g' && host[i] <= 'z') ||
         (host[i] >= 'A' && host[i] <= 'Z')) {
       return true;
-}
+    }
     ++i;
   }
   return false;
@@ -107,7 +107,7 @@ SocketDescriptor::SocketDescriptor(
     strcpy(hostAddress, _hostAddress);
   } else {
     hostAddress[0] = 0;
-}
+  }
   extraSocketOptions = 0;
   socketFamily = AF_INET;
 }
@@ -226,7 +226,7 @@ unsigned long SystemAddress::ToInteger(const SystemAddress& sa) {
 unsigned char SystemAddress::GetIPVersion() const {
   if (address.addr4.sin_family == AF_INET) {
     return 4;
-}
+  }
   return 6;
 }
 unsigned int SystemAddress::GetIPPROTO() const {
@@ -253,10 +253,10 @@ bool SystemAddress::IsLoopback() const {
     // unsigned long l = htonl(address.addr4.sin_addr.s_addr);
     if (htonl(address.addr4.sin_addr.s_addr) == 2130706433) {
       return true;
-}
+    }
     if (address.addr4.sin_addr.s_addr == 0) {
       return true;
-}
+    }
   }
 #if RAKNET_SUPPORT_IPV6 == 1
   else {
@@ -455,7 +455,7 @@ bool SystemAddress::SetBinaryAddress(const char* str, char portDelineator) {
          index++) {
       if (str[index] != '.' && (str[index] < '0' || str[index] > '9')) {
         break;
-}
+      }
       IPPart[index] = str[index];
     }
     IPPart[index] = 0;
@@ -466,7 +466,7 @@ bool SystemAddress::SetBinaryAddress(const char* str, char portDelineator) {
            index++, portIndex++) {
         if (str[index] < '0' || str[index] > '9') {
           break;
-}
+        }
 
         portPart[portIndex] = str[index];
       }
@@ -663,13 +663,13 @@ void RakNetGUID::ToString(char* dest) const {
   } else {
     //sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
     sprintf(dest, "%" PRINTF_64_BIT_MODIFIER "u", (long long unsigned int)g);
-}
+  }
   // sprintf(dest, "%u.%u.%u.%u.%u.%u", g[0], g[1], g[2], g[3], g[4], g[5]);
 }
 bool RakNetGUID::FromString(const char* source) {
   if (source == nullptr) {
     return false;
-}
+  }
 
 #if defined(WIN32)
   g = _strtoui64(source, nullptr, 10);

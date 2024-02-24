@@ -41,11 +41,11 @@ bool UDPProxyServer::LoginToCoordinator(
       loggingInCoordinators.GetIndexFromKey(coordinatorAddress, &objectExists);
   if (objectExists) {
     return false;
-}
+  }
   loggedInCoordinators.GetIndexFromKey(coordinatorAddress, &objectExists);
   if (objectExists) {
     return false;
-}
+  }
   RakNet::BitStream outgoingBs;
   outgoingBs.Write((MessageID)ID_UDP_PROXY_GENERAL);
   outgoingBs.Write(
@@ -97,17 +97,17 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
             case ID_UDP_PROXY_NO_PASSWORD_SET_FROM_COORDINATOR_TO_SERVER:
               if (resultHandler) {
                 resultHandler->OnNoPasswordSet(password, this);
-}
+              }
               break;
             case ID_UDP_PROXY_WRONG_PASSWORD_FROM_COORDINATOR_TO_SERVER:
               if (resultHandler) {
                 resultHandler->OnWrongPassword(password, this);
-}
+              }
               break;
             case ID_UDP_PROXY_ALREADY_LOGGED_IN_FROM_COORDINATOR_TO_SERVER:
               if (resultHandler) {
                 resultHandler->OnAlreadyLoggedIn(password, this);
-}
+              }
               break;
             case ID_UDP_PROXY_LOGIN_SUCCESS_FROM_COORDINATOR_TO_SERVER:
               // RakAssert(loggedInCoordinators.GetIndexOf(packet->systemAddress)==(unsigned int)-1);
@@ -118,7 +118,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
                   _FILE_AND_LINE_);
               if (resultHandler) {
                 resultHandler->OnLoginSuccess(password, this);
-}
+              }
               break;
           }
         }
@@ -150,7 +150,7 @@ void UDPProxyServer::OnRakPeerShutdown() {
 void UDPProxyServer::OnAttach() {
   if (rakPeerInterface->IsActive()) {
     OnRakPeerStartup();
-}
+  }
 }
 void UDPProxyServer::OnDetach() {
   OnRakPeerShutdown();

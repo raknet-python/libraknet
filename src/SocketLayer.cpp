@@ -345,7 +345,7 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
   for (idx = 0; idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS; ++idx) {
     if (phe->h_addr_list[idx] == nullptr) {
       break;
-}
+    }
 
     memcpy(
         &addresses[idx].address.addr4.sin_addr,
@@ -527,19 +527,19 @@ bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto) {
   for (l = 0; l < MAXIMUM_NUMBER_OF_INTERNAL_IDS; l++) {
     if (ipList[l] == UNASSIGNED_SYSTEM_ADDRESS) {
       break;
-}
+    }
     if (ipList[l].GetIPVersion() == 4 && ipProto == AF_INET) {
       break;
-}
+    }
     if (ipList[l].GetIPVersion() == 6 && ipProto == AF_INET6) {
       break;
-}
+    }
   }
 
   if (ipList[l] == UNASSIGNED_SYSTEM_ADDRESS ||
       l == MAXIMUM_NUMBER_OF_INTERNAL_IDS) {
     return false;
-}
+  }
   // 	RAKNET_DEBUG_PRINTF("%i %i %i %i\n",
   // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[0],
   // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[1],

@@ -38,7 +38,7 @@ void CheckSum::Add(unsigned int value) {
     Add(data.bytes[i])
 
         ;
-}
+  }
 } // CheckSum::add(unsigned int)
 
 /****************************************************************************
@@ -64,7 +64,7 @@ void CheckSum::Add(unsigned short value) {
     Add(data.bytes[i])
 
         ;
-}
+  }
 } // CheckSum::add(unsigned short)
 
 /****************************************************************************
@@ -99,5 +99,5 @@ void CheckSum::Add(unsigned char* b, unsigned int length) {
     Add(b[i])
 
         ;
-}
+  }
 } // CheckSum::add(LPunsigned char, unsigned int)

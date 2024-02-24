@@ -30,7 +30,7 @@ StringTable::~StringTable() {
   for (i = 0; i < orderedStringList.Size(); i++) {
     if (orderedStringList[i].b) {
       rakFree_Ex(orderedStringList[i].str, _FILE_AND_LINE_);
-}
+    }
   }
 }
 
@@ -97,17 +97,17 @@ bool StringTable::DecodeString(
 
   if (maxCharsToWrite == 0) {
     return false;
-}
+  }
   if (!input->Read(hasIndex)) {
     return false;
-}
+  }
   if (!hasIndex) {
     StringCompressor::Instance()->DecodeString(output, maxCharsToWrite, input);
   } else {
     StringTableType index;
     if (!input->Read(index)) {
       return false;
-}
+    }
     if (index >= orderedStringList.Size()) {
 #ifdef _DEBUG
       // Critical error - got a string index out of range, which means AddString was called more times on the remote system than on this system.
