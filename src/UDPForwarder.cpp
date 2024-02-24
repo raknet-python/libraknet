@@ -194,7 +194,7 @@ void UDPForwarder::RecvFrom(
   memset(&their_addr, 0, sizeof(their_addr));
   sockaddr* sockAddrPtr;
   socklen_t sockLen;
-  socklen_t* socketlenPtr = (socklen_t*)&sockLen;
+  auto* socketlenPtr = (socklen_t*)&sockLen;
   sockaddr_in* sockAddrIn;
   sockaddr_in6* sockAddrIn6;
   sockLen = sizeof(their_addr);
@@ -281,10 +281,10 @@ void UDPForwarder::RecvFrom(
 #if RAKNET_SUPPORT_IPV6 == 1
   if (their_addr.ss_family == AF_INET) {
     sockAddrIn = (sockaddr_in*)&their_addr;
-    sockAddrIn6 = 0;
+    sockAddrIn6 = nullptr;
     memcpy(&receivedAddr.address.addr4, sockAddrIn, sizeof(sockaddr_in));
   } else {
-    sockAddrIn = 0;
+    sockAddrIn = nullptr;
     sockAddrIn6 = (sockaddr_in6*)&their_addr;
     memcpy(&receivedAddr.address.addr6, sockAddrIn6, sizeof(sockaddr_in6));
   }
@@ -459,16 +459,17 @@ void UDPForwarder::UpdateUDPForwarder() {
         hints.ai_family = sfis->socketFamily;
         hints.ai_socktype = SOCK_DGRAM; // UDP sockets
         hints.ai_flags = AI_PASSIVE; // fill in my IP for me
-        struct addrinfo *servinfo = 0, *aip; // will point to the results
+        struct addrinfo *servinfo = nullptr, *aip; // will point to the results
 
         if (sfis->forceHostAddress.IsEmpty() ||
-            sfis->forceHostAddress == "UNASSIGNED_SYSTEM_ADDRESS")
-          getaddrinfo(0, "0", &hints, &servinfo);
-        else
+            sfis->forceHostAddress == "UNASSIGNED_SYSTEM_ADDRESS") {
+          getaddrinfo(nullptr, "0", &hints, &servinfo);
+        } else {
           getaddrinfo(
               sfis->forceHostAddress.C_String(), "0", &hints, &servinfo);
+        }
 
-        for (aip = servinfo; aip != NULL; aip = aip->ai_next) {
+        for (aip = servinfo; aip != nullptr; aip = aip->ai_next) {
           // Open socket. The address type depends on what
           // getaddrinfo() gave us.
           fe->socket =
@@ -484,10 +485,11 @@ void UDPForwarder::UpdateUDPForwarder() {
           }
         }
 
-        if (fe->socket == INVALID_SOCKET)
+        if (fe->socket == INVALID_SOCKET) {
           sfos.result = UDPFORWARDER_BIND_FAILED;
-        else
+        } else {
           sfos.result = UDPFORWARDER_SUCCESS;
+        }
 #endif // RAKNET_SUPPORT_IPV6==1
 
         if (sfos.result == UDPFORWARDER_SUCCESS) {

@@ -300,18 +300,18 @@ void GetMyIP_Win32(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
 
 #if RAKNET_SUPPORT_IPV6 == 1
   struct addrinfo hints;
-  struct addrinfo *servinfo = 0, *aip; // will point to the results
+  struct addrinfo *servinfo = nullptr, *aip; // will point to the results
   PrepareAddrInfoHints(&hints);
   getaddrinfo(ac, "", &hints, &servinfo);
 
   for (idx = 0, aip = servinfo;
-       aip != NULL && idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS;
+       aip != nullptr && idx < MAXIMUM_NUMBER_OF_INTERNAL_IDS;
        aip = aip->ai_next, idx++) {
     if (aip->ai_family == AF_INET) {
-      struct sockaddr_in* ipv4 = (struct sockaddr_in*)aip->ai_addr;
+      auto* ipv4 = (struct sockaddr_in*)aip->ai_addr;
       memcpy(&addresses[idx].address.addr4, ipv4, sizeof(sockaddr_in));
     } else {
-      struct sockaddr_in6* ipv6 = (struct sockaddr_in6*)aip->ai_addr;
+      auto* ipv6 = (struct sockaddr_in6*)aip->ai_addr;
       memcpy(&addresses[idx].address.addr4, ipv6, sizeof(sockaddr_in6));
     }
   }
@@ -447,20 +447,20 @@ void SocketLayer::GetSystemAddress(
     FormatMessage(
         FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
             FORMAT_MESSAGE_IGNORE_INSERTS,
-        NULL,
+        nullptr,
         dwIOError,
         MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
         (LPTSTR)&messageBuffer,
         0,
-        NULL);
+        nullptr);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "getsockname failed:Error code - %lu\n%s", dwIOError, messageBuffer);
 
     //Free the buffer.
     LocalFree(messageBuffer);
 #endif
-    systemAddressOut->FromString(0);
+    systemAddressOut->FromString(nullptr);
     return;
   }
 
@@ -476,8 +476,9 @@ void SocketLayer::GetSystemAddress(
     if (memcmp(
             &systemAddressOut->address.addr4.sin_addr.s_addr,
             &zero,
-            sizeof(zero)) == 0)
+            sizeof(zero)) == 0) {
       systemAddressOut->SetToLoopback(4);
+    }
     //	systemAddressOut->address.addr4.sin_port=ntohs(systemAddressOut->address.addr4.sin_port);
   } else {
     memcpy(
@@ -492,8 +493,9 @@ void SocketLayer::GetSystemAddress(
     if (memcmp(
             &systemAddressOut->address.addr4.sin_addr.s_addr,
             &zero,
-            sizeof(zero)) == 0)
+            sizeof(zero)) == 0) {
       systemAddressOut->SetToLoopback(6);
+    }
 
     //	systemAddressOut->address.addr6.sin6_port=ntohs(systemAddressOut->address.addr6.sin6_port);
   }

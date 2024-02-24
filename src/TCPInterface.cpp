@@ -129,12 +129,12 @@ bool TCPInterface::CreateListenSocket(
   hints.ai_family = socketFamily; // don't care IPv4 or IPv6
   hints.ai_socktype = SOCK_STREAM; // TCP sockets
   hints.ai_flags = AI_PASSIVE; // fill in my IP for me
-  struct addrinfo *servinfo = 0, *aip; // will point to the results
+  struct addrinfo *servinfo = nullptr, *aip; // will point to the results
   char portStr[32];
   Itoa(port, portStr, 10);
 
-  getaddrinfo(0, portStr, &hints, &servinfo);
-  for (aip = servinfo; aip != NULL; aip = aip->ai_next) {
+  getaddrinfo(nullptr, portStr, &hints, &servinfo);
+  for (aip = servinfo; aip != nullptr; aip = aip->ai_next) {
     // Open socket. The address type depends on what
     // getaddrinfo() gave us.
     listenSocket = socket__(aip->ai_family, aip->ai_socktype, aip->ai_protocol);
@@ -149,8 +149,9 @@ bool TCPInterface::CreateListenSocket(
     }
   }
 
-  if (listenSocket == 0)
+  if (listenSocket == 0) {
     return false;
+  }
 
   SocketLayer::SetSocketOptions(listenSocket, false, false);
 

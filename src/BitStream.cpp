@@ -652,7 +652,7 @@ bool BitStream::ReadCompressed(
     } else {
       // Read the rest of the bytes
 
-      return ReadBits(inOutByteArray, (currentByte + 1) << 3) != false;
+      return ReadBits(inOutByteArray, (currentByte + 1) << 3);
     }
   }
 

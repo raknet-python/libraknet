@@ -163,9 +163,10 @@ bool SystemAddress::operator!=(const SystemAddress& right) const {
 bool SystemAddress::operator>(const SystemAddress& right) const {
   if (address.addr4.sin_port == right.address.addr4.sin_port) {
 #if RAKNET_SUPPORT_IPV6 == 1
-    if (address.addr4.sin_family == AF_INET)
+    if (address.addr4.sin_family == AF_INET) {
       return address.addr4.sin_addr.s_addr >
           right.address.addr4.sin_addr.s_addr;
+    }
     return memcmp(
                address.addr6.sin6_addr.s6_addr,
                right.address.addr6.sin6_addr.s6_addr,
@@ -180,9 +181,10 @@ bool SystemAddress::operator>(const SystemAddress& right) const {
 bool SystemAddress::operator<(const SystemAddress& right) const {
   if (address.addr4.sin_port == right.address.addr4.sin_port) {
 #if RAKNET_SUPPORT_IPV6 == 1
-    if (address.addr4.sin_family == AF_INET)
+    if (address.addr4.sin_family == AF_INET) {
       return address.addr4.sin_addr.s_addr <
           right.address.addr4.sin_addr.s_addr;
+    }
     return memcmp(
                address.addr6.sin6_addr.s6_addr,
                right.address.addr6.sin6_addr.s6_addr,
@@ -206,16 +208,17 @@ unsigned long SystemAddress::ToInteger(const SystemAddress& sa) {
       sizeof(sa.address.addr4.sin_port),
       sizeof(sa.address.addr4.sin_port));
 #if RAKNET_SUPPORT_IPV6 == 1
-  if (sa.address.addr4.sin_family == AF_INET)
+  if (sa.address.addr4.sin_family == AF_INET) {
     return SuperFastHashIncremental(
         (const char*)&sa.address.addr4.sin_addr.s_addr,
         sizeof(sa.address.addr4.sin_addr.s_addr),
         lastHash);
-  else
+  } else {
     return SuperFastHashIncremental(
         (const char*)&sa.address.addr6.sin6_addr.s6_addr,
         sizeof(sa.address.addr6.sin6_addr.s6_addr),
         lastHash);
+  }
 #else
   return SuperFastHashIncremental(
       (const char*)&sa.address.addr4.sin_addr.s_addr,
@@ -231,8 +234,9 @@ unsigned char SystemAddress::GetIPVersion() const {
 }
 unsigned int SystemAddress::GetIPPROTO() const {
 #if RAKNET_SUPPORT_IPV6 == 1
-  if (address.addr4.sin_family == AF_INET)
+  if (address.addr4.sin_family == AF_INET) {
     return IPPROTO_IP;
+  }
   return IPPROTO_IPV6;
 #else
   return IPPROTO_IP;
@@ -262,8 +266,9 @@ bool SystemAddress::IsLoopback() const {
   else {
     const static char localhost[16] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1};
-    if (memcmp(&address.addr6.sin6_addr, localhost, 16) == 0)
+    if (memcmp(&address.addr6.sin6_addr, localhost, 16) == 0) {
       return true;
+    }
   }
 #endif
   return false;
@@ -322,7 +327,7 @@ void SystemAddress::ToString_New(
         sizeof(struct sockaddr_in),
         dest,
         22,
-        NULL,
+        nullptr,
         0,
         NI_NUMERICHOST);
   } else {
@@ -331,7 +336,7 @@ void SystemAddress::ToString_New(
         sizeof(struct sockaddr_in6),
         dest,
         INET6_ADDRSTRLEN,
-        NULL,
+        nullptr,
         0,
         NI_NUMERICHOST);
   }
@@ -497,7 +502,7 @@ bool SystemAddress::FromString(
   (void)ipVersion;
   return SetBinaryAddress(str, portDelineator);
 #else
-  if (str == 0) {
+  if (str == nullptr) {
     memset(&address, 0, sizeof(address));
     address.addr4.sin_family = AF_INET;
     return true;
@@ -516,12 +521,13 @@ bool SystemAddress::FromString(
   } else if (ipVersion == 6 && strcmp(str, IPV4_LOOPBACK) == 0) {
     address.addr4.sin_family = AF_INET6;
     strcpy(ipPart, IPV6_LOOPBACK);
-  } else if (NonNumericHostString(str) == false) {
+  } else if (!NonNumericHostString(str)) {
     for (; i < sizeof(ipPart) && str[i] != 0 && str[i] != portDelineator; i++) {
       if ((str[i] < '0' || str[i] > '9') && (str[i] < 'a' || str[i] > 'f') &&
           (str[i] < 'A' || str[i] > 'F') && str[i] != '.' && str[i] != ':' &&
-          str[i] != '%' && str[i] != '-' && str[i] != '/')
+          str[i] != '%' && str[i] != '-' && str[i] != '/') {
         break;
+      }
 
       ipPart[i] = str[i];
     }
@@ -545,25 +551,28 @@ bool SystemAddress::FromString(
 
   // This could be a domain, or a printable address such as "192.0.2.1" or "2001:db8:63b3:1::3490"
   // I want to convert it to its binary representation
-  addrinfo hints, *servinfo = 0;
+  addrinfo hints, *servinfo = nullptr;
   memset(&hints, 0, sizeof hints);
   hints.ai_socktype = SOCK_DGRAM;
-  if (ipVersion == 6)
+  if (ipVersion == 6) {
     hints.ai_family = AF_INET6;
-  else if (ipVersion == 4)
+  } else if (ipVersion == 4) {
     hints.ai_family = AF_INET;
-  else
+  } else {
     hints.ai_family = AF_UNSPEC;
+  }
   getaddrinfo(ipPart, "", &hints, &servinfo);
-  if (servinfo == 0) {
+  if (servinfo == nullptr) {
     if (ipVersion == 6) {
       ipVersion = 4;
       hints.ai_family = AF_UNSPEC;
       getaddrinfo(ipPart, "", &hints, &servinfo);
-      if (servinfo == 0)
+      if (servinfo == nullptr) {
         return false;
-    } else
+      }
+    } else {
       return false;
+    }
   }
   RakAssert(servinfo);
 
