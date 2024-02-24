@@ -19,6 +19,7 @@
 #if !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
 
 #include "Itoa.h"
+#include "LinuxStrings.h"
 
 void RNS2_Berkley::SetSocketOptions(void) {
   int r;
