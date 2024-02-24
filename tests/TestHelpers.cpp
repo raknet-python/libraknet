@@ -10,6 +10,17 @@
 
 #include "TestHelpers.h"
 
+#include <cstring>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "MessageIdentifiers.h"
+#include "PacketPriority.h"
+#include "RakNetDefines.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakTimer.h"
+
 TestHelpers::TestHelpers(void) = default;
 
 TestHelpers::~TestHelpers(void) = default;

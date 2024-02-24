@@ -10,6 +10,23 @@
 
 #include "ComprehensiveConvertTest.h"
 
+#include <cstdio>
+#include <cstring>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "MessageIdentifiers.h"
+#include "PacketPriority.h"
+#include "RakNetStatistics.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+#include "Rand.h"
+
 /*
 Description: Does a little bit of everything forever. This is an internal sample just to see if RakNet crashes or leaks memory over a long period of time.
 

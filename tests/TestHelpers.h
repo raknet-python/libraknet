@@ -10,16 +10,10 @@
 
 #pragma once
 
-#include "RakString.h"
-
-#include "BitStream.h"
-#include "CommonFunctions.h"
-#include "DebugTools.h"
+#include "DS_List.h"
 #include "MessageIdentifiers.h"
-#include "RakPeer.h"
+#include "PacketPriority.h"
 #include "RakPeerInterface.h"
-#include "RakSleep.h"
-#include "RakTimer.h"
 
 using namespace RakNet;
 

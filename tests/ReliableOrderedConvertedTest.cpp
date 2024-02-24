@@ -10,6 +10,26 @@
 
 #include "ReliableOrderedConvertedTest.h"
 
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#include "BitStream.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "MessageIdentifiers.h"
+#include "PacketPriority.h"
+#include "RakNetDefines.h"
+#include "RakNetStatistics.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+#include "Rand.h"
+
 FILE* fp;
 int memoryUsage = 0;
 

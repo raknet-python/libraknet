@@ -10,6 +10,21 @@
 
 #include "PeerConnectDisconnectWithCancelPendingTest.h"
 
+#include <cstdio>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "MessageIdentifiers.h"
+#include "PacketPriority.h"
+#include "RakNetDefines.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+
 /*
 What is being done here is having 8 peers all connect to eachother, disconnect, connect again.
 

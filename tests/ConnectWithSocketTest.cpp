@@ -10,6 +10,20 @@
 
 #include "ConnectWithSocketTest.h"
 
+#include <cstdio>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "RakNetDefines.h"
+#include "RakNetSocket2.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+#include "RakTimer.h"
+#include "TestHelpers.h"
+
 /*
 Description:
 virtual bool RakPeerInterface::ConnectWithSocket  	(  	const char *   	 host, 		unsigned short  	remotePort, 		const char *  	passwordData, 		int  	passwordDataLength, 		RakNetSmartPtr< RakNetSocket >  	socket, 		unsigned  	sendConnectionAttemptCount = 7, 		unsigned  	timeBetweenSendConnectionAttemptsMS = 500, 		TimeMS  	timeoutTime = 0	  	) 	

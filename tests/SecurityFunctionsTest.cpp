@@ -10,6 +10,20 @@
 
 #include "SecurityFunctionsTest.h"
 
+#include <cstdio>
+#include <cstring>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "PacketPriority.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+
 /*
 Description:
 

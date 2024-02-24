@@ -10,9 +10,27 @@
 
 #include <gtest/gtest.h>
 
+#include "ComprehensiveConvertTest.h"
+#include "ConnectWithSocketTest.h"
+#include "CrossConnectionConvertTest.h"
 #include "DS_List.h"
-#include "IncludeAllTests.h"
+#include "DroppedConnectionConvertTest.h"
+#include "EightPeerTest.h"
+#include "LocalIsConnectedTest.h"
+#include "ManyClientsOneServerBlockingTest.h"
+#include "ManyClientsOneServerDeallocateBlockingTest.h"
+#include "ManyClientsOneServerNonBlockingTest.h"
+#include "MaximumConnectTest.h"
+#include "MiscellaneousTestsTest.h"
+#include "OfflineMessagesConvertTest.h"
+#include "PacketAndLowLevelTestsTest.h"
+#include "PeerConnectDisconnectTest.h"
+#include "PeerConnectDisconnectWithCancelPendingTest.h"
+#include "PingTestsTest.h"
 #include "RakString.h"
+#include "ReliableOrderedConvertedTest.h"
+#include "SecurityFunctionsTest.h"
+#include "SystemAddressAndGuidTest.h"
 
 class RakNetTest : public testing::Test {
  protected:

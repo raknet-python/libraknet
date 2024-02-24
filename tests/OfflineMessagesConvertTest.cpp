@@ -10,6 +10,20 @@
 
 #include "OfflineMessagesConvertTest.h"
 
+#include <cstdio>
+#include <cstring>
+
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "MessageIdentifiers.h"
+#include "RakNetDefines.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+
 /*
 Description:
 Description: Tests / Demonstrates sending messages to systems you are not connected to.

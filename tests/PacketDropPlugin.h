@@ -11,9 +11,8 @@
 #pragma once
 
 #include "InternalPacket.h"
-#include "MessageIdentifiers.h"
-#include "PacketPriority.h"
 #include "PluginInterface2.h"
+#include "RakNetTime.h"
 #include "RakNetTypes.h"
 #include "RakTimer.h"
 

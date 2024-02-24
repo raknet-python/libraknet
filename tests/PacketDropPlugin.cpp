@@ -10,6 +10,9 @@
 
 #include "PacketDropPlugin.h"
 
+#include "PluginInterface2.h"
+#include "RakNetTypes.h"
+
 PacketDropPlugin::PacketDropPlugin() {
   timer.SetTimerLength(500);
 }

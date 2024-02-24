@@ -10,6 +10,14 @@
 
 #include "CommonFunctions.h"
 
+#include "GetTime.h"
+#include "PacketPriority.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakTimer.h"
+
 CommonFunctions::CommonFunctions(void) = default;
 
 CommonFunctions::~CommonFunctions(void) = default;

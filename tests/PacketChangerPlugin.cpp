@@ -10,6 +10,11 @@
 
 #include "PacketChangerPlugin.h"
 
+#include "InternalPacket.h"
+#include "MessageIdentifiers.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+
 PacketChangerPlugin::PacketChangerPlugin(void) = default;
 
 PacketChangerPlugin::~PacketChangerPlugin(void) = default;

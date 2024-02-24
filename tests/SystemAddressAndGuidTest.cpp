@@ -10,6 +10,16 @@
 
 #include "SystemAddressAndGuidTest.h"
 
+#include <cstdio>
+
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "RakNetDefines.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakString.h"
+#include "TestHelpers.h"
+
 /*
 Description:
 Tests:

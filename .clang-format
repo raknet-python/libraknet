@@ -44,7 +44,7 @@ ForEachMacros:
   - FOR_EACH
   - FOR_EACH_R
   - FOR_EACH_RANGE
-IncludeBlocks: Preserve
+IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^<.*\.h(pp)?>'
     Priority: 1

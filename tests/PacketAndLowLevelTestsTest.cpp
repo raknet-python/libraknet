@@ -10,6 +10,21 @@
 
 #include "PacketAndLowLevelTestsTest.h"
 
+#include <cstdio>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "MessageIdentifiers.h"
+#include "PacketChangerPlugin.h"
+#include "PacketPriority.h"
+#include "PluginInterface2.h"
+#include "RakNetDefines.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakString.h"
+#include "TestHelpers.h"
+
 /*
 Description:
 Tests out the sunctions:

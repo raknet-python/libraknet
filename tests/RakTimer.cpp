@@ -10,6 +10,8 @@
 
 #include "RakTimer.h"
 
+#include "GetTime.h"
+
 RakTimer::RakTimer() {
   timerLength = 1000;
   Start();

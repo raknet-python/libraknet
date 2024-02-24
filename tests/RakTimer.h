@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "GetTime.h"
 #include "RakNetTime.h"
 
 using namespace RakNet;

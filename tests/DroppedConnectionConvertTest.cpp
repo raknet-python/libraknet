@@ -10,6 +10,22 @@
 
 #include "DroppedConnectionConvertTest.h"
 
+#include <cstdio>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "GetTime.h"
+#include "MessageIdentifiers.h"
+#include "RakNetDefines.h"
+#include "RakNetTime.h"
+#include "RakNetTypes.h"
+#include "RakPeerInterface.h"
+#include "RakSleep.h"
+#include "RakString.h"
+#include "RakTimer.h"
+#include "Rand.h"
+
 /*
 Description:
 

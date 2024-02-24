@@ -10,6 +10,10 @@
 
 #include "DebugTools.h"
 
+#include <cstdio>
+
+#include "RakString.h"
+
 DebugTools::DebugTools(void) = default;
 
 DebugTools::~DebugTools(void) = default;

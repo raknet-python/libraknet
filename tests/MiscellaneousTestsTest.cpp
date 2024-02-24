@@ -10,6 +10,17 @@
 
 #include "MiscellaneousTestsTest.h"
 
+#include <cstdio>
+
+#include "CommonFunctions.h"
+#include "DS_List.h"
+#include "DebugTools.h"
+#include "MessageIdentifiers.h"
+#include "RakNetDefines.h"
+#include "RakPeerInterface.h"
+#include "RakString.h"
+#include "TestHelpers.h"
+
 /*
 Description:
 Tests:
