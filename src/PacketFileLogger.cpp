@@ -18,12 +18,14 @@ using namespace RakNet;
 PacketFileLogger::PacketFileLogger() {
   packetLogFile = nullptr;
 }
+
 PacketFileLogger::~PacketFileLogger() {
   if (packetLogFile) {
     fflush(packetLogFile);
     fclose(packetLogFile);
   }
 }
+
 void PacketFileLogger::StartLog(const char* filenamePrefix) {
   // Open file for writing
   char filename[256];

@@ -66,6 +66,7 @@ FileListReceiver::FileListReceiver() {
   DataStructures::Map<unsigned int, FLR_MemoryBlock>::
       IMPLEMENT_DEFAULT_COMPARISON();
 }
+
 FileListReceiver::~FileListReceiver() {
   unsigned int i = 0;
   for (i = 0; i < pushedFiles.Size(); i++) {
@@ -83,11 +84,13 @@ void FileListTransfer::FileToPushRecipient::DeleteThis() {
   ////	filesToPushMutex.Unlock();
   RakNet::OP_DELETE(this, _FILE_AND_LINE_);
 }
+
 void FileListTransfer::FileToPushRecipient::AddRef() {
   refCountMutex.Lock();
   ++refCount;
   refCountMutex.Unlock();
 }
+
 void FileListTransfer::FileToPushRecipient::Deref() {
   refCountMutex.Lock();
   --refCount;
@@ -98,15 +101,18 @@ void FileListTransfer::FileToPushRecipient::Deref() {
   }
   refCountMutex.Unlock();
 }
+
 FileListTransfer::FileListTransfer() {
   setId = 0;
   DataStructures::Map<unsigned short, FileListReceiver*>::
       IMPLEMENT_DEFAULT_COMPARISON();
 }
+
 FileListTransfer::~FileListTransfer() {
   threadPool.StopThreads();
   Clear();
 }
+
 void FileListTransfer::StartIncrementalReadThreads(
     int numThreads,
     int threadPriority) {
@@ -114,6 +120,7 @@ void FileListTransfer::StartIncrementalReadThreads(
 
   threadPool.StartThreads(numThreads, 0);
 }
+
 unsigned short FileListTransfer::SetupReceive(
     FileListTransferCBInterface* handler,
     bool deleteHandler,
@@ -531,6 +538,7 @@ bool FileListTransfer::DecodeFile(Packet* packet, bool isTheFullFile) {
 
   return true;
 }
+
 PluginReceiveResult FileListTransfer::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_FILE_LIST_TRANSFER_HEADER:
@@ -563,11 +571,13 @@ PluginReceiveResult FileListTransfer::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 void FileListTransfer::OnRakPeerShutdown() {
   threadPool.StopThreads();
   threadPool.ClearInput();
   Clear();
 }
+
 void FileListTransfer::Clear() {
   unsigned i;
   for (i = 0; i < fileListReceivers.Size(); i++) {
@@ -590,6 +600,7 @@ void FileListTransfer::Clear() {
 
   //filesToPush.Clear(false, _FILE_AND_LINE_);
 }
+
 void FileListTransfer::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -599,6 +610,7 @@ void FileListTransfer::OnClosedConnection(
 
   RemoveReceiver(systemAddress);
 }
+
 void FileListTransfer::CancelReceive(unsigned short setId) {
   if (!fileListReceivers.Has(setId)) {
 #ifdef _DEBUG
@@ -614,6 +626,7 @@ void FileListTransfer::CancelReceive(unsigned short setId) {
   RakNet::OP_DELETE(fileListReceiver, _FILE_AND_LINE_);
   fileListReceivers.Delete(setId);
 }
+
 void FileListTransfer::RemoveReceiver(SystemAddress systemAddress) {
   unsigned i;
   i = 0;
@@ -665,9 +678,11 @@ void FileListTransfer::RemoveReceiver(SystemAddress systemAddress) {
   }
   fileToPushRecipientListMutex.Unlock();
 }
+
 bool FileListTransfer::IsHandlerActive(unsigned short setId) {
   return fileListReceivers.Has(setId);
 }
+
 void FileListTransfer::AddCallback(FileListProgress* cb) {
   if (cb == nullptr) {
     return;
@@ -677,15 +692,18 @@ void FileListTransfer::AddCallback(FileListProgress* cb) {
     fileListProgressCallbacks.Push(cb, _FILE_AND_LINE_);
   }
 }
+
 void FileListTransfer::RemoveCallback(FileListProgress* cb) {
   unsigned int idx = fileListProgressCallbacks.GetIndexOf(cb);
   if (idx != (unsigned int)-1) {
     fileListProgressCallbacks.RemoveAtIndex(idx);
   }
 }
+
 void FileListTransfer::ClearCallbacks() {
   fileListProgressCallbacks.Clear(true, _FILE_AND_LINE_);
 }
+
 void FileListTransfer::GetCallbacks(
     DataStructures::List<FileListProgress*>& callbacks) {
   callbacks = fileListProgressCallbacks;
@@ -708,6 +726,7 @@ void FileListTransfer::Update() {
     }
   }
 }
+
 void FileListTransfer::OnReferencePush(Packet* packet, bool isTheFullFile) {
   RakNet::BitStream refPushAck;
   if (!isTheFullFile) {
@@ -951,6 +970,7 @@ void FileListTransfer::OnReferencePush(Packet* packet, bool isTheFullFile) {
 
   return;
 }
+
 namespace RakNet {
 
 /*
@@ -1175,6 +1195,7 @@ int SendIRIToAddressCB(
   return 0;
 }
 } // namespace RakNet
+
 void FileListTransfer::SendIRIToAddress(
     SystemAddress systemAddress,
     unsigned short setId) {
@@ -1190,6 +1211,7 @@ void FileListTransfer::SendIRIToAddress(
     SendIRIToAddressCB(threadData, &doesNothing, nullptr);
   }
 }
+
 void FileListTransfer::OnReferencePushAck(Packet* packet) {
   RakNet::BitStream inBitStream(packet->data, packet->length, false);
   inBitStream.IgnoreBits(8);
@@ -1197,6 +1219,7 @@ void FileListTransfer::OnReferencePushAck(Packet* packet) {
   inBitStream.Read(setId);
   SendIRIToAddress(packet->systemAddress, setId);
 }
+
 void FileListTransfer::RemoveFromList(FileToPushRecipient* ftpr) {
   fileToPushRecipientListMutex.Lock();
   for (unsigned int i = 0; i < fileToPushRecipientList.Size(); i++) {
@@ -1210,6 +1233,7 @@ void FileListTransfer::RemoveFromList(FileToPushRecipient* ftpr) {
   }
   fileToPushRecipientListMutex.Unlock();
 }
+
 unsigned int FileListTransfer::GetPendingFilesToAddress(
     SystemAddress recipient) {
   fileToPushRecipientListMutex.Lock();

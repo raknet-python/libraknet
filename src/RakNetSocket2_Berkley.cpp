@@ -54,6 +54,7 @@ void RNS2_Berkley::SetNonBlockingSocket(unsigned long nonblocking) {
     fcntl(rns2Socket, F_SETFL, O_NONBLOCK);
 #endif
 }
+
 void RNS2_Berkley::SetBroadcastSocket(int broadcast) {
   setsockopt__(
       rns2Socket,
@@ -62,10 +63,12 @@ void RNS2_Berkley::SetBroadcastSocket(int broadcast) {
       (char*)&broadcast,
       sizeof(broadcast));
 }
+
 void RNS2_Berkley::SetIPHdrIncl(int ipHdrIncl) {
   setsockopt__(
       rns2Socket, IPPROTO_IP, IP_HDRINCL, (char*)&ipHdrIncl, sizeof(ipHdrIncl));
 }
+
 void RNS2_Berkley::SetDoNotFragment(int opt) {
 #if defined(IP_DONTFRAGMENT)
 #if defined(_WIN32) && !defined(_DEBUG)
@@ -96,6 +99,7 @@ void RNS2_Berkley::GetSystemAddressIPV4(
     systemAddressOut->address.addr4.sin_addr.s_addr = inet_addr__("127.0.0.1");
   }
 }
+
 void RNS2_Berkley::GetSystemAddressIPV4And6(
     RNS2Socket rns2Socket,
     SystemAddress* systemAddressOut) {
@@ -279,6 +283,7 @@ RNS2BindResult RNS2_Berkley::BindSharedIPV4(
 
   return BR_SUCCESS;
 }
+
 RNS2BindResult RNS2_Berkley::BindSharedIPV4And6(
     RNS2_BerkleyBindParameters* bindParameters,
     const char* file,

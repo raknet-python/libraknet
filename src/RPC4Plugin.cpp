@@ -34,6 +34,7 @@ struct GlobalRegistration {
   MessageID messageId;
   int callPriority;
 };
+
 static GlobalRegistration
     globalRegistrationBuffer[RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS];
 static unsigned int globalRegistrationIndex = 0;
@@ -55,6 +56,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
   globalRegistrationBuffer[globalRegistrationIndex].callPriority = 0xFFFFFFFF;
   globalRegistrationIndex++;
 }
+
 RPC4GlobalRegistration::RPC4GlobalRegistration(
     const char* uniqueID,
     void (*functionPointer)(RakNet::BitStream* userData, Packet* packet),
@@ -74,6 +76,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
   globalRegistrationBuffer[globalRegistrationIndex].callPriority = callPriority;
   globalRegistrationIndex++;
 }
+
 RPC4GlobalRegistration::RPC4GlobalRegistration(
     const char* uniqueID,
     void (*functionPointer)(
@@ -93,6 +96,7 @@ RPC4GlobalRegistration::RPC4GlobalRegistration(
       .registerBlockingFunctionPointer = functionPointer;
   globalRegistrationIndex++;
 }
+
 RPC4GlobalRegistration::RPC4GlobalRegistration(
     const char* uniqueID,
     MessageID messageId) {
@@ -116,6 +120,7 @@ enum RPC4Identifiers {
   ID_RPC4_RETURN,
   ID_RPC4_SIGNAL,
 };
+
 int RPC4::LocalSlotObjectComp(
     const LocalSlotObject& key,
     const LocalSlotObject& data) {
@@ -134,6 +139,7 @@ int RPC4::LocalSlotObjectComp(
 
   return 1;
 }
+
 int RPC4::LocalCallbackComp(
     const MessageID& key,
     RPC4::LocalCallback* const& data) {
@@ -151,6 +157,7 @@ RPC4::RPC4() {
   nextSlotRegistrationCount = 0;
   interruptSignal = false;
 }
+
 RPC4::~RPC4() {
   unsigned int i;
   for (i = 0; i < localCallbacks.Size(); i++) {
@@ -166,6 +173,7 @@ RPC4::~RPC4() {
   }
   localSlots.Clear(_FILE_AND_LINE_);
 }
+
 bool RPC4::RegisterFunction(
     const char* uniqueID,
     void (*functionPointer)(RakNet::BitStream* userData, Packet* packet)) {
@@ -179,6 +187,7 @@ bool RPC4::RegisterFunction(
       uniqueID, functionPointer, _FILE_AND_LINE_);
   return true;
 }
+
 void RPC4::RegisterSlot(
     const char* sharedIdentifier,
     void (*functionPointer)(RakNet::BitStream* userData, Packet* packet),
@@ -195,6 +204,7 @@ void RPC4::RegisterSlot(
   }
   localSlot->slotObjects.Insert(lso, lso, true, _FILE_AND_LINE_);
 }
+
 bool RPC4::RegisterBlockingFunction(
     const char* uniqueID,
     void (*functionPointer)(
@@ -210,6 +220,7 @@ bool RPC4::RegisterBlockingFunction(
   registeredBlockingFunctions.Push(uniqueID, functionPointer, _FILE_AND_LINE_);
   return true;
 }
+
 void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId) {
   bool objectExists;
   unsigned int index;
@@ -230,14 +241,17 @@ void RPC4::RegisterLocalCallback(const char* uniqueID, MessageID messageId) {
     localCallbacks.InsertAtIndex(lc, index, _FILE_AND_LINE_);
   }
 }
+
 bool RPC4::UnregisterFunction(const char* uniqueID) {
   void (*f)(RakNet::BitStream*, Packet*);
   return registeredNonblockingFunctions.Pop(f, uniqueID, _FILE_AND_LINE_);
 }
+
 bool RPC4::UnregisterBlockingFunction(const char* uniqueID) {
   void (*f)(RakNet::BitStream*, RakNet::BitStream*, Packet*);
   return registeredBlockingFunctions.Pop(f, uniqueID, _FILE_AND_LINE_);
 }
+
 bool RPC4::UnregisterLocalCallback(const char* uniqueID, MessageID messageId) {
   bool objectExists;
   unsigned int index, index2;
@@ -259,6 +273,7 @@ bool RPC4::UnregisterLocalCallback(const char* uniqueID, MessageID messageId) {
   }
   return false;
 }
+
 bool RPC4::UnregisterSlot(const char* sharedIdentifier) {
   DataStructures::HashIndex hi = localSlots.GetIndexOf(sharedIdentifier);
   if (!hi.IsInvalid()) {
@@ -270,6 +285,7 @@ bool RPC4::UnregisterSlot(const char* sharedIdentifier) {
 
   return false;
 }
+
 void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
   Packet* p = nullptr;
 
@@ -341,6 +357,7 @@ void RPC4::CallLoopback(const char* uniqueID, RakNet::BitStream* bitStream) {
   PushBackPacketUnified(p, false);
   return;
 }
+
 void RPC4::Call(
     const char* uniqueID,
     RakNet::BitStream* bitStream,
@@ -367,6 +384,7 @@ void RPC4::Call(
       systemIdentifier,
       broadcast);
 }
+
 bool RPC4::CallBlocking(
     const char* uniqueID,
     RakNet::BitStream* bitStream,
@@ -447,6 +465,7 @@ bool RPC4::CallBlocking(
   returnData->ResetReadPointer();
   return true;
 }
+
 void RPC4::Signal(
     const char* sharedIdentifier,
     RakNet::BitStream* bitStream,
@@ -508,6 +527,7 @@ void RPC4::Signal(
     //printf("b3: %I64d\n", t4-t3);
   }
 }
+
 void RPC4::InvokeSignal(
     DataStructures::HashIndex functionIndex,
     RakNet::BitStream* serializedParameters,
@@ -547,9 +567,11 @@ void RPC4::InvokeSignal(
   //printf("b2: %I64d\n", t3-t2);
   //printf("b3: %I64d\n", t4-t3);
 }
+
 void RPC4::InterruptSignal() {
   interruptSignal = true;
 }
+
 void RPC4::OnAttach() {
   unsigned int i;
   for (i = 0; i < globalRegistrationIndex; i++) {
@@ -575,6 +597,7 @@ void RPC4::OnAttach() {
     }
   }
 }
+
 PluginReceiveResult RPC4::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_RPC_PLUGIN) {
     RakNet::BitStream bsIn(packet->data, packet->length, false);
@@ -691,6 +714,7 @@ PluginReceiveResult RPC4::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 DataStructures::HashIndex RPC4::GetLocalSlotIndex(
     const char* sharedIdentifier) {
   return localSlots.GetIndexOf(sharedIdentifier);

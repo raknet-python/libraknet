@@ -34,6 +34,7 @@ using namespace RakNet;
 CCRakNetSlidingWindow::CCRakNetSlidingWindow() = default;
 // ----------------------------------------------------------------------------------------------------------------------------
 CCRakNetSlidingWindow::~CCRakNetSlidingWindow() = default;
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::Init(
     CCTimeType curTime,
@@ -52,6 +53,7 @@ void CCRakNetSlidingWindow::Init(
   expectedNextSequenceNumber = 0;
   _isContinuousSend = false;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::Update(
     CCTimeType curTime,
@@ -59,6 +61,7 @@ void CCRakNetSlidingWindow::Update(
   (void)curTime;
   (void)hasDataToSendOrResend;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 int CCRakNetSlidingWindow::GetRetransmissionBandwidth(
     CCTimeType curTime,
@@ -71,6 +74,7 @@ int CCRakNetSlidingWindow::GetRetransmissionBandwidth(
 
   return unacknowledgedBytes;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 int CCRakNetSlidingWindow::GetTransmissionBandwidth(
     CCTimeType curTime,
@@ -88,6 +92,7 @@ int CCRakNetSlidingWindow::GetTransmissionBandwidth(
     return 0;
   }
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::ShouldSendACKs(
     CCTimeType curTime,
@@ -103,11 +108,13 @@ bool CCRakNetSlidingWindow::ShouldSendACKs(
 
   return curTime >= oldestUnsentAck + SYN;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 DatagramSequenceNumberType
 CCRakNetSlidingWindow::GetNextDatagramSequenceNumber() {
   return nextDatagramSequenceNumber;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 DatagramSequenceNumberType
 CCRakNetSlidingWindow::GetAndIncrementNextDatagramSequenceNumber() {
@@ -115,11 +122,13 @@ CCRakNetSlidingWindow::GetAndIncrementNextDatagramSequenceNumber() {
   nextDatagramSequenceNumber++;
   return dsnt;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnSendBytes(CCTimeType curTime, uint32_t numBytes) {
   (void)curTime;
   (void)numBytes;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnGotPacketPair(
     DatagramSequenceNumberType datagramSequenceNumber,
@@ -129,6 +138,7 @@ void CCRakNetSlidingWindow::OnGotPacketPair(
   (void)sizeInBytes;
   (void)datagramSequenceNumber;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::OnGotPacket(
     DatagramSequenceNumberType datagramSequenceNumber,
@@ -166,6 +176,7 @@ bool CCRakNetSlidingWindow::OnGotPacket(
 
   return true;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnResend(
     CCTimeType curTime,
@@ -191,6 +202,7 @@ void CCRakNetSlidingWindow::OnResend(
     //printf("-- %.0f (Resend) Enter slow start.\n", cwnd);
   }
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnNAK(
     CCTimeType curTime,
@@ -206,6 +218,7 @@ void CCRakNetSlidingWindow::OnNAK(
     //printf("- %.0f (NAK) Set congestion avoidance.\n", cwnd);
   }
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnAck(
     CCTimeType curTime,
@@ -269,6 +282,7 @@ void CCRakNetSlidingWindow::OnAck(
     // printf("+ %.0f Congestion avoidance increase.\n", cwnd);
   }
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnDuplicateAck(
     CCTimeType curTime,
@@ -276,6 +290,7 @@ void CCRakNetSlidingWindow::OnDuplicateAck(
   (void)curTime;
   (void)sequenceNumber;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnSendAckGetBAndAS(
     CCTimeType curTime,
@@ -288,6 +303,7 @@ void CCRakNetSlidingWindow::OnSendAckGetBAndAS(
 
   *hasBAndAS = false;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnSendAck(CCTimeType curTime, uint32_t numBytes) {
   (void)curTime;
@@ -295,11 +311,13 @@ void CCRakNetSlidingWindow::OnSendAck(CCTimeType curTime, uint32_t numBytes) {
 
   oldestUnsentAck = 0;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::OnSendNACK(CCTimeType curTime, uint32_t numBytes) {
   (void)curTime;
   (void)numBytes;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
     unsigned char timesSent) const {
@@ -330,15 +348,18 @@ CCTimeType CCRakNetSlidingWindow::GetRTOForRetransmission(
   }
   return threshhold;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 void CCRakNetSlidingWindow::SetMTU(uint32_t bytes) {
   RakAssert(bytes < MAXIMUM_MTU_SIZE);
   MAXIMUM_MTU_INCLUDING_UDP_HEADER = bytes;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 uint32_t CCRakNetSlidingWindow::GetMTU() const {
   return MAXIMUM_MTU_INCLUDING_UDP_HEADER;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 BytesPerMicrosecond CCRakNetSlidingWindow::GetLocalReceiveRate(
     CCTimeType currentTime) const {
@@ -346,6 +367,7 @@ BytesPerMicrosecond CCRakNetSlidingWindow::GetLocalReceiveRate(
 
   return 0; // TODO
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 double CCRakNetSlidingWindow::GetRTT() const {
   if (lastRtt == UNSET_TIME_US) {
@@ -353,6 +375,7 @@ double CCRakNetSlidingWindow::GetRTT() const {
   }
   return lastRtt;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::GreaterThan(
     DatagramSequenceNumberType a,
@@ -363,6 +386,7 @@ bool CCRakNetSlidingWindow::GreaterThan(
                                    (DatagramSequenceNumberType)2);
   return b != a && b - a > halfSpan;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::LessThan(
     DatagramSequenceNumberType a,
@@ -373,11 +397,13 @@ bool CCRakNetSlidingWindow::LessThan(
       (DatagramSequenceNumberType)2;
   return b != a && b - a < halfSpan;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 uint64_t CCRakNetSlidingWindow::GetBytesPerSecondLimitByCongestionControl()
     const {
   return 0; // TODO
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK() const {
   if (lastRtt == UNSET_TIME_US) {
@@ -385,9 +411,11 @@ CCTimeType CCRakNetSlidingWindow::GetSenderRTOForACK() const {
   }
   return (CCTimeType)(lastRtt + SYN);
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 bool CCRakNetSlidingWindow::IsInSlowStart() const {
   return cwnd <= ssThresh || ssThresh == 0;
 }
+
 // ----------------------------------------------------------------------------------------------------------------------------
 #endif

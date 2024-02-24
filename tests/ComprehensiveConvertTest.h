@@ -30,6 +30,7 @@
 #include "Rand.h"
 
 using namespace RakNet;
+
 class ComprehensiveConvertTest : public TestInterface {
  public:
   ComprehensiveConvertTest();

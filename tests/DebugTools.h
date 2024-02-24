@@ -13,6 +13,7 @@
 #include "RakString.h"
 
 using namespace RakNet;
+
 class DebugTools {
  public:
   DebugTools();

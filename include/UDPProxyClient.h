@@ -187,10 +187,12 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
     unsigned short ping;
     SystemAddress serverAddress;
   };
+
   struct SenderAndTargetAddress {
     SystemAddress senderClientAddress;
     SystemAddress targetClientAddress;
   };
+
   struct PingServerGroup {
     SenderAndTargetAddress sata;
     RakNet::TimeMS startPingTime;
@@ -200,6 +202,7 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
     bool AreAllServersPinged() const;
     void SendPingedServersToCoordinator(RakPeerInterface* rakPeerInterface);
   };
+
   //DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
   DataStructures::List<PingServerGroup*> pingServerGroups;
 

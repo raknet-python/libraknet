@@ -42,7 +42,9 @@ PacketLogger::PacketLogger() {
   suffix[0] = 0;
   logDirectMessages = true;
 }
+
 PacketLogger::~PacketLogger() {}
+
 void PacketLogger::FormatLine(
     char* into,
     const char* dir,
@@ -142,6 +144,7 @@ void PacketLogger::FormatLine(
       orderingIndex,
       suffix);
 }
+
 void PacketLogger::OnDirectSocketSend(
     const char* data,
     const BitSize_t bitsUsed,
@@ -173,6 +176,7 @@ void PacketLogger::LogHeader(void) {
   AddToLog(
       "Clock,S|R,Typ,Reliable#,Frm #,PktID,BitLn,Time     ,Local IP:Port   ,RemoteIP:Port,SPID,SPIN,SPCO,OI,Suffix,Miscellaneous\n");
 }
+
 void PacketLogger::OnDirectSocketReceive(
     const char* data,
     const BitSize_t bitsUsed,
@@ -198,6 +202,7 @@ void PacketLogger::OnDirectSocketReceive(
       (unsigned int)-1);
   AddToLog(str);
 }
+
 void PacketLogger::OnReliabilityLayerNotification(
     const char* errorMessage,
     const BitSize_t bitsUsed,
@@ -227,6 +232,7 @@ void PacketLogger::OnReliabilityLayerNotification(
   AddToLog(str);
   RakAssert(isError == false);
 }
+
 void PacketLogger::OnAck(
     unsigned int messageNumber,
     SystemAddress remoteSystemAddress,
@@ -250,6 +256,7 @@ void PacketLogger::OnAck(
       str2);
   AddToLog(str);
 }
+
 void PacketLogger::OnPushBackPacket(
     const char* data,
     const BitSize_t bitsUsed,
@@ -275,6 +282,7 @@ void PacketLogger::OnPushBackPacket(
       str2);
   AddToLog(str);
 }
+
 void PacketLogger::OnInternalPacket(
     InternalPacket* internalPacket,
     unsigned frameNumber,
@@ -340,12 +348,15 @@ void PacketLogger::OnInternalPacket(
 
   AddToLog(str);
 }
+
 void PacketLogger::AddToLog(const char* str) {
   WriteLog(str);
 }
+
 void PacketLogger::WriteLog(const char* str) {
   RAKNET_DEBUG_PRINTF("%s\n", str);
 }
+
 void PacketLogger::WriteMiscellaneous(const char* type, const char* msg) {
   char str[1024];
   char str1[64];
@@ -366,12 +377,15 @@ void PacketLogger::WriteMiscellaneous(const char* type, const char* msg) {
 
   AddToLog(msg);
 }
+
 void PacketLogger::SetPrintID(bool print) {
   printId = print;
 }
+
 void PacketLogger::SetPrintAcks(bool print) {
   printAcks = print;
 }
+
 const char* PacketLogger::BaseIDTOString(unsigned char Id) {
   if (Id >= ID_USER_PACKET_ENUM)
     return 0;
@@ -515,12 +529,14 @@ const char* PacketLogger::BaseIDTOString(unsigned char Id) {
 
   return (char*)IDTable[Id];
 }
+
 const char* PacketLogger::UserIDTOString(unsigned char Id) {
   // Users should override this
   static char str[256];
   Itoa(Id, str, 10);
   return (const char*)str;
 }
+
 const char* PacketLogger::IDTOString(unsigned char Id) {
   const char* out;
   out = BaseIDTOString(Id);
@@ -528,14 +544,17 @@ const char* PacketLogger::IDTOString(unsigned char Id) {
     return out;
   return UserIDTOString(Id);
 }
+
 void PacketLogger::SetPrefix(const char* _prefix) {
   strncpy(prefix, _prefix, 255);
   prefix[255] = 0;
 }
+
 void PacketLogger::SetSuffix(const char* _suffix) {
   strncpy(suffix, _suffix, 255);
   suffix[255] = 0;
 }
+
 void PacketLogger::GetLocalTime(char buffer[128]) {
 #if defined(_WIN32) && !defined(__GNUC__) && !defined(__GCCXML__)
   time_t rawtime;
@@ -569,6 +588,7 @@ void PacketLogger::GetLocalTime(char buffer[128]) {
   buffer[0] = 0;
 #endif
 }
+
 void PacketLogger::SetLogDirectMessages(bool send) {
   logDirectMessages = send;
 }

@@ -69,6 +69,7 @@ bool ReadyEvent::SetEvent(int eventId, bool isReady) {
   }
   return true;
 }
+
 void ReadyEvent::ForceCompletion(int eventId) {
   bool objectExists;
   unsigned eventIndex =
@@ -83,6 +84,7 @@ void ReadyEvent::ForceCompletion(int eventId) {
   ren->eventStatus = ID_READY_EVENT_FORCE_ALL_SET;
   UpdateReadyStatus(eventIndex);
 }
+
 bool ReadyEvent::DeleteEvent(int eventId) {
   bool objectExists;
   unsigned eventIndex =
@@ -94,6 +96,7 @@ bool ReadyEvent::DeleteEvent(int eventId) {
   }
   return false;
 }
+
 bool ReadyEvent::IsEventSet(int eventId) {
   bool objectExists;
   unsigned eventIndex =
@@ -104,6 +107,7 @@ bool ReadyEvent::IsEventSet(int eventId) {
   }
   return false;
 }
+
 bool ReadyEvent::IsEventCompletionProcessing(int eventId) const {
   bool objectExists;
   unsigned eventIndex =
@@ -126,6 +130,7 @@ bool ReadyEvent::IsEventCompletionProcessing(int eventId) const {
   }
   return false;
 }
+
 bool ReadyEvent::IsEventCompleted(int eventId) const {
   bool objectExists;
   unsigned eventIndex =
@@ -178,6 +183,7 @@ bool ReadyEvent::AddToWaitList(int eventId, RakNetGUID guid) {
   }
   return numAdded > 0;
 }
+
 bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
   bool eventExists;
   unsigned eventIndex =
@@ -209,6 +215,7 @@ bool ReadyEvent::RemoveFromWaitList(int eventId, RakNetGUID guid) {
 
   return false;
 }
+
 bool ReadyEvent::IsInWaitList(int eventId, RakNetGUID guid) {
   bool objectExists;
   unsigned readyIndex =
@@ -239,6 +246,7 @@ RakNetGUID ReadyEvent::GetFromWaitListAtIndex(int eventId, unsigned index)
   }
   return UNASSIGNED_RAKNET_GUID;
 }
+
 ReadyEventSystemStatus ReadyEvent::GetReadyStatus(
     int eventId,
     RakNetGUID guid) {
@@ -266,9 +274,11 @@ ReadyEventSystemStatus ReadyEvent::GetReadyStatus(
 
   return RES_UNKNOWN_EVENT;
 }
+
 void ReadyEvent::SetSendChannel(unsigned char newChannel) {
   channel = newChannel;
 }
+
 PluginReceiveResult ReadyEvent::OnReceive(Packet* packet) {
   unsigned char packetIdentifier;
   packetIdentifier = (unsigned char)packet->data[0];
@@ -293,6 +303,7 @@ PluginReceiveResult ReadyEvent::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid) {
   ReadyEventNode* ren = readyEventNodeList[eventIndex];
   bool objectExists;
@@ -309,6 +320,7 @@ bool ReadyEvent::AddToWaitListInternal(unsigned eventIndex, RakNetGUID guid) {
   }
   return false;
 }
+
 void ReadyEvent::OnReadyEventForceAllSet(Packet* packet) {
   RakNet::BitStream incomingBitStream(packet->data, packet->length, false);
   incomingBitStream.IgnoreBits(8);
@@ -325,6 +337,7 @@ void ReadyEvent::OnReadyEventForceAllSet(Packet* packet) {
     }
   }
 }
+
 void ReadyEvent::OnReadyEventPacketUpdate(Packet* packet) {
   RakNet::BitStream incomingBitStream(packet->data, packet->length, false);
   incomingBitStream.IgnoreBits(8);
@@ -357,6 +370,7 @@ void ReadyEvent::OnReadyEventPacketUpdate(Packet* packet) {
     }
   }
 }
+
 void ReadyEvent::OnReadyEventQuery(Packet* packet) {
   RakNet::BitStream incomingBitStream(packet->data, packet->length, false);
   incomingBitStream.IgnoreBits(8);
@@ -375,6 +389,7 @@ void ReadyEvent::OnReadyEventQuery(Packet* packet) {
     }
   }
 }
+
 void ReadyEvent::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -385,6 +400,7 @@ void ReadyEvent::OnClosedConnection(
 
   RemoveFromAllLists(rakNetGUID);
 }
+
 void ReadyEvent::OnRakPeerShutdown() {
   Clear();
 }
@@ -454,6 +470,7 @@ unsigned ReadyEvent::CreateNewEvent(int eventId, bool isReady) {
   }
   return readyEventNodeList.Insert(eventId, ren, true, _FILE_AND_LINE_);
 }
+
 void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
   ReadyEventNode* ren = readyEventNodeList[eventIndex];
   bool anyUnset;
@@ -485,6 +502,7 @@ void ReadyEvent::UpdateReadyStatus(unsigned eventIndex) {
   }
   BroadcastReadyUpdate(eventIndex, false);
 }
+
 void ReadyEvent::SendReadyUpdate(
     unsigned eventIndex,
     unsigned systemIndex,
@@ -507,6 +525,7 @@ void ReadyEvent::SendReadyUpdate(
     ren->systemList[systemIndex].lastSentStatus = ren->eventStatus;
   }
 }
+
 void ReadyEvent::BroadcastReadyUpdate(
     unsigned eventIndex,
     bool forceIfNotDefault) {
@@ -516,12 +535,14 @@ void ReadyEvent::BroadcastReadyUpdate(
     SendReadyUpdate(eventIndex, systemIndex, forceIfNotDefault);
   }
 }
+
 void ReadyEvent::SendReadyStateQuery(unsigned eventId, RakNetGUID guid) {
   RakNet::BitStream bs;
   bs.Write((MessageID)ID_READY_EVENT_QUERY);
   bs.Write(eventId);
   SendUnified(&bs, HIGH_PRIORITY, RELIABLE_ORDERED, channel, guid, false);
 }
+
 void ReadyEvent::RemoveFromAllLists(RakNetGUID guid) {
   unsigned eventIndex;
   for (eventIndex = 0; eventIndex < readyEventNodeList.Size(); eventIndex++) {
@@ -542,6 +563,7 @@ void ReadyEvent::RemoveFromAllLists(RakNetGUID guid) {
     }
   }
 }
+
 void ReadyEvent::PushCompletionPacket(unsigned eventId) {
   (void)eventId;
   // Not necessary

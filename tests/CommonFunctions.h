@@ -23,6 +23,7 @@
 #include "RakTimer.h"
 
 using namespace RakNet;
+
 class CommonFunctions {
  public:
   CommonFunctions();

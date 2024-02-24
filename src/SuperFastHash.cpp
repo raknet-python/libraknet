@@ -48,6 +48,7 @@ uint32_t SuperFastHash(const char* data, int length) {
 
   //	return SuperFastHashIncremental(data,len,len);
 }
+
 uint32_t
 SuperFastHashIncremental(const char* data, int len, unsigned int lastHash) {
   auto hash = (uint32_t)lastHash;

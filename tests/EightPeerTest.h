@@ -24,6 +24,7 @@
 #include "RakSleep.h"
 
 using namespace RakNet;
+
 class EightPeerTest : public TestInterface {
  public:
   EightPeerTest();

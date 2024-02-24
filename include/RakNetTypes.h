@@ -288,10 +288,12 @@ struct RAK_DLL_EXPORT SystemAddress {
 /// Use RakPeer::GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS) to get your own GUID
 struct RAK_DLL_EXPORT RakNetGUID {
   RakNetGUID();
+
   explicit RakNetGUID(uint64_t _g) {
     g = _g;
     systemIndex = (SystemIndex)-1;
   }
+
   //	uint32_t g[6];
   uint64_t g;
 
@@ -313,6 +315,7 @@ struct RAK_DLL_EXPORT RakNetGUID {
 
   // Used internally for fast lookup. Optional (use -1 to do regular lookup). Don't transmit this.
   SystemIndex systemIndex;
+
   static int size() {
     return (int)sizeof(uint64_t);
   }
@@ -346,34 +349,42 @@ struct RAK_DLL_EXPORT AddressOrGUID {
       return rakNetGuid.systemIndex;
     } else {
       return systemAddress.systemIndex;
-}
+    }
   }
+
   bool IsUndefined() const {
     return rakNetGuid == UNASSIGNED_RAKNET_GUID &&
         systemAddress == UNASSIGNED_SYSTEM_ADDRESS;
   }
+
   void SetUndefined() {
     rakNetGuid = UNASSIGNED_RAKNET_GUID;
     systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
   }
+
   static unsigned long ToInteger(const AddressOrGUID& aog);
   const char* ToString(bool writePort = true) const;
   void ToString(bool writePort, char* dest) const;
 
   AddressOrGUID() = default;
+
   AddressOrGUID(const AddressOrGUID& input) {
     rakNetGuid = input.rakNetGuid;
     systemAddress = input.systemAddress;
   }
+
   AddressOrGUID(const SystemAddress& input) {
     rakNetGuid = UNASSIGNED_RAKNET_GUID;
     systemAddress = input;
   }
+
   AddressOrGUID(Packet* packet);
+
   AddressOrGUID(const RakNetGUID& input) {
     rakNetGuid = input;
     systemAddress = UNASSIGNED_SYSTEM_ADDRESS;
   }
+
   AddressOrGUID& operator=(const AddressOrGUID& input) = default;
 
   AddressOrGUID& operator=(const SystemAddress& input) {
@@ -438,9 +449,11 @@ struct RAK_DLL_EXPORT uint24_t {
   uint32_t val;
 
   uint24_t() = default;
+
   inline operator uint32_t() {
     return val;
   }
+
   inline operator uint32_t() const {
     return val;
   }
@@ -448,63 +461,79 @@ struct RAK_DLL_EXPORT uint24_t {
   inline uint24_t(const uint24_t& a) {
     val = a.val;
   }
+
   inline uint24_t operator++() {
     ++val;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline uint24_t operator--() {
     --val;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline uint24_t operator++(int) {
     uint24_t temp(val);
     ++val;
     val &= 0x00FFFFFF;
     return temp;
   }
+
   inline uint24_t operator--(int) {
     uint24_t temp(val);
     --val;
     val &= 0x00FFFFFF;
     return temp;
   }
+
   inline uint24_t operator&(const uint24_t& a) {
     return uint24_t(val & a.val);
   }
+
   inline uint24_t& operator=(const uint24_t& a) = default;
+
   inline uint24_t& operator+=(const uint24_t& a) {
     val += a.val;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline uint24_t& operator-=(const uint24_t& a) {
     val -= a.val;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline bool operator==(const uint24_t& right) const {
     return val == right.val;
   }
+
   inline bool operator!=(const uint24_t& right) const {
     return val != right.val;
   }
+
   inline bool operator>(const uint24_t& right) const {
     return val > right.val;
   }
+
   inline bool operator<(const uint24_t& right) const {
     return val < right.val;
   }
+
   inline const uint24_t operator+(const uint24_t& other) const {
     return uint24_t(val + other.val);
   }
+
   inline const uint24_t operator-(const uint24_t& other) const {
     return uint24_t(val - other.val);
   }
+
   inline const uint24_t operator/(const uint24_t& other) const {
     return uint24_t(val / other.val);
   }
+
   inline const uint24_t operator*(const uint24_t& other) const {
     return uint24_t(val * other.val);
   }
@@ -513,45 +542,57 @@ struct RAK_DLL_EXPORT uint24_t {
     val = a;
     val &= 0x00FFFFFF;
   }
+
   inline uint24_t operator&(const uint32_t& a) {
     return uint24_t(val & a);
   }
+
   inline uint24_t& operator=(const uint32_t& a) {
     val = a;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline uint24_t& operator+=(const uint32_t& a) {
     val += a;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline uint24_t& operator-=(const uint32_t& a) {
     val -= a;
     val &= 0x00FFFFFF;
     return *this;
   }
+
   inline bool operator==(const uint32_t& right) const {
     return val == (right & 0x00FFFFFF);
   }
+
   inline bool operator!=(const uint32_t& right) const {
     return val != (right & 0x00FFFFFF);
   }
+
   inline bool operator>(const uint32_t& right) const {
     return val > (right & 0x00FFFFFF);
   }
+
   inline bool operator<(const uint32_t& right) const {
     return val < (right & 0x00FFFFFF);
   }
+
   inline const uint24_t operator+(const uint32_t& other) const {
     return uint24_t(val + other);
   }
+
   inline const uint24_t operator-(const uint32_t& other) const {
     return uint24_t(val - other);
   }
+
   inline const uint24_t operator/(const uint32_t& other) const {
     return uint24_t(val / other);
   }
+
   inline const uint24_t operator*(const uint32_t& other) const {
     return uint24_t(val * other);
   }

@@ -17,6 +17,7 @@
 #include "RakNetTypes.h"
 
 using namespace RakNet;
+
 class PacketChangerPlugin : public PluginInterface2 {
  public:
   PacketChangerPlugin();

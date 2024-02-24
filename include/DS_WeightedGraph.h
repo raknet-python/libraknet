@@ -92,6 +92,7 @@ class RAK_DLL_EXPORT WeightedGraph {
   DataStructures::OrderedList<node_type, node_type> costMatrixIndices;
   weight_type* costMatrix;
   node_type* leastNodeArray;
+
   //	} dijkstra;
 
   struct NodeAndParent {

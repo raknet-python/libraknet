@@ -30,6 +30,7 @@ class ThreadDataInterface {
   virtual void* PerThreadFactory(void* context) = 0;
   virtual void PerThreadDestructor(void* factoryResult, void* context) = 0;
 };
+
 /// A simple class to create worker threads that processes a queue of functions with data.
 /// This class does not allocate or deallocate memory.  It is up to the user to handle memory management.
 /// InputType and OutputType are stored directly in a queue.  For large structures, if you plan to delete from the middle of the queue,
@@ -305,6 +306,7 @@ void* WorkerThread( void* arguments )
 
   return 0;
 }
+
 template <class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::ThreadPool() {
   runThreads = false;
@@ -313,11 +315,13 @@ ThreadPool<InputType, OutputType>::ThreadPool() {
   tdiContext = 0;
   numThreadsWorking = 0;
 }
+
 template <class InputType, class OutputType>
 ThreadPool<InputType, OutputType>::~ThreadPool() {
   StopThreads();
   Clear();
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::StartThreads(
     int numThreads,
@@ -374,6 +378,7 @@ bool ThreadPool<InputType, OutputType>::StartThreads(
 
   return true;
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::SetThreadDataInterface(
     ThreadDataInterface* tdi,
@@ -381,6 +386,7 @@ void ThreadPool<InputType, OutputType>::SetThreadDataInterface(
   threadDataInterface = tdi;
   tdiContext = context;
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::StopThreads() {
   runThreadsMutex.Lock();
@@ -411,6 +417,7 @@ void ThreadPool<InputType, OutputType>::StopThreads() {
   // 	runtime=0;
   // #endif
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddInput(
     OutputType (*workerThreadCallback)(
@@ -425,16 +432,19 @@ void ThreadPool<InputType, OutputType>::AddInput(
 
   quitAndIncomingDataEvents.SetEvent();
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::AddOutput(OutputType outputData) {
   outputQueueMutex.Lock();
   outputQueue.Push(outputData, _FILE_AND_LINE_);
   outputQueueMutex.Unlock();
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutputFast() {
   return outputQueue.IsEmpty() == false;
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasOutput() {
   bool res;
@@ -443,10 +453,12 @@ bool ThreadPool<InputType, OutputType>::HasOutput() {
   outputQueueMutex.Unlock();
   return res;
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasInputFast() {
   return inputQueue.IsEmpty() == false;
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::HasInput() {
   bool res;
@@ -455,6 +467,7 @@ bool ThreadPool<InputType, OutputType>::HasInput() {
   inputQueueMutex.Unlock();
   return res;
 }
+
 template <class InputType, class OutputType>
 OutputType ThreadPool<InputType, OutputType>::GetOutput() {
   // Real output check
@@ -464,6 +477,7 @@ OutputType ThreadPool<InputType, OutputType>::GetOutput() {
   outputQueueMutex.Unlock();
   return output;
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Clear() {
   runThreadsMutex.Lock();
@@ -483,47 +497,58 @@ void ThreadPool<InputType, OutputType>::Clear() {
     outputQueue.Clear(_FILE_AND_LINE_);
   }
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockInput() {
   inputQueueMutex.Lock();
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockInput() {
   inputQueueMutex.Unlock();
 }
+
 template <class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::InputSize() {
   return inputQueue.Size();
 }
+
 template <class InputType, class OutputType>
 InputType ThreadPool<InputType, OutputType>::GetInputAtIndex(unsigned index) {
   return inputQueue[index];
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::RemoveInputAtIndex(unsigned index) {
   inputQueue.RemoveAtIndex(index);
   inputFunctionQueue.RemoveAtIndex(index);
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::LockOutput() {
   outputQueueMutex.Lock();
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::UnlockOutput() {
   outputQueueMutex.Unlock();
 }
+
 template <class InputType, class OutputType>
 unsigned ThreadPool<InputType, OutputType>::OutputSize() {
   return outputQueue.Size();
 }
+
 template <class InputType, class OutputType>
 OutputType ThreadPool<InputType, OutputType>::GetOutputAtIndex(unsigned index) {
   return outputQueue[index];
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::RemoveOutputAtIndex(unsigned index) {
   outputQueue.RemoveAtIndex(index);
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearInput() {
   inputQueue.Clear(_FILE_AND_LINE_);
@@ -534,6 +559,7 @@ template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::ClearOutput() {
   outputQueue.Clear(_FILE_AND_LINE_);
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::IsWorking() {
   bool isWorking;
@@ -574,6 +600,7 @@ bool ThreadPool<InputType, OutputType>::WasStarted() {
   runThreadsMutex.Unlock();
   return b;
 }
+
 template <class InputType, class OutputType>
 bool ThreadPool<InputType, OutputType>::Pause() {
   if (WasStarted() == false)
@@ -585,6 +612,7 @@ bool ThreadPool<InputType, OutputType>::Pause() {
   }
   return true;
 }
+
 template <class InputType, class OutputType>
 void ThreadPool<InputType, OutputType>::Resume() {
   workingThreadCountMutex.Unlock();

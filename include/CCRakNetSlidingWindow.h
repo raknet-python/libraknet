@@ -192,14 +192,18 @@ class CCRakNetSlidingWindow {
   BytesPerMicrosecond GetLocalSendRate() const {
     return 0;
   }
+
   BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
+
   BytesPerMicrosecond GetRemoveReceiveRate() const {
     return 0;
   }
+
   //BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
   BytesPerMicrosecond GetEstimatedBandwidth() const {
     return GetLinkCapacityBytesPerSecond() * 1000000.0;
   }
+
   double GetLinkCapacityBytesPerSecond() const {
     return 0;
   }
@@ -210,6 +214,7 @@ class CCRakNetSlidingWindow {
   bool GetIsInSlowStart() const {
     return IsInSlowStart();
   }
+
   uint32_t GetCWNDLimit() const {
     return (uint32_t)0;
   }

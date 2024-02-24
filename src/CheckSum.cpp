@@ -32,6 +32,7 @@ void CheckSum::Add(unsigned int value) {
   }
 
   data;
+
   data.value = value;
 
   for (unsigned int i = 0; i < sizeof(data.bytes); i++) {
@@ -58,6 +59,7 @@ void CheckSum::Add(unsigned short value) {
   }
 
   data;
+
   data.value = value;
 
   for (unsigned int i = 0; i < sizeof(data.bytes); i++) {

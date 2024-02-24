@@ -27,6 +27,7 @@
 #include "TestHelpers.h"
 
 using namespace RakNet;
+
 class PingTestsTest : public TestInterface {
  public:
   PingTestsTest();

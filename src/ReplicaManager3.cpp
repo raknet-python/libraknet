@@ -65,17 +65,20 @@ LastSerializationResult::LastSerializationResult() {
   lastSerializationResultBS = nullptr;
   whenLastSerialized = RakNet::GetTime();
 }
+
 LastSerializationResult::~LastSerializationResult() {
   if (lastSerializationResultBS) {
     RakNet::OP_DELETE(lastSerializationResultBS, _FILE_AND_LINE_);
   }
 }
+
 void LastSerializationResult::AllocBS() {
   if (lastSerializationResultBS == nullptr) {
     lastSerializationResultBS =
         RakNet::OP_NEW<LastSerializationResultBS>(_FILE_AND_LINE_);
   }
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ReplicaManager3::ReplicaManager3() {
@@ -390,6 +393,7 @@ void ReplicaManager3::GetReferencedReplicaList(
 
   replicaListOut = world->userReplicaList;
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void ReplicaManager3::GetReplicasCreatedByGuid(
@@ -881,6 +885,7 @@ void Connection_RM3::AutoConstructByQuery(
       worldId,
       replicaManager3);
 }
+
 void ReplicaManager3::Update() {
   unsigned int index, index2, index3;
 
@@ -1277,6 +1282,7 @@ PluginReceiveResult ReplicaManager3::OnSerialize(
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 PluginReceiveResult ReplicaManager3::OnDownloadStarted(
@@ -1519,6 +1525,7 @@ void Connection_RM3::SendSerializeHeader(
   bs->Write(worldId);
   bs->Write(replica->GetNetworkID());
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void Connection_RM3::ClearDownloadGroup(RakPeerInterface* rakPeerInterface) {
   unsigned int i;
@@ -1527,6 +1534,7 @@ void Connection_RM3::ClearDownloadGroup(RakPeerInterface* rakPeerInterface) {
   }
   downloadGroup.Clear(__FILE__, __LINE__);
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 SendSerializeIfChangedResult Connection_RM3::SendSerialize(
     RakNet::Replica3* replica,
@@ -2088,6 +2096,7 @@ void Connection_RM3::OnDownloadExisting(
     OnConstructToThisConnection(replica3, replicaManager);
   }
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void Connection_RM3::OnSendDestructionFromQuery(
@@ -2251,6 +2260,7 @@ void Connection_RM3::ValidateLists(ReplicaManager3* replicaManager) const {
 #endif
 	*/
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 void Connection_RM3::SendConstruction(

@@ -190,129 +190,154 @@ class RAK_DLL_EXPORT RackspaceEventCallback_Default
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnAuthenticationResult", eventType, htmlAdditionalInfo);
   }
+
   void OnListServersResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListServersResult", eventType, htmlAdditionalInfo);
   }
+
   void OnListServersWithDetailsResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnListServersWithDetailsResult", eventType, htmlAdditionalInfo);
   }
+
   void OnCreateServerResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateServerResult", eventType, htmlAdditionalInfo);
   }
+
   void OnGetServerDetails(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetServerDetails", eventType, htmlAdditionalInfo);
   }
+
   void OnUpdateServerNameOrPassword(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnUpdateServerNameOrPassword", eventType, htmlAdditionalInfo);
   }
+
   void OnDeleteServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteServer", eventType, htmlAdditionalInfo);
   }
+
   void OnListServerAddresses(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListServerAddresses", eventType, htmlAdditionalInfo);
   }
+
   void OnShareServerAddress(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnShareServerAddress", eventType, htmlAdditionalInfo);
   }
+
   void OnDeleteServerAddress(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteServerAddress", eventType, htmlAdditionalInfo);
   }
+
   void OnRebootServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRebootServer", eventType, htmlAdditionalInfo);
   }
+
   void OnRebuildServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRebuildServer", eventType, htmlAdditionalInfo);
   }
+
   void OnResizeServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnResizeServer", eventType, htmlAdditionalInfo);
   }
+
   void OnConfirmResizedServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnConfirmResizedServer", eventType, htmlAdditionalInfo);
   }
+
   void OnRevertResizedServer(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRevertResizedServer", eventType, htmlAdditionalInfo);
   }
+
   void OnListFlavorsResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListFlavorsResult", eventType, htmlAdditionalInfo);
   }
+
   void OnGetFlavorDetailsResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetFlavorDetailsResult", eventType, htmlAdditionalInfo);
   }
+
   void OnListImagesResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListImagesResult", eventType, htmlAdditionalInfo);
   }
+
   void OnCreateImageResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateImageResult", eventType, htmlAdditionalInfo);
   }
+
   void OnGetImageDetailsResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetImageDetailsResult", eventType, htmlAdditionalInfo);
   }
+
   void OnDeleteImageResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteImageResult", eventType, htmlAdditionalInfo);
   }
+
   void OnListSharedIPGroups(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListSharedIPGroups", eventType, htmlAdditionalInfo);
   }
+
   void OnListSharedIPGroupsWithDetails(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnListSharedIPGroupsWithDetails", eventType, htmlAdditionalInfo);
   }
+
   void OnCreateSharedIPGroup(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateSharedIPGroup", eventType, htmlAdditionalInfo);
   }
+
   void OnGetSharedIPGroupDetails(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetSharedIPGroupDetails", eventType, htmlAdditionalInfo);
   }
+
   void OnDeleteSharedIPGroup(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) override {

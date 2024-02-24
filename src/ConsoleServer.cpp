@@ -31,11 +31,13 @@ ConsoleServer::ConsoleServer() {
   password[0] = nullptr;
   prompt = nullptr;
 }
+
 ConsoleServer::~ConsoleServer() {
   if (prompt) {
     rakFree_Ex(prompt, _FILE_AND_LINE_);
   }
 }
+
 void ConsoleServer::SetTransportProvider(
     TransportInterface* transportInterface,
     unsigned short port) {
@@ -57,6 +59,7 @@ void ConsoleServer::SetTransportProvider(
     AddCommandParser(transport->GetCommandParser());
   }
 }
+
 void ConsoleServer::AddCommandParser(
     CommandParserInterface* commandParserInterface) {
   if (commandParserInterface == nullptr) {
@@ -84,6 +87,7 @@ void ConsoleServer::AddCommandParser(
     commandParserInterface->OnTransportChange(transport);
   }
 }
+
 void ConsoleServer::RemoveCommandParser(
     CommandParserInterface* commandParserInterface) {
   if (commandParserInterface == nullptr) {
@@ -100,6 +104,7 @@ void ConsoleServer::RemoveCommandParser(
     }
   }
 }
+
 void ConsoleServer::Update() {
   unsigned i;
   char* parameterList[20]; // Up to 20 parameters
@@ -347,9 +352,11 @@ void ConsoleServer::ListParsers(SystemAddress systemAddress) {
         systemAddress, "%i. %s\r\n", i + 1, commandParserList[i]->GetName());
   }
 }
+
 void ConsoleServer::ShowPrompt(SystemAddress systemAddress) {
   transport->Send(systemAddress, prompt);
 }
+
 void ConsoleServer::SetPrompt(const char* _prompt) {
   if (prompt) {
     rakFree_Ex(prompt, _FILE_AND_LINE_);

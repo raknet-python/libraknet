@@ -113,6 +113,7 @@ class RAK_DLL_EXPORT TwoWayAuthentication : public PluginInterface2 {
     unsigned short requestId;
     RakNet::Time whenGenerated;
   };
+
   /// \internal
   struct RAK_DLL_EXPORT NonceGenerator {
     NonceGenerator();

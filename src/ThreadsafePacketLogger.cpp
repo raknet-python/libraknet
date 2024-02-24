@@ -17,12 +17,14 @@
 using namespace RakNet;
 
 ThreadsafePacketLogger::ThreadsafePacketLogger() = default;
+
 ThreadsafePacketLogger::~ThreadsafePacketLogger() {
   char** msg;
   while ((msg = logMessages.ReadLock()) != nullptr) {
     rakFree_Ex((*msg), _FILE_AND_LINE_);
   }
 }
+
 void ThreadsafePacketLogger::Update() {
   char** msg;
   while ((msg = logMessages.ReadLock()) != nullptr) {
@@ -30,6 +32,7 @@ void ThreadsafePacketLogger::Update() {
     rakFree_Ex((*msg), _FILE_AND_LINE_);
   }
 }
+
 void ThreadsafePacketLogger::AddToLog(const char* str) {
   char** msg = logMessages.WriteLock();
   *msg = (char*)rakMalloc_Ex(strlen(str) + 1, _FILE_AND_LINE_);

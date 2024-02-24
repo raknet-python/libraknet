@@ -39,6 +39,7 @@ void StringTable::AddReference() {
     instance = RakNet::OP_NEW<StringTable>(_FILE_AND_LINE_);
   }
 }
+
 void StringTable::RemoveReference() {
   RakAssert(referenceCount > 0);
 
@@ -70,6 +71,7 @@ void StringTable::AddString(const char* str, bool copyString) {
   // If this assert hits you need to increase the range of StringTableType
   RakAssert(orderedStringList.Size() < (StringTableType)-1);
 }
+
 void StringTable::EncodeString(
     const char* input,
     int maxCharsToWrite,
@@ -123,6 +125,7 @@ bool StringTable::DecodeString(
 
   return true;
 }
+
 void StringTable::LogStringNotFound(const char* strName) {
   (void)strName;
 

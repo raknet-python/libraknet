@@ -21,11 +21,13 @@ struct FileListNodeContext {
     dataPtr = nullptr;
     dataLength = 0;
   }
+
   FileListNodeContext(unsigned char o, uint32_t f1, uint32_t f2, uint32_t f3)
       : op(o), flnc_extraData1(f1), flnc_extraData2(f2), flnc_extraData3(f3) {
     dataPtr = nullptr;
     dataLength = 0;
   }
+
   ~FileListNodeContext() = default;
 
   unsigned char op;
@@ -45,6 +47,7 @@ inline RakNet::BitStream& operator<<(
   out.Write(in.flnc_extraData3);
   return out;
 }
+
 inline RakNet::BitStream& operator>>(
     RakNet::BitStream& in,
     FileListNodeContext& out) {

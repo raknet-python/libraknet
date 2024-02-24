@@ -36,6 +36,7 @@ void PeerConnectDisconnectTest::WaitForConnectionRequestsToComplete(
     }
   }
 }
+
 void PeerConnectDisconnectTest::WaitAndPrintResults(
     RakPeerInterface** peerList,
     int peerNum,
@@ -365,6 +366,7 @@ RakString PeerConnectDisconnectTest::ErrorCodeToString(int errorCode) {
 PeerConnectDisconnectTest::PeerConnectDisconnectTest(void) = default;
 
 PeerConnectDisconnectTest::~PeerConnectDisconnectTest(void) = default;
+
 void PeerConnectDisconnectTest::DestroyPeers() {
   int theSize = destroyList.Size();
 

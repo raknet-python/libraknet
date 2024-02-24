@@ -84,15 +84,19 @@ float frandomMT(unsigned int* state, unsigned int*& next, int& left);
 void seedMT(unsigned int seed) {
   seedMT(seed, _state, _next, _left);
 }
+
 unsigned int reloadMT() {
   return reloadMT(_state, _next, _left);
 }
+
 unsigned int randomMT() {
   return randomMT(_state, _next, _left);
 }
+
 float frandomMT() {
   return frandomMT(_state, _next, _left);
 }
+
 void fillBufferMT(void* buffer, unsigned int bytes) {
   fillBufferMT(buffer, bytes, _state, _next, _left);
 }
@@ -230,10 +234,13 @@ void fillBufferMT(
 float frandomMT(unsigned int* state, unsigned int*& next, int& left) {
   return (float)((double)randomMT(state, next, left) / 4294967296.0);
 }
+
 RakNetRandom::RakNetRandom() {
   left = -1;
 }
+
 RakNetRandom::~RakNetRandom() = default;
+
 void RakNetRandom::SeedMT(unsigned int seed) {
   printf("%i\n", seed);
   seedMT(seed, state, next, left);

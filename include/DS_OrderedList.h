@@ -163,6 +163,7 @@ data_type OrderedList<key_type, data_type, default_comparison_function>::
   RakAssert(objectExists);
   return orderedList[index];
 }
+
 template <
     class key_type,
     class data_type,
@@ -179,6 +180,7 @@ bool OrderedList<key_type, data_type, default_comparison_function>::
     element = orderedList[index];
   return objectExists;
 }
+
 template <
     class key_type,
     class data_type,

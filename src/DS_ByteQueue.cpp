@@ -19,9 +19,11 @@ ByteQueue::ByteQueue() {
   readOffset = writeOffset = lengthAllocated = 0;
   data = nullptr;
 }
+
 ByteQueue::~ByteQueue() {
   Clear(_FILE_AND_LINE_);
 }
+
 void ByteQueue::WriteBytes(
     const char* in,
     unsigned length,
@@ -65,6 +67,7 @@ void ByteQueue::WriteBytes(
   }
   writeOffset = (writeOffset + length) % lengthAllocated;
 }
+
 bool ByteQueue::ReadBytes(char* out, unsigned maxLengthToRead, bool peek) {
   unsigned bytesWritten = GetBytesWritten();
   unsigned bytesToRead =
@@ -90,6 +93,7 @@ bool ByteQueue::ReadBytes(char* out, unsigned maxLengthToRead, bool peek) {
 
   return true;
 }
+
 char* ByteQueue::PeekContiguousBytes(unsigned int* outLength) const {
   if (writeOffset >= readOffset) {
     *outLength = writeOffset - readOffset;
@@ -98,6 +102,7 @@ char* ByteQueue::PeekContiguousBytes(unsigned int* outLength) const {
   }
   return data + readOffset;
 }
+
 void ByteQueue::Clear(const char* file, unsigned int line) {
   if (lengthAllocated) {
     rakFree_Ex(data, file, line);
@@ -105,6 +110,7 @@ void ByteQueue::Clear(const char* file, unsigned int line) {
   readOffset = writeOffset = lengthAllocated = 0;
   data = nullptr;
 }
+
 unsigned ByteQueue::GetBytesWritten() const {
   if (writeOffset >= readOffset) {
     return writeOffset - readOffset;
@@ -112,9 +118,11 @@ unsigned ByteQueue::GetBytesWritten() const {
     return writeOffset + (lengthAllocated - readOffset);
   }
 }
+
 void ByteQueue::IncrementReadOffset(unsigned length) {
   readOffset = (readOffset + length) % lengthAllocated;
 }
+
 void ByteQueue::DecrementReadOffset(unsigned length) {
   if (length > readOffset) {
     readOffset = lengthAllocated - (length - readOffset);
@@ -122,6 +130,7 @@ void ByteQueue::DecrementReadOffset(unsigned length) {
     readOffset -= length;
   }
 }
+
 void ByteQueue::Print() {
   unsigned i;
   for (i = readOffset; i != writeOffset; i++) {

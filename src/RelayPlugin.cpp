@@ -65,6 +65,7 @@ RelayPluginEnums RelayPlugin::AddParticipantOnServer(
 
   return RPE_ADD_CLIENT_SUCCESS;
 }
+
 void RelayPlugin::RemoveParticipantOnServer(const RakNetGUID& guid) {
   StrAndGuidAndRoom* strAndGuid;
   if (guidToStrHash.Pop(strAndGuid, guid, _FILE_AND_LINE_)) {
@@ -77,6 +78,7 @@ void RelayPlugin::RemoveParticipantOnServer(const RakNetGUID& guid) {
 void RelayPlugin::SetAcceptAddParticipantRequests(bool accept) {
   acceptAddParticipantRequests = accept;
 }
+
 void RelayPlugin::AddParticipantRequestFromClient(
     const RakString& key,
     const RakNetGUID& relayPluginServerGuid) {
@@ -87,6 +89,7 @@ void RelayPlugin::AddParticipantRequestFromClient(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
+
 void RelayPlugin::RemoveParticipantRequestFromClient(
     const RakNetGUID& relayPluginServerGuid) {
   BitStream bsOut;
@@ -95,6 +98,7 @@ void RelayPlugin::RemoveParticipantRequestFromClient(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
+
 // Send a message to a server running RelayPlugin, to forward a message to the system identified by \a key
 void RelayPlugin::SendToParticipant(
     const RakNetGUID& relayPluginServerGuid,
@@ -119,6 +123,7 @@ void RelayPlugin::SendToParticipant(
       relayPluginServerGuid,
       false);
 }
+
 void RelayPlugin::SendGroupMessage(
     const RakNetGUID& relayPluginServerGuid,
     BitStream* bitStream,
@@ -140,6 +145,7 @@ void RelayPlugin::SendGroupMessage(
       relayPluginServerGuid,
       false);
 }
+
 void RelayPlugin::LeaveGroup(const RakNetGUID& relayPluginServerGuid) {
   BitStream bsOut;
   bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN);
@@ -147,6 +153,7 @@ void RelayPlugin::LeaveGroup(const RakNetGUID& relayPluginServerGuid) {
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
+
 void RelayPlugin::GetGroupList(const RakNetGUID& relayPluginServerGuid) {
   BitStream bsOut;
   bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN);
@@ -154,6 +161,7 @@ void RelayPlugin::GetGroupList(const RakNetGUID& relayPluginServerGuid) {
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
+
 PluginReceiveResult RelayPlugin::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_RELAY_PLUGIN) {
     switch (packet->data[1]) {
@@ -271,6 +279,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
 
   return room;
 }
+
 void RelayPlugin::JoinGroupRequest(
     const RakNetGUID& relayPluginServerGuid,
     RakString groupName) {
@@ -281,6 +290,7 @@ void RelayPlugin::JoinGroupRequest(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, relayPluginServerGuid, false);
 }
+
 RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
     RakNetGUID userGuid,
     RakString roomName) {
@@ -316,6 +326,7 @@ RelayPlugin::RP_Group* RelayPlugin::JoinGroup(
 
   return nullptr;
 }
+
 void RelayPlugin::LeaveGroup(StrAndGuidAndRoom** strAndGuidSender) {
   if (strAndGuidSender == nullptr) {
     return;
@@ -345,6 +356,7 @@ void RelayPlugin::LeaveGroup(StrAndGuidAndRoom** strAndGuidSender) {
     }
   }
 }
+
 void RelayPlugin::NotifyUsersInRoom(
     RP_Group* room,
     int msg,
@@ -364,6 +376,7 @@ void RelayPlugin::NotifyUsersInRoom(
         false);
   }
 }
+
 void RelayPlugin::SendMessageToRoom(
     StrAndGuidAndRoom** strAndGuidSender,
     BitStream* message) {
@@ -398,6 +411,7 @@ void RelayPlugin::SendMessageToRoom(
     }
   }
 }
+
 void RelayPlugin::SendChatRoomsList(RakNetGUID target) {
   BitStream bsOut;
   bsOut.WriteCasted<MessageID>(ID_RELAY_PLUGIN);
@@ -409,6 +423,7 @@ void RelayPlugin::SendChatRoomsList(RakNetGUID target) {
   }
   SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
+
 void RelayPlugin::OnGroupMessageFromClient(Packet* packet) {
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID) * 2);
@@ -430,6 +445,7 @@ void RelayPlugin::OnGroupMessageFromClient(Packet* packet) {
     SendMessageToRoom(strAndGuidSender, &bsData);
   }
 }
+
 void RelayPlugin::OnJoinGroupRequestFromClient(Packet* packet) {
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID) * 2);
@@ -451,6 +467,7 @@ void RelayPlugin::OnJoinGroupRequestFromClient(Packet* packet) {
 
   SendUnified(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
 }
+
 void RelayPlugin::OnLeaveGroupRequestFromClient(Packet* packet) {
   BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID) * 2);

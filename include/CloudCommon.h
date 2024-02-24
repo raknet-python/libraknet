@@ -43,8 +43,10 @@ class RAK_DLL_EXPORT CloudAllocator {
 /// \ingroup CLOUD_GROUP
 struct RAK_DLL_EXPORT CloudKey {
   CloudKey() = default;
+
   CloudKey(RakNet::RakString _primaryKey, uint32_t _secondaryKey)
       : primaryKey(_primaryKey), secondaryKey(_secondaryKey) {}
+
   ~CloudKey() = default;
 
   /// Identifies the primary key. This is intended to be a major category, such as the name of the application

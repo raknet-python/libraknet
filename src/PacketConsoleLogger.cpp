@@ -26,6 +26,7 @@ void PacketConsoleLogger::SetLogCommandParser(LogCommandParser* lcp) {
     logCommandParser->AddChannel("PacketConsoleLogger");
   }
 }
+
 void PacketConsoleLogger::WriteLog(const char* str) {
   if (logCommandParser) {
     logCommandParser->WriteLog("PacketConsoleLogger", str);

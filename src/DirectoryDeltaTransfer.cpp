@@ -69,6 +69,7 @@ class DDTCallback : public FileListTransferCBInterface {
 
     onFileCallback->OnFileProgress(fps);
   }
+
   bool OnDownloadComplete(DownloadCompleteStruct* dcs) override {
     return onFileCallback->OnDownloadComplete(dcs);
   }
@@ -84,9 +85,11 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer() {
   orderingChannel = 0;
   incrementalReadInterface = nullptr;
 }
+
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer() {
   RakNet::OP_DELETE(availableUploads, _FILE_AND_LINE_);
 }
+
 void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
   if (fileListTransfer) {
     DataStructures::List<FileListProgress*> fileListProgressList;
@@ -110,6 +113,7 @@ void DirectoryDeltaTransfer::SetFileListTransferPlugin(FileListTransfer* flt) {
     availableUploads->ClearCallbacks();
   }
 }
+
 void DirectoryDeltaTransfer::SetApplicationDirectory(
     const char* pathToApplication) {
   if (pathToApplication == nullptr || pathToApplication[0] == 0) {
@@ -123,12 +127,14 @@ void DirectoryDeltaTransfer::SetApplicationDirectory(
     applicationDirectory[511] = 0;
   }
 }
+
 void DirectoryDeltaTransfer::SetUploadSendParameters(
     PacketPriority _priority,
     char _orderingChannel) {
   priority = _priority;
   orderingChannel = _orderingChannel;
 }
+
 void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char* subdir) {
   availableUploads->AddFilesFromDirectory(
       applicationDirectory,
@@ -138,6 +144,7 @@ void DirectoryDeltaTransfer::AddUploadsFromSubdirectory(const char* subdir) {
       true,
       FileListNodeContext(0, 0, 0, 0));
 }
+
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
     FileList& localFiles,
     const char* subdir,
@@ -204,6 +211,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
 
   return setId;
 }
+
 unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
     const char* subdir,
     const char* outputSubdir,
@@ -233,6 +241,7 @@ unsigned short DirectoryDeltaTransfer::DownloadFromSubdirectory(
       _orderingChannel,
       cb);
 }
+
 void DirectoryDeltaTransfer::GenerateHashes(
     FileList& localFiles,
     const char* outputSubdir,
@@ -245,9 +254,11 @@ void DirectoryDeltaTransfer::GenerateHashes(
       true,
       FileListNodeContext(0, 0, 0, 0));
 }
+
 void DirectoryDeltaTransfer::ClearUploads() {
   availableUploads->Clear();
 }
+
 void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
   char subdir[256];
   char remoteSubdir[256];
@@ -285,6 +296,7 @@ void DirectoryDeltaTransfer::OnDownloadRequest(Packet* packet) {
       incrementalReadInterface,
       chunkSize);
 }
+
 PluginReceiveResult DirectoryDeltaTransfer::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_DDT_DOWNLOAD_REQUEST:

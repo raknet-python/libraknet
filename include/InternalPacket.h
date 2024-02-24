@@ -93,6 +93,7 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader {
   BitSize_t headerLength;
   /// Buffer is a pointer to the actual data, assuming this packet has data at all
   unsigned char* data;
+
   /// How to alloc and delete the data member
   enum AllocationScheme {
     /// Data is allocated using rakMalloc. Just free it
@@ -105,6 +106,7 @@ struct InternalPacket : public InternalPacketFixedSizeTransmissionHeader {
     /// This is only used when sending. Received packets are deallocated in RakPeer
     STACK
   } allocationScheme;
+
   InternalPacketRefCountedData* refCountedData;
   /// How many attempts we made at sending this message
   unsigned char timesSent;

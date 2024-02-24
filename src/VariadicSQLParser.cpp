@@ -18,6 +18,7 @@ struct TypeMapping {
   char inputType;
   const char* type;
 };
+
 const int NUM_TYPE_MAPPINGS = 7;
 TypeMapping typeMappings[NUM_TYPE_MAPPINGS] = {
     {'i', "int"},
@@ -28,6 +29,7 @@ TypeMapping typeMappings[NUM_TYPE_MAPPINGS] = {
     {'g', "double precision"},
     {'a', "bytea"},
 };
+
 unsigned int GetTypeMappingIndex(char c) {
   unsigned int i;
   for (i = 0; i < (unsigned int)NUM_TYPE_MAPPINGS; i++) {
@@ -37,9 +39,11 @@ unsigned int GetTypeMappingIndex(char c) {
   }
   return (unsigned int)-1;
 }
+
 const char* VariadicSQLParser::GetTypeMappingAtIndex(int i) {
   return typeMappings[i].type;
 }
+
 void VariadicSQLParser::GetTypeMappingIndices(
     const char* format,
     DataStructures::List<IndexAndType>& indices) {
@@ -63,6 +67,7 @@ void VariadicSQLParser::GetTypeMappingIndices(
     previousCharWasPercentSign = format[i] == '%';
   }
 }
+
 void VariadicSQLParser::ExtractArguments(
     va_list argptr,
     const DataStructures::List<IndexAndType>& indices,
@@ -145,6 +150,7 @@ void VariadicSQLParser::ExtractArguments(
     }
   }
 }
+
 void VariadicSQLParser::FreeArguments(
     const DataStructures::List<IndexAndType>& indices,
     char** argumentBinary,

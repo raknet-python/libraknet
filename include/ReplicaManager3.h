@@ -1314,92 +1314,111 @@ class RAK_DLL_EXPORT Replica3Composite : public Replica3 {
   void SetCompositeOwner(parent_type* p) {
     r3CompositeOwner = p;
   }
+
   parent_type* GetCompositeOwner() const {
     return r3CompositeOwner;
   };
+
   void WriteAllocationID(
       RakNet::Connection_RM3* destinationConnection,
       RakNet::BitStream* allocationIdBitstream) const override {
     r3CompositeOwner->WriteAllocationID(
         destinationConnection, allocationIdBitstream);
   }
+
   RakNet::RM3ConstructionState QueryConstruction(
       RakNet::Connection_RM3* destinationConnection,
       RakNet::ReplicaManager3* replicaManager3) override {
     return r3CompositeOwner->QueryConstruction(
         destinationConnection, replicaManager3);
   }
+
   RakNet::RM3DestructionState QueryDestruction(
       RakNet::Connection_RM3* destinationConnection,
       RakNet::ReplicaManager3* replicaManager3) override {
     return r3CompositeOwner->QueryDestruction(
         destinationConnection, replicaManager3);
   }
+
   bool QueryRemoteConstruction(
       RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->QueryRemoteConstruction(sourceConnection);
   }
+
   bool QueryRelayDestruction(
       RakNet::Connection_RM3* sourceConnection) const override {
     return r3CompositeOwner->QueryRelayDestruction(sourceConnection);
   }
+
   void SerializeConstruction(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeConstruction(
         constructionBitstream, destinationConnection);
   }
+
   bool DeserializeConstruction(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->DeserializeConstruction(
         constructionBitstream, sourceConnection);
   }
+
   void SerializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeConstructionExisting(
         constructionBitstream, destinationConnection);
   }
+
   void DeserializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->DeserializeConstructionExisting(
         constructionBitstream, sourceConnection);
   }
+
   void SerializeDestruction(
       RakNet::BitStream* destructionBitstream,
       RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeDestruction(
         destructionBitstream, destinationConnection);
   }
+
   bool DeserializeDestruction(
       RakNet::BitStream* destructionBitstream,
       RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->DeserializeDestruction(
         destructionBitstream, sourceConnection);
   }
+
   RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(
       RakNet::Connection_RM3* droppedConnection) const override {
     return r3CompositeOwner->QueryActionOnPopConnection(droppedConnection);
   }
+
   void OnPoppedConnection(RakNet::Connection_RM3* droppedConnection) override {
     r3CompositeOwner->OnPoppedConnection(droppedConnection);
   }
+
   void DeallocReplica(RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->DeallocReplica(sourceConnection);
   }
+
   RakNet::RM3QuerySerializationResult QuerySerialization(
       RakNet::Connection_RM3* destinationConnection) override {
     return r3CompositeOwner->QuerySerialization(destinationConnection);
   }
+
   void OnUserReplicaPreSerializeTick() override {
     r3CompositeOwner->OnUserReplicaPreSerializeTick();
   }
+
   RakNet::RM3SerializationResult Serialize(
       RakNet::SerializeParameters* serializeParameters) override {
     return r3CompositeOwner->Serialize(serializeParameters);
   }
+
   void OnSerializeTransmission(
       RakNet::BitStream* bitStream,
       RakNet::Connection_RM3* destinationConnection,
@@ -1409,34 +1428,40 @@ class RAK_DLL_EXPORT Replica3Composite : public Replica3 {
     r3CompositeOwner->OnSerializeTransmission(
         bitStream, destinationConnection, bitsPerChannel, curTime);
   }
+
   void Deserialize(
       RakNet::DeserializeParameters* deserializeParameters) override {
     r3CompositeOwner->Deserialize(deserializeParameters);
   }
+
   void PostSerializeConstruction(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->PostSerializeConstruction(
         constructionBitstream, destinationConnection);
   }
+
   void PostDeserializeConstruction(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PostDeserializeConstruction(
         constructionBitstream, sourceConnection);
   }
+
   void PostSerializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->PostSerializeConstructionExisting(
         constructionBitstream, destinationConnection);
   }
+
   void PostDeserializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
       RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PostDeserializeConstructionExisting(
         constructionBitstream, sourceConnection);
   }
+
   void PreDestruction(RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PreDestruction(sourceConnection);
   }

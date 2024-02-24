@@ -218,6 +218,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
     MessageID messageId;
     DataStructures::OrderedList<RakNet::RakString, RakNet::RakString> functions;
   };
+
   static int LocalCallbackComp(
       const MessageID& key,
       LocalCallback* const& data);
@@ -226,6 +227,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
   // Callable object, along with priority to call relative to other objects
   struct LocalSlotObject {
     LocalSlotObject() = default;
+
     LocalSlotObject(
         unsigned int _registrationCount,
         int _callPriority,
@@ -234,6 +236,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
       callPriority = _callPriority;
       functionPointer = _functionPointer;
     }
+
     ~LocalSlotObject() = default;
 
     // Used so slots are called in the order they are registered
@@ -252,6 +255,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
         OrderedList<LocalSlotObject, LocalSlotObject, LocalSlotObjectComp>
             slotObjects;
   };
+
   DataStructures::
       Hash<RakNet::RakString, LocalSlot*, 256, RakNet::RakString::ToInteger>
           localSlots;

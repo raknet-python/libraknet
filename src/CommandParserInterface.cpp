@@ -96,6 +96,7 @@ void CommandParserInterface::ParseConsoleString(
   parameterList[parameterListIndex] = nullptr;
   *numParameters = parameterListIndex;
 }
+
 void CommandParserInterface::SendCommandList(
     TransportInterface* transport,
     const SystemAddress& systemAddress) {
@@ -112,6 +113,7 @@ void CommandParserInterface::SendCommandList(
     transport->Send(systemAddress, "No registered commands\r\n");
   }
 }
+
 void CommandParserInterface::RegisterCommand(
     unsigned char parameterCount,
     const char* command,
@@ -122,6 +124,7 @@ void CommandParserInterface::RegisterCommand(
   rc.parameterCount = parameterCount;
   commandList.Insert(command, rc, true, _FILE_AND_LINE_);
 }
+
 bool CommandParserInterface::GetRegisteredCommand(
     const char* command,
     RegisteredCommand* rc) {
@@ -133,21 +136,25 @@ bool CommandParserInterface::GetRegisteredCommand(
   }
   return objectExists;
 }
+
 void CommandParserInterface::OnTransportChange(TransportInterface* transport) {
   (void)transport;
 }
+
 void CommandParserInterface::OnNewIncomingConnection(
     const SystemAddress& systemAddress,
     TransportInterface* transport) {
   (void)systemAddress;
   (void)transport;
 }
+
 void CommandParserInterface::OnConnectionLost(
     const SystemAddress& systemAddress,
     TransportInterface* transport) {
   (void)systemAddress;
   (void)transport;
 }
+
 void CommandParserInterface::ReturnResult(
     bool res,
     const char* command,
@@ -159,6 +166,7 @@ void CommandParserInterface::ReturnResult(
     transport->Send(systemAddress, "%s returned false.\r\n", command);
   }
 }
+
 void CommandParserInterface::ReturnResult(
     int res,
     const char* command,
@@ -166,12 +174,14 @@ void CommandParserInterface::ReturnResult(
     const SystemAddress& systemAddress) {
   transport->Send(systemAddress, "%s returned %i.\r\n", command, res);
 }
+
 void CommandParserInterface::ReturnResult(
     const char* command,
     TransportInterface* transport,
     const SystemAddress& systemAddress) {
   transport->Send(systemAddress, "Successfully called %s.\r\n", command);
 }
+
 void CommandParserInterface::ReturnResult(
     char* res,
     const char* command,
@@ -179,6 +189,7 @@ void CommandParserInterface::ReturnResult(
     const SystemAddress& systemAddress) {
   transport->Send(systemAddress, "%s returned %s.\r\n", command, res);
 }
+
 void CommandParserInterface::ReturnResult(
     SystemAddress res,
     const char* command,

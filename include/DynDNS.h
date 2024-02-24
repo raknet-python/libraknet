@@ -73,25 +73,31 @@ class RAK_DLL_EXPORT DynDNS {
   bool IsRunning() const {
     return connectPhase != CP_IDLE;
   }
+
   bool IsCompleted() const {
     return connectPhase == CP_IDLE;
   }
+
   RakNet::DynDnsResultCode GetCompletedResultCode() {
     return result;
   }
+
   const char* GetCompletedDescription() const {
     return resultDescription;
   }
+
   bool WasResultSuccessful() const {
     return result == RC_SUCCESS || result == RC_DNS_ALREADY_SET ||
         result == RC_NO_CHANGE;
   }
+
   char* GetMyPublicIP() const {
     return (char*)myIPStr;
   } // We get our public IP as part of the process. This is valid once completed
 
  protected:
   void Stop();
+
   void SetCompleted(
       RakNet::DynDnsResultCode _result,
       const char* _resultDescription) {

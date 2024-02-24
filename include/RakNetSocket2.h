@@ -66,6 +66,7 @@ struct RNS2_SendParameters {
   RNS2_SendParameters() {
     ttl = 0;
   }
+
   char* data;
   int length;
   SystemAddress systemAddress;
@@ -144,6 +145,7 @@ ref class ListenerContext;
 // #include <collection.h>
 //#include <map>
 #include "DS_List.h"
+
 class RNS2_WindowsStore8 : public RakNetSocket2 {
  public:
   RNS2_WindowsStore8();
@@ -199,9 +201,11 @@ struct NativeClientBindParameters {
   RNS2EventHandler* eventHandler;
 };
 class RNS2_NativeClient;
+
 struct RNS2_SendParameters_NativeClient : public RNS2_SendParameters {
   RNS2_NativeClient* socket2;
 };
+
 class RNS2_NativeClient : public RakNetSocket2 {
  public:
   RNS2_NativeClient();
@@ -262,6 +266,7 @@ class RNS2_NativeClient : public RakNetSocket2 {
   SimpleMutex sendInProgressMutex;
 
   enum BindState { BS_UNBOUND, BS_IN_PROGRESS, BS_BOUND, BS_FAILED } bindState;
+
   DataStructures::Queue<RNS2_SendParameters_NativeClient*> bufferedSends;
   SimpleMutex bufferedSendsMutex;
 };
@@ -301,6 +306,7 @@ class IRNS2_Berkley : public RakNetSocket2 {
       const char* file,
       unsigned int line) = 0;
 };
+
 // Every platform that uses Berkley sockets, except native client, can compile some common functions
 class RNS2_Berkley : public IRNS2_Berkley {
  public:

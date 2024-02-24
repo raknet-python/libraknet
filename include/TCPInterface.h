@@ -254,6 +254,7 @@ struct RemoteClient {
     socket = 0;
 #endif
   }
+
   __TCPSOCKET__ socket;
   SystemAddress systemAddress;
   DataStructures::ByteQueue outgoingData;
@@ -277,6 +278,7 @@ struct RemoteClient {
     outgoingData.Clear(_FILE_AND_LINE_);
     outgoingDataMutex.Unlock();
   }
+
   void SetActive(bool a);
   void SendOrBuffer(
       const char** data,

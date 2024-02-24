@@ -615,6 +615,7 @@ class RAK_DLL_EXPORT BitStream {
   inline BitSize_t GetNumberOfBitsUsed() const {
     return GetWriteOffset();
   }
+
   inline BitSize_t GetWriteOffset() const {
     return numberOfBitsUsed;
   }
@@ -819,30 +820,39 @@ class RAK_DLL_EXPORT BitStream {
   inline void Write(const char* const inStringVar) {
     RakString::Serialize(inStringVar, this);
   }
+
   inline void Write(const wchar_t* const inStringVar) {
     RakWString::Serialize(inStringVar, this);
   }
+
   inline void Write(const unsigned char* const inTemplateVar) {
     Write((const char*)inTemplateVar);
   }
+
   inline void Write(char* const inTemplateVar) {
     Write((const char*)inTemplateVar);
   }
+
   inline void Write(unsigned char* const inTemplateVar) {
     Write((const char*)inTemplateVar);
   }
+
   inline void WriteCompressed(const char* const inStringVar) {
     RakString::SerializeCompressed(inStringVar, this, 0, false);
   }
+
   inline void WriteCompressed(const wchar_t* const inStringVar) {
     RakWString::Serialize(inStringVar, this);
   }
+
   inline void WriteCompressed(const unsigned char* const inTemplateVar) {
     WriteCompressed((const char*)inTemplateVar);
   }
+
   inline void WriteCompressed(char* const inTemplateVar) {
     WriteCompressed((const char*)inTemplateVar);
   }
+
   inline void WriteCompressed(unsigned char* const inTemplateVar) {
     WriteCompressed((const char*)inTemplateVar);
   }
@@ -1037,13 +1047,16 @@ class RAK_DLL_EXPORT BitStream {
     return false;
 #endif
   }
+
   inline static bool IsBigEndian() {
     return IsNetworkOrder();
   }
+
   inline static bool IsNetworkOrder() {
     bool r = IsNetworkOrderInternal();
     return r;
   }
+
   // Not inline, won't compile on PC due to winsock include errors
   static bool IsNetworkOrderInternal();
   static void ReverseBytes(
@@ -1150,6 +1163,7 @@ inline bool BitStream::SerializeCompressedDelta(
     return ReadCompressedDelta(inOutCurrentValue);
   return true;
 }
+
 //Stoppedhere
 template <class templateType>
 inline bool BitStream::SerializeCompressedDelta(
@@ -1200,6 +1214,7 @@ bool BitStream::SerializeBitsFromIntegerRange(
       requiredBits,
       allowOutsideRange);
 }
+
 template <class templateType>
 bool BitStream::SerializeBitsFromIntegerRange(
     bool writeToBitstream,
@@ -1393,26 +1408,32 @@ template <>
 inline void BitStream::Write(const RakString& inTemplateVar) {
   inTemplateVar.Serialize(this);
 }
+
 template <>
 inline void BitStream::Write(const RakWString& inTemplateVar) {
   inTemplateVar.Serialize(this);
 }
+
 template <>
 inline void BitStream::Write(const char* const& inStringVar) {
   RakString::Serialize(inStringVar, this);
 }
+
 template <>
 inline void BitStream::Write(const wchar_t* const& inStringVar) {
   RakWString::Serialize(inStringVar, this);
 }
+
 template <>
 inline void BitStream::Write(const unsigned char* const& inTemplateVar) {
   Write((const char*)inTemplateVar);
 }
+
 template <>
 inline void BitStream::Write(char* const& inTemplateVar) {
   Write((const char*)inTemplateVar);
 }
+
 template <>
 inline void BitStream::Write(unsigned char* const& inTemplateVar) {
   Write((const char*)inTemplateVar);
@@ -1541,27 +1562,33 @@ template <>
 inline void BitStream::WriteCompressed(const RakString& inTemplateVar) {
   inTemplateVar.SerializeCompressed(this, 0, false);
 }
+
 template <>
 inline void BitStream::WriteCompressed(const RakWString& inTemplateVar) {
   inTemplateVar.Serialize(this);
 }
+
 template <>
 inline void BitStream::WriteCompressed(const char* const& inStringVar) {
   RakString::SerializeCompressed(inStringVar, this, 0, false);
 }
+
 template <>
 inline void BitStream::WriteCompressed(const wchar_t* const& inStringVar) {
   RakWString::Serialize(inStringVar, this);
 }
+
 template <>
 inline void BitStream::WriteCompressed(
     const unsigned char* const& inTemplateVar) {
   WriteCompressed((const char*)inTemplateVar);
 }
+
 template <>
 inline void BitStream::WriteCompressed(char* const& inTemplateVar) {
   WriteCompressed((const char*)inTemplateVar);
 }
+
 template <>
 inline void BitStream::WriteCompressed(unsigned char* const& inTemplateVar) {
   WriteCompressed((const char*)inTemplateVar);
@@ -1733,18 +1760,22 @@ template <>
 inline bool BitStream::Read(RakString& outTemplateVar) {
   return outTemplateVar.Deserialize(this);
 }
+
 template <>
 inline bool BitStream::Read(RakWString& outTemplateVar) {
   return outTemplateVar.Deserialize(this);
 }
+
 template <>
 inline bool BitStream::Read(char*& varString) {
   return RakString::Deserialize(varString, this);
 }
+
 template <>
 inline bool BitStream::Read(wchar_t*& varString) {
   return RakWString::Deserialize(varString, this);
 }
+
 template <>
 inline bool BitStream::Read(unsigned char*& varString) {
   return RakString::Deserialize((char*)varString, this);
@@ -1851,18 +1882,22 @@ template <>
 inline bool BitStream::ReadCompressed(RakString& outTemplateVar) {
   return outTemplateVar.DeserializeCompressed(this, false);
 }
+
 template <>
 inline bool BitStream::ReadCompressed(RakWString& outTemplateVar) {
   return outTemplateVar.Deserialize(this);
 }
+
 template <>
 inline bool BitStream::ReadCompressed(char*& outTemplateVar) {
   return RakString::DeserializeCompressed(outTemplateVar, this, false);
 }
+
 template <>
 inline bool BitStream::ReadCompressed(wchar_t*& outTemplateVar) {
   return RakWString::Deserialize(outTemplateVar, this);
 }
+
 template <>
 inline bool BitStream::ReadCompressed(unsigned char*& outTemplateVar) {
   return RakString::DeserializeCompressed((char*)outTemplateVar, this, false);
@@ -1911,6 +1946,7 @@ void BitStream::WriteBitsFromIntegerRange(
   WriteBitsFromIntegerRange(
       value, minimum, maximum, requiredBits, allowOutsideRange);
 }
+
 template <class templateType>
 void BitStream::WriteBitsFromIntegerRange(
     const templateType value,
@@ -2062,6 +2098,7 @@ bool BitStream::ReadBitsFromIntegerRange(
   return ReadBitsFromIntegerRange(
       value, minimum, maximum, requiredBits, allowOutsideRange);
 }
+
 template <class templateType>
 bool BitStream::ReadBitsFromIntegerRange(
     templateType& value,
@@ -2230,6 +2267,7 @@ BitStream& operator<<(BitStream& out, templateType& c) {
   out.Write(c);
   return out;
 }
+
 template <class templateType>
 BitStream& operator>>(BitStream& in, templateType& c) {
   bool success = in.Read(c);

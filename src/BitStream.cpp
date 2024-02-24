@@ -175,10 +175,12 @@ void BitStream::Write(
     WriteBits((unsigned char*)inputByteArray, numberOfBytes * 8, true);
   }
 }
+
 void BitStream::Write(BitStream* bitStream) {
   Write(
       bitStream, bitStream->GetNumberOfBitsUsed() - bitStream->GetReadOffset());
 }
+
 void BitStream::Write(BitStream* bitStream, BitSize_t numberOfBits) {
   AddBitsAndReallocate(numberOfBits);
   BitSize_t numberOfBitsMod8;
@@ -223,12 +225,15 @@ void BitStream::Write(BitStream* bitStream, BitSize_t numberOfBits) {
     numberOfBitsUsed++;
   }
 }
+
 void BitStream::Write(BitStream& bitStream, BitSize_t numberOfBits) {
   Write(&bitStream, numberOfBits);
 }
+
 void BitStream::Write(BitStream& bitStream) {
   Write(&bitStream);
 }
+
 bool BitStream::Read(BitStream* bitStream, BitSize_t numberOfBits) {
   if (GetNumberOfUnreadBits() < numberOfBits) {
     return false;
@@ -236,10 +241,12 @@ bool BitStream::Read(BitStream* bitStream, BitSize_t numberOfBits) {
   bitStream->Write(this, numberOfBits);
   return true;
 }
+
 bool BitStream::Read(BitStream* bitStream) {
   bitStream->Write(this);
   return true;
 }
+
 bool BitStream::Read(BitStream& bitStream, BitSize_t numberOfBits) {
   if (GetNumberOfUnreadBits() < numberOfBits) {
     return false;
@@ -247,6 +254,7 @@ bool BitStream::Read(BitStream& bitStream, BitSize_t numberOfBits) {
   bitStream.Write(this, numberOfBits);
   return true;
 }
+
 bool BitStream::Read(BitStream& bitStream) {
   bitStream.Write(this);
   return true;
@@ -324,11 +332,13 @@ void BitStream::WriteAlignedBytes(
   AlignWriteToByteBoundary();
   Write((const char*)inByteArray, numberOfBytesToWrite);
 }
+
 void BitStream::EndianSwapBytes(int byteOffset, int length) {
   if (DoEndianSwap()) {
     ReverseBytesInPlace(data + byteOffset, length);
   }
 }
+
 /// Aligns the bitstream, writes inputLength, and writes input. Won't write beyond maxBytesToWrite
 void BitStream::WriteAlignedBytesSafe(
     const char* inByteArray,
@@ -372,6 +382,7 @@ bool BitStream::ReadAlignedBytes(
 
   return true;
 }
+
 bool BitStream::ReadAlignedBytesSafe(
     char* inOutByteArray,
     int& inputLength,
@@ -379,6 +390,7 @@ bool BitStream::ReadAlignedBytesSafe(
   return ReadAlignedBytesSafe(
       inOutByteArray, (unsigned int&)inputLength, (unsigned int)maxBytesToRead);
 }
+
 bool BitStream::ReadAlignedBytesSafe(
     char* inOutByteArray,
     unsigned int& inputLength,
@@ -394,6 +406,7 @@ bool BitStream::ReadAlignedBytesSafe(
   }
   return ReadAlignedBytes((unsigned char*)inOutByteArray, inputLength);
 }
+
 bool BitStream::ReadAlignedBytesSafeAlloc(
     char** outByteArray,
     int& inputLength,
@@ -401,6 +414,7 @@ bool BitStream::ReadAlignedBytesSafeAlloc(
   return ReadAlignedBytesSafeAlloc(
       outByteArray, (unsigned int&)inputLength, maxBytesToRead);
 }
+
 bool BitStream::ReadAlignedBytesSafeAlloc(
     char** outByteArray,
     unsigned int& inputLength,
@@ -741,9 +755,11 @@ void BitStream::AddBitsAndReallocate(const BitSize_t numberOfBitsToWrite) {
     numberOfBitsAllocated = newNumberOfBitsAllocated;
   }
 }
+
 BitSize_t BitStream::GetNumberOfBitsAllocated() const {
   return numberOfBitsAllocated;
 }
+
 void BitStream::PadWithZeroToByteLength(unsigned int bytes) {
   if (GetNumberOfBytesUsed() < bytes) {
     AlignWriteToByteBoundary();
@@ -782,6 +798,7 @@ int nlz10b(unsigned x) {
 int BitStream::NumberOfLeadingZeroes(int8_t x) {
   return NumberOfLeadingZeroes((uint8_t)x);
 }
+
 int BitStream::NumberOfLeadingZeroes(uint8_t x) {
   uint8_t y;
   int n;
@@ -803,9 +820,11 @@ int BitStream::NumberOfLeadingZeroes(uint8_t x) {
   }
   return (int)(n - x);
 }
+
 int BitStream::NumberOfLeadingZeroes(int16_t x) {
   return NumberOfLeadingZeroes((uint16_t)x);
 }
+
 int BitStream::NumberOfLeadingZeroes(uint16_t x) {
   uint16_t y;
   int n;
@@ -832,9 +851,11 @@ int BitStream::NumberOfLeadingZeroes(uint16_t x) {
   }
   return (int)(n - x);
 }
+
 int BitStream::NumberOfLeadingZeroes(int32_t x) {
   return NumberOfLeadingZeroes((uint32_t)x);
 }
+
 int BitStream::NumberOfLeadingZeroes(uint32_t x) {
   uint32_t y;
   int n;
@@ -866,9 +887,11 @@ int BitStream::NumberOfLeadingZeroes(uint32_t x) {
   }
   return (int)(n - x);
 }
+
 int BitStream::NumberOfLeadingZeroes(int64_t x) {
   return NumberOfLeadingZeroes((uint64_t)x);
 }
+
 int BitStream::NumberOfLeadingZeroes(uint64_t x) {
   uint64_t y;
   int n;
@@ -910,6 +933,7 @@ int BitStream::NumberOfLeadingZeroes(uint64_t x) {
 void BitStream::AssertStreamEmpty() {
   RakAssert(readOffset == numberOfBitsUsed);
 }
+
 void BitStream::PrintBits(char* out) const {
   if (numberOfBitsUsed <= 0) {
     strcpy(out, "No bits\n");
@@ -947,17 +971,20 @@ void BitStream::PrintBits(char* out) const {
 
   out[strIndex++] = 0;
 }
+
 void BitStream::PrintBits() const {
   char out[2048];
   PrintBits(out);
   RAKNET_DEBUG_PRINTF("%s", out);
 }
+
 void BitStream::PrintHex(char* out) const {
   BitSize_t i;
   for (i = 0; i < GetNumberOfBytesUsed(); i++) {
     sprintf(out + i * 3, "%02x ", data[i]);
   }
 }
+
 void BitStream::PrintHex() const {
   char out[2048];
   PrintHex(out);
@@ -1060,10 +1087,12 @@ void BitStream::AssertCopyData() {
     }
   }
 }
+
 bool BitStream::IsNetworkOrderInternal() {
   static unsigned long htonlValue = htonl(12345);
   return htonlValue == 12345;
 }
+
 void BitStream::ReverseBytes(
     unsigned char* inByteArray,
     unsigned char* inOutByteArray,
@@ -1072,6 +1101,7 @@ void BitStream::ReverseBytes(
     inOutByteArray[i] = inByteArray[length - i - 1];
   }
 }
+
 void BitStream::ReverseBytesInPlace(
     unsigned char* inOutData,
     const unsigned int length) {
@@ -1087,15 +1117,18 @@ void BitStream::ReverseBytesInPlace(
 bool BitStream::Read(char* varString) {
   return RakString::Deserialize(varString, this);
 }
+
 bool BitStream::Read(unsigned char* varString) {
   return RakString::Deserialize((char*)varString, this);
 }
+
 void BitStream::WriteAlignedVar8(const char* inByteArray) {
   RakAssert((numberOfBitsUsed & 7) == 0);
   AddBitsAndReallocate(1 * 8);
   data[(numberOfBitsUsed >> 3) + 0] = inByteArray[0];
   numberOfBitsUsed += 1 * 8;
 }
+
 bool BitStream::ReadAlignedVar8(char* inOutByteArray) {
   RakAssert((readOffset & 7) == 0);
   if (readOffset + 1 * 8 > numberOfBitsUsed) {
@@ -1106,6 +1139,7 @@ bool BitStream::ReadAlignedVar8(char* inOutByteArray) {
   readOffset += 1 * 8;
   return true;
 }
+
 void BitStream::WriteAlignedVar16(const char* inByteArray) {
   RakAssert((numberOfBitsUsed & 7) == 0);
   AddBitsAndReallocate(2 * 8);
@@ -1122,6 +1156,7 @@ void BitStream::WriteAlignedVar16(const char* inByteArray) {
 
   numberOfBitsUsed += 2 * 8;
 }
+
 bool BitStream::ReadAlignedVar16(char* inOutByteArray) {
   RakAssert((readOffset & 7) == 0);
   if (readOffset + 2 * 8 > numberOfBitsUsed) {
@@ -1141,6 +1176,7 @@ bool BitStream::ReadAlignedVar16(char* inOutByteArray) {
   readOffset += 2 * 8;
   return true;
 }
+
 void BitStream::WriteAlignedVar32(const char* inByteArray) {
   RakAssert((numberOfBitsUsed & 7) == 0);
   AddBitsAndReallocate(4 * 8);
@@ -1161,6 +1197,7 @@ void BitStream::WriteAlignedVar32(const char* inByteArray) {
 
   numberOfBitsUsed += 4 * 8;
 }
+
 bool BitStream::ReadAlignedVar32(char* inOutByteArray) {
   RakAssert((readOffset & 7) == 0);
   if (readOffset + 4 * 8 > numberOfBitsUsed) {
@@ -1184,6 +1221,7 @@ bool BitStream::ReadAlignedVar32(char* inOutByteArray) {
   readOffset += 4 * 8;
   return true;
 }
+
 bool BitStream::ReadFloat16(float& outFloat, float floatMin, float floatMax) {
   unsigned short percentile;
   if (Read(percentile)) {
@@ -1199,6 +1237,7 @@ bool BitStream::ReadFloat16(float& outFloat, float floatMin, float floatMax) {
   }
   return false;
 }
+
 bool BitStream::SerializeFloat16(
     bool writeToBitstream,
     float& inOutFloat,
@@ -1211,6 +1250,7 @@ bool BitStream::SerializeFloat16(
   }
   return true;
 }
+
 void BitStream::WriteFloat16(float inOutFloat, float floatMin, float floatMax) {
   RakAssert(floatMax > floatMin);
   if (inOutFloat > floatMax + .001) {

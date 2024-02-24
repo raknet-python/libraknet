@@ -23,13 +23,16 @@ BytePool::BytePool() {
   pool2048.SetPageSize(8192 * 4);
   pool8192.SetPageSize(8192 * 4);
 }
+
 BytePool::~BytePool() = default;
+
 void BytePool::SetPageSize(int size) {
   pool128.SetPageSize(size);
   pool512.SetPageSize(size);
   pool2048.SetPageSize(size);
   pool8192.SetPageSize(size);
 }
+
 unsigned char*
 BytePool::Allocate(int bytesWanted, const char* file, unsigned int line) {
 #ifdef _DISABLE_BYTE_POOL
@@ -85,6 +88,7 @@ BytePool::Allocate(int bytesWanted, const char* file, unsigned int line) {
   out[0] = (unsigned char)255;
   return out + 1;
 }
+
 void BytePool::Release(
     unsigned char* data,
     const char* file,
@@ -138,6 +142,7 @@ void BytePool::Release(
       break;
   }
 }
+
 void BytePool::Clear(const char* file, unsigned int line) {
   (void)file;
   (void)line;

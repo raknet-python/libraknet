@@ -15,6 +15,7 @@ using namespace RakNet;
 VariableListDeltaTracker::VariableListDeltaTracker() {
   nextWriteIndex = 0;
 }
+
 VariableListDeltaTracker::~VariableListDeltaTracker() {
   unsigned int i;
   for (i = 0; i < variableList.Size(); i++) {
@@ -37,9 +38,11 @@ void VariableListDeltaTracker::FlagDirtyFromBitArray(unsigned char* bArray) {
     }
   }
 }
+
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode() {
   lastData = nullptr;
 }
+
 VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(
     const unsigned char* data,
     int _byteLength) {
@@ -48,5 +51,6 @@ VariableListDeltaTracker::VariableLastValueNode::VariableLastValueNode(
   byteLength = _byteLength;
   isDirty = false;
 }
+
 VariableListDeltaTracker::VariableLastValueNode::~VariableLastValueNode() =
     default;

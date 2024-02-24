@@ -52,31 +52,37 @@ int RakNet::RakString::RakStringComp(
 RakString::RakString() {
   sharedString = &emptyString;
 }
+
 RakString::RakString(RakString::SharedString* _sharedString) {
   sharedString = _sharedString;
 }
+
 RakString::RakString(char input) {
   char str[2];
   str[0] = input;
   str[1] = 0;
   Assign(str);
 }
+
 RakString::RakString(unsigned char input) {
   char str[2];
   str[0] = (char)input;
   str[1] = 0;
   Assign(str);
 }
+
 RakString::RakString(const unsigned char* format, ...) {
   va_list ap;
   va_start(ap, format);
   Assign((const char*)format, ap);
 }
+
 RakString::RakString(const char* format, ...) {
   va_list ap;
   va_start(ap, format);
   Assign(format, ap);
 }
+
 RakString::RakString(const RakString& rhs) {
   if (rhs.sharedString == &emptyString) {
     sharedString = &emptyString;
@@ -92,9 +98,11 @@ RakString::RakString(const RakString& rhs) {
   }
   rhs.sharedString->refCountMutex->Unlock();
 }
+
 RakString::~RakString() {
   Free();
 }
+
 RakString& RakString::operator=(const RakString& rhs) {
   Free();
   if (rhs.sharedString == &emptyString) {
@@ -111,26 +119,32 @@ RakString& RakString::operator=(const RakString& rhs) {
   rhs.sharedString->refCountMutex->Unlock();
   return *this;
 }
+
 RakString& RakString::operator=(const char* str) {
   Free();
   Assign(str);
   return *this;
 }
+
 RakString& RakString::operator=(char* str) {
   return operator=((const char*)str);
 }
+
 RakString& RakString::operator=(const unsigned char* str) {
   return operator=((const char*)str);
 }
+
 RakString& RakString::operator=(char unsigned* str) {
   return operator=((const char*)str);
 }
+
 RakString& RakString::operator=(const char c) {
   char buff[2];
   buff[0] = c;
   buff[1] = 0;
   return operator=((const char*)buff);
 }
+
 void RakString::Realloc(SharedString* sharedString, size_t bytes) {
   if (bytes <= sharedString->bytesUsed) {
     return;
@@ -154,6 +168,7 @@ void RakString::Realloc(SharedString* sharedString, size_t bytes) {
   }
   sharedString->bytesUsed = newBytes;
 }
+
 RakString& RakString::operator+=(const RakString& rhs) {
   if (rhs.IsEmpty()) {
     return *this;
@@ -169,6 +184,7 @@ RakString& RakString::operator+=(const RakString& rhs) {
   }
   return *this;
 }
+
 RakString& RakString::operator+=(const char* str) {
   if (str == nullptr || str[0] == 0) {
     return *this;
@@ -184,55 +200,71 @@ RakString& RakString::operator+=(const char* str) {
   }
   return *this;
 }
+
 RakString& RakString::operator+=(char* str) {
   return operator+=((const char*)str);
 }
+
 RakString& RakString::operator+=(const unsigned char* str) {
   return operator+=((const char*)str);
 }
+
 RakString& RakString::operator+=(unsigned char* str) {
   return operator+=((const char*)str);
 }
+
 RakString& RakString::operator+=(const char c) {
   char buff[2];
   buff[0] = c;
   buff[1] = 0;
   return operator+=((const char*)buff);
 }
+
 unsigned char RakString::operator[](const unsigned int position) const {
   RakAssert(position < GetLength());
   return sharedString->c_str[position];
 }
+
 bool RakString::operator==(const RakString& rhs) const {
   return strcmp(sharedString->c_str, rhs.sharedString->c_str) == 0;
 }
+
 bool RakString::operator==(const char* str) const {
   return strcmp(sharedString->c_str, str) == 0;
 }
+
 bool RakString::operator==(char* str) const {
   return strcmp(sharedString->c_str, str) == 0;
 }
+
 bool RakString::operator<(const RakString& right) const {
   return strcmp(sharedString->c_str, right.C_String()) < 0;
 }
+
 bool RakString::operator<=(const RakString& right) const {
   return strcmp(sharedString->c_str, right.C_String()) <= 0;
 }
+
 bool RakString::operator>(const RakString& right) const {
   return strcmp(sharedString->c_str, right.C_String()) > 0;
 }
+
 bool RakString::operator>=(const RakString& right) const {
   return strcmp(sharedString->c_str, right.C_String()) >= 0;
 }
+
 bool RakString::operator!=(const RakString& rhs) const {
   return strcmp(sharedString->c_str, rhs.sharedString->c_str) != 0;
 }
+
 bool RakString::operator!=(const char* str) const {
   return strcmp(sharedString->c_str, str) != 0;
 }
+
 bool RakString::operator!=(char* str) const {
   return strcmp(sharedString->c_str, str) != 0;
 }
+
 const RakNet::RakString operator+(
     const RakNet::RakString& lhs,
     const RakNet::RakString& rhs) {
@@ -303,6 +335,7 @@ const RakNet::RakString operator+(
 
   return RakString(sharedString);
 }
+
 const char* RakString::ToLower() {
   Clone();
 
@@ -313,6 +346,7 @@ const char* RakString::ToLower() {
   }
   return sharedString->c_str;
 }
+
 const char* RakString::ToUpper() {
   Clone();
 
@@ -323,18 +357,22 @@ const char* RakString::ToUpper() {
   }
   return sharedString->c_str;
 }
+
 void RakString::Set(const char* format, ...) {
   va_list ap;
   va_start(ap, format);
   Clear();
   Assign(format, ap);
 }
+
 bool RakString::IsEmpty() const {
   return sharedString == &emptyString;
 }
+
 size_t RakString::GetLength() const {
   return strlen(sharedString->c_str);
 }
+
 // http://porg.es/blog/counting-characters-in-utf-8-strings-is-faster
 int porges_strlen2(char* s) {
   int i = 0;
@@ -368,9 +406,11 @@ int porges_strlen2(char* s) {
   }
   return count;
 }
+
 size_t RakString::GetLengthUTF8() const {
   return porges_strlen2(sharedString->c_str);
 }
+
 void RakString::Replace(unsigned index, unsigned count, unsigned char c) {
   RakAssert(index + count < GetLength());
   Clone();
@@ -381,11 +421,13 @@ void RakString::Replace(unsigned index, unsigned count, unsigned char c) {
     countIndex++;
   }
 }
+
 void RakString::SetChar(unsigned index, unsigned char c) {
   RakAssert(index < GetLength());
   Clone();
   sharedString->c_str[index] = c;
 }
+
 void RakString::SetChar(unsigned index, RakNet::RakString s) {
   RakAssert(index < GetLength());
   Clone();
@@ -449,9 +491,11 @@ WCHAR* RakString::ToWideChar() {
 
   return pszUTF16;
 }
+
 void RakString::DeallocWideChar(WCHAR* w) {
   RakNet::OP_DELETE_ARRAY(w, __FILE__, __LINE__);
 }
+
 void RakString::FromWideChar(const wchar_t* source) {
   Clear();
   int bufSize = wcslen(source) * 4;
@@ -468,6 +512,7 @@ void RakString::FromWideChar(const wchar_t* source) {
       nullptr, // No default character
       nullptr); // Don't care about this flag
 }
+
 RakNet::RakString RakString::FromWideChar_S(const wchar_t* source) {
   RakNet::RakString rs;
   rs.FromWideChar(source);
@@ -553,6 +598,7 @@ RakString RakString::SubStr(unsigned int index, unsigned int count) const {
   copy.sharedString->c_str[i] = 0;
   return copy;
 }
+
 void RakString::Erase(unsigned int index, unsigned int count) {
   size_t len = GetLength();
   RakAssert(index + count <= len);
@@ -564,6 +610,7 @@ void RakString::Erase(unsigned int index, unsigned int count) {
   }
   sharedString->c_str[i] = 0;
 }
+
 void RakString::TerminateAtLastCharacter(char c) {
   int i, len = (int)GetLength();
   for (i = len - 1; i >= 0; i--) {
@@ -574,6 +621,7 @@ void RakString::TerminateAtLastCharacter(char c) {
     }
   }
 }
+
 void RakString::StartAfterLastCharacter(char c) {
   int i, len = (int)GetLength();
   for (i = len - 1; i >= 0; i--) {
@@ -586,6 +634,7 @@ void RakString::StartAfterLastCharacter(char c) {
     }
   }
 }
+
 void RakString::TerminateAtFirstCharacter(char c) {
   unsigned int i, len = (unsigned int)GetLength();
   for (i = 0; i < len; i++) {
@@ -597,6 +646,7 @@ void RakString::TerminateAtFirstCharacter(char c) {
     }
   }
 }
+
 void RakString::StartAfterFirstCharacter(char c) {
   unsigned int i, len = (unsigned int)GetLength();
   for (i = 0; i < len; i++) {
@@ -609,6 +659,7 @@ void RakString::StartAfterFirstCharacter(char c) {
     }
   }
 }
+
 int RakString::GetCharacterCount(char c) {
   int count = 0;
   unsigned int i, len = (unsigned int)GetLength();
@@ -619,6 +670,7 @@ int RakString::GetCharacterCount(char c) {
   }
   return count;
 }
+
 void RakString::RemoveCharacter(char c) {
   if (c == 0) {
     return;
@@ -637,21 +689,27 @@ void RakString::RemoveCharacter(char c) {
     Clear();
   }
 }
+
 int RakString::StrCmp(const RakString& rhs) const {
   return strcmp(sharedString->c_str, rhs.C_String());
 }
+
 int RakString::StrNCmp(const RakString& rhs, size_t num) const {
   return strncmp(sharedString->c_str, rhs.C_String(), num);
 }
+
 int RakString::StrICmp(const RakString& rhs) const {
   return _stricmp(sharedString->c_str, rhs.C_String());
 }
+
 void RakString::Printf() {
   RAKNET_DEBUG_PRINTF("%s", sharedString->c_str);
 }
+
 void RakString::FPrintf(FILE* fp) {
   fprintf(fp, "%s", sharedString->c_str);
 }
+
 bool RakString::IPAddressMatch(const char* IP) {
   unsigned characterIndex;
 
@@ -697,6 +755,7 @@ bool RakString::IPAddressMatch(const char* IP) {
   // No match found.
   return false;
 }
+
 bool RakString::ContainsNonprintableExceptSpaces() const {
   size_t strLen = strlen(sharedString->c_str);
   unsigned i;
@@ -707,6 +766,7 @@ bool RakString::ContainsNonprintableExceptSpaces() const {
   }
   return false;
 }
+
 bool RakString::IsEmailAddress() const {
   if (IsEmpty()) {
     return false;
@@ -748,6 +808,7 @@ bool RakString::IsEmailAddress() const {
   // There's more I could check, but this is good enough
   return true;
 }
+
 RakNet::RakString& RakString::URLEncode() {
   RakString result;
   size_t strLen = strlen(sharedString->c_str);
@@ -775,6 +836,7 @@ RakNet::RakString& RakString::URLEncode() {
   *this = result;
   return *this;
 }
+
 RakNet::RakString& RakString::URLDecode() {
   RakString result;
   size_t strLen = strlen(sharedString->c_str);
@@ -824,6 +886,7 @@ RakNet::RakString& RakString::URLDecode() {
   *this = result;
   return *this;
 }
+
 void RakString::SplitURI(
     RakNet::RakString& header,
     RakNet::RakString& domain,
@@ -874,6 +937,7 @@ void RakString::SplitURI(
   }
   pathOutput[outputIndex] = 0;
 }
+
 RakNet::RakString& RakString::SQLEscape() {
   int strLen = (int)GetLength();
   int escapedCharacterCount = 0;
@@ -906,6 +970,7 @@ RakNet::RakString& RakString::SQLEscape() {
   }
   return *this;
 }
+
 RakNet::RakString RakString::FormatForPUTOrPost(
     const char* type,
     const char* uri,
@@ -965,6 +1030,7 @@ RakNet::RakString RakString::FormatForPUTOrPost(
 
   return out;
 }
+
 RakString RakString::FormatForPOST(
     const char* uri,
     const char* contentType,
@@ -972,6 +1038,7 @@ RakString RakString::FormatForPOST(
     const char* extraHeaders) {
   return FormatForPUTOrPost("POST", uri, contentType, body, extraHeaders);
 }
+
 RakString RakString::FormatForPUT(
     const char* uri,
     const char* contentType,
@@ -979,6 +1046,7 @@ RakString RakString::FormatForPUT(
     const char* extraHeaders) {
   return FormatForPUTOrPost("PUT", uri, contentType, body, extraHeaders);
 }
+
 RakString RakString::FormatForGET(const char* uri, const char* extraHeaders) {
   RakString out;
   RakString host;
@@ -1012,6 +1080,7 @@ RakString RakString::FormatForGET(const char* uri, const char* extraHeaders) {
 
   return out;
 }
+
 RakString RakString::FormatForDELETE(
     const char* uri,
     const char* extraHeaders) {
@@ -1051,6 +1120,7 @@ RakString RakString::FormatForDELETE(
 
   return out;
 }
+
 RakNet::RakString& RakString::MakeFilePath() {
   if (IsEmpty()) {
     return *this;
@@ -1086,11 +1156,13 @@ RakNet::RakString& RakString::MakeFilePath() {
   }
   return *this;
 }
+
 void RakString::FreeMemory() {
   LockMutex();
   FreeMemoryNoMutex();
   UnlockMutex();
 }
+
 void RakString::FreeMemoryNoMutex() {
   for (unsigned int i = 0; i < freeList.Size(); i++) {
     RakNet::OP_DELETE(freeList[i]->refCountMutex, _FILE_AND_LINE_);
@@ -1098,20 +1170,24 @@ void RakString::FreeMemoryNoMutex() {
   }
   freeList.Clear(false, _FILE_AND_LINE_);
 }
+
 void RakString::Serialize(BitStream* bs) const {
   Serialize(sharedString->c_str, bs);
 }
+
 void RakString::Serialize(const char* str, BitStream* bs) {
   auto l = (unsigned short)strlen(str);
   bs->Write(l);
   bs->WriteAlignedBytes((const unsigned char*)str, (const unsigned int)l);
 }
+
 void RakString::SerializeCompressed(
     BitStream* bs,
     uint8_t languageId,
     bool writeLanguageId) const {
   SerializeCompressed(C_String(), bs, languageId, writeLanguageId);
 }
+
 void RakString::SerializeCompressed(
     const char* str,
     BitStream* bs,
@@ -1122,6 +1198,7 @@ void RakString::SerializeCompressed(
   }
   StringCompressor::Instance()->EncodeString(str, 0xFFFF, bs, languageId);
 }
+
 bool RakString::Deserialize(BitStream* bs) {
   Clear();
 
@@ -1141,6 +1218,7 @@ bool RakString::Deserialize(BitStream* bs) {
   }
   return b;
 }
+
 bool RakString::Deserialize(char* str, BitStream* bs) {
   bool b;
   unsigned short l;
@@ -1156,6 +1234,7 @@ bool RakString::Deserialize(char* str, BitStream* bs) {
   str[l] = 0;
   return b;
 }
+
 bool RakString::DeserializeCompressed(BitStream* bs, bool readLanguageId) {
   uint8_t languageId;
   if (readLanguageId) {
@@ -1166,6 +1245,7 @@ bool RakString::DeserializeCompressed(BitStream* bs, bool readLanguageId) {
   return StringCompressor::Instance()->DecodeString(
       this, 0xFFFF, bs, languageId);
 }
+
 bool RakString::DeserializeCompressed(
     char* str,
     BitStream* bs,
@@ -1179,6 +1259,7 @@ bool RakString::DeserializeCompressed(
   return StringCompressor::Instance()->DecodeString(
       str, 0xFFFF, bs, languageId);
 }
+
 const char* RakString::ToString(int64_t i) {
   static int index = 0;
   static char buff[64][64];
@@ -1193,6 +1274,7 @@ const char* RakString::ToString(int64_t i) {
   }
   return buff[lastIndex];
 }
+
 const char* RakString::ToString(uint64_t i) {
   static int index = 0;
   static char buff[64][64];
@@ -1207,9 +1289,11 @@ const char* RakString::ToString(uint64_t i) {
   }
   return buff[lastIndex];
 }
+
 void RakString::Clear() {
   Free();
 }
+
 void RakString::Allocate(size_t len) {
   RakString::LockMutex();
   // sharedString = RakString::pool.Allocate( _FILE_AND_LINE_ );
@@ -1245,6 +1329,7 @@ void RakString::Allocate(size_t len) {
     sharedString->c_str = sharedString->bigString;
   }
 }
+
 void RakString::Assign(const char* str) {
   if (str == nullptr || str[0] == 0) {
     sharedString = &emptyString;
@@ -1255,6 +1340,7 @@ void RakString::Assign(const char* str) {
   Allocate(len);
   memcpy(sharedString->c_str, str, len);
 }
+
 void RakString::Assign(const char* str, va_list ap) {
   if (str == nullptr || str[0] == 0) {
     sharedString = &emptyString;
@@ -1294,6 +1380,7 @@ void RakString::Assign(const char* str, va_list ap) {
     buffSize *= 2;
   }
 }
+
 RakNet::RakString RakString::Assign(const char* str, size_t pos, size_t n) {
   size_t incomingLen = strlen(str);
 
@@ -1322,6 +1409,7 @@ RakNet::RakString RakString::NonVariadic(const char* str) {
   rs = str;
   return rs;
 }
+
 unsigned long RakString::ToInteger(const char* str) {
   unsigned long hash = 0;
   int c;
@@ -1332,9 +1420,11 @@ unsigned long RakString::ToInteger(const char* str) {
 
   return hash;
 }
+
 unsigned long RakString::ToInteger(const RakString& rs) {
   return RakString::ToInteger(rs.C_String());
 }
+
 int RakString::ReadIntFromSubstring(const char* str, size_t pos, size_t n) {
   char tmp[32];
   if (n >= 32) {
@@ -1345,6 +1435,7 @@ int RakString::ReadIntFromSubstring(const char* str, size_t pos, size_t n) {
   }
   return atoi(tmp);
 }
+
 void RakString::AppendBytes(const char* bytes, unsigned int count) {
   if (IsEmpty()) {
     Allocate(count);
@@ -1358,6 +1449,7 @@ void RakString::AppendBytes(const char* bytes, unsigned int count) {
     sharedString->c_str[length + count] = 0;
   }
 }
+
 void RakString::Clone() {
   RakAssert(sharedString != &emptyString);
   if (sharedString == &emptyString) {
@@ -1375,6 +1467,7 @@ void RakString::Clone() {
   sharedString->refCountMutex->Unlock();
   Assign(sharedString->c_str);
 }
+
 void RakString::Free() {
   if (sharedString == &emptyString) {
     return;
@@ -1404,21 +1497,25 @@ void RakString::Free() {
   }
   sharedString = &emptyString;
 }
+
 unsigned char RakString::ToLower(unsigned char c) {
   if (c >= 'A' && c <= 'Z') {
     return c - 'A' + 'a';
   }
   return c;
 }
+
 unsigned char RakString::ToUpper(unsigned char c) {
   if (c >= 'a' && c <= 'z') {
     return c - 'a' + 'A';
   }
   return c;
 }
+
 void RakString::LockMutex() {
   GetPoolMutex().Lock();
 }
+
 void RakString::UnlockMutex() {
   GetPoolMutex().Unlock();
 }

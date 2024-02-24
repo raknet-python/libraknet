@@ -22,6 +22,7 @@
 #include "RakTimer.h"
 
 using namespace RakNet;
+
 class TestHelpers {
  public:
   TestHelpers();

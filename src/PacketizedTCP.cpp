@@ -24,6 +24,7 @@ using PTCPHeader = uint32_t;
 STATIC_FACTORY_DEFINITIONS(PacketizedTCP, PacketizedTCP);
 
 PacketizedTCP::PacketizedTCP() = default;
+
 PacketizedTCP::~PacketizedTCP() {
   ClearAllConnections();
 }
@@ -63,6 +64,7 @@ void PacketizedTCP::Send(
   lengthsArray[1] = length;
   TCPInterface::SendList(dataArray, lengthsArray, 2, systemAddress, broadcast);
 }
+
 bool PacketizedTCP::SendList(
     const char** data,
     const unsigned int* lengths,
@@ -112,6 +114,7 @@ bool PacketizedTCP::SendList(
   return TCPInterface::SendList(
       dataArray, lengthsArray, numParameters + 1, systemAddress, broadcast);
 }
+
 void PacketizedTCP::PushNotificationsToQueues() {
   SystemAddress sa;
   sa = TCPInterface::HasNewIncomingConnection();
@@ -137,6 +140,7 @@ void PacketizedTCP::PushNotificationsToQueues() {
     AddToConnectionList(sa);
   }
 }
+
 Packet* PacketizedTCP::Receive() {
   PushNotificationsToQueues();
 
@@ -280,6 +284,7 @@ Packet* PacketizedTCP::Receive() {
 
   return ReturnOutgoingPacket();
 }
+
 Packet* PacketizedTCP::ReturnOutgoingPacket() {
   Packet* outgoingPacket = nullptr;
   unsigned int i;
@@ -302,10 +307,12 @@ Packet* PacketizedTCP::ReturnOutgoingPacket() {
 
   return outgoingPacket;
 }
+
 void PacketizedTCP::CloseConnection(SystemAddress systemAddress) {
   RemoveFromConnectionList(systemAddress);
   TCPInterface::CloseConnection(systemAddress);
 }
+
 void PacketizedTCP::RemoveFromConnectionList(const SystemAddress& sa) {
   if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -318,6 +325,7 @@ void PacketizedTCP::RemoveFromConnectionList(const SystemAddress& sa) {
     }
   }
 }
+
 void PacketizedTCP::AddToConnectionList(const SystemAddress& sa) {
   if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -325,6 +333,7 @@ void PacketizedTCP::AddToConnectionList(const SystemAddress& sa) {
   connections.SetNew(
       sa, RakNet::OP_NEW<DataStructures::ByteQueue>(_FILE_AND_LINE_));
 }
+
 void PacketizedTCP::ClearAllConnections() {
   unsigned int i;
   for (i = 0; i < connections.Size(); i++) {
@@ -332,6 +341,7 @@ void PacketizedTCP::ClearAllConnections() {
   }
   connections.Clear();
 }
+
 SystemAddress PacketizedTCP::HasCompletedConnectionAttempt() {
   PushNotificationsToQueues();
 
@@ -340,6 +350,7 @@ SystemAddress PacketizedTCP::HasCompletedConnectionAttempt() {
   }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 SystemAddress PacketizedTCP::HasFailedConnectionAttempt() {
   PushNotificationsToQueues();
 
@@ -348,6 +359,7 @@ SystemAddress PacketizedTCP::HasFailedConnectionAttempt() {
   }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 SystemAddress PacketizedTCP::HasNewIncomingConnection() {
   PushNotificationsToQueues();
 
@@ -356,6 +368,7 @@ SystemAddress PacketizedTCP::HasNewIncomingConnection() {
   }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 SystemAddress PacketizedTCP::HasLostConnection() {
   PushNotificationsToQueues();
 

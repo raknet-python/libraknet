@@ -35,19 +35,24 @@ int RakNet::CloudKeyComp(const CloudKey& key, const CloudKey& data) {
 CloudQueryRow* CloudAllocator::AllocateCloudQueryRow() {
   return RakNet::OP_NEW<CloudQueryRow>(_FILE_AND_LINE_);
 }
+
 void CloudAllocator::DeallocateCloudQueryRow(CloudQueryRow* row) {
   RakNet::OP_DELETE(row, _FILE_AND_LINE_);
 }
+
 unsigned char* CloudAllocator::AllocateRowData(uint32_t bytesNeededForData) {
   return (unsigned char*)rakMalloc_Ex(bytesNeededForData, _FILE_AND_LINE_);
 }
+
 void CloudAllocator::DeallocateRowData(void* data) {
   rakFree_Ex(data, _FILE_AND_LINE_);
 }
+
 void CloudKey::Serialize(bool writeToBitstream, BitStream* bitStream) {
   bitStream->Serialize(writeToBitstream, primaryKey);
   bitStream->Serialize(writeToBitstream, secondaryKey);
 }
+
 void CloudQuery::Serialize(bool writeToBitstream, BitStream* bitStream) {
   bool startingRowIndexIsZero = false;
   bool maxRowsToReturnIsZero = false;
@@ -77,6 +82,7 @@ void CloudQuery::Serialize(bool writeToBitstream, BitStream* bitStream) {
     }
   }
 }
+
 void CloudQueryRow::Serialize(
     bool writeToBitstream,
     BitStream* bitStream,
@@ -102,18 +108,21 @@ void CloudQueryRow::Serialize(
     }
   }
 }
+
 void CloudQueryResult::SerializeHeader(
     bool writeToBitstream,
     BitStream* bitStream) {
   cloudQuery.Serialize(writeToBitstream, bitStream);
   bitStream->Serialize(writeToBitstream, subscribeToResults);
 }
+
 void CloudQueryResult::SerializeNumRows(
     bool writeToBitstream,
     uint32_t& numRows,
     BitStream* bitStream) {
   bitStream->Serialize(writeToBitstream, numRows);
 }
+
 void CloudQueryResult::SerializeCloudQueryRows(
     bool writeToBitstream,
     uint32_t& numRows,
@@ -144,6 +153,7 @@ void CloudQueryResult::SerializeCloudQueryRows(
     }
   }
 }
+
 void CloudQueryResult::Serialize(
     bool writeToBitstream,
     BitStream* bitStream,

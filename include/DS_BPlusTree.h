@@ -71,6 +71,7 @@ class RAK_DLL_EXPORT BPlusTree {
   struct ReturnAction {
     KeyType key1;
     KeyType key2;
+
     enum {
       NO_ACTION,
       REPLACE_KEY1_WITH_KEY2,
@@ -159,14 +160,17 @@ BPlusTree<KeyType, DataType, order>::BPlusTree() {
   root = 0;
   leftmostLeaf = 0;
 }
+
 template <class KeyType, class DataType, int order>
 BPlusTree<KeyType, DataType, order>::~BPlusTree() {
   Clear();
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::SetPoolPageSize(int size) {
   pagePool.SetPageSize(size);
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::Get(const KeyType key, DataType& out)
     const {
@@ -182,6 +186,7 @@ bool BPlusTree<KeyType, DataType, order>::Get(const KeyType key, DataType& out)
   }
   return false;
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::DeleteFromPageAtIndex(
     const int index,
@@ -198,11 +203,13 @@ void BPlusTree<KeyType, DataType, order>::DeleteFromPageAtIndex(
   }
   cur->size--;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::Delete(const KeyType key) {
   DataType temp;
   return Delete(key, temp);
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::Delete(
     const KeyType key,
@@ -242,6 +249,7 @@ bool BPlusTree<KeyType, DataType, order>::Delete(
 
   return true;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::FindDeleteRebalance(
     const KeyType key,
@@ -322,6 +330,7 @@ bool BPlusTree<KeyType, DataType, order>::FindDeleteRebalance(
 
   return true;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::FixUnderflow(
     int branchIndex,
@@ -481,6 +490,7 @@ bool BPlusTree<KeyType, DataType, order>::FixUnderflow(
     return cur->size < order / 2;
   }
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::ShiftNodeRight(
     Page<KeyType, DataType, order>* cur) {
@@ -497,6 +507,7 @@ void BPlusTree<KeyType, DataType, order>::ShiftNodeRight(
 
   cur->size++;
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::ShiftNodeLeft(
     Page<KeyType, DataType, order>* cur) {
@@ -512,6 +523,7 @@ void BPlusTree<KeyType, DataType, order>::ShiftNodeLeft(
   }
   cur->size--;
 }
+
 template <class KeyType, class DataType, int order>
 Page<KeyType, DataType, order>*
 BPlusTree<KeyType, DataType, order>::InsertIntoNode(
@@ -688,6 +700,7 @@ void BPlusTree<KeyType, DataType, order>::RotateRight(
   cur->keys[childIndex] = dest->keys[0];
   returnAction->key2 = dest->keys[0];
 }
+
 template <class KeyType, class DataType, int order>
 Page<KeyType, DataType, order>*
 BPlusTree<KeyType, DataType, order>::GetLeafFromKey(const KeyType key) const {
@@ -800,6 +813,7 @@ BPlusTree<KeyType, DataType, order>::InsertBranchDown(
 
   return 0;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::Insert(
     const KeyType key,
@@ -845,6 +859,7 @@ bool BPlusTree<KeyType, DataType, order>::Insert(
 
   return true;
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::ShiftKeysLeft(
     Page<KeyType, DataType, order>* cur) {
@@ -852,6 +867,7 @@ void BPlusTree<KeyType, DataType, order>::ShiftKeysLeft(
   for (i = 0; i < cur->size; i++)
     cur->keys[i] = cur->keys[i + 1];
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::Clear() {
   if (root) {
@@ -861,6 +877,7 @@ void BPlusTree<KeyType, DataType, order>::Clear() {
   }
   pagePool.Clear(_FILE_AND_LINE_);
 }
+
 template <class KeyType, class DataType, int order>
 unsigned BPlusTree<KeyType, DataType, order>::Size() const {
   unsigned int count = 0;
@@ -871,10 +888,12 @@ unsigned BPlusTree<KeyType, DataType, order>::Size() const {
   }
   return count;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::IsEmpty() const {
   return root == 0;
 }
+
 template <class KeyType, class DataType, int order>
 bool BPlusTree<KeyType, DataType, order>::GetIndexOf(
     const KeyType key,
@@ -907,6 +926,7 @@ bool BPlusTree<KeyType, DataType, order>::GetIndexOf(
     }
   }
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::FreePages() {
   DataStructures::Queue<DataStructures::Page<KeyType, DataType, order>*> queue;
@@ -923,15 +943,18 @@ void BPlusTree<KeyType, DataType, order>::FreePages() {
     //	memset(ptr,0,sizeof(root));
   };
 }
+
 template <class KeyType, class DataType, int order>
 Page<KeyType, DataType, order>*
 BPlusTree<KeyType, DataType, order>::GetListHead() const {
   return leftmostLeaf;
 }
+
 template <class KeyType, class DataType, int order>
 DataType BPlusTree<KeyType, DataType, order>::GetDataHead() const {
   return leftmostLeaf->data[0];
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::ForEachLeaf(
     void (*func)(Page<KeyType, DataType, order>* leaf, int index)) {
@@ -942,6 +965,7 @@ void BPlusTree<KeyType, DataType, order>::ForEachLeaf(
     cur = cur->next;
   }
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::ForEachData(
     void (*func)(DataType input, int index)) {
@@ -953,6 +977,7 @@ void BPlusTree<KeyType, DataType, order>::ForEachData(
     cur = cur->next;
   }
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::PrintLeaf(
     Page<KeyType, DataType, order>* leaf,
@@ -962,6 +987,7 @@ void BPlusTree<KeyType, DataType, order>::PrintLeaf(
   for (i = 0; i < leaf->size; i++)
     RAKNET_DEBUG_PRINTF(" %i. %i\n", i + 1, leaf->data[i]);
 }
+
 template <class KeyType, class DataType, int order>
 void BPlusTree<KeyType, DataType, order>::PrintLeaves() {
   ForEachLeaf(PrintLeaf);

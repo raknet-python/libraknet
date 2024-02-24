@@ -91,6 +91,7 @@ void FLP_Printf::OnDirectory(
   (void)fileList;
   RAKNET_DEBUG_PRINTF("Adding %s. %i remaining.\n", dir, directoriesRemaining);
 }
+
 void FLP_Printf::OnFilePushesComplete(
     SystemAddress systemAddress,
     unsigned short setID) {
@@ -100,15 +101,19 @@ void FLP_Printf::OnFilePushesComplete(
   systemAddress.ToString(true, (char*)str);
   RAKNET_DEBUG_PRINTF("File pushes complete to %s\n", str);
 }
+
 void FLP_Printf::OnSendAborted(SystemAddress systemAddress) {
   char str[32];
   systemAddress.ToString(true, (char*)str);
   RAKNET_DEBUG_PRINTF("Send aborted to %s\n", str);
 }
+
 FileList::FileList() = default;
+
 FileList::~FileList() {
   Clear();
 }
+
 void FileList::AddFile(
     const char* filepath,
     const char* filename,
@@ -158,6 +163,7 @@ void FileList::AddFile(
     rakFree_Ex(data, _FILE_AND_LINE_);
   }
 }
+
 void FileList::AddFile(
     const char* filename,
     const char* fullPathToFile,
@@ -224,6 +230,7 @@ void FileList::AddFile(
 
   fileList.Insert(n, _FILE_AND_LINE_);
 }
+
 void FileList::AddFilesFromDirectory(
     const char* applicationDirectory,
     const char* subDirectory,
@@ -402,6 +409,7 @@ void FileList::AddFilesFromDirectory(
     rakFree_Ex(dirSoFar, _FILE_AND_LINE_);
   }
 }
+
 void FileList::Clear() {
   unsigned i;
   for (i = 0; i < fileList.Size(); i++) {
@@ -409,6 +417,7 @@ void FileList::Clear() {
   }
   fileList.Clear(false, _FILE_AND_LINE_);
 }
+
 void FileList::Serialize(RakNet::BitStream* outBitStream) {
   outBitStream->WriteCompressed(fileList.Size());
   unsigned i;
@@ -433,6 +442,7 @@ void FileList::Serialize(RakNet::BitStream* outBitStream) {
     }
   }
 }
+
 bool FileList::Deserialize(RakNet::BitStream* inBitStream) {
   bool b, dataLenNonZero = false, fileLenMatchesDataLen = false;
   char filename[512];
@@ -492,6 +502,7 @@ bool FileList::Deserialize(RakNet::BitStream* inBitStream) {
 
   return true;
 }
+
 void FileList::GetDeltaToCurrent(
     FileList* input,
     FileList* output,
@@ -582,6 +593,7 @@ void FileList::GetDeltaToCurrent(
     }
   }
 }
+
 void FileList::ListMissingOrChangedFiles(
     const char* applicationDirectory,
     FileList* missingOrChangedFiles,
@@ -667,6 +679,7 @@ void FileList::ListMissingOrChangedFiles(
     }
   }
 }
+
 void FileList::PopulateDataFromDisk(
     const char* applicationDirectory,
     bool writeFileData,
@@ -759,12 +772,14 @@ void FileList::PopulateDataFromDisk(
     }
   }
 }
+
 void FileList::FlagFilesAsReferences() {
   for (unsigned int i = 0; i < fileList.Size(); i++) {
     fileList[i].isAReference = true;
     fileList[i].dataLengthBytes = fileList[i].fileLengthBytes;
   }
 }
+
 void FileList::WriteDataToDisk(const char* applicationDirectory) {
   char fullPath[512];
   unsigned i, j;
@@ -839,15 +854,18 @@ void FileList::AddCallback(FileListProgress* cb) {
     fileListProgressCallbacks.Push(cb, _FILE_AND_LINE_);
   }
 }
+
 void FileList::RemoveCallback(FileListProgress* cb) {
   unsigned int idx = fileListProgressCallbacks.GetIndexOf(cb);
   if (idx != (unsigned int)-1) {
     fileListProgressCallbacks.RemoveAtIndex(idx);
   }
 }
+
 void FileList::ClearCallbacks() {
   fileListProgressCallbacks.Clear(true, _FILE_AND_LINE_);
 }
+
 void FileList::GetCallbacks(
     DataStructures::List<FileListProgress*>& callbacks) {
   callbacks = fileListProgressCallbacks;

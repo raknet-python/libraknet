@@ -30,14 +30,17 @@ using namespace RakNet;
 STATIC_FACTORY_DEFINITIONS(RakNetTransport2, RakNetTransport2);
 
 RakNetTransport2::RakNetTransport2() = default;
+
 RakNetTransport2::~RakNetTransport2() {
   Stop();
 }
+
 bool RakNetTransport2::Start(unsigned short port, bool serverMode) {
   (void)port;
   (void)serverMode;
   return true;
 }
+
 void RakNetTransport2::Stop() {
   newConnections.Clear(_FILE_AND_LINE_);
   lostConnections.Clear(_FILE_AND_LINE_);
@@ -47,6 +50,7 @@ void RakNetTransport2::Stop() {
   }
   packetQueue.Clear(_FILE_AND_LINE_);
 }
+
 void RakNetTransport2::Send(
     SystemAddress systemAddress,
     const char* data,
@@ -74,31 +78,37 @@ void RakNetTransport2::Send(
       systemAddress,
       (systemAddress == UNASSIGNED_SYSTEM_ADDRESS) != 0);
 }
+
 void RakNetTransport2::CloseConnection(SystemAddress systemAddress) {
   rakPeerInterface->CloseConnection(systemAddress, true, 0);
 }
+
 Packet* RakNetTransport2::Receive() {
   if (packetQueue.Size() == 0) {
     return nullptr;
   }
   return packetQueue.Pop();
 }
+
 SystemAddress RakNetTransport2::HasNewIncomingConnection() {
   if (newConnections.Size()) {
     return newConnections.Pop();
   }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 SystemAddress RakNetTransport2::HasLostConnection() {
   if (lostConnections.Size()) {
     return lostConnections.Pop();
   }
   return UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 void RakNetTransport2::DeallocatePacket(Packet* packet) {
   rakFree_Ex(packet->data, _FILE_AND_LINE_);
   RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
 }
+
 PluginReceiveResult RakNetTransport2::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_TRANSPORT_STRING: {
@@ -118,6 +128,7 @@ PluginReceiveResult RakNetTransport2::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void RakNetTransport2::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -126,6 +137,7 @@ void RakNetTransport2::OnClosedConnection(
   (void)lostConnectionReason;
   lostConnections.Push(systemAddress, _FILE_AND_LINE_);
 }
+
 void RakNetTransport2::OnNewConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,

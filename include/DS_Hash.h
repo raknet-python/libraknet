@@ -27,9 +27,11 @@ namespace DataStructures {
 struct HashIndex {
   unsigned int primaryIndex;
   unsigned int secondaryIndex;
+
   bool IsInvalid() const {
     return primaryIndex == (unsigned int)-1;
   }
+
   void SetInvalid() {
     primaryIndex = (unsigned int)-1;
     secondaryIndex = (unsigned int)-1;
@@ -78,6 +80,7 @@ class RAK_DLL_EXPORT Hash {
       string = strIn;
       data = _data;
     }
+
     key_type string;
     data_type data;
     // Next in the list for this key
@@ -407,6 +410,7 @@ void Hash<key_type, data_type, HASH_SIZE, hashFunction>::GetAsList(
     }
   }
 }
+
 template <
     class key_type,
     class data_type,

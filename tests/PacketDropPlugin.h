@@ -18,6 +18,7 @@
 #include "RakTimer.h"
 
 using namespace RakNet;
+
 class PacketDropPlugin : public PluginInterface2 {
  public:
   PacketDropPlugin();

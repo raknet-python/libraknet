@@ -120,6 +120,7 @@ class RAK_DLL_EXPORT BinarySearchTree {
   node* root;
 
   enum Direction_Types { NOT_FOUND, LEFT, RIGHT, ROOT } direction;
+
   unsigned int HeightRecursive(node* current);
   unsigned int BinarySearchTree_size;
   node*& Find(const BinarySearchTreeType& element, node** parent);
@@ -137,9 +138,11 @@ class RAK_DLL_EXPORT AVLBalancedBinarySearchTree
     : public BinarySearchTree<BinarySearchTreeType> {
  public:
   AVLBalancedBinarySearchTree() {}
+
   virtual ~AVLBalancedBinarySearchTree();
   void Add(const BinarySearchTreeType& input);
   void Del(const BinarySearchTreeType& input);
+
   BinarySearchTree<BinarySearchTreeType>& operator=(
       BinarySearchTree<BinarySearchTreeType>& original_copy) {
     return BinarySearchTree<BinarySearchTreeType>::operator=(original_copy);

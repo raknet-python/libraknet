@@ -16,11 +16,13 @@
 GridSectorizer::GridSectorizer() {
   grid = nullptr;
 }
+
 GridSectorizer::~GridSectorizer() {
   if (grid) {
     RakNet::OP_DELETE_ARRAY(grid, _FILE_AND_LINE_);
   }
 }
+
 void GridSectorizer::Init(
     const float _maxCellWidth,
     const float _maxCellHeight,
@@ -54,6 +56,7 @@ void GridSectorizer::Init(
       gridCellWidthCount * gridCellHeightCount, _FILE_AND_LINE_);
 #endif
 }
+
 void GridSectorizer::AddEntry(
     void* entry,
     const float minX,
@@ -101,6 +104,7 @@ void GridSectorizer::RemoveEntry(
     }
   }
 }
+
 void GridSectorizer::MoveEntry(
     void* entry,
     const float sourceMinX,
@@ -182,6 +186,7 @@ void GridSectorizer::GetEntries(
     }
   }
 }
+
 bool GridSectorizer::PositionCrossesCells(
     const float originX,
     const float originY,
@@ -190,12 +195,15 @@ bool GridSectorizer::PositionCrossesCells(
   return originX / cellWidth != destinationX / cellWidth ||
       originY / cellHeight != destinationY / cellHeight;
 }
+
 int GridSectorizer::WorldToCellX(const float input) const {
   return (int)((input - cellOriginX) * invCellWidth);
 }
+
 int GridSectorizer::WorldToCellY(const float input) const {
   return (int)((input - cellOriginY) * invCellHeight);
 }
+
 int GridSectorizer::WorldToCellXOffsetAndClamped(const float input) const {
   int cell = WorldToCellX(input);
   cell = cell > 0 ? cell : 0; // __max(cell,0);
@@ -204,6 +212,7 @@ int GridSectorizer::WorldToCellXOffsetAndClamped(const float input) const {
       : cell; // __min(gridCellWidthCount-1, cell);
   return cell;
 }
+
 int GridSectorizer::WorldToCellYOffsetAndClamped(const float input) const {
   int cell = WorldToCellY(input);
   cell = cell > 0 ? cell : 0; // __max(cell,0);
@@ -212,6 +221,7 @@ int GridSectorizer::WorldToCellYOffsetAndClamped(const float input) const {
       : cell; // __min(gridCellHeightCount-1, cell);
   return cell;
 }
+
 void GridSectorizer::Clear() {
   int cur;
   int count = gridCellWidthCount * gridCellHeightCount;

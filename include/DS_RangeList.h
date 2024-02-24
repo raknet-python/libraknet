@@ -25,11 +25,14 @@ namespace DataStructures {
 template <class range_type>
 struct RangeNode {
   RangeNode() {}
+
   ~RangeNode() {}
+
   RangeNode(range_type min, range_type max) {
     minIndex = min;
     maxIndex = max;
   }
+
   range_type minIndex;
   range_type maxIndex;
 };
@@ -114,6 +117,7 @@ RakNet::BitSize_t RangeList<range_type>::Serialize(
 
   return bitsWritten;
 }
+
 template <class range_type>
 bool RangeList<range_type>::Deserialize(RakNet::BitStream* out) {
   ranges.Clear(true, _FILE_AND_LINE_);

@@ -24,29 +24,35 @@ RakWString::RakWString() {
   c_str = nullptr;
   c_strCharLength = 0;
 }
+
 RakWString::RakWString(const RakString& right) {
   c_str = nullptr;
   c_strCharLength = 0;
   *this = right;
 }
+
 RakWString::RakWString(const char* input) {
   c_str = nullptr;
   c_strCharLength = 0;
   *this = input;
 }
+
 RakWString::RakWString(const wchar_t* input) {
   c_str = nullptr;
   c_strCharLength = 0;
   *this = input;
 }
+
 RakWString::RakWString(const RakWString& right) {
   c_str = nullptr;
   c_strCharLength = 0;
   *this = right;
 }
+
 RakWString::~RakWString() {
   rakFree_Ex(c_str, _FILE_AND_LINE_);
 }
+
 RakWString& RakWString::operator=(const RakWString& right) {
   Clear();
   if (right.IsEmpty()) {
@@ -67,9 +73,11 @@ RakWString& RakWString::operator=(const RakWString& right) {
 
   return *this;
 }
+
 RakWString& RakWString::operator=(const RakString& right) {
   return *this = right.C_String();
 }
+
 RakWString& RakWString::operator=(const wchar_t* const str) {
   Clear();
   if (str == nullptr) {
@@ -90,10 +98,12 @@ RakWString& RakWString::operator=(const wchar_t* const str) {
 
   return *this;
 }
+
 RakWString& RakWString::operator=(wchar_t* str) {
   *this = (const wchar_t* const)str;
   return *this;
 }
+
 RakWString& RakWString::operator=(const char* const str) {
   Clear();
 
@@ -129,10 +139,12 @@ RakWString& RakWString::operator=(const char* const str) {
 
   return *this;
 }
+
 RakWString& RakWString::operator=(char* str) {
   *this = (const char* const)str;
   return *this;
 }
+
 RakWString& RakWString::operator+=(const RakWString& right) {
   if (right.IsEmpty()) {
     return *this;
@@ -166,6 +178,7 @@ RakWString& RakWString::operator+=(const RakWString& right) {
 
   return *this;
 }
+
 RakWString& RakWString::operator+=(const wchar_t* const right) {
   if (right == nullptr) {
     return *this;
@@ -197,42 +210,53 @@ RakWString& RakWString::operator+=(const wchar_t* const right) {
 
   return *this;
 }
+
 RakWString& RakWString::operator+=(wchar_t* right) {
   return *this += (const wchar_t* const)right;
 }
+
 bool RakWString::operator==(const RakWString& right) const {
   if (GetLength() != right.GetLength()) {
     return false;
   }
   return wcscmp(C_String(), right.C_String()) == 0;
 }
+
 bool RakWString::operator<(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String()) < 0;
 }
+
 bool RakWString::operator<=(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String()) <= 0;
 }
+
 bool RakWString::operator>(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String()) > 0;
 }
+
 bool RakWString::operator>=(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String()) >= 0;
 }
+
 bool RakWString::operator!=(const RakWString& right) const {
   if (GetLength() != right.GetLength()) {
     return true;
   }
   return wcscmp(C_String(), right.C_String()) != 0;
 }
+
 void RakWString::Set(wchar_t* str) {
   *this = str;
 }
+
 bool RakWString::IsEmpty() const {
   return GetLength() == 0;
 }
+
 size_t RakWString::GetLength() const {
   return c_strCharLength;
 }
+
 unsigned long RakWString::ToInteger(const RakWString& rs) {
   unsigned long hash = 0;
   int c;
@@ -247,9 +271,11 @@ unsigned long RakWString::ToInteger(const RakWString& rs) {
 
   return hash;
 }
+
 int RakWString::StrCmp(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String());
 }
+
 int RakWString::StrICmp(const RakWString& right) const {
 #ifdef _WIN32
   return _wcsicmp(C_String(), right.C_String());
@@ -258,20 +284,25 @@ int RakWString::StrICmp(const RakWString& right) const {
   return wcscmp(C_String(), right.C_String());
 #endif
 }
+
 void RakWString::Clear() {
   rakFree_Ex(c_str, _FILE_AND_LINE_);
   c_str = nullptr;
   c_strCharLength = 0;
 }
+
 void RakWString::Printf() {
   printf("%ls", C_String());
 }
+
 void RakWString::FPrintf(FILE* fp) {
   fprintf(fp, "%ls", C_String());
 }
+
 void RakWString::Serialize(BitStream* bs) const {
   Serialize(C_String(), bs);
 }
+
 void RakWString::Serialize(const wchar_t* const str, BitStream* bs) {
 #if 0
 	char *multiByteBuffer;
@@ -292,6 +323,7 @@ void RakWString::Serialize(const wchar_t* const str, BitStream* bs) {
   }
 #endif
 }
+
 bool RakWString::Deserialize(BitStream* bs) {
   Clear();
 
@@ -329,6 +361,7 @@ bool RakWString::Deserialize(BitStream* bs) {
     return true;
   }
 }
+
 bool RakWString::Deserialize(wchar_t* str, BitStream* bs) {
   size_t mbByteLength;
   bs->ReadCasted<unsigned short>(mbByteLength);

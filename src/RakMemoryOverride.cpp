@@ -65,49 +65,63 @@ int (*dlMallocMUnmap)(void* ptr, size_t size) = RakNet::_DLMallocMUnmap;
 void SetMalloc(void* (*userFunction)(size_t size)) {
   rakMalloc = userFunction;
 }
+
 void SetRealloc(void* (*userFunction)(void* p, size_t size)) {
   rakRealloc = userFunction;
 }
+
 void SetFree(void (*userFunction)(void* p)) {
   rakFree = userFunction;
 }
+
 void SetMalloc_Ex(
     void* (*userFunction)(size_t size, const char* file, unsigned int line)) {
   rakMalloc_Ex = userFunction;
 }
+
 void SetRealloc_Ex(void* (
     *userFunction)(void* p, size_t size, const char* file, unsigned int line)) {
   rakRealloc_Ex = userFunction;
 }
+
 void SetFree_Ex(
     void (*userFunction)(void* p, const char* file, unsigned int line)) {
   rakFree_Ex = userFunction;
 }
+
 void SetNotifyOutOfMemory(
     void (*userFunction)(const char* file, const long line)) {
   notifyOutOfMemory = userFunction;
 }
+
 void SetDLMallocMMap(void* (*userFunction)(size_t size)) {
   dlMallocMMap = userFunction;
 }
+
 void SetDLMallocDirectMMap(void* (*userFunction)(size_t size)) {
   dlMallocDirectMMap = userFunction;
 }
+
 void SetDLMallocMUnmap(int (*userFunction)(void* ptr, size_t size)) {
   dlMallocMUnmap = userFunction;
 }
+
 void* (*GetMalloc())(size_t size) {
   return rakMalloc;
 }
+
 void* (*GetRealloc())(void* p, size_t size) {
   return rakRealloc;
 }
+
 void (*GetFree())(void* p) {
   return rakFree;
 }
+
 void* (*GetMalloc_Ex())(size_t size, const char* file, unsigned int line) {
   return rakMalloc_Ex;
 }
+
 void* (*GetRealloc_Ex())(
     void* p,
     size_t size,
@@ -115,18 +129,23 @@ void* (*GetRealloc_Ex())(
     unsigned int line) {
   return rakRealloc_Ex;
 }
+
 void (*GetFree_Ex())(void* p, const char* file, unsigned int line) {
   return rakFree_Ex;
 }
+
 void* (*GetDLMallocMMap())(size_t size) {
   return dlMallocMMap;
 }
+
 void* (*GetDLMallocDirectMMap())(size_t size) {
   return dlMallocDirectMMap;
 }
+
 int (*GetDLMallocMUnmap())(void* ptr, size_t size) {
   return dlMallocMUnmap;
 }
+
 void* RakNet::_RakMalloc(size_t size) {
   return malloc(size);
 }
@@ -167,9 +186,11 @@ void RakNet::_RakFree_Ex(void* p, const char* file, unsigned int line) {
 void* RakNet::_DLMallocMMap(size_t size) {
   return RAK_MMAP_DEFAULT(size);
 }
+
 void* RakNet::_DLMallocDirectMMap(size_t size) {
   return RAK_DIRECT_MMAP_DEFAULT(size);
 }
+
 int RakNet::_DLMallocMUnmap(void* p, size_t size) {
   return RAK_MUNMAP_DEFAULT(p, size);
 }
@@ -188,6 +209,7 @@ void _DLFree(void* p) {
   if (p)
     rak_mspace_free(rakNetFixedHeapMSpace, p);
 }
+
 void* _DLMalloc_Ex(size_t size, const char* file, unsigned int line) {
   (void)file;
   (void)line;
@@ -227,6 +249,7 @@ void UseRaknetFixedHeap(
 
   rakNetFixedHeapMSpace = rak_create_mspace(initialCapacity, 0);
 }
+
 void FreeRakNetFixedHeap(void) {
   if (rakNetFixedHeapMSpace) {
     rak_destroy_mspace(rakNetFixedHeapMSpace);
@@ -245,33 +268,40 @@ void* RakNet::_DLMallocMMap(size_t size) {
   (void)size;
   return nullptr;
 }
+
 void* RakNet::_DLMallocDirectMMap(size_t size) {
   (void)size;
   return nullptr;
 }
+
 int RakNet::_DLMallocMUnmap(void* p, size_t size) {
   (void)size;
   (void)p;
   return 0;
 }
+
 void* _DLMalloc(size_t size) {
   (void)size;
   return nullptr;
 }
+
 void* _DLRealloc(void* p, size_t size) {
   (void)p;
   (void)size;
   return nullptr;
 }
+
 void _DLFree(void* p) {
   (void)p;
 }
+
 void* _DLMalloc_Ex(size_t size, const char* file, unsigned int line) {
   (void)size;
   (void)file;
   (void)line;
   return nullptr;
 }
+
 void* _DLRealloc_Ex(void* p, size_t size, const char* file, unsigned int line) {
   (void)p;
   (void)size;
@@ -279,6 +309,7 @@ void* _DLRealloc_Ex(void* p, size_t size, const char* file, unsigned int line) {
   (void)line;
   return nullptr;
 }
+
 void _DLFree_Ex(void* p, const char* file, unsigned int line) {
   (void)p;
   (void)file;
@@ -295,6 +326,7 @@ void UseRaknetFixedHeap(
   (void)yourDirectMMapFunction;
   (void)yourMUnmapFunction;
 }
+
 void FreeRakNetFixedHeap() {}
 #endif
 

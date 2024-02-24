@@ -25,13 +25,17 @@ UDPProxyServer::UDPProxyServer() {
   resultHandler = nullptr;
   socketFamily = AF_INET;
 }
+
 UDPProxyServer::~UDPProxyServer() = default;
+
 void UDPProxyServer::SetSocketFamily(unsigned short _socketFamily) {
   socketFamily = _socketFamily;
 }
+
 void UDPProxyServer::SetResultHandler(UDPProxyServerResultHandler* rh) {
   resultHandler = rh;
 }
+
 bool UDPProxyServer::LoginToCoordinator(
     RakNet::RakString password,
     SystemAddress coordinatorAddress) {
@@ -62,10 +66,13 @@ bool UDPProxyServer::LoginToCoordinator(
       coordinatorAddress, insertionIndex, _FILE_AND_LINE_);
   return true;
 }
+
 void UDPProxyServer::SetServerPublicIP(RakString ip) {
   serverPublicIp = ip;
 }
+
 void UDPProxyServer::Update() {}
+
 PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
   // Make sure incoming messages from from UDPProxyCoordinator
 
@@ -129,6 +136,7 @@ PluginReceiveResult UDPProxyServer::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void UDPProxyServer::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -139,22 +147,27 @@ void UDPProxyServer::OnClosedConnection(
   loggingInCoordinators.RemoveIfExists(systemAddress);
   loggedInCoordinators.RemoveIfExists(systemAddress);
 }
+
 void UDPProxyServer::OnRakPeerStartup() {
   udpForwarder.Startup();
 }
+
 void UDPProxyServer::OnRakPeerShutdown() {
   udpForwarder.Shutdown();
   loggingInCoordinators.Clear(true, _FILE_AND_LINE_);
   loggedInCoordinators.Clear(true, _FILE_AND_LINE_);
 }
+
 void UDPProxyServer::OnAttach() {
   if (rakPeerInterface->IsActive()) {
     OnRakPeerStartup();
   }
 }
+
 void UDPProxyServer::OnDetach() {
   OnRakPeerShutdown();
 }
+
 void UDPProxyServer::OnForwardingRequestFromCoordinatorToServer(
     Packet* packet) {
   SystemAddress sourceAddress, targetAddress;

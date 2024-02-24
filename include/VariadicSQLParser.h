@@ -20,6 +20,7 @@ struct IndexAndType {
   unsigned int strIndex;
   unsigned int typeMappingIndex;
 };
+
 const char* GetTypeMappingAtIndex(int i);
 void GetTypeMappingIndices(
     const char* format,

@@ -14,6 +14,7 @@
 #include "RakString.h"
 
 using namespace RakNet;
+
 class TestInterface {
  public:
   TestInterface();

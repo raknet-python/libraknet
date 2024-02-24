@@ -21,7 +21,9 @@ PluginInterface2::PluginInterface2() {
   tcpInterface = nullptr;
 #endif
 }
+
 PluginInterface2::~PluginInterface2() = default;
+
 void PluginInterface2::SendUnified(
     const RakNet::BitStream* bitStream,
     PacketPriority priority,
@@ -68,6 +70,7 @@ void PluginInterface2::SendUnified(
     Update();
   }
 }
+
 void PluginInterface2::SendUnified(
     const char* data,
     const int length,
@@ -112,6 +115,7 @@ void PluginInterface2::SendUnified(
     Update();
   }
 }
+
 Packet* PluginInterface2::AllocatePacketUnified(unsigned dataSize) {
   if (rakPeerInterface) {
     return rakPeerInterface->AllocatePacket(dataSize);
@@ -131,6 +135,7 @@ Packet* PluginInterface2::AllocatePacketUnified(unsigned dataSize) {
   packet->wasGeneratedLocally = false;
   return packet;
 }
+
 void PluginInterface2::PushBackPacketUnified(Packet* packet, bool pushAtHead) {
   if (rakPeerInterface) {
     rakPeerInterface->PushBackPacket(packet, pushAtHead);
@@ -146,6 +151,7 @@ void PluginInterface2::PushBackPacketUnified(Packet* packet, bool pushAtHead) {
   OnReceive(packet);
   Update();
 }
+
 void PluginInterface2::DeallocPacketUnified(Packet* packet) {
   if (rakPeerInterface) {
     rakPeerInterface->DeallocatePacket(packet);
@@ -161,6 +167,7 @@ void PluginInterface2::DeallocPacketUnified(Packet* packet) {
   rakFree_Ex(packet->data, _FILE_AND_LINE_);
   RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
 }
+
 bool PluginInterface2::SendListUnified(
     const char** data,
     const int* lengths,
@@ -232,6 +239,7 @@ bool PluginInterface2::SendListUnified(
 
   return false;
 }
+
 void PluginInterface2::SetRakPeerInterface(RakPeerInterface* ptr) {
   rakPeerInterface = ptr;
 }

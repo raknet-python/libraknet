@@ -34,18 +34,22 @@ TeamBalancer::TeamBalancer() {
   lockTeams = false;
   hostGuid = UNASSIGNED_RAKNET_GUID;
 }
+
 TeamBalancer::~TeamBalancer() = default;
+
 void TeamBalancer::SetTeamSizeLimit(TeamId team, unsigned short limit) {
   teamLimits.Replace(limit, 0, team, _FILE_AND_LINE_);
   if (teamLimits.Size() > teamMemberCounts.Size()) {
     teamMemberCounts.Replace(0, 0, teamLimits.Size() - 1, _FILE_AND_LINE_);
   }
 }
+
 void TeamBalancer::SetDefaultAssignmentAlgorithm(
     DefaultAssigmentAlgorithm daa) {
   // Just update the default. Currently active teams are not affected.
   defaultAssigmentAlgorithm = daa;
 }
+
 void TeamBalancer::SetForceEvenTeams(bool force) {
   // Set flag to indicate that teams should be even.
   forceTeamsToBeEven = force;
@@ -60,6 +64,7 @@ void TeamBalancer::SetForceEvenTeams(bool force) {
     EvenTeams();
   }
 }
+
 void TeamBalancer::SetLockTeams(bool lock) {
   if (lock == lockTeams) {
     return;
@@ -102,6 +107,7 @@ void TeamBalancer::SetLockTeams(bool lock) {
     }
   }
 }
+
 void TeamBalancer::RequestSpecificTeam(NetworkID memberId, TeamId desiredTeam) {
   bool foundMatch = false;
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
@@ -134,6 +140,7 @@ void TeamBalancer::RequestSpecificTeam(NetworkID memberId, TeamId desiredTeam) {
   rakPeerInterface->Send(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, hostGuid, false);
 }
+
 void TeamBalancer::CancelRequestSpecificTeam(NetworkID memberId) {
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
     if (myTeamMembers[i].memberId == memberId) {
@@ -151,6 +158,7 @@ void TeamBalancer::CancelRequestSpecificTeam(NetworkID memberId) {
     }
   }
 }
+
 void TeamBalancer::RequestAnyTeam(NetworkID memberId) {
   bool foundMatch = false;
 
@@ -182,6 +190,7 @@ void TeamBalancer::RequestAnyTeam(NetworkID memberId) {
   rakPeerInterface->Send(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, hostGuid, false);
 }
+
 TeamId TeamBalancer::GetMyTeam(NetworkID memberId) const {
   // Return team returned by last ID_TEAM_BALANCER_TEAM_ASSIGNED packet
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
@@ -192,6 +201,7 @@ TeamId TeamBalancer::GetMyTeam(NetworkID memberId) const {
 
   return UNASSIGNED_TEAM_ID;
 }
+
 void TeamBalancer::DeleteMember(NetworkID memberId) {
   for (unsigned int i = 0; i < myTeamMembers.Size(); i++) {
     if (myTeamMembers[i].memberId == memberId) {
@@ -207,6 +217,7 @@ void TeamBalancer::DeleteMember(NetworkID memberId) {
     }
   }
 }
+
 PluginReceiveResult TeamBalancer::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_FCM2_NEW_HOST: {
@@ -274,6 +285,7 @@ PluginReceiveResult TeamBalancer::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 void TeamBalancer::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -283,10 +295,12 @@ void TeamBalancer::OnClosedConnection(
 
   RemoveByGuid(rakNetGUID);
 }
+
 void TeamBalancer::OnAttach() {
   hostGuid =
       rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 }
+
 void TeamBalancer::RemoveByGuid(RakNetGUID rakNetGUID) {
   // If we are the host, and the closed connection has a team, and teams are not locked:
   if (WeAreHost()) {
@@ -312,6 +326,7 @@ void TeamBalancer::RemoveByGuid(RakNetGUID rakNetGUID) {
     }
   }
 }
+
 void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
   if (!WeAreHost()) {
     return;
@@ -378,6 +393,7 @@ void TeamBalancer::OnStatusUpdateToNewHost(Packet* packet) {
     }
   }
 }
+
 void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
   if (!WeAreHost()) {
     return;
@@ -393,6 +409,7 @@ void TeamBalancer::OnCancelTeamRequest(Packet* packet) {
     teamMembers[memberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
   }
 }
+
 void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
   if (!WeAreHost()) {
     return;
@@ -417,6 +434,7 @@ void TeamBalancer::OnRequestAnyTeam(Packet* packet) {
     NotifyTeamAssigment(AddTeamMember(tm));
   }
 }
+
 void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
   if (!WeAreHost()) {
     return;
@@ -495,6 +513,7 @@ void TeamBalancer::OnRequestSpecificTeam(Packet* packet) {
     }
   }
 }
+
 unsigned int TeamBalancer::GetMemberIndex(NetworkID memberId, RakNetGUID guid)
     const {
   for (unsigned int i = 0; i < teamMembers.Size(); i++) {
@@ -505,6 +524,7 @@ unsigned int TeamBalancer::GetMemberIndex(NetworkID memberId, RakNetGUID guid)
   }
   return (unsigned int)-1;
 }
+
 unsigned int TeamBalancer::AddTeamMember(const TeamMember& tm) {
   if (tm.currentTeam > teamLimits.Size()) {
     RakAssert("TeamBalancer::AddTeamMember team index out of bounds" && 0);
@@ -521,12 +541,14 @@ unsigned int TeamBalancer::AddTeamMember(const TeamMember& tm) {
   }
   return teamMembers.Size() - 1;
 }
+
 void TeamBalancer::RemoveTeamMember(unsigned int index) {
   RakAssert(teamMemberCounts[teamMembers[index].currentTeam] != 0);
   teamMemberCounts[teamMembers[index].currentTeam] =
       teamMemberCounts[teamMembers[index].currentTeam] - 1;
   teamMembers.RemoveAtIndexFast(index);
 }
+
 void TeamBalancer::GetMinMaxTeamMembers(
     int& minMembersOnASingleTeam,
     int& maxMembersOnASingleTeam) {
@@ -537,6 +559,7 @@ void TeamBalancer::GetMinMaxTeamMembers(
     maxMembersOnASingleTeam = minMembersOnASingleTeam + 1;
   }
 }
+
 void TeamBalancer::EvenTeams() {
   // Ensure all teams are even. If not, pick players at random from overpopulated teams, and move to underpopulated teams.
   int minMembersOnASingleTeam;
@@ -565,6 +588,7 @@ void TeamBalancer::EvenTeams() {
     }
   }
 }
+
 unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(
     const DataStructures::List<TeamId>& sourceTeamNumbers,
     TeamId targetTeamNumber) {
@@ -592,6 +616,7 @@ unsigned int TeamBalancer::GetMemberIndexToSwitchTeams(
     return (unsigned int)-1;
   }
 }
+
 void TeamBalancer::SwitchMemberTeam(
     unsigned int teamMemberIndex,
     TeamId destinationTeam) {
@@ -603,6 +628,7 @@ void TeamBalancer::SwitchMemberTeam(
     teamMembers[teamMemberIndex].requestedTeam = UNASSIGNED_TEAM_ID;
   }
 }
+
 void TeamBalancer::GetOverpopulatedTeams(
     DataStructures::List<TeamId>& overpopulatedTeams,
     int maxTeamSize) {
@@ -613,6 +639,7 @@ void TeamBalancer::GetOverpopulatedTeams(
     }
   }
 }
+
 void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex) {
   RakAssert(teamMemberIndex < teamMembers.Size());
   if (teamMemberIndex >= teamMembers.Size()) {
@@ -631,10 +658,12 @@ void TeamBalancer::NotifyTeamAssigment(unsigned int teamMemberIndex) {
       teamMembers[teamMemberIndex].memberGuid,
       false);
 }
+
 bool TeamBalancer::WeAreHost() const {
   return hostGuid ==
       rakPeerInterface->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 }
+
 PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -666,6 +695,7 @@ PluginReceiveResult TeamBalancer::OnTeamAssigned(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 PluginReceiveResult TeamBalancer::OnRequestedTeamChangePending(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -673,6 +703,7 @@ PluginReceiveResult TeamBalancer::OnRequestedTeamChangePending(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 PluginReceiveResult TeamBalancer::OnTeamsLocked(Packet* packet) {
   if (packet->guid != hostGuid) {
     return RR_STOP_PROCESSING_AND_DEALLOCATE;
@@ -680,6 +711,7 @@ PluginReceiveResult TeamBalancer::OnTeamsLocked(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 TeamId TeamBalancer::GetNextDefaultTeam() {
   // Accounting for team balancing and team limits, get the team a player should be placed on
   switch (defaultAssigmentAlgorithm) {
@@ -699,6 +731,7 @@ TeamId TeamBalancer::GetNextDefaultTeam() {
     }
   }
 }
+
 bool TeamBalancer::TeamWouldBeOverpopulatedOnAddition(
     TeamId teamId,
     unsigned int teamMemberSize) {
@@ -714,6 +747,7 @@ bool TeamBalancer::TeamWouldBeOverpopulatedOnAddition(
 
   return false;
 }
+
 bool TeamBalancer::TeamWouldBeUnderpopulatedOnLeave(
     TeamId teamId,
     unsigned int teamMemberSize) {
@@ -724,6 +758,7 @@ bool TeamBalancer::TeamWouldBeUnderpopulatedOnLeave(
   }
   return false;
 }
+
 TeamId TeamBalancer::GetSmallestNonFullTeam() const {
   TeamId idx;
   unsigned long smallestTeamCount = MAX_UNSIGNED_LONG;
@@ -737,6 +772,7 @@ TeamId TeamBalancer::GetSmallestNonFullTeam() const {
   }
   return smallestTeamIndex;
 }
+
 TeamId TeamBalancer::GetFirstNonFullTeam() const {
   TeamId idx;
   for (idx = 0; idx < teamMemberCounts.Size(); idx++) {
@@ -746,6 +782,7 @@ TeamId TeamBalancer::GetFirstNonFullTeam() const {
   }
   return UNASSIGNED_TEAM_ID;
 }
+
 void TeamBalancer::MoveMemberThatWantsToJoinTeam(TeamId teamId) {
   RakAssert(forceTeamsToBeEven == false && lockTeams == false);
 
@@ -753,6 +790,7 @@ void TeamBalancer::MoveMemberThatWantsToJoinTeam(TeamId teamId) {
     teamId = MoveMemberThatWantsToJoinTeamInternal(teamId);
   } while (teamId != UNASSIGNED_TEAM_ID);
 }
+
 TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId) {
   DataStructures::List<TeamId> membersThatWantToJoinTheTeam;
   for (TeamId i = 0; i < teamMembers.Size(); i++) {
@@ -772,6 +810,7 @@ TeamId TeamBalancer::MoveMemberThatWantsToJoinTeamInternal(TeamId teamId) {
   }
   return UNASSIGNED_TEAM_ID;
 }
+
 void TeamBalancer::NotifyTeamsLocked(RakNetGUID target, TeamId requestedTeam) {
   BitStream bsOut;
   bsOut.Write((MessageID)ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED);
@@ -779,6 +818,7 @@ void TeamBalancer::NotifyTeamsLocked(RakNetGUID target, TeamId requestedTeam) {
   rakPeerInterface->Send(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
+
 void TeamBalancer::NotifyTeamSwitchPending(
     RakNetGUID target,
     TeamId requestedTeam,
@@ -790,6 +830,7 @@ void TeamBalancer::NotifyTeamSwitchPending(
   rakPeerInterface->Send(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
+
 void TeamBalancer::SwapTeamMembersByRequest(
     unsigned int memberIndex1,
     unsigned int memberIndex2) {
@@ -799,6 +840,7 @@ void TeamBalancer::SwapTeamMembersByRequest(
   teamMembers[memberIndex1].requestedTeam = UNASSIGNED_TEAM_ID;
   teamMembers[memberIndex2].requestedTeam = UNASSIGNED_TEAM_ID;
 }
+
 void TeamBalancer::NotifyNoTeam(NetworkID memberId, RakNetGUID target) {
   BitStream bsOut;
   bsOut.Write((MessageID)ID_TEAM_BALANCER_TEAM_ASSIGNED);
@@ -807,6 +849,7 @@ void TeamBalancer::NotifyNoTeam(NetworkID memberId, RakNetGUID target) {
   rakPeerInterface->Send(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, target, false);
 }
+
 bool TeamBalancer::TeamsWouldBeEvenOnSwitch(TeamId t1, TeamId t2) {
   RakAssert(teamMembers.Size() != 0);
   return !TeamWouldBeOverpopulatedOnAddition(t1, teamMembers.Size() - 1) &&

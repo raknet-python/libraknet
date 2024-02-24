@@ -35,10 +35,12 @@ template <class MemoryBlockType>
 class RAK_DLL_EXPORT MemoryPool {
  public:
   struct Page;
+
   struct MemoryWithPage {
     MemoryBlockType userMemory;
     Page* parentPage;
   };
+
   struct Page {
     MemoryWithPage** availableStack;
     int availableStackSize;
@@ -56,9 +58,11 @@ class RAK_DLL_EXPORT MemoryPool {
   int GetAvailablePagesSize() const {
     return availablePagesSize;
   }
+
   int GetUnavailablePagesSize() const {
     return unavailablePagesSize;
   }
+
   int GetMemoryPoolPageSize() const {
     return memoryPoolPageSize;
   }
@@ -85,6 +89,7 @@ MemoryPool<MemoryBlockType>::MemoryPool() {
   memoryPoolPageSize = 16384;
 #endif
 }
+
 template <class MemoryBlockType>
 MemoryPool<MemoryBlockType>::~MemoryPool() {
 #ifndef _DISABLE_MEMORY_POOL
@@ -149,6 +154,7 @@ MemoryBlockType* MemoryPool<MemoryBlockType>::Allocate(
       availablePages->availableStack[--availablePages->availableStackSize];
 #endif
 }
+
 template <class MemoryBlockType>
 void MemoryPool<MemoryBlockType>::Release(
     MemoryBlockType* m,
@@ -205,6 +211,7 @@ void MemoryPool<MemoryBlockType>::Release(
   }
 #endif
 }
+
 template <class MemoryBlockType>
 void MemoryPool<MemoryBlockType>::Clear(const char* file, unsigned int line) {
 #ifdef _DISABLE_MEMORY_POOL
@@ -253,10 +260,12 @@ void MemoryPool<MemoryBlockType>::Clear(const char* file, unsigned int line) {
   unavailablePagesSize = 0;
 #endif
 }
+
 template <class MemoryBlockType>
 int MemoryPool<MemoryBlockType>::BlocksPerPage() const {
   return memoryPoolPageSize / sizeof(MemoryWithPage);
 }
+
 template <class MemoryBlockType>
 bool MemoryPool<MemoryBlockType>::InitPage(
     Page* page,

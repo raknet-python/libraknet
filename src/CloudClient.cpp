@@ -25,13 +25,16 @@ CloudClient::CloudClient() {
   callback = nullptr;
   allocator = &unsetDefaultAllocator;
 }
+
 CloudClient::~CloudClient() = default;
+
 void CloudClient::SetDefaultCallbacks(
     CloudAllocator* _allocator,
     CloudClientCallback* _callback) {
   callback = _callback;
   allocator = _allocator;
 }
+
 void CloudClient::Post(
     CloudKey* cloudKey,
     const unsigned char* data,
@@ -52,6 +55,7 @@ void CloudClient::Post(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
+
 void CloudClient::Release(
     DataStructures::List<CloudKey>& keys,
     RakNetGUID systemIdentifier) {
@@ -65,6 +69,7 @@ void CloudClient::Release(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
+
 bool CloudClient::Get(CloudQuery* keyQuery, RakNetGUID systemIdentifier) {
   RakNet::BitStream bsOut;
   bsOut.Write((MessageID)ID_CLOUD_GET_REQUEST);
@@ -74,6 +79,7 @@ bool CloudClient::Get(CloudQuery* keyQuery, RakNetGUID systemIdentifier) {
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
   return true;
 }
+
 bool CloudClient::Get(
     CloudQuery* keyQuery,
     DataStructures::List<RakNetGUID>& specificSystems,
@@ -90,6 +96,7 @@ bool CloudClient::Get(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
   return true;
 }
+
 bool CloudClient::Get(
     CloudQuery* keyQuery,
     DataStructures::List<CloudQueryRow*>& specificSystems,
@@ -112,6 +119,7 @@ bool CloudClient::Get(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
   return true;
 }
+
 void CloudClient::Unsubscribe(
     DataStructures::List<CloudKey>& keys,
     RakNetGUID systemIdentifier) {
@@ -126,6 +134,7 @@ void CloudClient::Unsubscribe(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
+
 void CloudClient::Unsubscribe(
     DataStructures::List<CloudKey>& keys,
     DataStructures::List<RakNetGUID>& specificSystems,
@@ -145,6 +154,7 @@ void CloudClient::Unsubscribe(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
+
 void CloudClient::Unsubscribe(
     DataStructures::List<CloudKey>& keys,
     DataStructures::List<CloudQueryRow*>& specificSystems,
@@ -170,11 +180,13 @@ void CloudClient::Unsubscribe(
   SendUnified(
       &bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, systemIdentifier, false);
 }
+
 PluginReceiveResult CloudClient::OnReceive(Packet* packet) {
   (void)packet;
 
   return RR_CONTINUE_PROCESSING;
 }
+
 void CloudClient::OnGetReponse(
     Packet* packet,
     CloudClientCallback* _callback,
@@ -201,6 +213,7 @@ void CloudClient::OnGetReponse(
     }
   }
 }
+
 void CloudClient::OnGetReponse(
     CloudQueryResult* cloudQueryResult,
     Packet* packet,
@@ -213,6 +226,7 @@ void CloudClient::OnGetReponse(
   bsIn.IgnoreBytes(sizeof(MessageID));
   cloudQueryResult->Serialize(false, &bsIn, _allocator);
 }
+
 void CloudClient::OnSubscriptionNotification(
     Packet* packet,
     CloudClientCallback* _callback,
@@ -238,6 +252,7 @@ void CloudClient::OnSubscriptionNotification(
     _allocator->DeallocateRowData(row.data);
   }
 }
+
 void CloudClient::OnSubscriptionNotification(
     bool* wasUpdated,
     CloudQueryRow* row,
@@ -254,6 +269,7 @@ void CloudClient::OnSubscriptionNotification(
   *wasUpdated = b;
   row->Serialize(false, &bsIn, _allocator);
 }
+
 void CloudClient::DeallocateWithDefaultAllocator(
     CloudQueryResult* cloudQueryResult) {
   unsigned int i;
@@ -266,6 +282,7 @@ void CloudClient::DeallocateWithDefaultAllocator(
   cloudQueryResult->resultKeyIndices.Clear(false, _FILE_AND_LINE_);
   cloudQueryResult->cloudQuery.keys.Clear(false, _FILE_AND_LINE_);
 }
+
 void CloudClient::DeallocateWithDefaultAllocator(CloudQueryRow* row) {
   allocator->DeallocateRowData(row->data);
 }

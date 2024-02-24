@@ -28,11 +28,13 @@ STATIC_FACTORY_DEFINITIONS(NatTypeDetectionClient, NatTypeDetectionClient);
 NatTypeDetectionClient::NatTypeDetectionClient() {
   c2 = nullptr;
 }
+
 NatTypeDetectionClient::~NatTypeDetectionClient() {
   if (c2 != nullptr) {
     RakNet::OP_DELETE(c2, _FILE_AND_LINE_);
   }
 }
+
 void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress) {
   if (IsInProgress()) {
     return;
@@ -72,6 +74,7 @@ void NatTypeDetectionClient::DetectNATType(SystemAddress _serverAddress) {
   rakPeerInterface->Send(
       &bs, MEDIUM_PRIORITY, RELIABLE, 0, serverAddress, false);
 }
+
 void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result) {
   Packet* p =
       AllocatePacketUnified(sizeof(MessageID) + sizeof(unsigned char) * 2);
@@ -96,9 +99,11 @@ void NatTypeDetectionClient::OnCompletion(NATTypeDetectionResult result) {
 
   Shutdown();
 }
+
 bool NatTypeDetectionClient::IsInProgress() const {
   return serverAddress != UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 void NatTypeDetectionClient::Update() {
   if (IsInProgress()) {
     RNS2RecvStruct* recvStruct;
@@ -126,6 +131,7 @@ void NatTypeDetectionClient::Update() {
     }
   }
 }
+
 PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet* packet) {
   if (IsInProgress()) {
     switch (packet->data[0]) {
@@ -150,6 +156,7 @@ PluginReceiveResult NatTypeDetectionClient::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 void NatTypeDetectionClient::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -161,12 +168,15 @@ void NatTypeDetectionClient::OnClosedConnection(
     Shutdown();
   }
 }
+
 void NatTypeDetectionClient::OnRakPeerShutdown() {
   Shutdown();
 }
+
 void NatTypeDetectionClient::OnDetach() {
   Shutdown();
 }
+
 void NatTypeDetectionClient::OnTestPortRestricted(Packet* packet) {
   RakNet::BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID));
@@ -194,6 +204,7 @@ void NatTypeDetectionClient::OnTestPortRestricted(Packet* packet) {
   bsp.systemAddress = s3p4Addr;
   sockets[0]->Send(&bsp, _FILE_AND_LINE_);
 }
+
 void NatTypeDetectionClient::Shutdown() {
   serverAddress = UNASSIGNED_SYSTEM_ADDRESS;
   if (c2 != nullptr) {
@@ -221,12 +232,14 @@ void NatTypeDetectionClient::DeallocRNS2RecvStruct(
     unsigned int line) {
   RakNet::OP_DELETE(s, file, line);
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 RNS2RecvStruct* NatTypeDetectionClient::AllocRNS2RecvStruct(
     const char* file,
     unsigned int line) {
   return RakNet::OP_NEW<RNS2RecvStruct>(file, line);
 }
+
 void NatTypeDetectionClient::OnRNS2Recv(RNS2RecvStruct* recvStruct) {
   bufferedPacketsMutex.Lock();
   bufferedPackets.Push(recvStruct, _FILE_AND_LINE_);

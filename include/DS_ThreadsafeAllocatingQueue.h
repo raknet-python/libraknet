@@ -98,6 +98,7 @@ structureType* ThreadsafeAllocatingQueue<structureType>::Allocate(
   s = new ((void*)s) structureType;
   return s;
 }
+
 template <class structureType>
 void ThreadsafeAllocatingQueue<structureType>::Deallocate(
     structureType* s,

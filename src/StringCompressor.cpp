@@ -30,6 +30,7 @@ void StringCompressor::AddReference() {
     instance = RakNet::OP_NEW<StringCompressor>(_FILE_AND_LINE_);
   }
 }
+
 void StringCompressor::RemoveReference() {
   RakAssert(referenceCount > 0);
 
@@ -80,6 +81,7 @@ StringCompressor::StringCompressor() {
 
   huffmanEncodingTrees.Set(0, huffmanEncodingTree);
 }
+
 void StringCompressor::GenerateTreeFromStrings(
     unsigned char* input,
     unsigned inputLength,
@@ -201,6 +203,7 @@ void StringCompressor::EncodeString(
   LPTSTR p = input;
   EncodeString(p, maxCharsToWrite * sizeof(TCHAR), output, languageID);
 }
+
 bool StringCompressor::DecodeString(
     CString& output,
     int maxCharsToWrite,
@@ -219,6 +222,7 @@ void StringCompressor::EncodeString(
     uint8_t languageId) {
   EncodeString(input.c_str(), maxCharsToWrite, output, languageId);
 }
+
 bool StringCompressor::DecodeString(
     std::string* output,
     int maxCharsToWrite,
@@ -256,6 +260,7 @@ void StringCompressor::EncodeString(
     uint8_t languageId) {
   EncodeString(input->C_String(), maxCharsToWrite, output, languageId);
 }
+
 bool StringCompressor::DecodeString(
     RakString* output,
     int maxCharsToWrite,

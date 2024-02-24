@@ -33,7 +33,9 @@ class RAK_DLL_EXPORT Heap {
  public:
   struct HeapNode {
     HeapNode() {}
+
     HeapNode(const weight_type& w, const data_type& d) : weight(w), data(d) {}
+
     weight_type
         weight; // I'm assuming key is a native numerical type - float or int
     data_type data;
@@ -46,10 +48,12 @@ class RAK_DLL_EXPORT Heap {
       const data_type& data,
       const char* file,
       unsigned int line);
+
   /// Call before calling PushSeries, for a new series of items
   void StartSeries() {
     optimizeNextSeriesPush = false;
   }
+
   /// If you are going to push a list of items, where the weights of the items on the list are in order and follow the heap order, PushSeries is faster than Push()
   void PushSeries(
       const weight_type& weight,
@@ -247,6 +251,7 @@ inline data_type& Heap<weight_type, data_type, isMaxHeap>::operator[](
     const unsigned int position) const {
   return heap[position].data;
 }
+
 template <class weight_type, class data_type, bool isMaxHeap>
 unsigned Heap<weight_type, data_type, isMaxHeap>::Size() const {
   return heap.Size();

@@ -25,6 +25,7 @@
 #include "RakSleep.h"
 
 using namespace RakNet;
+
 class PeerConnectDisconnectWithCancelPendingTest : public TestInterface {
  public:
   PeerConnectDisconnectWithCancelPendingTest();

@@ -26,6 +26,7 @@
 #include "TestHelpers.h"
 
 using namespace RakNet;
+
 class SystemAddressAndGuidTest : public TestInterface {
  public:
   SystemAddressAndGuidTest();

@@ -102,6 +102,7 @@ bool WriteFileWithDirectories(
 
   return true;
 }
+
 bool IsSlash(unsigned char c) {
   return c == '/' || c == '\\';
 }
@@ -119,6 +120,7 @@ void AddSlash(char* input) {
     input[lastCharIndex + 2] = 0;
   }
 }
+
 bool DirectoryExists(const char* directory) {
   _finddata_t fileInfo;
   intptr_t dir;
@@ -133,6 +135,7 @@ bool DirectoryExists(const char* directory) {
   _findclose(dir);
   return true;
 }
+
 void QuoteIfSpaces(char* str) {
   unsigned i;
   bool hasSpace = false;
@@ -150,6 +153,7 @@ void QuoteIfSpaces(char* str) {
     str[len + 1] = 0;
   }
 }
+
 unsigned int GetFileLength(const char* path) {
   FILE* fp = fopen(path, "rb");
   if (fp == nullptr) {

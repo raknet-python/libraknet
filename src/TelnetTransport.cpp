@@ -35,6 +35,7 @@ TelnetTransport::TelnetTransport() {
   sendSuffix = nullptr;
   sendPrefix = nullptr;
 }
+
 TelnetTransport::~TelnetTransport() {
   Stop();
   if (sendSuffix) {
@@ -44,12 +45,14 @@ TelnetTransport::~TelnetTransport() {
     rakFree_Ex(sendPrefix, _FILE_AND_LINE_);
   }
 }
+
 bool TelnetTransport::Start(unsigned short port, bool serverMode) {
   (void)serverMode;
   AutoAllocate();
   RakAssert(serverMode);
   return tcpInterface->Start(port, 64);
 }
+
 void TelnetTransport::Stop() {
   if (tcpInterface == nullptr) {
     return;
@@ -63,6 +66,7 @@ void TelnetTransport::Stop() {
   RakNet::OP_DELETE(tcpInterface, _FILE_AND_LINE_);
   tcpInterface = nullptr;
 }
+
 void TelnetTransport::Send(SystemAddress systemAddress, const char* data, ...) {
   if (tcpInterface == nullptr) {
     return;
@@ -96,9 +100,11 @@ void TelnetTransport::Send(SystemAddress systemAddress, const char* data, ...) {
 
   tcpInterface->Send(text, (unsigned int)strlen(text), systemAddress, false);
 }
+
 void TelnetTransport::CloseConnection(SystemAddress systemAddress) {
   tcpInterface->CloseConnection(systemAddress);
 }
+
 Packet* TelnetTransport::Receive() {
   if (tcpInterface == nullptr) {
     return nullptr;
@@ -223,6 +229,7 @@ Packet* TelnetTransport::Receive() {
   tcpInterface->DeallocatePacket(p);
   return nullptr;
 }
+
 void TelnetTransport::DeallocatePacket(Packet* packet) {
   if (tcpInterface == nullptr) {
     return;
@@ -230,6 +237,7 @@ void TelnetTransport::DeallocatePacket(Packet* packet) {
   rakFree_Ex(packet->data, _FILE_AND_LINE_);
   rakFree_Ex(packet, _FILE_AND_LINE_);
 }
+
 SystemAddress TelnetTransport::HasNewIncomingConnection() {
   unsigned i;
   SystemAddress newConnection;
@@ -279,6 +287,7 @@ SystemAddress TelnetTransport::HasNewIncomingConnection() {
   }
   return newConnection;
 }
+
 SystemAddress TelnetTransport::HasLostConnection() {
   SystemAddress systemAddress;
   unsigned i;
@@ -294,9 +303,11 @@ SystemAddress TelnetTransport::HasLostConnection() {
   }
   return systemAddress;
 }
+
 CommandParserInterface* TelnetTransport::GetCommandParser() {
   return nullptr;
 }
+
 void TelnetTransport::SetSendSuffix(const char* suffix) {
   if (sendSuffix) {
     rakFree_Ex(sendSuffix, _FILE_AND_LINE_);
@@ -307,6 +318,7 @@ void TelnetTransport::SetSendSuffix(const char* suffix) {
     strcpy(sendSuffix, suffix);
   }
 }
+
 void TelnetTransport::SetSendPrefix(const char* prefix) {
   if (sendPrefix) {
     rakFree_Ex(sendPrefix, _FILE_AND_LINE_);
@@ -317,11 +329,13 @@ void TelnetTransport::SetSendPrefix(const char* prefix) {
     strcpy(sendPrefix, prefix);
   }
 }
+
 void TelnetTransport::AutoAllocate() {
   if (tcpInterface == nullptr) {
     tcpInterface = new TCPInterface;
   }
 }
+
 bool TelnetTransport::ReassembleLine(
     TelnetTransport::TelnetClient* remoteClient,
     unsigned char c) {

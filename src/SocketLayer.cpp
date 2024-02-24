@@ -387,6 +387,7 @@ unsigned short SocketLayer::GetLocalPort(__UDPSOCKET__ s) {
   GetSystemAddress(s, &sa);
   return sa.GetPort();
 }
+
 void SocketLayer::GetSystemAddress_Old(
     __UDPSOCKET__ s,
     SystemAddress* systemAddressOut) {
@@ -424,6 +425,7 @@ void SocketLayer::GetSystemAddress_Old(
   systemAddressOut->address.addr4.sin_addr.s_addr = sa.sin_addr.s_addr;
 #endif
 }
+
 /*
 void SocketLayer::GetSystemAddress_Old ( RakNetSocket *s, SystemAddress *systemAddressOut )
 {
@@ -501,6 +503,7 @@ void SocketLayer::GetSystemAddress(
   }
 #endif // #if RAKNET_SUPPORT_IPV6!=1
 }
+
 /*
 void SocketLayer::GetSystemAddress ( RakNetSocket *s, SystemAddress *systemAddressOut )
 {

@@ -156,6 +156,7 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
     IncrementalReadInterface* incrementalReadInterface;
     unsigned int chunkSize;
   };
+
   struct FileToPushRecipient {
     unsigned int refCount;
     SimpleMutex refCountMutex;
@@ -169,6 +170,7 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
     //// SimpleMutex filesToPushMutex;
     DataStructures::Queue<FileToPush*> filesToPush;
   };
+
   DataStructures::List<FileToPushRecipient*> fileToPushRecipientList;
   SimpleMutex fileToPushRecipientListMutex;
   void RemoveFromList(FileToPushRecipient* ftpr);

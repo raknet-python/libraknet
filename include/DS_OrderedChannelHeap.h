@@ -63,10 +63,12 @@ class RAK_DLL_EXPORT OrderedChannelHeap {
 
   struct HeapChannelAndData {
     HeapChannelAndData() {}
+
     HeapChannelAndData(
         const channel_key_type& _channel,
         const heap_data_type& _data)
         : data(_data), channel(_channel) {}
+
     heap_data_type data;
     channel_key_type channel;
   };

@@ -13,6 +13,7 @@
 
 #if defined(_WIN32) && !defined(__GNUC__) && !defined(__GCCXML__)
 #include < time.h >
+
 struct timezone {
   int tz_minuteswest; /* minutes W of Greenwich */
   int tz_dsttime; /* type of dst correction */

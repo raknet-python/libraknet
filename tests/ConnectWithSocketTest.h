@@ -26,6 +26,7 @@
 #include "TestHelpers.h"
 
 using namespace RakNet;
+
 class ConnectWithSocketTest : public TestInterface {
  public:
   ConnectWithSocketTest();

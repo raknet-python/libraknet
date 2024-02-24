@@ -29,15 +29,18 @@ void Rackspace::AddEventCallback(Rackspace2EventCallback* callback) {
     eventCallbacks.Push(callback, _FILE_AND_LINE_);
   }
 }
+
 void Rackspace::RemoveEventCallback(Rackspace2EventCallback* callback) {
   unsigned int idx = eventCallbacks.GetIndexOf(callback);
   if (idx != (unsigned int)-1) {
     eventCallbacks.RemoveAtIndex(idx);
   }
 }
+
 void Rackspace::ClearEventCallbacks() {
   eventCallbacks.Clear(true, _FILE_AND_LINE_);
 }
+
 SystemAddress Rackspace::Authenticate(
     TCPInterface* _tcpInterface,
     const char* _authenticationURL,
@@ -130,6 +133,7 @@ const char* Rackspace::EventTypeToString(RackspaceEventType eventType) {
   }
   return "Unknown event type (bug)";
 }
+
 void Rackspace::AddOperation(
     RackspaceOperationType type,
     RakNet::RakString httpCommand,
@@ -149,12 +153,15 @@ void Rackspace::AddOperation(
     operations.Insert(ro, _FILE_AND_LINE_);
   }
 }
+
 void Rackspace::ListServers() {
   AddOperation(RO_LIST_SERVERS, "GET", "servers", "");
 }
+
 void Rackspace::ListServersWithDetails() {
   AddOperation(RO_LIST_SERVERS_WITH_DETAILS, "GET", "servers/detail", "");
 }
+
 void Rackspace::CreateServer(
     RakNet::RakString name,
     RakNet::RakString imageId,
@@ -168,6 +175,7 @@ void Rackspace::CreateServer(
       flavorId.C_String());
   AddOperation(RO_CREATE_SERVER, "POST", "servers", xml);
 }
+
 void Rackspace::GetServerDetails(RakNet::RakString serverId) {
   AddOperation(
       RO_GET_SERVER_DETAILS,
@@ -175,6 +183,7 @@ void Rackspace::GetServerDetails(RakNet::RakString serverId) {
       RakNet::RakString("servers/%s", serverId.C_String()),
       "");
 }
+
 void Rackspace::UpdateServerNameOrPassword(
     RakNet::RakString serverId,
     RakNet::RakString newName,
@@ -198,6 +207,7 @@ void Rackspace::UpdateServerNameOrPassword(
       RakNet::RakString("servers/%s", serverId.C_String()),
       xml);
 }
+
 void Rackspace::DeleteServer(RakNet::RakString serverId) {
   AddOperation(
       RO_DELETE_SERVER,
@@ -205,6 +215,7 @@ void Rackspace::DeleteServer(RakNet::RakString serverId) {
       RakNet::RakString("servers/%s", serverId.C_String()),
       "");
 }
+
 void Rackspace::ListServerAddresses(RakNet::RakString serverId) {
   AddOperation(
       RO_LIST_SERVER_ADDRESSES,
@@ -212,6 +223,7 @@ void Rackspace::ListServerAddresses(RakNet::RakString serverId) {
       RakNet::RakString("servers/%s/ips", serverId.C_String()),
       "");
 }
+
 void Rackspace::ShareServerAddress(
     RakNet::RakString serverId,
     RakNet::RakString ipAddress) {
@@ -224,6 +236,7 @@ void Rackspace::ShareServerAddress(
           ipAddress.C_String()),
       "");
 }
+
 void Rackspace::DeleteServerAddress(
     RakNet::RakString serverId,
     RakNet::RakString ipAddress) {
@@ -236,6 +249,7 @@ void Rackspace::DeleteServerAddress(
           ipAddress.C_String()),
       "");
 }
+
 void Rackspace::RebootServer(
     RakNet::RakString serverId,
     RakNet::RakString rebootType) {
@@ -251,6 +265,7 @@ void Rackspace::RebootServer(
       RakNet::RakString("servers/%s/action", serverId.C_String()),
       xml);
 }
+
 void Rackspace::RebuildServer(
     RakNet::RakString serverId,
     RakNet::RakString imageId) {
@@ -266,6 +281,7 @@ void Rackspace::RebuildServer(
       RakNet::RakString("servers/%s/action", serverId.C_String()),
       xml);
 }
+
 void Rackspace::ResizeServer(
     RakNet::RakString serverId,
     RakNet::RakString flavorId) {
@@ -281,6 +297,7 @@ void Rackspace::ResizeServer(
       RakNet::RakString("servers/%s/action", serverId.C_String()),
       xml);
 }
+
 void Rackspace::ConfirmResizedServer(RakNet::RakString serverId) {
   RakNet::RakString xml(
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -292,6 +309,7 @@ void Rackspace::ConfirmResizedServer(RakNet::RakString serverId) {
       RakNet::RakString("servers/%s/action", serverId.C_String()),
       xml);
 }
+
 void Rackspace::RevertResizedServer(RakNet::RakString serverId) {
   RakNet::RakString xml(
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -303,9 +321,11 @@ void Rackspace::RevertResizedServer(RakNet::RakString serverId) {
       RakNet::RakString("servers/%s/action", serverId.C_String()),
       xml);
 }
+
 void Rackspace::ListFlavors() {
   AddOperation(RO_LIST_FLAVORS, "GET", "flavors", "");
 }
+
 void Rackspace::GetFlavorDetails(RakNet::RakString flavorId) {
   AddOperation(
       RO_GET_FLAVOR_DETAILS,
@@ -313,9 +333,11 @@ void Rackspace::GetFlavorDetails(RakNet::RakString flavorId) {
       RakNet::RakString("flavors/%s", flavorId.C_String()),
       "");
 }
+
 void Rackspace::ListImages() {
   AddOperation(RO_LIST_IMAGES, "GET", "images", "");
 }
+
 void Rackspace::CreateImage(
     RakNet::RakString serverId,
     RakNet::RakString imageName) {
@@ -328,6 +350,7 @@ void Rackspace::CreateImage(
 
   AddOperation(RO_CREATE_IMAGE, "POST", "images", xml);
 }
+
 void Rackspace::GetImageDetails(RakNet::RakString imageId) {
   AddOperation(
       RO_GET_IMAGE_DETAILS,
@@ -335,6 +358,7 @@ void Rackspace::GetImageDetails(RakNet::RakString imageId) {
       RakNet::RakString("images/%s", imageId.C_String()),
       "");
 }
+
 void Rackspace::DeleteImage(RakNet::RakString imageId) {
   AddOperation(
       RO_DELETE_IMAGE,
@@ -342,9 +366,11 @@ void Rackspace::DeleteImage(RakNet::RakString imageId) {
       RakNet::RakString("images/%s", imageId.C_String()),
       "");
 }
+
 void Rackspace::ListSharedIPGroups() {
   AddOperation(RO_LIST_SHARED_IP_GROUPS, "GET", "shared_ip_groups", "");
 }
+
 void Rackspace::ListSharedIPGroupsWithDetails() {
   AddOperation(
       RO_LIST_SHARED_IP_GROUPS_WITH_DETAILS,
@@ -352,6 +378,7 @@ void Rackspace::ListSharedIPGroupsWithDetails() {
       "shared_ip_groups/detail",
       "");
 }
+
 void Rackspace::CreateSharedIPGroup(
     RakNet::RakString name,
     RakNet::RakString optionalServerId) {
@@ -367,6 +394,7 @@ void Rackspace::CreateSharedIPGroup(
 
   AddOperation(RO_CREATE_SHARED_IP_GROUP, "POST", "shared_ip_groups", xml);
 }
+
 void Rackspace::GetSharedIPGroupDetails(RakNet::RakString groupId) {
   AddOperation(
       RO_GET_SHARED_IP_GROUP_DETAILS,
@@ -374,6 +402,7 @@ void Rackspace::GetSharedIPGroupDetails(RakNet::RakString groupId) {
       RakNet::RakString("shared_ip_groups/%s", groupId.C_String()),
       "");
 }
+
 void Rackspace::DeleteSharedIPGroup(RakNet::RakString groupId) {
   AddOperation(
       RO_DELETE_SHARED_IP_GROUP,
@@ -381,6 +410,7 @@ void Rackspace::DeleteSharedIPGroup(RakNet::RakString groupId) {
       RakNet::RakString("shared_ip_groups/%s", groupId.C_String()),
       "");
 }
+
 void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
   if (systemAddress == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -690,6 +720,7 @@ void Rackspace::OnClosedConnection(SystemAddress systemAddress) {
     }
   }
 }
+
 void Rackspace::OnReceive(Packet* packet) {
   unsigned int operationsIndex;
   for (operationsIndex = 0; operationsIndex < operations.Size();
@@ -701,6 +732,7 @@ void Rackspace::OnReceive(Packet* packet) {
     }
   }
 }
+
 bool Rackspace::ExecuteOperation(RackspaceOperation& ro) {
   if (!ConnectToServerManagementDomain(ro)) {
     return false;
@@ -737,6 +769,7 @@ bool Rackspace::ExecuteOperation(RackspaceOperation& ro) {
       false);
   return true;
 }
+
 void Rackspace::ReadLine(
     const char* data,
     const char* stringStart,
@@ -784,6 +817,7 @@ bool Rackspace::ConnectToServerManagementDomain(RackspaceOperation& ro) {
 
   return true;
 }
+
 bool Rackspace::HasOperationOfType(RackspaceOperationType t) {
   unsigned int i;
   for (i = 0; i < operations.Size(); i++) {
@@ -793,6 +827,7 @@ bool Rackspace::HasOperationOfType(RackspaceOperationType t) {
   }
   return false;
 }
+
 unsigned int Rackspace::GetOperationOfTypeIndex(RackspaceOperationType t) {
   unsigned int i;
   for (i = 0; i < operations.Size(); i++) {

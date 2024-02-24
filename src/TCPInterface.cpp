@@ -76,6 +76,7 @@ TCPInterface::TCPInterface() {
   WSAStartupSingleton::AddRef();
 #endif
 }
+
 TCPInterface::~TCPInterface() {
   Stop();
 #ifdef _WIN32
@@ -243,6 +244,7 @@ bool TCPInterface::Start(
   return true;
 #endif // __native_client__
 }
+
 void TCPInterface::Stop() {
   unsigned int i;
   for (i = 0; i < messageHandlerList.Size(); i++) {
@@ -328,6 +330,7 @@ void TCPInterface::Stop() {
 
 #endif // __native_client__
 }
+
 SystemAddress TCPInterface::Connect(
     const char* host,
     unsigned short remotePort,
@@ -432,6 +435,7 @@ void TCPInterface::StartSSLClient(SystemAddress systemAddress) {
   if (index == (unsigned)-1)
     activeSSLConnections.Insert(systemAddress, _FILE_AND_LINE_);
 }
+
 bool TCPInterface::IsSSLActive(SystemAddress systemAddress) {
   return activeSSLConnections.GetIndexOf(systemAddress) != -1;
 }
@@ -443,6 +447,7 @@ void TCPInterface::Send(
     bool broadcast) {
   SendList(&data, &length, 1, systemAddress, broadcast);
 }
+
 bool TCPInterface::SendList(
     const char** data,
     const unsigned int* lengths,
@@ -494,10 +499,12 @@ bool TCPInterface::SendList(
 
   return true;
 }
+
 bool TCPInterface::ReceiveHasPackets() {
   return !headPush.IsEmpty() || !incomingMessages.IsEmpty() ||
       !tailPush.IsEmpty();
 }
+
 Packet* TCPInterface::Receive() {
   unsigned int i;
   for (i = 0; i < messageHandlerList.Size(); i++) {
@@ -524,6 +531,7 @@ Packet* TCPInterface::Receive() {
 
   return outgoingPacket;
 }
+
 Packet* TCPInterface::ReceiveInt() {
   if (isStarted.GetValue() == 0) {
     return nullptr;
@@ -548,6 +556,7 @@ void TCPInterface::AttachPlugin(PluginInterface2* plugin) {
     plugin->OnAttach();
   }
 }
+
 void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
   if (plugin == nullptr) {
     return;
@@ -564,6 +573,7 @@ void TCPInterface::DetachPlugin(PluginInterface2* plugin) {
     plugin->SetTCPInterface(nullptr);
   }
 }
+
 void TCPInterface::CloseConnection(SystemAddress systemAddress) {
   if (isStarted.GetValue() == 0) {
     return;
@@ -602,6 +612,7 @@ void TCPInterface::CloseConnection(SystemAddress systemAddress) {
     activeSSLConnections.RemoveAtIndex(index);
 #endif
 }
+
 void TCPInterface::DeallocatePacket(Packet* packet) {
   if (packet == nullptr) {
     return;
@@ -615,6 +626,7 @@ void TCPInterface::DeallocatePacket(Packet* packet) {
     RakNet::OP_DELETE(packet, _FILE_AND_LINE_);
   }
 }
+
 Packet* TCPInterface::AllocatePacket(unsigned dataSize) {
   auto* p = RakNet::OP_NEW<Packet>(_FILE_AND_LINE_);
   p->data = (unsigned char*)rakMalloc_Ex(dataSize, _FILE_AND_LINE_);
@@ -626,6 +638,7 @@ Packet* TCPInterface::AllocatePacket(unsigned dataSize) {
   p->systemAddress.systemIndex = (SystemIndex)-1;
   return p;
 }
+
 void TCPInterface::PushBackPacket(Packet* packet, bool pushAtHead) {
   if (pushAtHead) {
     headPush.Push(packet, _FILE_AND_LINE_);
@@ -633,9 +646,11 @@ void TCPInterface::PushBackPacket(Packet* packet, bool pushAtHead) {
     tailPush.Push(packet, _FILE_AND_LINE_);
   }
 }
+
 bool TCPInterface::WasStarted() const {
   return threadRunning.GetValue() > 0;
 }
+
 SystemAddress TCPInterface::HasCompletedConnectionAttempt() {
   SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
   completedConnectionAttemptMutex.Lock();
@@ -654,6 +669,7 @@ SystemAddress TCPInterface::HasCompletedConnectionAttempt() {
 
   return sysAddr;
 }
+
 SystemAddress TCPInterface::HasFailedConnectionAttempt() {
   SystemAddress sysAddr = UNASSIGNED_SYSTEM_ADDRESS;
   failedConnectionAttemptMutex.Lock();
@@ -677,6 +693,7 @@ SystemAddress TCPInterface::HasFailedConnectionAttempt() {
 
   return sysAddr;
 }
+
 SystemAddress TCPInterface::HasNewIncomingConnection() {
   SystemAddress *out, out2;
   out = newIncomingConnections.PopInaccurate();
@@ -695,6 +712,7 @@ SystemAddress TCPInterface::HasNewIncomingConnection() {
     return UNASSIGNED_SYSTEM_ADDRESS;
   }
 }
+
 SystemAddress TCPInterface::HasLostConnection() {
   SystemAddress *out, out2;
   out = lostConnections.PopInaccurate();
@@ -713,6 +731,7 @@ SystemAddress TCPInterface::HasLostConnection() {
     return UNASSIGNED_SYSTEM_ADDRESS;
   }
 }
+
 void TCPInterface::GetConnectionList(
     SystemAddress* remoteSystems,
     unsigned short* numberOfSystems) const {
@@ -728,6 +747,7 @@ void TCPInterface::GetConnectionList(
   }
   *numberOfSystems = systemCount;
 }
+
 unsigned short TCPInterface::GetConnectionCount() const {
   unsigned short systemCount = 0;
   for (int i = 0; i < remoteClientsLength; i++) {
@@ -761,6 +781,7 @@ unsigned int TCPInterface::GetOutgoingDataBufferSize(
   }
   return bytesWritten;
 }
+
 __TCPSOCKET__ TCPInterface::SocketConnect(
     const char* host,
     unsigned short remotePort,
@@ -1216,6 +1237,7 @@ void RemoteClient::SetActive(bool a) {
     }
   }
 }
+
 void RemoteClient::SendOrBuffer(
     const char** data,
     const unsigned int* lengths,
@@ -1321,20 +1343,24 @@ bool RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD* meth) {
   }
   return true;
 }
+
 void RemoteClient::DisconnectSSL(void) {
   if (ssl)
     SSL_shutdown(ssl); /* send SSL/TLS close_notify */
 }
+
 void RemoteClient::FreeSSL(void) {
   if (ssl)
     SSL_free(ssl);
 }
+
 int RemoteClient::Send(const char* data, unsigned int length) {
   if (ssl)
     return SSL_write(ssl, data, length);
   else
     return send__(socket, data, length, 0);
 }
+
 int RemoteClient::Recv(char* data, const int dataSize) {
   if (ssl)
     return SSL_read(ssl, data, dataSize);
@@ -1349,6 +1375,7 @@ int RemoteClient::Send(const char* data, unsigned int length) {
   return send__(socket, data, length, 0);
 #endif
 }
+
 int RemoteClient::Recv(char* data, const int dataSize) {
 #ifdef __native_client__
   return -1;

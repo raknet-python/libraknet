@@ -28,6 +28,7 @@
 #include "DebugTools.h"
 
 using namespace RakNet;
+
 class ReliableOrderedConvertedTest : public TestInterface {
  public:
   ReliableOrderedConvertedTest();

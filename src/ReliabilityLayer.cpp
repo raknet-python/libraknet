@@ -72,24 +72,30 @@ static FILE* fp = 0;
 
 BPSTracker::TimeAndValue2::TimeAndValue2() = default;
 BPSTracker::TimeAndValue2::~TimeAndValue2() = default;
+
 BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1)
     : value1(v1), time(t) {}
+
 //BPSTracker::TimeAndValue2::TimeAndValue2(RakNet::TimeUS t, uint64_t v1, uint64_t v2) : time(t), value1(v1), value2(v2) {}
 BPSTracker::BPSTracker() {
   Reset(_FILE_AND_LINE_);
 }
+
 BPSTracker::~BPSTracker() = default;
+
 //void BPSTracker::Reset(const char *file, unsigned int line) {total1=total2=lastSec1=lastSec2=0; dataQueue.Clear(file,line);}
 void BPSTracker::Reset(const char* file, unsigned int line) {
   total1 = lastSec1 = 0;
   dataQueue.Clear(file, line);
 }
+
 //void BPSTracker::Push2(RakNetTimeUS time, uint64_t value1, uint64_t value2) {dataQueue.Push(TimeAndValue2(time,value1,value2),_FILE_AND_LINE_); total1+=value1; lastSec1+=value1;  total2+=value2; lastSec2+=value2;}
 //uint64_t BPSTracker::GetBPS2(RakNetTimeUS time) {ClearExpired2(time); return lastSec2;}
 //void BPSTracker::GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2) {ClearExpired2(time); out1=lastSec1; out2=lastSec2;}
 uint64_t BPSTracker::GetTotal1() const {
   return total1;
 }
+
 //uint64_t BPSTracker::GetTotal2(void) const {return total2;}
 
 // void BPSTracker::ClearExpired2(RakNet::TimeUS time) {
@@ -183,6 +189,7 @@ struct DatagramHeaderFormat {
       b->Write(datagramNumber);
     }
   }
+
   void Deserialize(RakNet::BitStream* b) {
     // Not endian safe
     //		b->ReadAlignedBytes((unsigned char*) this, sizeof(DatagramHeaderFormat));
@@ -339,6 +346,7 @@ ReliabilityLayer::ReliabilityLayer() {
 ReliabilityLayer::~ReliabilityLayer() {
   FreeMemory(true); // Free all memory immediately
 }
+
 //-------------------------------------------------------------------------------------------------------
 // Resets the layer for reuse
 //-------------------------------------------------------------------------------------------------------
@@ -1910,6 +1918,7 @@ bool ReliabilityLayer::Send(
   //	sendPacketSet[priority].WriteUnlock();
   return true;
 }
+
 //-------------------------------------------------------------------------------------------------------
 // Run this once per game cycle.  Handles internal lists and actually does the send
 //-------------------------------------------------------------------------------------------------------
@@ -2646,9 +2655,11 @@ bool ReliabilityLayer::IsOutgoingDataWaiting() {
       //resendTree.IsEmpty()==false;// || outputQueue.Size() > 0 || orderingList.Size() > 0 || splitPacketChannelList.Size() > 0;
       statistics.messagesInResendBuffer != 0;
 }
+
 bool ReliabilityLayer::AreAcksWaiting() {
   return acknowlegements.Size() > 0;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ApplyNetworkSimulator(
     double _packetloss,
@@ -2662,10 +2673,12 @@ void ReliabilityLayer::ApplyNetworkSimulator(
   //		ping=(minExtraPing+extraPingVariance)*2;
 #endif
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::SetSplitMessageProgressInterval(int interval) {
   splitMessageProgressInterval = interval;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::SetUnreliableTimeout(RakNet::TimeMS timeoutMS) {
 #if CC_TIME_TYPE_BYTES == 4
@@ -2842,6 +2855,7 @@ BitSize_t ReliabilityLayer::GetMaxMessageHeaderLengthBits() {
   ip.splitPacketCount = 1;
   return GetMessageHeaderLengthBits(&ip);
 }
+
 //-------------------------------------------------------------------------------------------------------
 BitSize_t ReliabilityLayer::GetMessageHeaderLengthBits(
     const InternalPacket* const internalPacket) {
@@ -3659,6 +3673,7 @@ InternalPacket* ReliabilityLayer::BuildPacketFromSplitPacketList(
   return internalPacket;
 #endif
 }
+
 //-------------------------------------------------------------------------------------------------------
 InternalPacket* ReliabilityLayer::BuildPacketFromSplitPacketList(
     SplitPacketIdType splitPacketId,
@@ -3693,6 +3708,7 @@ InternalPacket* ReliabilityLayer::BuildPacketFromSplitPacketList(
     return nullptr;
   }
 }
+
 /*
 //-------------------------------------------------------------------------------------------------------
 // Delete any unreliable split packets that have long since expired
@@ -3884,14 +3900,17 @@ bool ReliabilityLayer::AckTimeout(RakNet::Time curTime) {
   return (timeLastDatagramArrived - curTime) > 10000 &&
       curTime - timeLastDatagramArrived > timeoutTime;
 }
+
 //-------------------------------------------------------------------------------------------------------
 CCTimeType ReliabilityLayer::GetNextSendTime() const {
   return nextSendTime;
 }
+
 //-------------------------------------------------------------------------------------------------------
 CCTimeType ReliabilityLayer::GetTimeBetweenPackets() const {
   return timeBetweenPackets;
 }
+
 //-------------------------------------------------------------------------------------------------------
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
 CCTimeType ReliabilityLayer::GetAckPing(void) const {
@@ -3907,6 +3926,7 @@ void ReliabilityLayer::ResetPacketsAndDatagrams() {
   datagramSizesInBytes.Clear(true, _FILE_AND_LINE_);
   datagramSizeSoFar = 0;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::PushPacket(
     CCTimeType time,
@@ -3940,6 +3960,7 @@ void ReliabilityLayer::PushPacket(
       BITS_TO_BYTES(internalPacket->dataBitLength) +
           BITS_TO_BYTES(internalPacket->headerLength));
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::PushDatagram() {
   if (datagramSizeSoFar > 0) {
@@ -3964,6 +3985,7 @@ void ReliabilityLayer::PushDatagram() {
 		*/
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair() {
   if (datagramsToSendThisUpdateIsPair.Size() >= 2) {
@@ -3975,6 +3997,7 @@ bool ReliabilityLayer::TagMostRecentPushAsSecondOfPacketPair() {
   }
   return false;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ClearPacketsAndDatagrams() {
   unsigned int i;
@@ -3989,6 +4012,7 @@ void ReliabilityLayer::ClearPacketsAndDatagrams() {
   }
   packetsToDeallocThisUpdate.Clear(true, _FILE_AND_LINE_);
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::MoveToListHead(InternalPacket* internalPacket) {
   if (internalPacket == resendLinkedListHead) {
@@ -4011,6 +4035,7 @@ void ReliabilityLayer::MoveToListHead(InternalPacket* internalPacket) {
 
   //ValidateResendList();
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::RemoveFromList(
     InternalPacket* internalPacket,
@@ -4038,6 +4063,7 @@ void ReliabilityLayer::RemoveFromList(
     //		ValidateResendList();
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AddToListTail(
     InternalPacket* internalPacket,
@@ -4061,15 +4087,18 @@ void ReliabilityLayer::AddToListTail(
 
   //	ValidateResendList();
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::PopListHead(bool modifyUnacknowledgedBytes) {
   RakAssert(resendLinkedListHead != nullptr);
   RemoveFromList(resendLinkedListHead, modifyUnacknowledgedBytes);
 }
+
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::IsResendQueueEmpty() const {
   return resendLinkedListHead == nullptr;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::SendACKs(
     RakNetSocket2* s,
@@ -4114,6 +4143,7 @@ void ReliabilityLayer::SendACKs(
     //	congestionManager.OnSendBytes(time,UDP_HEADER_SIZE+updateBitStream.GetNumberOfBytesUsed());
   }
 }
+
 /*
 //-------------------------------------------------------------------------------------------------------
 ReliabilityLayer::DatagramMessageIDList* ReliabilityLayer::AllocateFromDatagramMessageIDPool(void)
@@ -4145,10 +4175,12 @@ InternalPacket* ReliabilityLayer::AllocateFromInternalPacketPool() {
   ip->timesSent = 0;
   return ip;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ReleaseToInternalPacketPool(InternalPacket* ip) {
   internalPacketPool.Release(ip, _FILE_AND_LINE_);
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::RemoveFromUnreliableLinkedList(
     InternalPacket* internalPacket) {
@@ -4172,6 +4204,7 @@ void ReliabilityLayer::RemoveFromUnreliableLinkedList(
     }
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AddToUnreliableLinkedList(
     InternalPacket* internalPacket) {
@@ -4193,6 +4226,7 @@ void ReliabilityLayer::AddToUnreliableLinkedList(
     unreliableLinkedListHead->unreliablePrev = internalPacket;
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::ValidateResendList() const {
   // 	unsigned int count1=0, count2=0;
@@ -4212,6 +4246,7 @@ void ReliabilityLayer::ValidateResendList() const {
   // 	RakAssert(count1==count2);
   // 	RakAssert(count2<=RESEND_BUFFER_ARRAY_LENGTH);
 }
+
 //-------------------------------------------------------------------------------------------------------
 bool ReliabilityLayer::ResendBufferOverflow() const {
   int index1 =
@@ -4220,6 +4255,7 @@ bool ReliabilityLayer::ResendBufferOverflow() const {
   RakAssert(index1 < RESEND_BUFFER_ARRAY_LENGTH);
   return resendBuffer[index1] != nullptr; // || resendBuffer[index2]!=0;
 }
+
 //-------------------------------------------------------------------------------------------------------
 ReliabilityLayer::MessageNumberNode*
 ReliabilityLayer::GetMessageNumberNodeByDatagramIndex(
@@ -4241,6 +4277,7 @@ ReliabilityLayer::GetMessageNumberNodeByDatagramIndex(
   *timeSent = datagramHistory[offsetIntoList].timeSent;
   return datagramHistory[offsetIntoList].head;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::RemoveFromDatagramHistory(
     DatagramSequenceNumberType index) {
@@ -4254,6 +4291,7 @@ void ReliabilityLayer::RemoveFromDatagramHistory(
   }
   datagramHistory[offsetIntoList].head = nullptr;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AddFirstToDatagramHistory(
     DatagramSequenceNumberType datagramNumber,
@@ -4268,6 +4306,7 @@ void ReliabilityLayer::AddFirstToDatagramHistory(
   datagramHistory.Push(DatagramHistoryNode(nullptr, timeSent), _FILE_AND_LINE_);
   // printf("%p Pushed empty DatagramHistoryNode to datagram history at index %i\n", this, datagramHistory.Size()-1);
 }
+
 //-------------------------------------------------------------------------------------------------------
 ReliabilityLayer::MessageNumberNode*
 ReliabilityLayer::AddFirstToDatagramHistory(
@@ -4289,6 +4328,7 @@ ReliabilityLayer::AddFirstToDatagramHistory(
   // printf("%p Pushed message %i to DatagramHistoryNode to datagram history at index %i\n", this, messageNumber.val, datagramHistory.Size()-1);
   return mnm;
 }
+
 //-------------------------------------------------------------------------------------------------------
 ReliabilityLayer::MessageNumberNode*
 ReliabilityLayer::AddSubsequentToDatagramHistory(
@@ -4300,6 +4340,7 @@ ReliabilityLayer::AddSubsequentToDatagramHistory(
   messageNumberNode->next->next = nullptr;
   return messageNumberNode->next;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AllocInternalPacketData(
     InternalPacket* internalPacket,
@@ -4318,6 +4359,7 @@ void ReliabilityLayer::AllocInternalPacketData(
   }
   internalPacket->refCountedData = (*refCounter);
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AllocInternalPacketData(
     InternalPacket* internalPacket,
@@ -4325,6 +4367,7 @@ void ReliabilityLayer::AllocInternalPacketData(
   internalPacket->allocationScheme = InternalPacket::NORMAL;
   internalPacket->data = externallyAllocatedPtr;
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::AllocInternalPacketData(
     InternalPacket* internalPacket,
@@ -4340,6 +4383,7 @@ void ReliabilityLayer::AllocInternalPacketData(
     internalPacket->data = (unsigned char*)rakMalloc_Ex(numBytes, file, line);
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::FreeInternalPacketData(
     InternalPacket* internalPacket,
@@ -4374,6 +4418,7 @@ void ReliabilityLayer::FreeInternalPacketData(
     internalPacket->data = nullptr;
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes() {
   unsigned int val = congestionManager.GetMTU() -
@@ -4386,10 +4431,12 @@ unsigned int ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBytes() {
 
   return val;
 }
+
 //-------------------------------------------------------------------------------------------------------
 BitSize_t ReliabilityLayer::GetMaxDatagramSizeExcludingMessageHeaderBits() {
   return BYTES_TO_BITS(GetMaxDatagramSizeExcludingMessageHeaderBytes());
 }
+
 //-------------------------------------------------------------------------------------------------------
 void ReliabilityLayer::InitHeapWeights() {
   for (int priorityLevel = 0; priorityLevel < NUMBER_OF_PRIORITIES;
@@ -4398,6 +4445,7 @@ void ReliabilityLayer::InitHeapWeights() {
         (1 << priorityLevel) * priorityLevel + priorityLevel;
   }
 }
+
 //-------------------------------------------------------------------------------------------------------
 reliabilityHeapWeightType ReliabilityLayer::GetNextWeight(int priorityLevel) {
   uint64_t next = outgoingPacketBufferNextWeights[priorityLevel];

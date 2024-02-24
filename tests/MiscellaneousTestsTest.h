@@ -26,6 +26,7 @@
 #include "TestHelpers.h"
 
 using namespace RakNet;
+
 class MiscellaneousTestsTest : public TestInterface {
  public:
   MiscellaneousTestsTest();

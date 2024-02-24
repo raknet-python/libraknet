@@ -27,6 +27,7 @@ SignaledEvent::SignaledEvent() {
   isSignaled = false;
 #endif
 }
+
 SignaledEvent::~SignaledEvent() {
   // Intentionally do not close event, so it doesn't close twice on linux
 }

@@ -25,12 +25,15 @@ RakTimer::~RakTimer(void) = default;
 void RakTimer::SetTimerLength(int lengthInMilliseconds) {
   timerLength = lengthInMilliseconds;
 }
+
 void RakTimer::Start() {
   startTime = RakNet::GetTimeMS();
 }
+
 void RakTimer::Pause() {
   pauseOffset = (int)(RakNet::GetTimeMS() - startTime);
 }
+
 void RakTimer::Resume() {
   startTime = RakNet::GetTimeMS() - pauseOffset;
 }

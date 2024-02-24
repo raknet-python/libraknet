@@ -38,17 +38,21 @@ int RakNet::FilterSetComp(const int& key, FilterSet* const& data) {
     return 1;
   }
 }
+
 STATIC_FACTORY_DEFINITIONS(MessageFilter, MessageFilter);
 
 MessageFilter::MessageFilter() {
   whenLastTimeoutCheck = RakNet::GetTime();
 }
+
 MessageFilter::~MessageFilter() {
   Clear();
 }
+
 void MessageFilter::SetAutoAddNewConnectionsToFilter(int filterSetID) {
   autoAddNewConnectionsToFilter = filterSetID;
 }
+
 void MessageFilter::SetAllowMessageID(
     bool allow,
     int messageIDStart,
@@ -61,6 +65,7 @@ void MessageFilter::SetAllowMessageID(
     filterSet->allowedIDs[i] = allow;
   }
 }
+
 void MessageFilter::SetAllowRPC4(
     bool allow,
     const char* uniqueID,
@@ -83,6 +88,7 @@ void MessageFilter::SetAllowRPC4(
     }
   }
 }
+
 void MessageFilter::SetActionOnDisallowedMessage(
     bool kickOnDisallowed,
     bool banOnDisallowed,
@@ -93,6 +99,7 @@ void MessageFilter::SetActionOnDisallowedMessage(
   filterSet->disallowedMessageBanTimeMS = banTimeMS;
   filterSet->banOnDisallowedMessage = banOnDisallowed;
 }
+
 void MessageFilter::SetDisallowedMessageCallback(
     int filterSetID,
     void* userData,
@@ -106,6 +113,7 @@ void MessageFilter::SetDisallowedMessageCallback(
   filterSet->invalidMessageCallback = invalidMessageCallback;
   filterSet->disallowedCallbackUserData = userData;
 }
+
 void MessageFilter::SetTimeoutCallback(
     int filterSetID,
     void* userData,
@@ -118,6 +126,7 @@ void MessageFilter::SetTimeoutCallback(
   filterSet->timeoutCallback = invalidMessageCallback;
   filterSet->timeoutUserData = userData;
 }
+
 void MessageFilter::SetFilterMaxTime(
     int allowedTimeMS,
     bool banOnExceed,
@@ -128,6 +137,7 @@ void MessageFilter::SetFilterMaxTime(
   filterSet->banOnFilterTimeExceed = banOnExceed;
   filterSet->timeExceedBanTimeMS = banTimeMS;
 }
+
 int MessageFilter::GetSystemFilterSet(AddressOrGUID systemAddress) {
   // 	bool objectExists;
   // 	unsigned index = systemList.GetIndexFromKey(systemAddress, &objectExists);
@@ -143,6 +153,7 @@ int MessageFilter::GetSystemFilterSet(AddressOrGUID systemAddress) {
     return systemList.ItemAtIndex(index).filter->filterSetID;
   }
 }
+
 void MessageFilter::SetSystemFilterSet(
     AddressOrGUID addressOrGUID,
     int filterSetID) {
@@ -173,6 +184,7 @@ void MessageFilter::SetSystemFilterSet(
     }
   }
 }
+
 unsigned MessageFilter::GetSystemCount(int filterSetID) const {
   if (filterSetID == -1) {
     return systemList.Size();
@@ -190,12 +202,15 @@ unsigned MessageFilter::GetSystemCount(int filterSetID) const {
     return count;
   }
 }
+
 unsigned MessageFilter::GetFilterSetCount() const {
   return filterList.Size();
 }
+
 int MessageFilter::GetFilterSetIDByIndex(unsigned index) {
   return filterList[index]->filterSetID;
 }
+
 void MessageFilter::DeleteFilterSet(int filterSetID) {
   FilterSet* filterSet;
   bool objectExists;
@@ -228,6 +243,7 @@ void MessageFilter::DeleteFilterSet(int filterSetID) {
 		*/
   }
 }
+
 void MessageFilter::Clear() {
   unsigned i;
   systemList.Clear(_FILE_AND_LINE_);
@@ -236,9 +252,11 @@ void MessageFilter::Clear() {
   }
   filterList.Clear(false, _FILE_AND_LINE_);
 }
+
 void MessageFilter::DeallocateFilterSet(FilterSet* filterSet) {
   RakNet::OP_DELETE(filterSet, _FILE_AND_LINE_);
 }
+
 FilterSet* MessageFilter::GetFilterSetByID(int filterSetID) {
   RakAssert(filterSetID >= 0);
   bool objectExists;
@@ -266,6 +284,7 @@ FilterSet* MessageFilter::GetFilterSetByID(int filterSetID) {
     return newFilterSet;
   }
 }
+
 void MessageFilter::OnInvalidMessage(
     FilterSet* filterSet,
     AddressOrGUID systemAddress,
@@ -293,6 +312,7 @@ void MessageFilter::OnInvalidMessage(
 #endif
   }
 }
+
 void MessageFilter::Update() {
   // Update all timers for all systems.  If those systems' filter sets are expired, take the appropriate action.
   RakNet::Time curTime = RakNet::GetTime();
@@ -336,6 +356,7 @@ void MessageFilter::Update() {
     whenLastTimeoutCheck = curTime + 1000;
   }
 }
+
 void MessageFilter::OnNewConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -353,6 +374,7 @@ void MessageFilter::OnNewConnection(
     SetSystemFilterSet(aog, autoAddNewConnectionsToFilter);
   }
 }
+
 void MessageFilter::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -367,6 +389,7 @@ void MessageFilter::OnClosedConnection(
   // Lost system, remove from the list
   systemList.Remove(aog, _FILE_AND_LINE_);
 }
+
 PluginReceiveResult MessageFilter::OnReceive(Packet* packet) {
   DataStructures::HashIndex index;
   unsigned char messageId;

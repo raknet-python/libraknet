@@ -48,6 +48,7 @@ typedef double MicrosecondsPerByte;
 #define CC_DEBUG_PRINTF_3(x, y, z)
 #define CC_DEBUG_PRINTF_4(x, y, z, a)
 #define CC_DEBUG_PRINTF_5(x, y, z, a, b)
+
 //#define CC_DEBUG_PRINTF_1(x) printf(x)
 //#define CC_DEBUG_PRINTF_2(x,y) printf(x,y)
 //#define CC_DEBUG_PRINTF_3(x,y,z) printf(x,y,z)
@@ -156,6 +157,7 @@ class CCRakNetUDT {
       double totalUserDataBytesAcked,
       bool isContinuousSend,
       DatagramSequenceNumberType sequenceNumber);
+
   void OnDuplicateAck(
       CCTimeType curTime,
       DatagramSequenceNumberType sequenceNumber) {}
@@ -197,14 +199,18 @@ class CCRakNetUDT {
   BytesPerMicrosecond GetLocalSendRate(void) const {
     return 1.0 / SND;
   }
+
   BytesPerMicrosecond GetLocalReceiveRate(CCTimeType currentTime) const;
+
   BytesPerMicrosecond GetRemoveReceiveRate(void) const {
     return AS;
   }
+
   //BytesPerMicrosecond GetEstimatedBandwidth(void) const {return B;}
   BytesPerMicrosecond GetEstimatedBandwidth(void) const {
     return GetLinkCapacityBytesPerSecond() * 1000000.0;
   }
+
   double GetLinkCapacityBytesPerSecond(void) const {
     return estimatedLinkCapacityBytesPerSecond;
   };
@@ -215,6 +221,7 @@ class CCRakNetUDT {
   bool GetIsInSlowStart(void) const {
     return isInSlowStart;
   }
+
   uint32_t GetCWNDLimit(void) const {
     return (uint32_t)(CWND * MAXIMUM_MTU_INCLUDING_UDP_HEADER);
   }

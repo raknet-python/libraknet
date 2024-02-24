@@ -102,11 +102,14 @@ RakNetCommandParser::RakNetCommandParser() {
   RegisterCommand(0, "GetIncomingPassword", "( void );");
   RegisterCommand(0, "IsNetworkSimulatorActive", "( void );");
 }
+
 RakNetCommandParser::~RakNetCommandParser() = default;
+
 void RakNetCommandParser::SetRakPeerInterface(
     RakNet::RakPeerInterface* rakPeer) {
   peer = rakPeer;
 }
+
 bool RakNetCommandParser::OnCommand(
     const char* command,
     unsigned numParameters,
@@ -325,9 +328,11 @@ bool RakNetCommandParser::OnCommand(
 
   return true;
 }
+
 const char* RakNetCommandParser::GetName() const {
   return "RakNet";
 }
+
 void RakNetCommandParser::SendHelp(
     TransportInterface* transport,
     const SystemAddress& systemAddress) {

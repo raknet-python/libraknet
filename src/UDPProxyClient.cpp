@@ -30,12 +30,15 @@ STATIC_FACTORY_DEFINITIONS(UDPProxyClient, UDPProxyClient);
 UDPProxyClient::UDPProxyClient() {
   resultHandler = nullptr;
 }
+
 UDPProxyClient::~UDPProxyClient() {
   Clear();
 }
+
 void UDPProxyClient::SetResultHandler(UDPProxyClientResultHandler* rh) {
   resultHandler = rh;
 }
+
 bool UDPProxyClient::RequestForwarding(
     SystemAddress proxyCoordinator,
     SystemAddress sourceAddress,
@@ -79,6 +82,7 @@ bool UDPProxyClient::RequestForwarding(
 
   return true;
 }
+
 bool UDPProxyClient::RequestForwarding(
     SystemAddress proxyCoordinator,
     SystemAddress sourceAddress,
@@ -122,6 +126,7 @@ bool UDPProxyClient::RequestForwarding(
 
   return true;
 }
+
 void UDPProxyClient::Update() {
   unsigned int idx1 = 0;
   while (idx1 < pingServerGroups.Size()) {
@@ -140,6 +145,7 @@ void UDPProxyClient::Update() {
     }
   }
 }
+
 PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_UNCONNECTED_PONG) {
     unsigned int idx1, idx2;
@@ -278,9 +284,11 @@ PluginReceiveResult UDPProxyClient::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void UDPProxyClient::OnRakPeerShutdown() {
   Clear();
 }
+
 void UDPProxyClient::OnPingServers(Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
   incomingBs.IgnoreBytes(2);
@@ -344,6 +352,7 @@ void UDPProxyClient::PingServerGroup::SendPingedServersToCoordinator(
       coordinatorAddressForPings,
       false);
 }
+
 void UDPProxyClient::Clear() {
   for (unsigned int i = 0; i < pingServerGroups.Size(); i++) {
     RakNet::OP_DELETE(pingServerGroups[i], _FILE_AND_LINE_);

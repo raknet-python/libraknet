@@ -74,9 +74,11 @@ bool HTTPConnection::HasBadResponse(int* code, RakNet::RakString* data) {
   }
   return true;
 }
+
 void HTTPConnection::CloseConnection() {
   connectionState = CS_DISCONNECTING;
 }
+
 void HTTPConnection::Update() {
   SystemAddress sa;
   sa = tcp->HasCompletedConnectionAttempt();
@@ -177,9 +179,11 @@ void HTTPConnection::Update() {
   //	if (connectionState==CS_PROCESSING && currentProcessingCommand.data.IsEmpty()==false)
   //		outgoingCommand.PushAtHead(currentProcessingCommand);
 }
+
 bool HTTPConnection::HasRead() const {
   return !results.IsEmpty();
 }
+
 RakString HTTPConnection::Read() {
   if (results.IsEmpty()) {
     return RakString();
@@ -195,9 +199,11 @@ RakString HTTPConnection::Read() {
     return resultStr;
   }
 }
+
 SystemAddress HTTPConnection::GetServerAddress() const {
   return server;
 }
+
 void HTTPConnection::ProcessTCPPacket(Packet* packet) {
   RakAssert(packet);
 

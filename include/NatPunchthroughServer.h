@@ -62,6 +62,7 @@ struct RAK_DLL_EXPORT NatPunchthroughServerDebugInterface_PacketLogger
   NatPunchthroughServerDebugInterface_PacketLogger() {
     pl = nullptr;
   }
+
   ~NatPunchthroughServerDebugInterface_PacketLogger() override = default;
   void OnServerMessage(const char* msg) override;
 };
@@ -106,6 +107,7 @@ class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2 {
 
   // Each connected user has a ready state. Ready means ready for nat punchthrough.
   struct User;
+
   struct ConnectionAttempt {
     ConnectionAttempt() {
       sender = nullptr;
@@ -113,14 +115,17 @@ class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2 {
       startTime = 0;
       attemptPhase = NAT_ATTEMPT_PHASE_NOT_STARTED;
     }
+
     User *sender, *recipient;
     uint16_t sessionId;
     RakNet::Time startTime;
+
     enum {
       NAT_ATTEMPT_PHASE_NOT_STARTED,
       NAT_ATTEMPT_PHASE_GETTING_RECENT_PORTS,
     } attemptPhase;
   };
+
   struct User {
     RakNetGUID guid;
     SystemAddress systemAddress;
@@ -135,6 +140,7 @@ class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2 {
     void DeleteConnectionAttempt(ConnectionAttempt* ca);
     void LogConnectionAttempts(RakNet::RakString& rs);
   };
+
   RakNet::Time lastUpdate;
   static int NatPunchthroughUserComp(const RakNetGUID& key, User* const& data);
 

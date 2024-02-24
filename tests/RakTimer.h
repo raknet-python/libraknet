@@ -14,6 +14,7 @@
 #include "RakNetTime.h"
 
 using namespace RakNet;
+
 class RakTimer {
  public:
   RakTimer();

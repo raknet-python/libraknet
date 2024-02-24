@@ -52,17 +52,21 @@ class RAK_DLL_EXPORT Map {
 
   struct MapNode {
     MapNode() {}
+
     MapNode(key_type _key, data_type _data)
         : mapNodeKey(_key), mapNodeData(_data) {}
+
     MapNode& operator=(const MapNode& input) {
       mapNodeKey = input.mapNodeKey;
       mapNodeData = input.mapNodeData;
       return *this;
     }
+
     MapNode(const MapNode& input) {
       mapNodeKey = input.mapNodeKey;
       mapNodeData = input.mapNodeData;
     }
+
     key_type mapNodeKey;
     data_type mapNodeData;
   };

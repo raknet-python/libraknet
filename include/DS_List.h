@@ -139,6 +139,7 @@ class RAK_DLL_EXPORT List {
   /// Size of \a array
   unsigned int allocation_size;
 };
+
 template <class list_type>
 List<list_type>::List() {
   allocation_size = 0;

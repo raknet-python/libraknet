@@ -119,6 +119,7 @@ struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_PacketLogger
   NatPunchthroughDebugInterface_PacketLogger() {
     pl = nullptr;
   }
+
   ~NatPunchthroughDebugInterface_PacketLogger() override = default;
   void OnClientMessage(const char* msg) override;
 };
@@ -214,6 +215,7 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
     int punchingFixedPortAttempts; // only used for TestMode::PUNCHING_FIXED_PORT
     uint16_t sessionId;
     bool sentTTL;
+
     // Give priority to internal IP addresses because if we are on a LAN, we don't want to try to connect through the internet
     enum TestMode {
       TESTING_INTERNAL_IPS,
@@ -265,22 +267,26 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
     SystemAddress addr;
     RakNetGUID guid;
   };
+
   DataStructures::List<AddrAndGuid> failedAttemptList;
 
   struct DSTAndFac {
     RakNetGUID destination;
     SystemAddress facilitator;
   };
+
   DataStructures::Queue<DSTAndFac> queuedOpenNat;
 
   void IncrementExternalAttemptCount(RakNet::Time time, RakNet::Time delta);
   unsigned short portStride;
+
   enum {
     HAS_PORT_STRIDE,
     UNKNOWN_PORT_STRIDE,
     CALCULATING_PORT_STRIDE,
     INCAPABLE_PORT_STRIDE
   } hasPortStride;
+
   RakNet::Time portStrideCalTimeout;
 
   /*

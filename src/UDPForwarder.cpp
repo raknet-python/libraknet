@@ -40,6 +40,7 @@ UDPForwarder::ForwardEntry::ForwardEntry() {
   addr1Confirmed = UNASSIGNED_SYSTEM_ADDRESS;
   addr2Confirmed = UNASSIGNED_SYSTEM_ADDRESS;
 }
+
 UDPForwarder::ForwardEntry::~ForwardEntry() {
   if (socket != INVALID_SOCKET) {
     closesocket__(socket);
@@ -56,6 +57,7 @@ UDPForwarder::UDPForwarder() {
   startForwardingInput.SetPageSize(sizeof(StartForwardingInputStruct) * 16);
   stopForwardingCommands.SetPageSize(sizeof(StopForwardingStruct) * 16);
 }
+
 UDPForwarder::~UDPForwarder() {
   Shutdown();
 
@@ -63,6 +65,7 @@ UDPForwarder::~UDPForwarder() {
   WSAStartupSingleton::Deref();
 #endif
 }
+
 void UDPForwarder::Startup() {
   if (isRunning.GetValue() > 0) {
     return;
@@ -83,6 +86,7 @@ void UDPForwarder::Startup() {
     RakSleep(30);
   }
 }
+
 void UDPForwarder::Shutdown() {
   if (isRunning.GetValue() == 0) {
     return;
@@ -99,16 +103,20 @@ void UDPForwarder::Shutdown() {
   }
   forwardListNotUpdated.Clear(false, _FILE_AND_LINE_);
 }
+
 void UDPForwarder::SetMaxForwardEntries(unsigned short maxEntries) {
   RakAssert(maxEntries > 0 && maxEntries < 65535 / 2);
   maxForwardEntries = maxEntries;
 }
+
 int UDPForwarder::GetMaxForwardEntries() const {
   return maxForwardEntries;
 }
+
 int UDPForwarder::GetUsedForwardEntries() const {
   return (int)forwardListNotUpdated.Size();
 }
+
 UDPForwarderResult UDPForwarder::StartForwarding(
     SystemAddress source,
     SystemAddress destination,
@@ -174,6 +182,7 @@ UDPForwarderResult UDPForwarder::StartForwarding(
 
   return UDPFORWARDER_RESULT_COUNT;
 }
+
 void UDPForwarder::StopForwarding(
     SystemAddress source,
     SystemAddress destination) {
@@ -183,6 +192,7 @@ void UDPForwarder::StopForwarding(
   sfs->source = source;
   stopForwardingCommands.Push(sfs);
 }
+
 void UDPForwarder::RecvFrom(
     RakNet::TimeMS curTime,
     ForwardEntry* forwardEntry) {
@@ -377,6 +387,7 @@ void UDPForwarder::RecvFrom(
   forwardEntry->timeLastDatagramForwarded = curTime;
 #endif // __native_client__
 }
+
 void UDPForwarder::UpdateUDPForwarder() {
   /*
 #if !defined(SN_TARGET_PSP2)

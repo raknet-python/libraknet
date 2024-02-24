@@ -43,10 +43,13 @@ int RakNet::ConnectionGraph2::SystemAddressAndGuidComp(
   }
   return 0;
 }
+
 ConnectionGraph2::ConnectionGraph2() {
   autoProcessNewConnections = true;
 }
+
 ConnectionGraph2::~ConnectionGraph2() = default;
+
 bool ConnectionGraph2::GetConnectionListForRemoteSystem(
     RakNetGUID remoteSystemGuid,
     SystemAddress* saOut,
@@ -80,6 +83,7 @@ bool ConnectionGraph2::GetConnectionListForRemoteSystem(
   }
   return true;
 }
+
 bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2) {
   if (g1 == g2) {
     return false;
@@ -94,6 +98,7 @@ bool ConnectionGraph2::ConnectionExists(RakNetGUID g1, RakNetGUID g2) {
   sag.guid = g2;
   return remoteSystems[idx]->remoteConnections.HasData(sag);
 }
+
 uint16_t ConnectionGraph2::GetPingBetweenSystems(RakNetGUID g1, RakNetGUID g2)
     const {
   if (g1 == g2) {
@@ -193,12 +198,15 @@ void ConnectionGraph2::OnClosedConnection(
     remoteSystems.RemoveAtIndex(idx);
   }
 }
+
 void ConnectionGraph2::SetAutoProcessNewConnections(bool b) {
   autoProcessNewConnections = b;
 }
+
 bool ConnectionGraph2::GetAutoProcessNewConnections() const {
   return autoProcessNewConnections;
 }
+
 void ConnectionGraph2::AddParticipant(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID) {
@@ -249,6 +257,7 @@ void ConnectionGraph2::AddParticipant(
     remoteSystems.InsertAtIndex(remoteSystem, ii, _FILE_AND_LINE_);
   }
 }
+
 void ConnectionGraph2::GetParticipantList(
     DataStructures::OrderedList<RakNetGUID, RakNetGUID>& participantList) {
   participantList.Clear(true, _FILE_AND_LINE_);
@@ -257,6 +266,7 @@ void ConnectionGraph2::GetParticipantList(
     participantList.InsertAtEnd(remoteSystems[i]->guid, _FILE_AND_LINE_);
   }
 }
+
 void ConnectionGraph2::OnNewConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -266,6 +276,7 @@ void ConnectionGraph2::OnNewConnection(
     AddParticipant(systemAddress, rakNetGUID);
   }
 }
+
 PluginReceiveResult ConnectionGraph2::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_REMOTE_CONNECTION_LOST ||
       packet->data[0] == ID_REMOTE_DISCONNECTION_NOTIFICATION) {

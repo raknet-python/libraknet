@@ -42,10 +42,12 @@ NatPunchthroughClient::NatPunchthroughClient() {
   portStride = 0;
   hasPortStride = UNKNOWN_PORT_STRIDE;
 }
+
 NatPunchthroughClient::~NatPunchthroughClient() {
   rakPeerInterface = nullptr;
   Clear();
 }
+
 void NatPunchthroughClient::FindRouterPortStride(
     const SystemAddress& facilitator) {
   ConnectionState cs = rakPeerInterface->GetConnectionState(facilitator);
@@ -69,6 +71,7 @@ void NatPunchthroughClient::FindRouterPortStride(
   rakPeerInterface->Send(
       &outgoingBs, HIGH_PRIORITY, RELIABLE_ORDERED, 0, facilitator, false);
 }
+
 bool NatPunchthroughClient::OpenNAT(
     RakNetGUID destination,
     const SystemAddress& facilitator) {
@@ -87,6 +90,7 @@ bool NatPunchthroughClient::OpenNAT(
 
   return true;
 }
+
 /*
 bool NatPunchthroughClient::OpenNATGroup(DataStructures::List<RakNetGUID> destinationSystems, const SystemAddress &facilitator)
 {
@@ -112,6 +116,7 @@ void NatPunchthroughClient::SetDebugInterface(
     NatPunchthroughDebugInterface* i) {
   natPunchthroughDebugInterface = i;
 }
+
 void NatPunchthroughClient::Update() {
   RakNet::Time time = RakNet::GetTime();
 
@@ -318,6 +323,7 @@ void NatPunchthroughClient::Update() {
 	}
 	*/
 }
+
 void NatPunchthroughClient::PushFailure() {
   Packet* p = AllocatePacketUnified(sizeof(MessageID) + sizeof(unsigned char));
   p->data[0] = ID_NAT_PUNCHTHROUGH_FAILED;
@@ -332,6 +338,7 @@ void NatPunchthroughClient::PushFailure() {
   p->wasGeneratedLocally = true;
   rakPeerInterface->PushBackPacket(p, true);
 }
+
 void NatPunchthroughClient::OnPunchthroughFailure() {
   if (!pc.retryOnFailure) {
     if (natPunchthroughDebugInterface) {
@@ -416,6 +423,7 @@ void NatPunchthroughClient::OnPunchthroughFailure() {
     SendPunchthrough(sp.targetGuid, sp.facilitator);
   }
 }
+
 PluginReceiveResult NatPunchthroughClient::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_NAT_GET_MOST_RECENT_PORT: {
@@ -726,6 +734,7 @@ PluginReceiveResult NatPunchthroughClient::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 /*
 void NatPunchthroughClient::ProcessNextPunchthroughQueue(void)
 {
@@ -783,6 +792,7 @@ void NatPunchthroughClient::OnConnectAtTime(Packet* packet) {
   bs.Read(sp.targetGuid);
   bs.Read(sp.weAreSender);
 }
+
 void NatPunchthroughClient::SendTTL(const SystemAddress& sa) {
   if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -832,6 +842,7 @@ const char* TestModeToString(NatPunchthroughClient::SendPing::TestMode tm) {
   }
   return "";
 }
+
 void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId) {
   if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -883,6 +894,7 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId) {
     }
   }
 }
+
 void NatPunchthroughClient::OnNewConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -961,6 +973,7 @@ void NatPunchthroughClient::OnClosedConnection(
 	}
 	*/
 }
+
 void NatPunchthroughClient::GetUPNPPortMappings(
     char* externalPort,
     char* internalPort,
@@ -974,6 +987,7 @@ void NatPunchthroughClient::GetUPNPPortMappings(
   }
   Itoa(mostRecentExternalPort, externalPort, 10);
 }
+
 void NatPunchthroughClient::OnFailureNotification(Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
   incomingBs.IgnoreBytes(sizeof(MessageID));
@@ -997,6 +1011,7 @@ void NatPunchthroughClient::OnFailureNotification(Packet* packet) {
 	}
 	*/
 }
+
 void NatPunchthroughClient::OnGetMostRecentPort(Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
   incomingBs.IgnoreBytes(sizeof(MessageID));
@@ -1035,6 +1050,7 @@ void NatPunchthroughClient::OnGetMostRecentPort(Packet* packet) {
       false);
   sp.facilitator = packet->systemAddress;
 }
+
 /*
 unsigned int NatPunchthroughClient::GetPendingOpenNATIndex(RakNetGUID destination, const SystemAddress &facilitator)
 {
@@ -1055,12 +1071,14 @@ void NatPunchthroughClient::QueueOpenNAT(
   daf.facilitator = facilitator;
   queuedOpenNat.Push(daf, _FILE_AND_LINE_);
 }
+
 void NatPunchthroughClient::SendQueuedOpenNAT() {
   while (!queuedOpenNat.IsEmpty()) {
     DSTAndFac daf = queuedOpenNat.Pop();
     SendPunchthrough(daf.destination, daf.facilitator);
   }
 }
+
 void NatPunchthroughClient::SendPunchthrough(
     RakNetGUID destination,
     const SystemAddress& facilitator) {
@@ -1079,15 +1097,19 @@ void NatPunchthroughClient::SendPunchthrough(
         "Starting ID_NAT_PUNCHTHROUGH_REQUEST to guid %s.", guidString));
   }
 }
+
 void NatPunchthroughClient::OnAttach() {
   Clear();
 }
+
 void NatPunchthroughClient::OnDetach() {
   Clear();
 }
+
 void NatPunchthroughClient::OnRakPeerShutdown() {
   Clear();
 }
+
 void NatPunchthroughClient::Clear() {
   OnReadyForNextPunchthrough();
 
@@ -1104,10 +1126,12 @@ void NatPunchthroughClient::Clear() {
 	groupPunchRequests.Clear(true, _FILE_AND_LINE_);
 	*/
 }
+
 PunchthroughConfiguration*
 NatPunchthroughClient::GetPunchthroughConfiguration() {
   return &pc;
 }
+
 void NatPunchthroughClient::OnReadyForNextPunchthrough() {
   if (rakPeerInterface == nullptr) {
     return;
@@ -1135,6 +1159,7 @@ void NatPunchthroughClient::PushSuccess() {
   p->wasGeneratedLocally = true;
   rakPeerInterface->PushBackPacket(p, true);
 }
+
 bool NatPunchthroughClient::RemoveFromFailureQueue() {
   unsigned int i;
   for (i = 0; i < failedAttemptList.Size(); i++) {
@@ -1159,6 +1184,7 @@ void NatPunchthroughClient::IncrementExternalAttemptCount(
     sp.nextActionTime = time + pc.TIME_BETWEEN_PUNCH_ATTEMPTS_EXTERNAL - delta;
   }
 }
+
 /*
 // 0=failed, 1=success, 2=ignore
 void NatPunchthroughClient::UpdateGroupPunchOnNatResult(SystemAddress facilitator, RakNetGUID targetSystem, SystemAddress targetSystemAddress, int result)

@@ -32,12 +32,14 @@ using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Storage::Streams;
+
 //using namespace Platform::Collections;
 //using namespace Windows::Foundation::Collections;
 
 namespace RakNet {
 
 public
+
 ref class OutputStreamAndDataWriter sealed {
  public:
   // http://msdn.microsoft.com/en-us/library/windows/apps/hh755807.aspx
@@ -59,6 +61,7 @@ ref class OutputStreamAndDataWriter sealed {
 };
 
 public
+
 ref class ListenerContext sealed {
  public:
   ListenerContext(Windows::Networking::Sockets::DatagramSocket ^ listener);
@@ -242,15 +245,19 @@ void ListenerContext::OnMessage(
     });
 	*/
 }
+
 void ListenerContext::EchoMessage(
     DatagramSocketMessageReceivedEventArgs ^ eventArguments) {}
+
 RakNet::DataStructures::List<RNS2_WindowsStore8*> RNS2_WindowsStore8::rns2List;
 SimpleMutex RNS2_WindowsStore8::rns2ListMutex;
+
 RNS2_WindowsStore8::RNS2_WindowsStore8() {
   rns2ListMutex.Lock();
   rns2List.Insert(this, _FILE_AND_LINE_);
   rns2ListMutex.Unlock();
 }
+
 RNS2_WindowsStore8::~RNS2_WindowsStore8() {
   unsigned int i;
   rns2ListMutex.Lock();
@@ -262,6 +269,7 @@ RNS2_WindowsStore8::~RNS2_WindowsStore8() {
   }
   rns2ListMutex.Unlock();
 }
+
 RNS2_WindowsStore8* RNS2_WindowsStore8::GetRNS2FromDatagramSocket(
     Windows::Networking::Sockets::DatagramSocket ^ s) {
   RNS2_WindowsStore8* out = 0;
@@ -276,6 +284,7 @@ RNS2_WindowsStore8* RNS2_WindowsStore8::GetRNS2FromDatagramSocket(
   rns2ListMutex.Unlock();
   return out;
 }
+
 RNS2BindResult RNS2_WindowsStore8::Bind(Platform::String ^ localServiceName) {
   listener = ref new DatagramSocket();
   listenerContext = ref new ListenerContext(listener);
@@ -293,10 +302,12 @@ RNS2BindResult RNS2_WindowsStore8::Bind(Platform::String ^ localServiceName) {
 
   return BR_SUCCESS;
 }
+
 void RNS2_WindowsStore8::GetMyIP(
     SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]) {
   RakAssert("GetMyIP Unsupported" && 0);
 }
+
 RNS2SendResult RNS2_WindowsStore8::Send(
     RNS2_SendParameters* sendParameters,
     const char* file,
@@ -329,6 +340,7 @@ RNS2SendResult RNS2_WindowsStore8::Send(
 
   return 0;
 }
+
 void RNS2_WindowsStore8::DomainNameToIP(const char* domainName, char ip[65]) {
   ip[0] = 0;
 

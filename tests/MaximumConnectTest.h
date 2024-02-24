@@ -24,6 +24,7 @@
 #include "RakSleep.h"
 
 using namespace RakNet;
+
 class MaximumConnectTest : public TestInterface {
  public:
   MaximumConnectTest();

@@ -25,6 +25,7 @@
 #include "RakSleep.h"
 
 using namespace RakNet;
+
 class SecurityFunctionsTest : public TestInterface {
  public:
   SecurityFunctionsTest();

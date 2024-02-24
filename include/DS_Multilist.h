@@ -70,15 +70,19 @@ template <class templateType>
 class MLKeyRef {
  public:
   MLKeyRef(const templateType& input) : val(input) {}
+
   const templateType& Get() const {
     return val;
   }
+
   bool operator<(const templateType& right) {
     return val < right;
   }
+
   bool operator>(const templateType& right) {
     return val > right;
   }
+
   bool operator==(const templateType& right) {
     return val == right;
   }

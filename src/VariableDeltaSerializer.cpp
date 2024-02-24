@@ -15,6 +15,7 @@ using namespace RakNet;
 VariableDeltaSerializer::VariableDeltaSerializer() {
   didComparisonThisTick = false;
 }
+
 VariableDeltaSerializer::~VariableDeltaSerializer() {
   RemoveRemoteSystemVariableHistory();
 }
@@ -23,6 +24,7 @@ VariableDeltaSerializer::SerializationContext::SerializationContext() {
   variableHistoryIdentical = nullptr;
   variableHistoryUnique = nullptr;
 }
+
 VariableDeltaSerializer::SerializationContext::~SerializationContext() =
     default;
 
@@ -218,6 +220,7 @@ void VariableDeltaSerializer::DirtyAndFreeVarsAssociatedWithReceipt(
     vprs->updatedVariablesHistory.RemoveAtIndex(idx2);
   }
 }
+
 unsigned int VariableDeltaSerializer::GetVarsWrittenPerRemoteSystemListIndex(
     RakNetGUID guid) {
   unsigned int idx;
@@ -228,6 +231,7 @@ unsigned int VariableDeltaSerializer::GetVarsWrittenPerRemoteSystemListIndex(
   }
   return (unsigned int)-1;
 }
+
 void VariableDeltaSerializer::RemoveRemoteSystemVariableHistory() {
   unsigned int idx, idx2;
   for (idx = 0; idx < remoteSystemVariableHistoryList.Size(); idx++) {
@@ -257,10 +261,12 @@ VariableDeltaSerializer::AllocChangedVariablesList() {
   p->bitField[0] = 0;
   return p;
 }
+
 void VariableDeltaSerializer::FreeChangedVariablesList(
     ChangedVariablesList* changedVariables) {
   updatedVariablesMemoryPool.Release(changedVariables, _FILE_AND_LINE_);
 }
+
 void VariableDeltaSerializer::StoreChangedVariablesList(
     RemoteSystemVariableHistory* variableHistory,
     ChangedVariablesList* changedVariables,
@@ -286,6 +292,7 @@ VariableDeltaSerializer::StartVariableHistoryWrite(RakNetGUID guid) {
   variableHistory->variableListDeltaTracker.StartWrite();
   return variableHistory;
 }
+
 unsigned int VariableDeltaSerializer::GetRemoteSystemHistoryListIndex(
     RakNetGUID guid) {
   // Find the variable tracker for the target system

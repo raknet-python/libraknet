@@ -28,6 +28,7 @@ void* ReliableOrderedConvertedTest::LoggedMalloc(
   memcpy(p, &size, sizeof(size));
   return p + sizeof(size);
 }
+
 void ReliableOrderedConvertedTest::LoggedFree(
     void* p,
     const char* file,
@@ -47,6 +48,7 @@ void ReliableOrderedConvertedTest::LoggedFree(
   }
   free(realP);
 }
+
 void* ReliableOrderedConvertedTest::LoggedRealloc(
     void* p,
     size_t size,
@@ -429,6 +431,7 @@ RakString ReliableOrderedConvertedTest::ErrorCodeToString(int errorCode) {
 ReliableOrderedConvertedTest::ReliableOrderedConvertedTest(void) = default;
 
 ReliableOrderedConvertedTest::~ReliableOrderedConvertedTest(void) = default;
+
 void ReliableOrderedConvertedTest::DestroyPeers() {
   int theSize = destroyList.Size();
 

@@ -80,12 +80,14 @@ class RAK_DLL_EXPORT SingleProducerConsumer {
     DataPlusPtr() {
       readyToRead = false;
     }
+
     SingleProducerConsumerType object;
 
     // Ready to read is so we can use an equality boolean comparison, in case the writePointer var is trashed while context switching.
     volatile bool readyToRead;
     volatile DataPlusPtr* next;
   };
+
   volatile DataPlusPtr* readAheadPointer;
   volatile DataPlusPtr* writeAheadPointer;
   volatile DataPlusPtr* readPointer;

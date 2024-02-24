@@ -44,15 +44,18 @@ DynDnsResult resultTable[13] = {
     {"Serious error", "numhost", RC_NUM_HOST},
     {"This host exists, but does not belong to you", "!yours", RC_NOT_YOURS},
     {"911", "911", RC_911}};
+
 DynDNS::DynDNS() {
   connectPhase = CP_IDLE;
   tcp = nullptr;
 }
+
 DynDNS::~DynDNS() {
   if (tcp) {
     RakNet::OP_DELETE(tcp, _FILE_AND_LINE_);
   }
 }
+
 void DynDNS::Stop() {
   tcp->Stop();
   connectPhase = CP_IDLE;
@@ -99,6 +102,7 @@ void DynDNS::UpdateHostIPAsynch(
   getString += outputData;
   getString += "User-Agent: Jenkins Software LLC - PC - 1.0\n\n";
 }
+
 void DynDNS::Update() {
   if (connectPhase == CP_IDLE) {
     return;

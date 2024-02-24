@@ -61,6 +61,7 @@ int UDPProxyCoordinator::ForwardingRequestComp(
   }
   return 0;
 }
+
 //
 // bool operator<( const DataStructures::MLKeyRef<UDPProxyCoordinator::SenderAndTargetAddress> &inputKey, const UDPProxyCoordinator::ForwardingRequest *cls )
 // {
@@ -80,12 +81,15 @@ int UDPProxyCoordinator::ForwardingRequestComp(
 STATIC_FACTORY_DEFINITIONS(UDPProxyCoordinator, UDPProxyCoordinator);
 
 UDPProxyCoordinator::UDPProxyCoordinator() = default;
+
 UDPProxyCoordinator::~UDPProxyCoordinator() {
   Clear();
 }
+
 void UDPProxyCoordinator::SetRemoteLoginPassword(RakNet::RakString password) {
   remoteLoginPassword = password;
 }
+
 void UDPProxyCoordinator::Update() {
   unsigned int idx;
   RakNet::TimeMS curTime = RakNet::GetTimeMS();
@@ -110,6 +114,7 @@ void UDPProxyCoordinator::Update() {
     }
   }
 }
+
 PluginReceiveResult UDPProxyCoordinator::OnReceive(Packet* packet) {
   if (packet->data[0] == ID_UDP_PROXY_GENERAL && packet->length > 1) {
     switch (packet->data[1]) {
@@ -129,6 +134,7 @@ PluginReceiveResult UDPProxyCoordinator::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void UDPProxyCoordinator::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -165,6 +171,7 @@ void UDPProxyCoordinator::OnClosedConnection(
     serverList.RemoveAtIndexFast(idx);
   }
 }
+
 void UDPProxyCoordinator::OnForwardingRequestFromClientToCoordinator(
     Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
@@ -334,6 +341,7 @@ void UDPProxyCoordinator::SendForwardingRequest(
   rakPeerInterface->Send(
       &outgoingBs, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, serverAddress, false);
 }
+
 void UDPProxyCoordinator::OnLoginRequestFromServerToCoordinator(
     Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
@@ -401,6 +409,7 @@ void UDPProxyCoordinator::OnLoginRequestFromServerToCoordinator(
       packet->systemAddress,
       false);
 }
+
 void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(
     Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
@@ -500,6 +509,7 @@ void UDPProxyCoordinator::OnForwardingReplyFromServerToCoordinator(
     RakNet::OP_DELETE(fw, _FILE_AND_LINE_);
   }
 }
+
 void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
     Packet* packet) {
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
@@ -557,6 +567,7 @@ void UDPProxyCoordinator::OnPingServersReplyFromClientToCoordinator(
     TryNextServer(fw->sata, fw);
   }
 }
+
 void UDPProxyCoordinator::TryNextServer(
     SenderAndTargetAddress sata,
     ForwardingRequest* fw) {
@@ -587,6 +598,7 @@ void UDPProxyCoordinator::TryNextServer(
       fw->currentlyAttemptedServerAddress,
       fw->timeoutOnNoDataMS);
 }
+
 void UDPProxyCoordinator::SendAllBusy(
     SystemAddress senderClientAddress,
     SystemAddress targetClientAddress,
@@ -606,6 +618,7 @@ void UDPProxyCoordinator::SendAllBusy(
       requestingAddress,
       false);
 }
+
 void UDPProxyCoordinator::Clear() {
   serverList.Clear(true, _FILE_AND_LINE_);
   for (unsigned int i = 0; i < forwardingRequestList.Size(); i++) {
@@ -613,6 +626,7 @@ void UDPProxyCoordinator::Clear() {
   }
   forwardingRequestList.Clear(false, _FILE_AND_LINE_);
 }
+
 void UDPProxyCoordinator::ForwardingRequest::OrderRemainingServersToTry() {
   //DataStructures::Multilist<ML_ORDERED_LIST,UDPProxyCoordinator::ServerWithPing,unsigned short> swpList;
   DataStructures::OrderedList<

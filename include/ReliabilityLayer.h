@@ -75,6 +75,7 @@ struct SplitPacketChannel //<SplitPacketChannel>
   InternalPacket* firstPacket;
 #endif
 };
+
 int RAK_DLL_EXPORT SplitPacketChannelComp(
     SplitPacketIdType const& key,
     SplitPacketChannel* const& data);
@@ -84,23 +85,28 @@ struct BPSTracker {
   BPSTracker();
   ~BPSTracker();
   void Reset(const char* file, unsigned int line);
+
   inline void Push1(CCTimeType time, uint64_t value1) {
     dataQueue.Push(TimeAndValue2(time, value1), _FILE_AND_LINE_);
     total1 += value1;
     lastSec1 += value1;
   }
+
   //	void Push2(RakNet::TimeUS time, uint64_t value1, uint64_t value2);
   inline uint64_t GetBPS1(CCTimeType time) {
     (void)time;
     return lastSec1;
   }
+
   inline uint64_t GetBPS1Threadsafe(CCTimeType time) {
     (void)time;
     return lastSec1;
   }
+
   //	uint64_t GetBPS2(RakNetTimeUS time);
   //	void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
   uint64_t GetTotal1() const;
+
   //	uint64_t GetTotal2(void) const;
 
   struct TimeAndValue2 {
@@ -407,13 +413,17 @@ class ReliabilityLayer //<ReliabilityLayer>
     DatagramSequenceNumberType messageNumber;
     MessageNumberNode* next;
   };
+
   struct DatagramHistoryNode {
     DatagramHistoryNode() = default;
+
     DatagramHistoryNode(MessageNumberNode* _head, CCTimeType ts)
         : head(_head), timeSent(ts) {}
+
     MessageNumberNode* head;
     CCTimeType timeSent;
   };
+
   // Queue length is programmatically restricted to DATAGRAM_MESSAGE_ID_ARRAY_LENGTH
   // This is essentially an O(1) lookup to get a DatagramHistoryNode given an index
   // datagramHistory holds a linked list of MessageNumberNode. Each MessageNumberNode refers to one element in resendList which can be cleared on an ack.
@@ -422,6 +432,7 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   struct UnreliableWithAckReceiptNode {
     UnreliableWithAckReceiptNode() = default;
+
     UnreliableWithAckReceiptNode(
         DatagramSequenceNumberType _datagramNumber,
         uint32_t _sendReceiptSerial,
@@ -429,10 +440,12 @@ class ReliabilityLayer //<ReliabilityLayer>
         : datagramNumber(_datagramNumber),
           sendReceiptSerial(_sendReceiptSerial),
           nextActionTime(_nextActionTime) {}
+
     DatagramSequenceNumberType datagramNumber;
     uint32_t sendReceiptSerial;
     RakNet::TimeUS nextActionTime;
   };
+
   DataStructures::List<UnreliableWithAckReceiptNode>
       unreliableWithAckReceiptHistory;
 
@@ -586,6 +599,7 @@ class ReliabilityLayer //<ReliabilityLayer>
     unsigned short remotePortRakNetWasStartedOn_PS3;
     unsigned int extraSocketOptions;
   };
+
   DataStructures::Queue<DataAndTime*> delayList;
 
   // Internet simulator

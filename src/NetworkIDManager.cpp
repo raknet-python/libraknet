@@ -27,10 +27,13 @@ NetworkIDManager::NetworkIDManager() {
   startingOffset = RakPeerInterface::Get64BitUniqueRandomNumber();
   Clear();
 }
+
 NetworkIDManager::~NetworkIDManager() = default;
+
 void NetworkIDManager::Clear() {
   memset(networkIdHash, 0, sizeof(networkIdHash));
 }
+
 NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
   unsigned int hashIndex = NetworkIDToHashIndex(x);
   NetworkIDObject* nio = networkIdHash[hashIndex];
@@ -42,6 +45,7 @@ NetworkIDObject* NetworkIDManager::GET_BASE_OBJECT_FROM_ID(NetworkID x) {
   }
   return nullptr;
 }
+
 NetworkID NetworkIDManager::GetNewNetworkID() {
   while (GET_BASE_OBJECT_FROM_ID(++startingOffset)) {
     ;
@@ -53,10 +57,12 @@ NetworkID NetworkIDManager::GetNewNetworkID() {
   }
   return startingOffset;
 }
+
 unsigned int NetworkIDManager::NetworkIDToHashIndex(NetworkID networkId) {
   //	return SuperFastHash((const char*) &networkId.guid.g,sizeof(networkId.guid.g)) % NETWORK_ID_MANAGER_HASH_LENGTH;
   return (unsigned int)(networkId % NETWORK_ID_MANAGER_HASH_LENGTH);
 }
+
 void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject* networkIdObject) {
   RakAssert(networkIdObject->GetNetworkIDManager() == this);
   NetworkID rawId = networkIdObject->GetNetworkID();
@@ -87,6 +93,7 @@ void NetworkIDManager::TrackNetworkIDObject(NetworkIDObject* networkIdObject) {
 
   nio->nextInstanceForNetworkIDManager = networkIdObject;
 }
+
 void NetworkIDManager::StopTrackingNetworkIDObject(
     NetworkIDObject* networkIdObject) {
   RakAssert(networkIdObject->GetNetworkIDManager() == this);

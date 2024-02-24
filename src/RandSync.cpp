@@ -20,20 +20,25 @@ RakNetRandomSync::RakNetRandomSync() {
   callCount = 0;
   usedValueBufferCount = 0;
 }
+
 RakNetRandomSync::~RakNetRandomSync() = default;
+
 void RakNetRandomSync::SeedMT(uint32_t _seed) {
   seed = _seed;
   rnr.SeedMT(seed);
   callCount = 0;
   usedValueBufferCount = 0;
 }
+
 void RakNetRandomSync::SeedMT(uint32_t _seed, uint32_t skipValues) {
   SeedMT(_seed);
   Skip(skipValues);
 }
+
 float RakNetRandomSync::FrandomMT() {
   return (float)((double)RandomMT() / (double)UINT_MAX);
 }
+
 unsigned int RakNetRandomSync::RandomMT() {
   if (usedValueBufferCount > 0) {
     --usedValueBufferCount;
@@ -55,20 +60,25 @@ unsigned int RakNetRandomSync::RandomMT() {
     return usedValues[usedValues.Size() - 1];
   }
 }
+
 uint32_t RakNetRandomSync::GetSeed() const {
   return seed;
 }
+
 uint32_t RakNetRandomSync::GetCallCount() const {
   return callCount;
 }
+
 void RakNetRandomSync::SetCallCount(uint32_t i) {
   callCount = i;
 }
+
 void RakNetRandomSync::SerializeConstruction(
     RakNet::BitStream* constructionBitstream) {
   constructionBitstream->Write(seed);
   constructionBitstream->Write(callCount);
 }
+
 bool RakNetRandomSync::DeserializeConstruction(
     RakNet::BitStream* constructionBitstream) {
   uint32_t _seed;
@@ -80,9 +90,11 @@ bool RakNetRandomSync::DeserializeConstruction(
   }
   return success;
 }
+
 void RakNetRandomSync::Serialize(RakNet::BitStream* outputBitstream) {
   outputBitstream->Write(callCount);
 }
+
 void RakNetRandomSync::Deserialize(RakNet::BitStream* outputBitstream) {
   uint32_t _callCount;
   outputBitstream->Read(_callCount);
@@ -101,6 +113,7 @@ void RakNetRandomSync::Deserialize(RakNet::BitStream* outputBitstream) {
     }
   }
 }
+
 void RakNetRandomSync::Skip(uint32_t count) {
   for (uint32_t i = 0; i < count; i++) {
     rnr.RandomMT();

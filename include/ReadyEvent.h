@@ -179,9 +179,11 @@ class ReadyEvent : public PluginInterface2 {
     MessageID lastSentStatus, lastReceivedStatus;
     RakNetGUID rakNetGuid;
   };
+
   static int RemoteSystemCompByGuid(
       const RakNetGUID& key,
       const RemoteSystem& data);
+
   /// \internal
   /// An event, with a set of systems we are waiting for, a set of systems that are signaled, and a set of systems with completed events
   struct ReadyEventNode {
@@ -193,6 +195,7 @@ class ReadyEvent : public PluginInterface2 {
         ReadyEvent::RemoteSystemCompByGuid>
         systemList;
   };
+
   static int ReadyEventNodeComp(
       const int& key,
       ReadyEvent::ReadyEventNode* const& data);

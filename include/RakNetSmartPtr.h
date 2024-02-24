@@ -30,13 +30,17 @@ class RAK_DLL_EXPORT ReferenceCounter {
   ReferenceCounter() {
     refCount = 0;
   }
+
   ~ReferenceCounter() = default;
+
   void AddRef() {
     refCount++;
   }
+
   int Release() {
     return --refCount;
   }
+
   int GetRefCount() const {
     return refCount;
   }
@@ -134,9 +138,11 @@ class RAK_DLL_EXPORT RakNetSmartPtr {
   bool operator==(const RakNetSmartPtr<T>& sp) {
     return ptr == sp.ptr;
   }
+
   bool operator<(const RakNetSmartPtr<T>& right) {
     return ptr < right.ptr;
   }
+
   bool operator>(const RakNetSmartPtr<T>& right) {
     return ptr > right.ptr;
   }

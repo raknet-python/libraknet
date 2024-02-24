@@ -28,6 +28,7 @@
 #include "Rand.h" // randomMT
 
 using namespace RakNet;
+
 class DroppedConnectionConvertTest : public TestInterface {
  public:
   DroppedConnectionConvertTest();

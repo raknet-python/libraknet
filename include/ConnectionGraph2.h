@@ -94,6 +94,7 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
     RakNetGUID guid;
     uint16_t sendersPingToThatSystem;
   };
+
   /// \internal
   static int SystemAddressAndGuidComp(
       const SystemAddressAndGuid& key,
@@ -108,6 +109,7 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
         remoteConnections;
     RakNetGUID guid;
   };
+
   /// \internal
   static int RemoteSystemComp(const RakNetGUID& key, RemoteSystem* const& data);
 

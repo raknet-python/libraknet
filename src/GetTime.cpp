@@ -41,6 +41,7 @@ static bool initialized = false;
 #include "SimpleMutex.h"
 RakNet::TimeUS lastNormalizedReturnedValue = 0;
 RakNet::TimeUS lastNormalizedInputValue = 0;
+
 /// This constraints timer forward jumps to 1 second, and does not let it jump backwards
 /// See http://support.microsoft.com/kb/274323 where the timer can sometimes jump forward by hours or days
 /// This also has the effect where debugging a sending system won't treat the time spent halted past 1 second as elapsed network time
@@ -68,6 +69,7 @@ RakNet::TimeUS NormalizeTime(RakNet::TimeUS timeIn) {
 RakNet::Time RakNet::GetTime() {
   return (RakNet::Time)(GetTimeUS() / 1000);
 }
+
 RakNet::TimeMS RakNet::GetTimeMS() {
   return (RakNet::TimeMS)(GetTimeUS() / 1000);
 }
@@ -143,12 +145,14 @@ RakNet::TimeUS RakNet::GetTimeUS() {
   return GetTimeUS_Linux();
 #endif
 }
+
 bool RakNet::GreaterThan(RakNet::Time a, RakNet::Time b) {
   // a > b?
   const auto halfSpan =
       (RakNet::Time)(((RakNet::Time)(const RakNet::Time)-1) / (RakNet::Time)2);
   return b != a && b - a > halfSpan;
 }
+
 bool RakNet::LessThan(RakNet::Time a, RakNet::Time b) {
   // a < b?
   const RakNet::Time halfSpan =

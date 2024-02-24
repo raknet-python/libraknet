@@ -58,6 +58,7 @@ Algorithm:
 void Router2DebugInterface::ShowFailure(const char* message) {
   printf("%s", message);
 }
+
 void Router2DebugInterface::ShowDiagnostic(const char* message) {
   printf("%s", message);
 }
@@ -68,6 +69,7 @@ enum Router2MessageIdentifiers {
   ID_ROUTER_2_REQUEST_FORWARDING,
   ID_ROUTER_2_INCREASE_TIMEOUT,
 };
+
 Router2::ConnnectRequest::ConnnectRequest() = default;
 Router2::ConnnectRequest::~ConnnectRequest() = default;
 
@@ -79,6 +81,7 @@ Router2::Router2() {
   debugInterface = nullptr;
   socketFamily = AF_INET;
 }
+
 Router2::~Router2() {
   ClearAll();
 
@@ -87,11 +90,13 @@ Router2::~Router2() {
     RakNet::OP_DELETE(udpForwarder, _FILE_AND_LINE_);
   }
 }
+
 void Router2::ClearMinipunches() {
   miniPunchesInProgressMutex.Lock();
   miniPunchesInProgress.Clear(false, _FILE_AND_LINE_);
   miniPunchesInProgressMutex.Unlock();
 }
+
 void Router2::ClearConnectionRequests() {
   connectionRequestsMutex.Lock();
   for (unsigned int i = 0; i < connectionRequests.Size(); i++) {
@@ -100,6 +105,7 @@ void Router2::ClearConnectionRequests() {
   connectionRequests.Clear(false, _FILE_AND_LINE_);
   connectionRequestsMutex.Unlock();
 }
+
 bool Router2::ConnectInternal(
     RakNetGUID endpointGuid,
     bool returnConnectionLostOnFailure) {
@@ -211,9 +217,11 @@ bool Router2::ConnectInternal(
 
   return true;
 }
+
 void Router2::SetSocketFamily(unsigned short _socketFamily) {
   socketFamily = _socketFamily;
 }
+
 void Router2::EstablishRouting(RakNetGUID endpointGuid) {
   ConnectionState cs = rakPeerInterface->GetConnectionState(endpointGuid);
   if (cs != IS_DISCONNECTED && cs != IS_NOT_CONNECTED) {
@@ -232,6 +240,7 @@ void Router2::EstablishRouting(RakNetGUID endpointGuid) {
 
   ConnectInternal(endpointGuid, false);
 }
+
 void Router2::SetMaximumForwardingRequests(int max) {
   if (max > 0 && maximumForwardingRequests <= 0) {
     udpForwarder = RakNet::OP_NEW<UDPForwarder>(_FILE_AND_LINE_);
@@ -244,6 +253,7 @@ void Router2::SetMaximumForwardingRequests(int max) {
 
   maximumForwardingRequests = max;
 }
+
 PluginReceiveResult Router2::OnReceive(Packet* packet) {
   SystemAddress sa;
   RakNet::BitStream bs(packet->data, packet->length, false);
@@ -399,6 +409,7 @@ PluginReceiveResult Router2::OnReceive(Packet* packet) {
 
   return RR_CONTINUE_PROCESSING;
 }
+
 void Router2::Update() {
   RakNet::TimeMS curTime = RakNet::GetTimeMS();
   unsigned int connectionRequestIndex = 0;
@@ -465,6 +476,7 @@ void Router2::Update() {
   }
   miniPunchesInProgressMutex.Unlock();
 }
+
 void Router2::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -602,6 +614,7 @@ void Router2::OnClosedConnection(
   }
   miniPunchesInProgressMutex.Unlock();
 }
+
 void Router2::OnFailedConnectionAttempt(
     Packet* packet,
     PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {
@@ -633,9 +646,11 @@ void Router2::OnFailedConnectionAttempt(
   }
   forwardedConnectionListMutex.Unlock();
 }
+
 void Router2::OnRakPeerShutdown() {
   ClearAll();
 }
+
 // connectionRequestsMutex should already be locked
 bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest) {
   connectionRequest->connectionRequestSystemsMutex.Lock();
@@ -712,12 +727,14 @@ bool Router2::UpdateForwarding(ConnnectRequest* connectionRequest) {
 
   return true;
 }
+
 // connectionRequestsMutex should already be locked
 void Router2::RemoveConnectionRequest(unsigned int connectionRequestIndex) {
   RakNet::OP_DELETE(
       connectionRequests[connectionRequestIndex], _FILE_AND_LINE_);
   connectionRequests.RemoveAtIndexFast(connectionRequestIndex);
 }
+
 int ConnectionRequestSystemComp(
     const Router2::ConnectionRequestSystem& key,
     const Router2::ConnectionRequestSystem& data) {
@@ -737,6 +754,7 @@ int ConnectionRequestSystemComp(
   }
   return 0;
 }
+
 // connectionRequestsMutex should already be locked
 void Router2::RequestForwarding(ConnnectRequest* connectionRequest) {
   RakAssert(
@@ -802,6 +820,7 @@ void Router2::RequestForwarding(ConnnectRequest* connectionRequest) {
         __LINE__));
   }
 }
+
 void Router2::SendFailureOnCannotForward(
     RakNetGUID sourceGuid,
     RakNetGUID endpointGuid) {
@@ -813,6 +832,7 @@ void Router2::SendFailureOnCannotForward(
   rakPeerInterface->Send(
       &bsOut, MEDIUM_PRIORITY, RELIABLE_ORDERED, 0, sourceGuid, false);
 }
+
 int Router2::ReturnFailureOnCannotForward(
     RakNetGUID sourceGuid,
     RakNetGUID endpointGuid) {
@@ -872,6 +892,7 @@ int Router2::ReturnFailureOnCannotForward(
   }
   return pingToEndpoint;
 }
+
 void Router2::OnQueryForwarding(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
@@ -914,6 +935,7 @@ void Router2::OnQueryForwarding(Packet* packet) {
         __LINE__));
   }
 }
+
 void Router2::OnQueryForwardingReply(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
@@ -998,6 +1020,7 @@ void Router2::OnQueryForwardingReply(Packet* packet) {
   }
   connectionRequestsMutex.Unlock();
 }
+
 void Router2::SendForwardingSuccess(
     MessageID messageId,
     RakNetGUID sourceGuid,
@@ -1023,6 +1046,7 @@ void Router2::SendForwardingSuccess(
     }
   }
 }
+
 void Router2::SendOOBFromRakNetPort(
     OutOfBandIdentifiers oob,
     BitStream* extraData,
@@ -1041,6 +1065,7 @@ void Router2::SendOOBFromRakNetPort(
       (const char*)oobBs.GetData(),
       oobBs.GetNumberOfBytesUsed());
 }
+
 void Router2::SendOOBFromSpecifiedSocket(
     OutOfBandIdentifiers oob,
     SystemAddress sa,
@@ -1070,6 +1095,7 @@ void Router2::SendOOBFromSpecifiedSocket(
 #endif
   }
 }
+
 void Router2::SendOOBMessages(Router2::MiniPunchRequest* mpr) {
   // Mini NAT punch
   // Send from srcToDestPort to packet->systemAddress (source). If the message arrives, the remote system should reply.
@@ -1114,6 +1140,7 @@ void Router2::SendOOBMessages(Router2::MiniPunchRequest* mpr) {
   SendOOBFromRakNetPort(
       ID_ROUTER_2_REPLY_TO_SPECIFIED_PORT, &extraData, mpr->endpointAddress);
 }
+
 void Router2::OnRequestForwarding(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
@@ -1262,6 +1289,7 @@ void Router2::OnRequestForwarding(Packet* packet) {
     miniPunchesInProgressMutex.Unlock();
   }
 }
+
 void Router2::OnMiniPunchReplyBounce(Packet* packet) {
   // Find stored punch request
   unsigned int i = 0;
@@ -1319,6 +1347,7 @@ void Router2::OnMiniPunchReplyBounce(Packet* packet) {
   }
   miniPunchesInProgressMutex.Unlock();
 }
+
 void Router2::OnMiniPunchReply(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID) + sizeof(unsigned char));
@@ -1345,6 +1374,7 @@ void Router2::OnMiniPunchReply(Packet* packet) {
         __LINE__));
   }
 }
+
 void Router2::OnRerouted(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID));
@@ -1411,6 +1441,7 @@ void Router2::OnRerouted(Packet* packet) {
     }
   }
 }
+
 bool Router2::OnForwardingSuccess(Packet* packet) {
   RakNet::BitStream bs(packet->data, packet->length, false);
   bs.IgnoreBytes(sizeof(MessageID));
@@ -1487,6 +1518,7 @@ bool Router2::OnForwardingSuccess(Packet* packet) {
   }
   return true; // Return packet to user
 }
+
 int Router2::GetLargestPingAmongConnectedSystems() const {
   int avePing;
   int largestPing = -1;
@@ -1518,6 +1550,7 @@ unsigned int Router2::GetConnectionRequestIndex(RakNetGUID endpointGuid) {
   }
   return (unsigned int)-1;
 }
+
 unsigned int Router2::ConnnectRequest::GetGuidIndex(RakNetGUID guid) {
   unsigned int i;
   for (i = 0; i < connectionRequestSystems.Size(); i++) {
@@ -1527,6 +1560,7 @@ unsigned int Router2::ConnnectRequest::GetGuidIndex(RakNetGUID guid) {
   }
   return (unsigned int)-1;
 }
+
 void Router2::ReturnToUser(
     MessageID messageId,
     RakNetGUID endpointGuid,
@@ -1540,19 +1574,23 @@ void Router2::ReturnToUser(
   p->wasGeneratedLocally = wasGeneratedLocally;
   rakPeerInterface->PushBackPacket(p, true);
 }
+
 void Router2::ClearForwardedConnections() {
   forwardedConnectionListMutex.Lock();
   forwardedConnectionList.Clear(false, _FILE_AND_LINE_);
   forwardedConnectionListMutex.Unlock();
 }
+
 void Router2::ClearAll() {
   ClearConnectionRequests();
   ClearMinipunches();
   ClearForwardedConnections();
 }
+
 void Router2::SetDebugInterface(Router2DebugInterface* _debugInterface) {
   debugInterface = _debugInterface;
 }
+
 Router2DebugInterface* Router2::GetDebugInterface() const {
   return debugInterface;
 }

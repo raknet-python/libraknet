@@ -69,6 +69,7 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
     /// Join the team with the lowest index that has open slots.
     FILL_IN_ORDER
   };
+
   /// \brief Determine how players' teams will be set when they call RequestAnyTeam()
   /// \details Based on the specified enumeration, a player will join a team automatically
   /// Defaults to SMALLEST_TEAM
@@ -134,6 +135,7 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
     TeamId currentTeam;
     TeamId requestedTeam;
   };
+
   struct MyTeamMembers {
     NetworkID memberId;
     TeamId currentTeam;

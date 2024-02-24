@@ -128,6 +128,7 @@ class RAK_DLL_EXPORT UDPForwarder {
     UDPForwarderResult result;
     unsigned int inputId;
   };
+
   DataStructures::Queue<StartForwardingOutputStruct> startForwardingOutput;
   SimpleMutex startForwardingOutputMutex;
 
@@ -135,6 +136,7 @@ class RAK_DLL_EXPORT UDPForwarder {
     SystemAddress source;
     SystemAddress destination;
   };
+
   DataStructures::ThreadsafeAllocatingQueue<StopForwardingStruct>
       stopForwardingCommands;
   unsigned int nextInputId;

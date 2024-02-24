@@ -78,6 +78,7 @@ class VariableListDeltaTracker {
     nextWriteIndex++;
     return true; // Different because dirty or memcmp was different
   }
+
   /// Calls WriteVar. If the variable has changed, writes true, and writes the variable. Otherwise writes false.
   template <class VarType>
   bool WriteVarToBitstream(
@@ -91,6 +92,7 @@ class VariableListDeltaTracker {
     }
     return false;
   }
+
   /// Calls WriteVarToBitstream(). Additionally, adds the boolean result of WriteVar() to boolean bit array
   template <class VarType>
   bool WriteVarToBitstream(

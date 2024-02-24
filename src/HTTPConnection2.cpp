@@ -20,6 +20,7 @@ STATIC_FACTORY_DEFINITIONS(HTTPConnection2, HTTPConnection2);
 
 HTTPConnection2::HTTPConnection2() = default;
 HTTPConnection2::~HTTPConnection2() = default;
+
 bool HTTPConnection2::TransmitRequest(
     const char* stringToTransmit,
     const char* host,
@@ -87,6 +88,7 @@ bool HTTPConnection2::TransmitRequest(
   }
   return true;
 }
+
 bool HTTPConnection2::GetResponse(
     RakString& stringTransmitted,
     RakString& hostTransmitted,
@@ -102,6 +104,7 @@ bool HTTPConnection2::GetResponse(
       contentOffset,
       &userData);
 }
+
 bool HTTPConnection2::GetResponse(
     RakString& stringTransmitted,
     RakString& hostTransmitted,
@@ -129,12 +132,15 @@ bool HTTPConnection2::GetResponse(
   }
   return false;
 }
+
 bool HTTPConnection2::IsBusy() const {
   return pendingRequests.Size() > 0 || sentRequests.Size() > 0;
 }
+
 bool HTTPConnection2::HasResponse() const {
   return completedRequests.Size() > 0;
 }
+
 int ReadChunkSize(char* txtStart, char** txtEnd) {
   // 	char lengthStr[32];
   // 	memset(lengthStr, 0, 32);
@@ -142,6 +148,7 @@ int ReadChunkSize(char* txtStart, char** txtEnd) {
   return strtoul(txtStart, txtEnd, 16);
   // return atoi(lengthStr);
 }
+
 void ReadChunkBlock(
     size_t& currentChunkSize,
     size_t& bytesReadSoFar,
@@ -180,6 +187,7 @@ void ReadChunkBlock(
     txtIn = newLine + 2;
   } while (txtIn);
 }
+
 PluginReceiveResult HTTPConnection2::OnReceive(Packet* packet) {
   unsigned int i;
 
@@ -403,6 +411,7 @@ void HTTPConnection2::OnNewConnection(
 
   SendPendingRequestToConnectedSystem(systemAddress);
 }
+
 void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa) {
   if (sa == UNASSIGNED_SYSTEM_ADDRESS) {
     return;
@@ -468,6 +477,7 @@ void HTTPConnection2::SendPendingRequestToConnectedSystem(SystemAddress sa) {
     }
   }
 }
+
 void HTTPConnection2::RemovePendingRequest(SystemAddress sa) {
   unsigned int i;
   i = 0;
@@ -484,6 +494,7 @@ void HTTPConnection2::RemovePendingRequest(SystemAddress sa) {
 
   pendingRequestsMutex.Unlock();
 }
+
 void HTTPConnection2::SendNextPendingRequest() {
   // Send a pending request
   pendingRequestsMutex.Lock();
@@ -527,6 +538,7 @@ void HTTPConnection2::OnFailedConnectionAttempt(
 
   SendNextPendingRequest();
 }
+
 void HTTPConnection2::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -576,6 +588,7 @@ void HTTPConnection2::OnClosedConnection(
 
   SendNextPendingRequest();
 }
+
 bool HTTPConnection2::IsConnected(SystemAddress sa) {
   SystemAddress remoteSystems[64];
   unsigned short numberOfSystems = 64;
@@ -587,6 +600,7 @@ bool HTTPConnection2::IsConnected(SystemAddress sa) {
   }
   return false;
 }
+
 void HTTPConnection2::SendRequest(Request* request) {
   tcpInterface->Send(
       request->stringToTransmit.C_String(),

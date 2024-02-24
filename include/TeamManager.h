@@ -547,6 +547,7 @@ class TM_World {
     unsigned int indexIntoTeamsRequested;
     unsigned int requestIndex;
   };
+
   /// \internal
   static int JoinRequestHelperComp(
       const TM_World::JoinRequestHelper& key,

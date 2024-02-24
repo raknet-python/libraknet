@@ -43,6 +43,7 @@ void NatPunchthroughServer::User::DeleteConnectionAttempt(
     connectionAttempts.RemoveAtIndex(index);
   }
 }
+
 void NatPunchthroughServer::User::DerefConnectionAttempt(
     NatPunchthroughServer::ConnectionAttempt* ca) {
   unsigned int index = connectionAttempts.GetIndexOf(ca);
@@ -50,6 +51,7 @@ void NatPunchthroughServer::User::DerefConnectionAttempt(
     connectionAttempts.RemoveAtIndex(index);
   }
 }
+
 bool NatPunchthroughServer::User::HasConnectionAttemptToUser(User* user) {
   unsigned int index;
   for (index = 0; index < connectionAttempts.Size(); index++) {
@@ -60,6 +62,7 @@ bool NatPunchthroughServer::User::HasConnectionAttemptToUser(User* user) {
   }
   return false;
 }
+
 void NatPunchthroughServer::User::LogConnectionAttempts(RakNet::RakString& rs) {
   rs.Clear();
   unsigned int index;
@@ -124,6 +127,7 @@ NatPunchthroughServer::NatPunchthroughServer() {
   }
   boundAddressCount = 0;
 }
+
 NatPunchthroughServer::~NatPunchthroughServer() {
   User *user, *otherUser;
   ConnectionAttempt* connectionAttempt;
@@ -144,10 +148,12 @@ NatPunchthroughServer::~NatPunchthroughServer() {
     users.RemoveAtIndex(users.Size() - 1);
   }
 }
+
 void NatPunchthroughServer::SetDebugInterface(
     NatPunchthroughServerDebugInterface* i) {
   natPunchthroughServerDebugInterface = i;
 }
+
 void NatPunchthroughServer::Update() {
   ConnectionAttempt* connectionAttempt;
   User *user, *recipient;
@@ -233,6 +239,7 @@ void NatPunchthroughServer::Update() {
     }
   }
 }
+
 PluginReceiveResult NatPunchthroughServer::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_NAT_PUNCHTHROUGH_REQUEST:
@@ -299,6 +306,7 @@ PluginReceiveResult NatPunchthroughServer::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void NatPunchthroughServer::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -398,6 +406,7 @@ void NatPunchthroughServer::OnNewConnection(
   //	printf("Adding to users %s\n", rakNetGUID.ToString());
   //	printf("DEBUG users[0] guid=%s\n", users[0]->guid.ToString());
 }
+
 void NatPunchthroughServer::OnNATPunchthroughRequest(Packet* packet) {
   RakNet::BitStream outgoingBs;
   RakNet::BitStream incomingBs(packet->data, packet->length, false);
@@ -451,6 +460,7 @@ void NatPunchthroughServer::OnNATPunchthroughRequest(Packet* packet) {
 
   StartPunchthroughForUser(ca->sender);
 }
+
 void NatPunchthroughServer::OnClientReady(Packet* packet) {
   unsigned int i;
   bool objectExists;
@@ -460,6 +470,7 @@ void NatPunchthroughServer::OnClientReady(Packet* packet) {
     StartPunchthroughForUser(users[i]);
   }
 }
+
 void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
   RakNet::BitStream bsIn(packet->data, packet->length, false);
   bsIn.IgnoreBytes(sizeof(MessageID));
@@ -616,6 +627,7 @@ void NatPunchthroughServer::OnGetMostRecentPort(Packet* packet) {
     }
   }
 }
+
 void NatPunchthroughServer::StartPunchthroughForUser(User* user) {
   if (!user->isReady) {
     return;

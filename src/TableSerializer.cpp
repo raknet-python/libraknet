@@ -34,6 +34,7 @@ void TableSerializer::SerializeTable(
     cur = cur->next;
   }
 }
+
 void TableSerializer::SerializeColumns(
     DataStructures::Table* in,
     RakNet::BitStream* out) {
@@ -47,6 +48,7 @@ void TableSerializer::SerializeColumns(
     out->Write((unsigned char)columns[i].columnType);
   }
 }
+
 void TableSerializer::SerializeColumns(
     DataStructures::Table* in,
     RakNet::BitStream* out,
@@ -63,6 +65,7 @@ void TableSerializer::SerializeColumns(
     }
   }
 }
+
 bool TableSerializer::DeserializeTable(
     unsigned char* serializedTable,
     unsigned int dataLength,
@@ -70,6 +73,7 @@ bool TableSerializer::DeserializeTable(
   RakNet::BitStream in((unsigned char*)serializedTable, dataLength, false);
   return DeserializeTable(&in, out);
 }
+
 bool TableSerializer::DeserializeTable(
     RakNet::BitStream* in,
     DataStructures::Table* out) {
@@ -88,6 +92,7 @@ bool TableSerializer::DeserializeTable(
   }
   return true;
 }
+
 bool TableSerializer::DeserializeColumns(
     RakNet::BitStream* in,
     DataStructures::Table* out) {
@@ -107,6 +112,7 @@ bool TableSerializer::DeserializeColumns(
   }
   return true;
 }
+
 void TableSerializer::SerializeRow(
     DataStructures::Table::Row* in,
     unsigned keyIn,
@@ -122,6 +128,7 @@ void TableSerializer::SerializeRow(
     SerializeCell(out, in->cells[cellIndex], columns[cellIndex].columnType);
   }
 }
+
 void TableSerializer::SerializeRow(
     DataStructures::Table::Row* in,
     unsigned keyIn,
@@ -146,6 +153,7 @@ void TableSerializer::SerializeRow(
     }
   }
 }
+
 bool TableSerializer::DeserializeRow(
     RakNet::BitStream* in,
     DataStructures::Table* out) {
@@ -171,6 +179,7 @@ bool TableSerializer::DeserializeRow(
   }
   return true;
 }
+
 void TableSerializer::SerializeCell(
     RakNet::BitStream* out,
     DataStructures::Table::Cell* cell,
@@ -195,6 +204,7 @@ void TableSerializer::SerializeCell(
     }
   }
 }
+
 bool TableSerializer::DeserializeCell(
     RakNet::BitStream* in,
     DataStructures::Table::Cell* cell,
@@ -244,6 +254,7 @@ bool TableSerializer::DeserializeCell(
   }
   return true;
 }
+
 void TableSerializer::SerializeFilterQuery(
     RakNet::BitStream* in,
     DataStructures::Table::FilterQuery* query) {
@@ -261,6 +272,7 @@ void TableSerializer::SerializeFilterQuery(
     in->Write(query->cellValue->ptr);
   }
 }
+
 bool TableSerializer::DeserializeFilterQuery(
     RakNet::BitStream* out,
     DataStructures::Table::FilterQuery* query) {
@@ -289,6 +301,7 @@ bool TableSerializer::DeserializeFilterQuery(
   }
   return b;
 }
+
 void TableSerializer::SerializeFilterQueryList(
     RakNet::BitStream* in,
     DataStructures::Table::FilterQuery* query,
@@ -307,6 +320,7 @@ void TableSerializer::SerializeFilterQueryList(
     SerializeFilterQuery(in, query);
   }
 }
+
 bool TableSerializer::DeserializeFilterQueryList(
     RakNet::BitStream* out,
     DataStructures::Table::FilterQuery** query,
@@ -346,6 +360,7 @@ bool TableSerializer::DeserializeFilterQueryList(
 
   return b;
 }
+
 void TableSerializer::DeallocateQueryList(
     DataStructures::Table::FilterQuery* query,
     unsigned int numQueries) {

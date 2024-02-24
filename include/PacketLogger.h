@@ -133,6 +133,7 @@ class RAK_DLL_EXPORT PacketLogger : public PluginInterface2 {
   bool UsesReliabilityLayer() const override {
     return true;
   }
+
   const char* IDTOString(unsigned char Id);
   virtual void AddToLog(const char* str);
   // Users should override this

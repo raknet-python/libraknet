@@ -47,6 +47,7 @@ struct RemoteSystemIndex {
   unsigned index;
   RemoteSystemIndex* next;
 };
+
 //int RAK_DLL_EXPORT SystemAddressAndIndexComp( const SystemAddress &key, const RemoteSystemIndex &data ); // GCC requires RakPeer::RemoteSystemIndex or it won't compile
 
 ///\brief Main interface for network communications.
@@ -995,6 +996,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
     offlinePingResponse_Mutex,
     NUMBER_OF_RAKPEER_MUTEXES
   };
+
   SimpleMutex rakPeerMutexes[NUMBER_OF_RAKPEER_MUTEXES];
   ///RunUpdateCycle is not thread safe but we don't need to mutex calls. Just skip calls if it is running already
 
@@ -1010,6 +1012,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   unsigned int validationInteger;
   SimpleMutex incomingQueueMutex,
       banListMutex; //,synchronizedMemoryQueueMutex, automaticVariableSynchronizationMutex;
+
   //DataStructures::Queue<Packet *> incomingpacketSingleProducerConsumer; //, synchronizedMemorypacketSingleProducerConsumer;
   // BitStream enumerationData;
 
@@ -1033,6 +1036,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
     RakNet::TimeMS timeoutTime;
     PublicKeyMode publicKeyMode;
     RakNetSocket2* socket;
+
     enum {
       CONNECT = 1,
       /*PING=2, PING_OPEN_CONNECTIONS=4,*/ /*ADVERTISE_SYSTEM=2*/
@@ -1080,6 +1084,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
     RakNetSocket2* socket;
     unsigned short port;
     uint32_t receipt;
+
     enum {
       BCS_SEND,
       BCS_CLOSE_CONNECTION,

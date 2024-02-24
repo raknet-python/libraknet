@@ -45,13 +45,17 @@ SendToThread::SendToThreadBlock* SendToWorkerThread(
   SendToThread::objectQueue.Push(input);
   return 0;
 }
+
 SendToThread::SendToThread() {}
+
 SendToThread::~SendToThread() {}
+
 void SendToThread::AddRef(void) {
   if (++refCount == 1) {
     threadPool.StartThreads(1, 0);
   }
 }
+
 void SendToThread::Deref(void) {
   if (refCount > 0) {
     if (--refCount == 0) {
@@ -69,6 +73,7 @@ void SendToThread::Deref(void) {
     }
   }
 }
+
 SendToThread::SendToThreadBlock* SendToThread::AllocateBlock(void) {
   SendToThread::SendToThreadBlock* b;
   b = objectQueue.Pop();
@@ -76,6 +81,7 @@ SendToThread::SendToThreadBlock* SendToThread::AllocateBlock(void) {
     b = objectQueue.Allocate(_FILE_AND_LINE_);
   return b;
 }
+
 void SendToThread::ProcessBlock(SendToThread::SendToThreadBlock* threadedSend) {
   RakAssert(
       threadedSend->dataWriteOffset > 0 &&

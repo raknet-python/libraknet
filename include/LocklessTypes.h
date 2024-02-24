@@ -29,6 +29,7 @@ class RAK_DLL_EXPORT LocklessUint32_t {
   uint32_t Increment();
   // Returns variable value after changing it
   uint32_t Decrement();
+
   uint32_t GetValue() const {
     return value;
   }

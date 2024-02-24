@@ -160,14 +160,17 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
   // ----------------------------------------------------------------------------
   struct CloudData {
     CloudData() = default;
+
     ~CloudData() {
       if (allocatedData) {
         rakFree_Ex(allocatedData, _FILE_AND_LINE_);
       }
     }
+
     bool IsUnused() const {
       return !isUploaded && specificSubscribers.Size() == 0;
     }
+
     void Clear() {
       if (dataPtr == allocatedData) {
         rakFree_Ex(allocatedData, _FILE_AND_LINE_);
@@ -201,6 +204,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
     /// This list mutually exclusive with CloudDataList::nonSpecificSubscribers
     DataStructures::OrderedList<RakNetGUID, RakNetGUID> specificSubscribers;
   };
+
   void WriteCloudQueryRowFromResultList(
       unsigned int i,
       DataStructures::List<CloudData*>& cloudDataResultList,
@@ -212,13 +216,16 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
       BitStream* bsOut);
 
   static int KeyDataPtrComp(const RakNetGUID& key, CloudData* const& data);
+
   struct CloudDataList {
     bool IsUnused() const {
       return keyData.Size() == 0 && nonSpecificSubscribers.Size() == 0;
     }
+
     bool IsNotUploaded() const {
       return uploaderCount == 0;
     }
+
     bool RemoveSubscriber(RakNetGUID g) {
       bool objectExists;
       unsigned int index;
@@ -254,6 +261,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
     DataStructures::OrderedList<RakNetGUID, RakNetGUID>
         specificSystemsSubscribedTo;
   };
+
   static int KeySubscriberIDComp(
       const CloudKey& key,
       KeySubscriberID* const& data);
@@ -272,6 +280,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
         subscribedKeys;
     uint64_t uploadedBytes;
   };
+
   DataStructures::
       Hash<RakNetGUID, RemoteCloudClient*, 2048, RakNetGUID::ToUint32>
           remoteSystems;
@@ -337,6 +346,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
   static int BufferedGetResponseFromServerComp(
       const RakNetGUID& key,
       BufferedGetResponseFromServer* const& data);
+
   struct GetRequest {
     void Clear(CloudAllocator* allocator);
     bool AllRemoteServersHaveResponded() const;
@@ -356,6 +366,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
         CloudServer::BufferedGetResponseFromServerComp>
         remoteServerResponses;
   };
+
   static int GetRequestComp(const uint32_t& key, GetRequest* const& data);
   DataStructures::
       OrderedList<uint32_t, GetRequest*, CloudServer::GetRequestComp>

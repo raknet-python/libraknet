@@ -30,9 +30,11 @@ STATIC_FACTORY_DEFINITIONS(NatTypeDetectionServer, NatTypeDetectionServer);
 NatTypeDetectionServer::NatTypeDetectionServer() {
   s1p2 = s2p3 = s3p4 = s4p5 = nullptr;
 }
+
 NatTypeDetectionServer::~NatTypeDetectionServer() {
   Shutdown();
 }
+
 void NatTypeDetectionServer::Startup(
     const char* nonRakNetIP2,
     const char* nonRakNetIP3,
@@ -82,6 +84,7 @@ void NatTypeDetectionServer::Startup(
   }
 #endif
 }
+
 void NatTypeDetectionServer::Shutdown() {
   if (s1p2 != nullptr) {
     RakNet::OP_DELETE(s1p2, _FILE_AND_LINE_);
@@ -111,6 +114,7 @@ void NatTypeDetectionServer::Shutdown() {
   }
   bufferedPacketsMutex.Unlock();
 }
+
 void NatTypeDetectionServer::Update() {
   int i = 0;
   RakNet::TimeMS time = RakNet::GetTimeMS();
@@ -349,6 +353,7 @@ void NatTypeDetectionServer::Update() {
     i++;
   }
 }
+
 PluginReceiveResult NatTypeDetectionServer::OnReceive(Packet* packet) {
   switch (packet->data[0]) {
     case ID_NAT_TYPE_DETECTION_REQUEST:
@@ -357,6 +362,7 @@ PluginReceiveResult NatTypeDetectionServer::OnReceive(Packet* packet) {
   }
   return RR_CONTINUE_PROCESSING;
 }
+
 void NatTypeDetectionServer::OnClosedConnection(
     const SystemAddress& systemAddress,
     RakNetGUID rakNetGUID,
@@ -370,6 +376,7 @@ void NatTypeDetectionServer::OnClosedConnection(
   }
   natDetectionAttempts.RemoveAtIndexFast(i);
 }
+
 void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
   unsigned int i = GetDetectionAttemptIndex(packet->systemAddress);
 
@@ -399,6 +406,7 @@ void NatTypeDetectionServer::OnDetectionRequest(Packet* packet) {
     natDetectionAttempts.RemoveAtIndexFast(i);
   }
 }
+
 unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(
     const SystemAddress& sa) {
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
@@ -408,6 +416,7 @@ unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(
   }
   return (unsigned int)-1;
 }
+
 unsigned int NatTypeDetectionServer::GetDetectionAttemptIndex(RakNetGUID guid) {
   for (unsigned int i = 0; i < natDetectionAttempts.Size(); i++) {
     if (natDetectionAttempts[i].guid == guid) {
@@ -424,6 +433,7 @@ void NatTypeDetectionServer::DeallocRNS2RecvStruct(
     unsigned int line) {
   RakNet::OP_DELETE(s, file, line);
 }
+
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 RNS2RecvStruct* NatTypeDetectionServer::AllocRNS2RecvStruct(
     const char* file,

@@ -22,6 +22,7 @@ int WSAStartupSingleton::refCount = 0;
 
 WSAStartupSingleton::WSAStartupSingleton() = default;
 WSAStartupSingleton::~WSAStartupSingleton() = default;
+
 void WSAStartupSingleton::AddRef() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
 
@@ -55,6 +56,7 @@ void WSAStartupSingleton::AddRef() {
 
 #endif
 }
+
 void WSAStartupSingleton::Deref() {
 #if defined(_WIN32) && !defined(WINDOWS_STORE_RT)
   if (refCount == 0) {
