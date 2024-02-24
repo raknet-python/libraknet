@@ -56,7 +56,7 @@ namespace RakNet {
 /// Forward declarations
 class PluginInterface2;
 class RakNetRandom;
-typedef uint64_t reliabilityHeapWeightType;
+using reliabilityHeapWeightType = uint64_t;
 
 // int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data );
 struct SplitPacketChannel //<SplitPacketChannel>
@@ -100,7 +100,7 @@ struct BPSTracker {
   }
   //	uint64_t GetBPS2(RakNetTimeUS time);
   //	void GetBPS1And2(RakNetTimeUS time, uint64_t &out1, uint64_t &out2);
-  uint64_t GetTotal1(void) const;
+  uint64_t GetTotal1() const;
   //	uint64_t GetTotal2(void) const;
 
   struct TimeAndValue2 {
@@ -140,7 +140,7 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   /// Returns the value passed to SetTimeoutTime. or the default if it was never called
   /// \param[out] the value passed to SetTimeoutTime
-  RakNet::TimeMS GetTimeoutTime(void);
+  RakNet::TimeMS GetTimeoutTime();
 
   /// Packets are read directly from the socket layer and skip the reliability layer because unconnected players do not use the reliability layer
   /// This function takes packet data after a player has been confirmed as connected.
@@ -208,18 +208,18 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   /// Were you ever unable to deliver a packet despite retries?
   /// \return true means the connection has been lost.  Otherwise not.
-  bool IsDeadConnection(void) const;
+  bool IsDeadConnection() const;
 
   /// Causes IsDeadConnection to return true
-  void KillConnection(void);
+  void KillConnection();
 
   /// Get Statistics
   /// \return A pointer to a static struct, filled out with current statistical information.
   RakNetStatistics* GetStatistics(RakNetStatistics* rns);
 
   ///Are we waiting for any data to be sent out or be processed by the player?
-  bool IsOutgoingDataWaiting(void);
-  bool AreAcksWaiting(void);
+  bool IsOutgoingDataWaiting();
+  bool AreAcksWaiting();
 
   // Set outgoing lag and packet loss properties
   void ApplyNetworkSimulator(
@@ -229,18 +229,18 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   /// Returns if you previously called ApplyNetworkSimulator
   /// \return If you previously called ApplyNetworkSimulator
-  bool IsNetworkSimulatorActive(void);
+  bool IsNetworkSimulatorActive();
 
   void SetSplitMessageProgressInterval(int interval);
   void SetUnreliableTimeout(RakNet::TimeMS timeoutMS);
   /// Has a lot of time passed since the last ack
   bool AckTimeout(RakNet::Time curTime);
-  CCTimeType GetNextSendTime(void) const;
-  CCTimeType GetTimeBetweenPackets(void) const;
+  CCTimeType GetNextSendTime() const;
+  CCTimeType GetTimeBetweenPackets() const;
 #if INCLUDE_TIMESTAMP_WITH_DATAGRAMS == 1
   CCTimeType GetAckPing(void) const;
 #endif
-  RakNet::TimeMS GetTimeLastDatagramArrived(void) const {
+  RakNet::TimeMS GetTimeLastDatagramArrived() const {
     return timeLastDatagramArrived;
   }
 
@@ -296,7 +296,7 @@ class ReliabilityLayer //<ReliabilityLayer>
   void UpdateWindowFromAck(CCTimeType time);
 
   /// Parse an internalPacket and figure out how many header bits would be written.  Returns that number
-  BitSize_t GetMaxMessageHeaderLengthBits(void);
+  BitSize_t GetMaxMessageHeaderLengthBits();
   BitSize_t GetMessageHeaderLengthBits(
       const InternalPacket* const internalPacket);
 
@@ -371,16 +371,16 @@ class ReliabilityLayer //<ReliabilityLayer>
   void FreeMemory(bool freeAllImmediately);
 
   /// Memory handling
-  void FreeThreadSafeMemory(void);
+  void FreeThreadSafeMemory();
 
   // Initialize the variables
-  void InitializeVariables(void);
+  void InitializeVariables();
 
   /// Given the current time, is this time so old that we should consider it a timeout?
   bool IsExpiredTime(unsigned int input, CCTimeType currentTime) const;
 
   // Make it so we don't do resends within a minimum threshold of time
-  void UpdateNextActionTime(void);
+  void UpdateNextActionTime();
 
   /// Does this packet number represent a packet that was skipped (out of order?)
   //unsigned int IsReceivedPacketHole(unsigned int input, RakNet::TimeMS currentTime) const;
@@ -389,12 +389,12 @@ class ReliabilityLayer //<ReliabilityLayer>
   //unsigned int MakeReceivedPacketHole(unsigned int input) const;
 
   /// How many elements are waiting to be resent?
-  unsigned int GetResendListDataSize(void) const;
+  unsigned int GetResendListDataSize() const;
 
   /// Update all memory which is not threadsafe
-  void UpdateThreadedMemory(void);
+  void UpdateThreadedMemory();
 
-  void CalculateHistogramAckSize(void);
+  void CalculateHistogramAckSize();
 
   // Used ONLY for RELIABLE_ORDERED
   // RELIABLE_SEQUENCED just returns the newest one
@@ -408,7 +408,7 @@ class ReliabilityLayer //<ReliabilityLayer>
     MessageNumberNode* next;
   };
   struct DatagramHistoryNode {
-    DatagramHistoryNode() {}
+    DatagramHistoryNode() = default;
     DatagramHistoryNode(MessageNumberNode* _head, CCTimeType ts)
         : head(_head), timeSent(ts) {}
     MessageNumberNode* head;
@@ -421,7 +421,7 @@ class ReliabilityLayer //<ReliabilityLayer>
   DataStructures::MemoryPool<MessageNumberNode> datagramHistoryMessagePool;
 
   struct UnreliableWithAckReceiptNode {
-    UnreliableWithAckReceiptNode() {}
+    UnreliableWithAckReceiptNode() = default;
     UnreliableWithAckReceiptNode(
         DatagramSequenceNumberType _datagramNumber,
         uint32_t _sendReceiptSerial,
@@ -482,7 +482,7 @@ class ReliabilityLayer //<ReliabilityLayer>
       outgoingPacketBuffer;
   reliabilityHeapWeightType
       outgoingPacketBufferNextWeights[NUMBER_OF_PRIORITIES];
-  void InitHeapWeights(void);
+  void InitHeapWeights();
   reliabilityHeapWeightType GetNextWeight(int priorityLevel);
   //	unsigned int messageInSendBuffer[NUMBER_OF_PRIORITIES];
   //	double bytesInSendBuffer[NUMBER_OF_PRIORITIES];
@@ -605,14 +605,14 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   uint32_t unacknowledgedBytes;
 
-  bool ResendBufferOverflow(void) const;
-  void ValidateResendList(void) const;
-  void ResetPacketsAndDatagrams(void);
+  bool ResendBufferOverflow() const;
+  void ValidateResendList() const;
+  void ResetPacketsAndDatagrams();
   void
   PushPacket(CCTimeType time, InternalPacket* internalPacket, bool isReliable);
-  void PushDatagram(void);
-  bool TagMostRecentPushAsSecondOfPacketPair(void);
-  void ClearPacketsAndDatagrams(void);
+  void PushDatagram();
+  bool TagMostRecentPushAsSecondOfPacketPair();
+  void ClearPacketsAndDatagrams();
   void MoveToListHead(InternalPacket* internalPacket);
   void RemoveFromList(
       InternalPacket* internalPacket,
@@ -621,7 +621,7 @@ class ReliabilityLayer //<ReliabilityLayer>
       InternalPacket* internalPacket,
       bool modifyUnacknowledgedBytes);
   void PopListHead(bool modifyUnacknowledgedBytes);
-  bool IsResendQueueEmpty(void) const;
+  bool IsResendQueueEmpty() const;
   void SortSplitPacketList(
       DataStructures::List<InternalPacket*>& data,
       unsigned int leftEdge,
@@ -650,15 +650,15 @@ class ReliabilityLayer //<ReliabilityLayer>
 
   // Every 16 datagrams, we make sure the 17th datagram goes out the same update tick, and is the same size as the 16th
   int countdownToNextPacketPair;
-  InternalPacket* AllocateFromInternalPacketPool(void);
+  InternalPacket* AllocateFromInternalPacketPool();
   void ReleaseToInternalPacketPool(InternalPacket* ip);
 
   DataStructures::RangeList<DatagramSequenceNumberType> acknowlegements;
   DataStructures::RangeList<DatagramSequenceNumberType> NAKs;
   bool remoteSystemNeedsBAndAS;
 
-  unsigned int GetMaxDatagramSizeExcludingMessageHeaderBytes(void);
-  BitSize_t GetMaxDatagramSizeExcludingMessageHeaderBits(void);
+  unsigned int GetMaxDatagramSizeExcludingMessageHeaderBytes();
+  BitSize_t GetMaxDatagramSizeExcludingMessageHeaderBits();
 
   // ourOffset refers to a section within externallyAllocatedPtr. Do not deallocate externallyAllocatedPtr until all references are lost
   void AllocInternalPacketData(

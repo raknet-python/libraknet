@@ -40,7 +40,7 @@ class RAK_DLL_EXPORT PacketLogger : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(PacketLogger)
 
   PacketLogger();
-  virtual ~PacketLogger();
+  ~PacketLogger() override;
 
   // Translate the supplied parameters into an output line - overloaded version that takes a MessageIdentifier
   // and translates it into a string (numeric or textual representation based on printId); this calls the
@@ -77,36 +77,36 @@ class RAK_DLL_EXPORT PacketLogger : public PluginInterface2 {
       unsigned int orderingIndex);
 
   /// Events on low level sends and receives.  These functions may be called from different threads at the same time.
-  virtual void OnDirectSocketSend(
+  void OnDirectSocketSend(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress);
-  virtual void OnDirectSocketReceive(
+      SystemAddress remoteSystemAddress) override;
+  void OnDirectSocketReceive(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress);
-  virtual void OnReliabilityLayerNotification(
+      SystemAddress remoteSystemAddress) override;
+  void OnReliabilityLayerNotification(
       const char* errorMessage,
       const BitSize_t bitsUsed,
       SystemAddress remoteSystemAddress,
-      bool isError);
-  virtual void OnInternalPacket(
+      bool isError) override;
+  void OnInternalPacket(
       InternalPacket* internalPacket,
       unsigned frameNumber,
       SystemAddress remoteSystemAddress,
       RakNet::TimeMS time,
-      int isSend);
-  virtual void OnAck(
+      int isSend) override;
+  void OnAck(
       unsigned int messageNumber,
       SystemAddress remoteSystemAddress,
-      RakNet::TimeMS time);
-  virtual void OnPushBackPacket(
+      RakNet::TimeMS time) override;
+  void OnPushBackPacket(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress);
+      SystemAddress remoteSystemAddress) override;
 
   /// Logs out a header for all the data
-  virtual void LogHeader(void);
+  virtual void LogHeader();
 
   /// Override this to log strings to wherever.  Log should be threadsafe
   virtual void WriteLog(const char* str);
@@ -130,7 +130,7 @@ class RAK_DLL_EXPORT PacketLogger : public PluginInterface2 {
   void SetLogDirectMessages(bool send);
 
  protected:
-  virtual bool UsesReliabilityLayer(void) const {
+  bool UsesReliabilityLayer() const override {
     return true;
   }
   const char* IDTOString(unsigned char Id);

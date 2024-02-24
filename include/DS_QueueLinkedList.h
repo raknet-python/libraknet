@@ -30,13 +30,13 @@ class RAK_DLL_EXPORT QueueLinkedList {
   QueueLinkedList();
   QueueLinkedList(const QueueLinkedList& original_copy);
   bool operator=(const QueueLinkedList& original_copy);
-  QueueType Pop(void);
-  QueueType& Peek(void);
-  QueueType& EndPeek(void);
+  QueueType Pop();
+  QueueType& Peek();
+  QueueType& EndPeek();
   void Push(const QueueType& input);
-  unsigned int Size(void);
-  void Clear(void);
-  void Compress(void);
+  unsigned int Size();
+  void Clear();
+  void Compress();
 
  private:
   LinkedList<QueueType> data;
@@ -51,19 +51,19 @@ inline unsigned int QueueLinkedList<QueueType>::Size() {
 }
 
 template <class QueueType>
-inline QueueType QueueLinkedList<QueueType>::Pop(void) {
+inline QueueType QueueLinkedList<QueueType>::Pop() {
   data.Beginning();
   return (QueueType)data.Pop();
 }
 
 template <class QueueType>
-inline QueueType& QueueLinkedList<QueueType>::Peek(void) {
+inline QueueType& QueueLinkedList<QueueType>::Peek() {
   data.Beginning();
   return (QueueType)data.Peek();
 }
 
 template <class QueueType>
-inline QueueType& QueueLinkedList<QueueType>::EndPeek(void) {
+inline QueueType& QueueLinkedList<QueueType>::EndPeek() {
   data.End();
   return (QueueType)data.Peek();
 }
@@ -90,7 +90,7 @@ bool QueueLinkedList<QueueType>::operator=(
 }
 
 template <class QueueType>
-void QueueLinkedList<QueueType>::Clear(void) {
+void QueueLinkedList<QueueType>::Clear() {
   data.Clear();
 }
 } // namespace DataStructures

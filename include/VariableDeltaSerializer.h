@@ -135,7 +135,7 @@ class RAK_DLL_EXPORT VariableDeltaSerializer {
   /// BeginIdenticalSerialize() requires knowledge of when serialization has started for an object across multiple systems
   /// This way it can setup the flag to do new comparisons against the last sent values, rather than just resending the last sent bitStream
   /// For Replica3, overload and call this from Replica3::OnUserReplicaPreSerializeTick()
-  void OnPreSerializeTick(void);
+  void OnPreSerializeTick();
 
   /// Call when getting ID_SND_RECEIPT_LOSS or ID_SND_RECEIPT_ACKED for a particular system
   /// Example:
@@ -259,11 +259,11 @@ class RAK_DLL_EXPORT VariableDeltaSerializer {
       RakNetGUID guid,
       uint32_t receiptId);
   unsigned int GetVarsWrittenPerRemoteSystemListIndex(RakNetGUID guid);
-  void RemoveRemoteSystemVariableHistory(void);
+  void RemoveRemoteSystemVariableHistory();
 
   RemoteSystemVariableHistory* GetRemoteSystemVariableHistory(RakNetGUID guid);
 
-  ChangedVariablesList* AllocChangedVariablesList(void);
+  ChangedVariablesList* AllocChangedVariablesList();
   void FreeChangedVariablesList(ChangedVariablesList* changedVariables);
   void StoreChangedVariablesList(
       RemoteSystemVariableHistory* variableHistory,

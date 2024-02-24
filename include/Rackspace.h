@@ -86,8 +86,8 @@ enum RackspaceOperationType {
 /// \brief Callback interface to receive the results of operations
 class RAK_DLL_EXPORT Rackspace2EventCallback {
  public:
-  Rackspace2EventCallback() {}
-  virtual ~Rackspace2EventCallback() {}
+  Rackspace2EventCallback() = default;
+  virtual ~Rackspace2EventCallback() = default;
   virtual void OnAuthenticationResult(
       RackspaceEventType eventType,
       const char* htmlAdditionalInfo) = 0;
@@ -185,143 +185,143 @@ class RAK_DLL_EXPORT RackspaceEventCallback_Default
     (void)htmlAdditionalInfo;
   }
 
-  virtual void OnAuthenticationResult(
+  void OnAuthenticationResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnAuthenticationResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListServersResult(
+  void OnListServersResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListServersResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListServersWithDetailsResult(
+  void OnListServersWithDetailsResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnListServersWithDetailsResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnCreateServerResult(
+  void OnCreateServerResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateServerResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnGetServerDetails(
+  void OnGetServerDetails(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetServerDetails", eventType, htmlAdditionalInfo);
   }
-  virtual void OnUpdateServerNameOrPassword(
+  void OnUpdateServerNameOrPassword(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnUpdateServerNameOrPassword", eventType, htmlAdditionalInfo);
   }
-  virtual void OnDeleteServer(
+  void OnDeleteServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListServerAddresses(
+  void OnListServerAddresses(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListServerAddresses", eventType, htmlAdditionalInfo);
   }
-  virtual void OnShareServerAddress(
+  void OnShareServerAddress(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnShareServerAddress", eventType, htmlAdditionalInfo);
   }
-  virtual void OnDeleteServerAddress(
+  void OnDeleteServerAddress(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteServerAddress", eventType, htmlAdditionalInfo);
   }
-  virtual void OnRebootServer(
+  void OnRebootServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRebootServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnRebuildServer(
+  void OnRebuildServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRebuildServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnResizeServer(
+  void OnResizeServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnResizeServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnConfirmResizedServer(
+  void OnConfirmResizedServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnConfirmResizedServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnRevertResizedServer(
+  void OnRevertResizedServer(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnRevertResizedServer", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListFlavorsResult(
+  void OnListFlavorsResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListFlavorsResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnGetFlavorDetailsResult(
+  void OnGetFlavorDetailsResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetFlavorDetailsResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListImagesResult(
+  void OnListImagesResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListImagesResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnCreateImageResult(
+  void OnCreateImageResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateImageResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnGetImageDetailsResult(
+  void OnGetImageDetailsResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetImageDetailsResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnDeleteImageResult(
+  void OnDeleteImageResult(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteImageResult", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListSharedIPGroups(
+  void OnListSharedIPGroups(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnListSharedIPGroups", eventType, htmlAdditionalInfo);
   }
-  virtual void OnListSharedIPGroupsWithDetails(
+  void OnListSharedIPGroupsWithDetails(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault(
         "OnListSharedIPGroupsWithDetails", eventType, htmlAdditionalInfo);
   }
-  virtual void OnCreateSharedIPGroup(
+  void OnCreateSharedIPGroup(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnCreateSharedIPGroup", eventType, htmlAdditionalInfo);
   }
-  virtual void OnGetSharedIPGroupDetails(
+  void OnGetSharedIPGroupDetails(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnGetSharedIPGroupDetails", eventType, htmlAdditionalInfo);
   }
-  virtual void OnDeleteSharedIPGroup(
+  void OnDeleteSharedIPGroup(
       RackspaceEventType eventType,
-      const char* htmlAdditionalInfo) {
+      const char* htmlAdditionalInfo) override {
     ExecuteDefault("OnDeleteSharedIPGroup", eventType, htmlAdditionalInfo);
   }
 
-  virtual void OnConnectionAttemptFailure(
+  void OnConnectionAttemptFailure(
       RackspaceOperationType operationType,
-      const char* url) {
+      const char* url) override {
     (void)operationType;
     (void)url;
   }
@@ -354,13 +354,13 @@ class RAK_DLL_EXPORT Rackspace {
   /// \brief Get a list of running servers
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListServersResult()
-  void ListServers(void);
+  void ListServers();
 
   /// \brief Get a list of running servers, with extended details on each server
   /// \sa GetServerDetails()
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListServersWithDetailsResult()
-  void ListServersWithDetails(void);
+  void ListServersWithDetails();
 
   /// \brief Create a server
   /// \details Create a server with a given image (harddrive contents) and flavor (hardware configuration)
@@ -465,7 +465,7 @@ class RAK_DLL_EXPORT Rackspace {
   /// \brief List all flavors (hardware configs, primarily memory)
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListFlavorsResult()
-  void ListFlavors(void);
+  void ListFlavors();
 
   /// \brief Get extended details about a specific flavor
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
@@ -478,7 +478,7 @@ class RAK_DLL_EXPORT Rackspace {
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListImagesResult()
   /// \sa CreateImage()
-  void ListImages(void);
+  void ListImages();
 
   /// \brief Images a running server. This essentially copies the harddrive, and lets you start a server with the same harddrive contents later
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
@@ -505,12 +505,12 @@ class RAK_DLL_EXPORT Rackspace {
   /// \brief List IP groups
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListSharedIPGroupsResult()
-  void ListSharedIPGroups(void);
+  void ListSharedIPGroups();
 
   /// \brief List IP groups with extended details
   /// \sa http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf
   /// \sa RackspaceEventCallback::OnListSharedIPGroupsWithDetailsResult()
-  void ListSharedIPGroupsWithDetails(void);
+  void ListSharedIPGroupsWithDetails();
 
   // I don't know what this does
   void CreateSharedIPGroup(
@@ -528,7 +528,7 @@ class RAK_DLL_EXPORT Rackspace {
   /// The callbacks are called in the order they are added
   void RemoveEventCallback(Rackspace2EventCallback* callback);
   /// \brief Removes all callbacks
-  void ClearEventCallbacks(void);
+  void ClearEventCallbacks();
 
   /// Call this anytime TCPInterface returns a packet
   void OnReceive(Packet* packet);

@@ -42,7 +42,7 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(CloudClient)
 
   CloudClient();
-  virtual ~CloudClient();
+  ~CloudClient() override;
 
   /// \brief Set the default callbacks for OnGetReponse(), OnSubscriptionNotification(), and OnSubscriptionDataDeleted()
   /// \details Pointers to CloudAllocator and CloudClientCallback can be stored by the system if desired. If a callback is not provided to OnGetReponse(), OnSubscriptionNotification(), OnSubscriptionDataDeleted(), the callback passed here will be used instead.
@@ -122,8 +122,8 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
   /// \param[in] _allocator Allocator to be used to allocate data. If 0, default is used.
   virtual void OnGetReponse(
       Packet* packet,
-      CloudClientCallback* _callback = 0,
-      CloudAllocator* _allocator = 0);
+      CloudClientCallback* _callback = nullptr,
+      CloudAllocator* _allocator = nullptr);
 
   /// \brief Call this when you get ID_CLOUD_GET_RESPONSE
   /// Different form of OnGetReponse that returns to a structure that you pass, instead of using a callback
@@ -135,7 +135,7 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
   virtual void OnGetReponse(
       CloudQueryResult* cloudQueryResult,
       Packet* packet,
-      CloudAllocator* _allocator = 0);
+      CloudAllocator* _allocator = nullptr);
 
   /// \brief Call this when you get ID_CLOUD_SUBSCRIPTION_NOTIFICATION
   /// If \a callback or \a allocator are 0, the default callbacks passed to SetDefaultCallbacks() are used
@@ -144,8 +144,8 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
   /// \param[in] _allocator Allocator to be used to allocate data. If 0, default is used.
   virtual void OnSubscriptionNotification(
       Packet* packet,
-      CloudClientCallback* _callback = 0,
-      CloudAllocator* _allocator = 0);
+      CloudClientCallback* _callback = nullptr,
+      CloudAllocator* _allocator = nullptr);
 
   /// \brief Call this when you get ID_CLOUD_SUBSCRIPTION_NOTIFICATION
   /// Different form of OnSubscriptionNotification that returns to a structure that you pass, instead of using a callback
@@ -159,7 +159,7 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
       bool* wasUpdated,
       CloudQueryRow* row,
       Packet* packet,
-      CloudAllocator* _allocator = 0);
+      CloudAllocator* _allocator = nullptr);
 
   /// If you never specified an allocator, and used the non-callback form of OnGetReponse(), deallocate cloudQueryResult with this function
   virtual void DeallocateWithDefaultAllocator(
@@ -169,7 +169,7 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
   virtual void DeallocateWithDefaultAllocator(CloudQueryRow* row);
 
  protected:
-  PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
   CloudClientCallback* callback;
   CloudAllocator* allocator;
@@ -181,8 +181,8 @@ class RAK_DLL_EXPORT CloudClient : public PluginInterface2 {
 /// Parses ID_CLOUD_GET_RESPONSE and ID_CLOUD_SUBSCRIPTION_NOTIFICATION in a convenient callback form
 class RAK_DLL_EXPORT CloudClientCallback {
  public:
-  CloudClientCallback() {}
-  virtual ~CloudClientCallback() {}
+  CloudClientCallback() = default;
+  virtual ~CloudClientCallback() = default;
 
   /// \brief Called in response to ID_CLOUD_GET_RESPONSE
   /// \param[out] result Contains the original query passed to Get(), and a list of rows returned.

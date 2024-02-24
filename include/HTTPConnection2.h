@@ -41,7 +41,7 @@ class RAK_DLL_EXPORT HTTPConnection2 : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(HTTPConnection2)
 
   HTTPConnection2();
-  virtual ~HTTPConnection2();
+  ~HTTPConnection2() override;
 
   /// \brief Connect to, then transmit a request to a TCP based server
   /// \param[in] tcp An instance of TCPInterface that previously had TCPInterface::Start() called
@@ -60,7 +60,7 @@ class RAK_DLL_EXPORT HTTPConnection2 : public PluginInterface2 {
       bool useSSL = false,
       int ipVersion = 4,
       SystemAddress useAddress = UNASSIGNED_SYSTEM_ADDRESS,
-      void* userData = 0);
+      void* userData = nullptr);
 
   /// \brief Check for and return a response from a prior call to TransmitRequest()
   /// As TCP is stream based, you may get a webserver reply over several calls to TCPInterface::Receive()
@@ -88,10 +88,10 @@ class RAK_DLL_EXPORT HTTPConnection2 : public PluginInterface2 {
       int& contentOffset);
 
   /// \brief Return if any requests are pending
-  bool IsBusy(void) const;
+  bool IsBusy() const;
 
   /// \brief Return if any requests are waiting to be read by the user
-  bool HasResponse(void) const;
+  bool HasResponse() const;
 
   struct Request {
     RakString stringToTransmit;
@@ -111,24 +111,24 @@ class RAK_DLL_EXPORT HTTPConnection2 : public PluginInterface2 {
   };
 
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnNewConnection(
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
-  virtual void OnFailedConnectionAttempt(
+      bool isIncoming) override;
+  void OnFailedConnectionAttempt(
       Packet* packet,
-      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
+      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) override;
 
  protected:
   bool IsConnected(SystemAddress sa);
   void SendRequest(Request* request);
   void RemovePendingRequest(SystemAddress sa);
-  void SendNextPendingRequest(void);
+  void SendNextPendingRequest();
   void SendPendingRequestToConnectedSystem(SystemAddress sa);
 
   DataStructures::Queue<Request*> pendingRequests;

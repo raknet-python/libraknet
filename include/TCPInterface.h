@@ -67,10 +67,10 @@ class RAK_DLL_EXPORT TCPInterface {
       unsigned short maxConnections = 0,
       int _threadPriority = -99999,
       unsigned short socketFamily = AF_INET,
-      const char* bindAddress = 0);
+      const char* bindAddress = nullptr);
 
   /// Stops the TCP server
-  void Stop(void);
+  void Stop();
 
   /// Connect to the specified host on the specified port
   SystemAddress Connect(
@@ -78,7 +78,7 @@ class RAK_DLL_EXPORT TCPInterface {
       unsigned short remotePort,
       bool block = true,
       unsigned short socketFamily = AF_INET,
-      const char* bindAddress = 0);
+      const char* bindAddress = nullptr);
 
 #if OPEN_SSL_CLIENT_SUPPORT == 1
   /// Start SSL on an existing connection, notified with HasCompletedConnectionAttempt
@@ -108,10 +108,10 @@ class RAK_DLL_EXPORT TCPInterface {
 
   /// Returns if Receive() will return data
   /// Do not use on PacketizedTCP
-  virtual bool ReceiveHasPackets(void);
+  virtual bool ReceiveHasPackets();
 
   /// Returns data received
-  virtual Packet* Receive(void);
+  virtual Packet* Receive();
 
   /// Disconnects a player/address
   void CloseConnection(SystemAddress systemAddress);
@@ -127,21 +127,21 @@ class RAK_DLL_EXPORT TCPInterface {
       unsigned short* numberOfSystems) const;
 
   /// Returns just the number of connections we have
-  unsigned short GetConnectionCount(void) const;
+  unsigned short GetConnectionCount() const;
 
   /// Has a previous call to connect succeeded?
   /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-  SystemAddress HasCompletedConnectionAttempt(void);
+  SystemAddress HasCompletedConnectionAttempt();
 
   /// Has a previous call to connect failed?
   /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-  SystemAddress HasFailedConnectionAttempt(void);
+  SystemAddress HasFailedConnectionAttempt();
 
   /// Queued events of new incoming connections
-  SystemAddress HasNewIncomingConnection(void);
+  SystemAddress HasNewIncomingConnection();
 
   /// Queued events of lost connections
-  SystemAddress HasLostConnection(void);
+  SystemAddress HasLostConnection();
 
   /// Return an allocated but empty packet, for custom use
   Packet* AllocatePacket(unsigned dataSize);
@@ -150,13 +150,13 @@ class RAK_DLL_EXPORT TCPInterface {
   virtual void PushBackPacket(Packet* packet, bool pushAtHead);
 
   /// Returns if Start() was called successfully
-  bool WasStarted(void) const;
+  bool WasStarted() const;
 
   void AttachPlugin(PluginInterface2* plugin);
   void DetachPlugin(PluginInterface2* plugin);
 
  protected:
-  Packet* ReceiveInt(void);
+  Packet* ReceiveInt();
 
 #if defined(WINDOWS_STORE_RT)
   bool CreateListenSocket_WinStore8(
@@ -272,7 +272,7 @@ struct RemoteClient {
   int Send(const char* data, unsigned int length);
   int Recv(char* data, const int dataSize);
 #endif
-  void Reset(void) {
+  void Reset() {
     outgoingDataMutex.Lock();
     outgoingData.Clear(_FILE_AND_LINE_);
     outgoingDataMutex.Unlock();

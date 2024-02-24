@@ -30,17 +30,17 @@ class RAK_DLL_EXPORT PacketizedTCP : public TCPInterface {
   STATIC_FACTORY_DECLARATIONS(PacketizedTCP)
 
   PacketizedTCP();
-  virtual ~PacketizedTCP();
+  ~PacketizedTCP() override;
 
   /// Stops the TCP server
-  void Stop(void);
+  void Stop();
 
   /// Sends a byte stream
   void Send(
       const char* data,
       unsigned length,
       const SystemAddress& systemAddress,
-      bool broadcast);
+      bool broadcast) override;
 
   // Sends a concatenated list of byte streams
   bool SendList(
@@ -48,34 +48,34 @@ class RAK_DLL_EXPORT PacketizedTCP : public TCPInterface {
       const unsigned int* lengths,
       const int numParameters,
       const SystemAddress& systemAddress,
-      bool broadcast);
+      bool broadcast) override;
 
   /// Returns data received
-  Packet* Receive(void);
+  Packet* Receive() override;
 
   /// Disconnects a player/address
   void CloseConnection(SystemAddress systemAddress);
 
   /// Has a previous call to connect succeeded?
   /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-  SystemAddress HasCompletedConnectionAttempt(void);
+  SystemAddress HasCompletedConnectionAttempt();
 
   /// Has a previous call to connect failed?
   /// \return UNASSIGNED_SYSTEM_ADDRESS = no. Anything else means yes.
-  SystemAddress HasFailedConnectionAttempt(void);
+  SystemAddress HasFailedConnectionAttempt();
 
   /// Queued events of new incoming connections
-  SystemAddress HasNewIncomingConnection(void);
+  SystemAddress HasNewIncomingConnection();
 
   /// Queued events of lost connections
-  SystemAddress HasLostConnection(void);
+  SystemAddress HasLostConnection();
 
  protected:
-  void ClearAllConnections(void);
+  void ClearAllConnections();
   void RemoveFromConnectionList(const SystemAddress& sa);
   void AddToConnectionList(const SystemAddress& sa);
-  void PushNotificationsToQueues(void);
-  Packet* ReturnOutgoingPacket(void);
+  void PushNotificationsToQueues();
+  Packet* ReturnOutgoingPacket();
 
   // A single TCP recieve may generate multiple split packets. They are stored in the waitingPackets list until Receive is called
   DataStructures::Queue<Packet*> waitingPackets;

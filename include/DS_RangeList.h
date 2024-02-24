@@ -49,9 +49,9 @@ class RAK_DLL_EXPORT RangeList {
   RangeList();
   ~RangeList();
   void Insert(range_type index);
-  void Clear(void);
-  unsigned Size(void) const;
-  unsigned RangeSum(void) const;
+  void Clear();
+  unsigned Size() const;
+  unsigned RangeSum() const;
   RakNet::BitSize_t Serialize(
       RakNet::BitStream* in,
       RakNet::BitSize_t maxBits,
@@ -210,17 +210,17 @@ void RangeList<range_type>::Insert(range_type index) {
 }
 
 template <class range_type>
-void RangeList<range_type>::Clear(void) {
+void RangeList<range_type>::Clear() {
   ranges.Clear(true, _FILE_AND_LINE_);
 }
 
 template <class range_type>
-unsigned RangeList<range_type>::Size(void) const {
+unsigned RangeList<range_type>::Size() const {
   return ranges.Size();
 }
 
 template <class range_type>
-unsigned RangeList<range_type>::RangeSum(void) const {
+unsigned RangeList<range_type>::RangeSum() const {
   unsigned sum = 0, i;
   for (i = 0; i < ranges.Size(); i++)
     sum += ranges[i].maxIndex - ranges[i].minIndex + 1;

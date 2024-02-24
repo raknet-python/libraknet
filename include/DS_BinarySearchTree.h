@@ -102,7 +102,7 @@ class RAK_DLL_EXPORT BinarySearchTree {
   virtual ~BinarySearchTree();
   BinarySearchTree(const BinarySearchTree& original_type);
   BinarySearchTree& operator=(const BinarySearchTree& original_copy);
-  unsigned int Size(void);
+  unsigned int Size();
   void Clear(const char* file, unsigned int line);
   unsigned int Height(node* starting_node = 0);
   node*
@@ -372,7 +372,7 @@ AVLBalancedBinarySearchTree<
 }
 
 template <class BinarySearchTreeType>
-unsigned int BinarySearchTree<BinarySearchTreeType>::Size(void) {
+unsigned int BinarySearchTree<BinarySearchTreeType>::Size() {
   return BinarySearchTree_size;
 }
 

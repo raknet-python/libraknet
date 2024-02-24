@@ -24,8 +24,8 @@
 using namespace RakNet;
 class TestHelpers {
  public:
-  TestHelpers(void);
-  ~TestHelpers(void);
+  TestHelpers();
+  ~TestHelpers();
 
   static void StandardServerPrep(RakPeerInterface*& server);
   static void StandardClientPrep(RakPeerInterface*& client);

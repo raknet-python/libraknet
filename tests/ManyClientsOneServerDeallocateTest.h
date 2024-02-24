@@ -12,6 +12,6 @@
 
 class ManyClientsOneServerDeallocateTest {
  public:
-  ManyClientsOneServerDeallocateTest(void);
-  ~ManyClientsOneServerDeallocateTest(void);
+  ManyClientsOneServerDeallocateTest();
+  ~ManyClientsOneServerDeallocateTest();
 };

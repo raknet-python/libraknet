@@ -30,8 +30,8 @@ class UDPProxyServer;
 /// Callback to handle results of calling UDPProxyServer::LoginToCoordinator()
 /// \ingroup UDP_PROXY_GROUP
 struct UDPProxyServerResultHandler {
-  UDPProxyServerResultHandler() {}
-  virtual ~UDPProxyServerResultHandler() {}
+  UDPProxyServerResultHandler() = default;
+  virtual ~UDPProxyServerResultHandler() = default;
 
   /// Called when our login succeeds
   /// \param[out] usedPassword The password we passed to UDPProxyServer::LoginToCoordinator()
@@ -74,7 +74,7 @@ class RAK_DLL_EXPORT UDPProxyServer : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(UDPProxyServer)
 
   UDPProxyServer();
-  ~UDPProxyServer();
+  ~UDPProxyServer() override;
 
   /// Sets the socket family to use, either IPV4 or IPV6
   /// \param[in] socketFamily For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
@@ -103,18 +103,18 @@ class RAK_DLL_EXPORT UDPProxyServer : public PluginInterface2 {
   /// UDPForwarder::Startup(), UDPForwarder::Shutdown(), and UDPForwarder::Update() are called automatically by the plugin
   UDPForwarder udpForwarder;
 
-  virtual void OnAttach(void);
-  virtual void OnDetach(void);
+  void OnAttach() override;
+  void OnDetach() override;
 
   /// \internal
-  virtual void Update(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  void Update() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnRakPeerStartup(void);
-  virtual void OnRakPeerShutdown(void);
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnRakPeerStartup() override;
+  void OnRakPeerShutdown() override;
 
  protected:
   void OnForwardingRequestFromCoordinatorToServer(Packet* packet);

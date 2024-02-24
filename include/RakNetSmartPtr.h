@@ -30,14 +30,14 @@ class RAK_DLL_EXPORT ReferenceCounter {
   ReferenceCounter() {
     refCount = 0;
   }
-  ~ReferenceCounter() {}
+  ~ReferenceCounter() = default;
   void AddRef() {
     refCount++;
   }
   int Release() {
     return --refCount;
   }
-  int GetRefCount(void) const {
+  int GetRefCount() const {
     return refCount;
   }
 };
@@ -77,11 +77,11 @@ class RAK_DLL_EXPORT RakNetSmartPtr {
     }
   }
 
-  bool IsNull(void) const {
+  bool IsNull() const {
     return ptr == 0;
   }
 
-  void SetNull(void) {
+  void SetNull() {
     if (reference && reference->Release() == 0) {
       RakNet::OP_DELETE(ptr, _FILE_AND_LINE_);
       RakNet::OP_DELETE(reference, _FILE_AND_LINE_);
@@ -93,7 +93,7 @@ class RAK_DLL_EXPORT RakNetSmartPtr {
     reference = 0;
   }
 
-  bool IsUnique(void) const {
+  bool IsUnique() const {
     return reference->GetRefCount() == 1;
   }
 
@@ -111,7 +111,7 @@ class RAK_DLL_EXPORT RakNetSmartPtr {
     }
   }
 
-  int GetRefCount(void) const {
+  int GetRefCount() const {
     return reference->GetRefCount();
   }
 

@@ -46,7 +46,7 @@ class RAK_DLL_EXPORT StringCompressor {
   /// static function because only static functions can access static members
   /// The RakPeer constructor adds a reference to this class, so don't call this until an instance of RakPeer exists, or unless you call AddReference yourself.
   /// \return the unique instance of the StringCompressor
-  static StringCompressor* Instance(void);
+  static StringCompressor* Instance();
 
   /// Given an array of strings, such as a chat log, generate the optimal encoding tree for it.
   /// This function is optional and if it is not called a default tree will be used instead.
@@ -118,10 +118,10 @@ class RAK_DLL_EXPORT StringCompressor {
       uint8_t languageId = 0);
 
   /// Used so I can allocate and deallocate this singleton at runtime
-  static void AddReference(void);
+  static void AddReference();
 
   /// Used so I can allocate and deallocate this singleton at runtime
-  static void RemoveReference(void);
+  static void RemoveReference();
 
   StringCompressor();
 

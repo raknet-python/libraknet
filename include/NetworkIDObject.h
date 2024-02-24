@@ -23,7 +23,7 @@ namespace RakNet {
 /// Forward declarations
 class NetworkIDManager;
 
-typedef uint32_t NetworkIDType;
+using NetworkIDType = uint32_t;
 
 /// \brief Unique shared ids for each object instance
 /// \details A class you can derive from to make it easier to represent every networked object with an integer.  This way you can refer to objects over the network.
@@ -45,13 +45,13 @@ class RAK_DLL_EXPORT NetworkIDObject {
   virtual void SetNetworkIDManager(NetworkIDManager* manager);
 
   /// Returns what was passed to SetNetworkIDManager
-  virtual NetworkIDManager* GetNetworkIDManager(void) const;
+  virtual NetworkIDManager* GetNetworkIDManager() const;
 
   /// Returns the NetworkID that you can use to refer to this object over the network.
   /// \pre You must first call SetNetworkIDManager before using this function
   /// \retval UNASSIGNED_NETWORK_ID UNASSIGNED_NETWORK_ID is returned IsNetworkIDAuthority() is false and SetNetworkID() was not previously called.  This is also returned if you call this function in the constructor.
   /// \retval 0-65534 Any other value is a valid NetworkID.  NetworkIDs start at 0 and go to 65534, wrapping at that point.
-  virtual NetworkID GetNetworkID(void);
+  virtual NetworkID GetNetworkID();
 
   /// Sets the NetworkID for this instance.  Usually this is called by the clients and determined from the servers.  However, if you save multiplayer games you would likely use
   /// This on load as well.
@@ -64,7 +64,7 @@ class RAK_DLL_EXPORT NetworkIDObject {
 
   /// Return what was passed to SetParent
   /// \return The value passed to SetParent, or 0 if it was never called.
-  virtual void* GetParent(void) const;
+  virtual void* GetParent() const;
 
  protected:
   /// The  network ID of this object

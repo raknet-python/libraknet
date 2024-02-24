@@ -89,7 +89,7 @@ class RAK_DLL_EXPORT MessageFilter : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(MessageFilter)
 
   MessageFilter();
-  virtual ~MessageFilter();
+  ~MessageFilter() override;
 
   // --------------------------------------------------------------------------------------------
   // User functions
@@ -189,7 +189,7 @@ class RAK_DLL_EXPORT MessageFilter : public PluginInterface2 {
 
   /// Returns the total number of filter sets.
   /// \return The total number of filter sets.
-  unsigned GetFilterSetCount(void) const;
+  unsigned GetFilterSetCount() const;
 
   /// Returns the ID of a filter set, by index
   /// \param[in] An index between 0 and GetFilterSetCount()-1 inclusive
@@ -202,19 +202,19 @@ class RAK_DLL_EXPORT MessageFilter : public PluginInterface2 {
   // --------------------------------------------------------------------------------------------
   // Packet handling functions
   // --------------------------------------------------------------------------------------------
-  virtual void Update(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnNewConnection(
+  void Update() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
-  virtual void OnClosedConnection(
+      bool isIncoming) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
  protected:
-  void Clear(void);
+  void Clear();
   void DeallocateFilterSet(FilterSet* filterSet);
   FilterSet* GetFilterSetByID(int filterSetID);
   void OnInvalidMessage(

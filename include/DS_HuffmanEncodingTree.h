@@ -53,7 +53,7 @@ class RAK_DLL_EXPORT HuffmanEncodingTree {
   void GenerateFromFrequencyTable(unsigned int frequencyTable[256]);
 
   /// \brief Free the memory used by the tree.
-  void FreeMemory(void);
+  void FreeMemory();
 
  private:
   /// The root node of the tree

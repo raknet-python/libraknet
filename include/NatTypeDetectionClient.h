@@ -50,7 +50,7 @@ class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2,
   NatTypeDetectionClient();
 
   // Destructor
-  virtual ~NatTypeDetectionClient();
+  ~NatTypeDetectionClient() override;
 
   /// Send the message to the server to detect the nat type
   /// Server must be running NatTypeDetectionServer
@@ -59,24 +59,25 @@ class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2,
   void DetectNATType(SystemAddress _serverAddress);
 
   /// \internal For plugin handling
-  virtual void Update(void);
+  void Update() override;
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnRakPeerShutdown(void);
-  virtual void OnDetach(void);
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnRakPeerShutdown() override;
+  void OnDetach() override;
 
-  virtual void OnRNS2Recv(RNS2RecvStruct* recvStruct);
-  virtual void
-  DeallocRNS2RecvStruct(RNS2RecvStruct* s, const char* file, unsigned int line);
-  virtual RNS2RecvStruct* AllocRNS2RecvStruct(
+  void OnRNS2Recv(RNS2RecvStruct* recvStruct) override;
+  void DeallocRNS2RecvStruct(
+      RNS2RecvStruct* s,
       const char* file,
-      unsigned int line);
+      unsigned int line) override;
+  RNS2RecvStruct* AllocRNS2RecvStruct(const char* file, unsigned int line)
+      override;
 
  protected:
   DataStructures::Queue<RNS2RecvStruct*> bufferedPackets;
@@ -84,9 +85,9 @@ class RAK_DLL_EXPORT NatTypeDetectionClient : public PluginInterface2,
 
   RakNetSocket2* c2;
   //unsigned short c2Port;
-  void Shutdown(void);
+  void Shutdown();
   void OnCompletion(NATTypeDetectionResult result);
-  bool IsInProgress(void) const;
+  bool IsInProgress() const;
 
   void OnTestPortRestricted(Packet* packet);
   SystemAddress serverAddress;

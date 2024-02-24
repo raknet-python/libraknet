@@ -39,7 +39,7 @@ class RAK_DLL_EXPORT UDPProxyCoordinator : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(UDPProxyCoordinator)
 
   UDPProxyCoordinator();
-  virtual ~UDPProxyCoordinator();
+  ~UDPProxyCoordinator() override;
 
   /// For UDPProxyServers logging in remotely, they must pass a password to UDPProxyServer::LoginToCoordinator(). It must match the password set here.
   /// If no password is set, they cannot login remotely.
@@ -47,12 +47,12 @@ class RAK_DLL_EXPORT UDPProxyCoordinator : public PluginInterface2 {
   void SetRemoteLoginPassword(RakNet::RakString password);
 
   /// \internal
-  virtual void Update(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  void Update() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
   struct SenderAndTargetAddress {
     SystemAddress senderClientAddress;
@@ -79,7 +79,7 @@ class RAK_DLL_EXPORT UDPProxyCoordinator : public PluginInterface2 {
     DataStructures::List<ServerWithPing> sourceServerPings, targetServerPings;
     RakNet::TimeMS timeRequestedPings;
     // Order based on sourceServerPings and targetServerPings
-    void OrderRemainingServersToTry(void);
+    void OrderRemainingServersToTry();
   };
 
  protected:
@@ -100,7 +100,7 @@ class RAK_DLL_EXPORT UDPProxyCoordinator : public PluginInterface2 {
       SystemAddress targetClientAddress,
       RakNetGUID targetClientGuid,
       SystemAddress requestingAddress);
-  void Clear(void);
+  void Clear();
 
   void SendForwardingRequest(
       SystemAddress sourceAddress,

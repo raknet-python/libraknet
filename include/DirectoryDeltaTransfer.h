@@ -69,7 +69,7 @@ class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface2 {
   DirectoryDeltaTransfer();
 
   // Destructor
-  virtual ~DirectoryDeltaTransfer();
+  ~DirectoryDeltaTransfer() override;
 
   /// \brief This plugin has a dependency on the FileListTransfer plugin, which it uses to actually send the files.
   /// \details So you need an instance of that plugin registered with RakPeerInterface, and a pointer to that interface should be passed here.
@@ -157,11 +157,11 @@ class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface2 {
       bool prependAppDirToOutputSubdir);
 
   /// \brief Clear all allowed uploads previously set with AddUploadsFromSubdirectory
-  void ClearUploads(void);
+  void ClearUploads();
 
   /// \brief Returns how many files are available for upload
   /// \return How many files are available for upload
-  unsigned GetNumberOfFilesForUpload(void) const;
+  unsigned GetNumberOfFilesForUpload() const;
 
   /// \brief Normally, if a remote system requests files, those files are all loaded into memory and sent immediately.
   /// \details This function allows the files to be read in incremental chunks, saving memory
@@ -172,7 +172,7 @@ class RAK_DLL_EXPORT DirectoryDeltaTransfer : public PluginInterface2 {
       unsigned int _chunkSize);
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
  protected:
   void OnDownloadRequest(Packet* packet);

@@ -11,7 +11,7 @@
 #ifndef __SUPER_FAST_HASH_H
 #define __SUPER_FAST_HASH_H
 
-#include <stdio.h>
+#include <cstdio>
 #include "NativeTypes.h"
 
 // From http://www.azillionmonkeys.com/qed/hash.html

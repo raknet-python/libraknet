@@ -42,7 +42,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
   STATIC_FACTORY_DECLARATIONS(RakPeerInterface)
 
   ///Destructor
-  virtual ~RakPeerInterface() {}
+  virtual ~RakPeerInterface() = default;
 
   // --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
   /// \brief Starts the network threads, opens the listen port.
@@ -79,7 +79,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
 
   /// Disables security for incoming connections.
   /// \note Must be called while offline
-  virtual void DisableSecurity(void) = 0;
+  virtual void DisableSecurity() = 0;
 
   /// If secure connections are on, do not use secure connections for a specific IP address.
   /// This is useful if you have a fixed-address internal server behind a LAN.
@@ -104,11 +104,11 @@ class RAK_DLL_EXPORT RakPeerInterface {
 
   /// Returns the value passed to SetMaximumIncomingConnections()
   /// \return the maximum number of incoming connections, which is always <= maxConnections
-  virtual unsigned int GetMaximumIncomingConnections(void) const = 0;
+  virtual unsigned int GetMaximumIncomingConnections() const = 0;
 
   /// Returns how many open connections there are at this time
   /// \return the number of open connections
-  virtual unsigned short NumberOfConnections(void) const = 0;
+  virtual unsigned short NumberOfConnections() const = 0;
 
   /// Sets the password incoming connections must match in the call to Connect (defaults to none). Pass 0 to passwordData to specify no password
   /// This is a way to set a low level password for all incoming connections.  To selectively reject connections, implement your own scheme using CloseConnection() to remove unwanted connections
@@ -148,7 +148,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
       unsigned short remotePort,
       const char* passwordData,
       int passwordDataLength,
-      PublicKey* publicKey = 0,
+      PublicKey* publicKey = nullptr,
       unsigned connectionSocketIndex = 0,
       unsigned sendConnectionAttemptCount = 12,
       unsigned timeBetweenSendConnectionAttemptsMS = 500,
@@ -171,7 +171,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
       const char* passwordData,
       int passwordDataLength,
       RakNetSocket2* socket,
-      PublicKey* publicKey = 0,
+      PublicKey* publicKey = nullptr,
       unsigned sendConnectionAttemptCount = 12,
       unsigned timeBetweenSendConnectionAttemptsMS = 500,
       RakNet::TimeMS timeoutTime = 0) = 0;
@@ -194,7 +194,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
 
   /// Returns if the network thread is running
   /// \return true if the network thread is running, false otherwise
-  virtual bool IsActive(void) const = 0;
+  virtual bool IsActive() const = 0;
 
   /// Fills the array remoteSystems with the SystemAddress of all the systems we are connected to
   /// \param[out] remoteSystems An array of SystemAddress structures to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to only get the number of systems we are connected to
@@ -206,12 +206,12 @@ class RAK_DLL_EXPORT RakPeerInterface {
   /// Returns the next uint32_t that Send() will return
   /// \note If using RakPeer from multiple threads, this may not be accurate for your thread. Use IncrementNextSendReceipt() in that case.
   /// \return The next uint32_t that Send() or SendList will return
-  virtual uint32_t GetNextSendReceipt(void) = 0;
+  virtual uint32_t GetNextSendReceipt() = 0;
 
   /// Returns the next uint32_t that Send() will return, and increments the value by one
   /// \note If using RakPeer from multiple threads, pass this to forceReceipt in the send function
   /// \return The next uint32_t that Send() or SendList will return
-  virtual uint32_t IncrementNextSendReceipt(void) = 0;
+  virtual uint32_t IncrementNextSendReceipt() = 0;
 
   /// Sends a block of data to the specified system that you are connected to.
   /// This function only works while connected
@@ -298,14 +298,14 @@ class RAK_DLL_EXPORT RakPeerInterface {
   /// \return 0 if no packets are waiting to be handled, otherwise a pointer to a packet.
   /// \note COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up.
   /// sa RakNetTypes.h contains struct Packet
-  virtual Packet* Receive(void) = 0;
+  virtual Packet* Receive() = 0;
 
   /// Call this to deallocate a message returned by Receive() when you are done handling it.
   /// \param[in] packet The message to deallocate.
   virtual void DeallocatePacket(Packet* packet) = 0;
 
   /// Return the total number of connections we are allowed
-  virtual unsigned int GetMaximumNumberOfPeers(void) const = 0;
+  virtual unsigned int GetMaximumNumberOfPeers() const = 0;
 
   // -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
   /// Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
@@ -368,7 +368,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
   virtual void RemoveFromBanList(const char* IP) = 0;
 
   /// Allows all previously banned IPs to connect.
-  virtual void ClearBanList(void) = 0;
+  virtual void ClearBanList() = 0;
 
   /// Returns true or false indicating if a particular IP is banned.
   /// \param[in] IP - Dotted IP address.
@@ -464,13 +464,13 @@ class RAK_DLL_EXPORT RakPeerInterface {
   virtual SystemAddress GetExternalID(const SystemAddress target) const = 0;
 
   /// Return my own GUID
-  virtual const RakNetGUID GetMyGUID(void) const = 0;
+  virtual const RakNetGUID GetMyGUID() const = 0;
 
   /// Return the address bound to a socket at the specified index
   virtual SystemAddress GetMyBoundAddress(const int socketIndex = 0) = 0;
 
   /// Get a random number (to generate a GUID)
-  static uint64_t Get64BitUniqueRandomNumber(void);
+  static uint64_t Get64BitUniqueRandomNumber();
 
   /// Given a connected system, give us the unique GUID representing that instance of RakPeer.
   /// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different
@@ -517,7 +517,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
   virtual int GetMTUSize(const SystemAddress target) const = 0;
 
   /// Returns the number of IP addresses this system has internally. Get the actual addresses from GetLocalIP()
-  virtual unsigned GetNumberOfAddresses(void) = 0;
+  virtual unsigned GetNumberOfAddresses() = 0;
 
   /// Returns an IP address at index 0 to GetNumberOfAddresses-1
   /// \param[in] index index into the list of IP addresses
@@ -559,7 +559,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
 
   /// Returns what was passed to SetSplitMessageProgressInterval()
   /// \return What was passed to SetSplitMessageProgressInterval(). Default to 0.
-  virtual int GetSplitMessageProgressInterval(void) const = 0;
+  virtual int GetSplitMessageProgressInterval() const = 0;
 
   /// Set how long to wait before giving up on sending an unreliable message
   /// Useful if the network is clogged up.
@@ -664,7 +664,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
 
   /// Returns if you previously called ApplyNetworkSimulator
   /// \return If you previously called ApplyNetworkSimulator
-  virtual bool IsNetworkSimulatorActive(void) = 0;
+  virtual bool IsNetworkSimulatorActive() = 0;
 
   // --------------------------------------------------------------------------------------------Statistical Functions - Functions dealing with API performance--------------------------------------------------------------------------------------------
 
@@ -676,7 +676,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
   /// \sa RakNetStatistics.h
   virtual RakNetStatistics* GetStatistics(
       const SystemAddress systemAddress,
-      RakNetStatistics* rns = 0) = 0;
+      RakNetStatistics* rns = nullptr) = 0;
   /// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
   ///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
   virtual bool GetStatistics(
@@ -693,7 +693,7 @@ class RAK_DLL_EXPORT RakPeerInterface {
       DataStructures::List<RakNetStatistics>& statistics) = 0;
 
   /// \Returns how many messages are waiting when you call Receive()
-  virtual unsigned int GetReceiveBufferSize(void) = 0;
+  virtual unsigned int GetReceiveBufferSize() = 0;
 
   // --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 

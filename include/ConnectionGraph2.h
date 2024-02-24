@@ -41,7 +41,7 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(ConnectionGraph2)
 
   ConnectionGraph2();
-  ~ConnectionGraph2();
+  ~ConnectionGraph2() override;
 
   /// \brief Given a remote system identified by RakNetGUID, return the list of SystemAddresses and RakNetGUIDs they are connected to
   /// \param[in] remoteSystemGuid Which system we are referring to. This only works for remote systems, not ourselves.
@@ -63,7 +63,7 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
 
   /// Returns the system with the lowest average ping among all its connections.
   /// If you need one system in the peer to peer group to relay data, have the FullyConnectedMesh2 host call this function after host migration, and use that system
-  RakNetGUID GetLowestAveragePingSystem(void) const;
+  RakNetGUID GetLowestAveragePingSystem() const;
 
   /// \brief If called with false, then new connections are only added to the connection graph when you call ProcessNewConnection();
   /// \details This is useful if you want to perform validation before connecting a system to a mesh, or if you want a submesh (for example a server cloud)
@@ -72,7 +72,7 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
 
   /// \brief Returns value passed to SetAutoProcessNewConnections()
   /// \return Value passed to SetAutoProcessNewConnections(), or the default of true if it was never called
-  bool GetAutoProcessNewConnections(void) const;
+  bool GetAutoProcessNewConnections() const;
 
   /// \brief If you call SetAutoProcessNewConnections(false);, then you will need to manually call ProcessNewConnection() on new connections
   /// \details On ID_NEW_INCOMING_CONNECTION or ID_CONNECTION_REQUEST_ACCEPTED, adds that system to the graph
@@ -113,17 +113,17 @@ class RAK_DLL_EXPORT ConnectionGraph2 : public PluginInterface2 {
 
  protected:
   /// \internal
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
   /// \internal
-  virtual void OnNewConnection(
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
+      bool isIncoming) override;
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
   // List of systems I am connected to, which in turn stores which systems they are connected to
   DataStructures::

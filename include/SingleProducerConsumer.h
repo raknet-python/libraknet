@@ -37,7 +37,7 @@ class RAK_DLL_EXPORT SingleProducerConsumer {
 
   /// WriteLock must be immediately followed by WriteUnlock.  These two functions must be called in the same thread.
   /// \return A pointer to a block of data you can write to.
-  SingleProducerConsumerType* WriteLock(void);
+  SingleProducerConsumerType* WriteLock();
 
   /// Call if you don't want to write to a block of data from WriteLock() after all.
   /// Cancelling locks cancels all locks back up to the data passed.  So if you lock twice and cancel using the first lock, the second lock is ignored
@@ -45,12 +45,12 @@ class RAK_DLL_EXPORT SingleProducerConsumer {
   void CancelWriteLock(SingleProducerConsumerType* cancelToLocation);
 
   /// Call when you are done writing to a block of memory returned by WriteLock()
-  void WriteUnlock(void);
+  void WriteUnlock();
 
   /// ReadLock must be immediately followed by ReadUnlock. These two functions must be called in the same thread.
   /// \retval 0 No data is availble to read
   /// \retval Non-zero The data previously written to, in another thread, by WriteLock followed by WriteUnlock.
-  SingleProducerConsumerType* ReadLock(void);
+  SingleProducerConsumerType* ReadLock();
 
   // Cancelling locks cancels all locks back up to the data passed.  So if you lock twice and cancel using the first lock, the second lock is ignored
   /// param[in] Which ReadLock() to cancel.
@@ -58,14 +58,14 @@ class RAK_DLL_EXPORT SingleProducerConsumer {
 
   /// Signals that we are done reading the the data from the least recent call of ReadLock.
   /// At this point that pointer is no longer valid, and should no longer be read.
-  void ReadUnlock(void);
+  void ReadUnlock();
 
   /// Clear is not thread-safe and none of the lock or unlock functions should be called while it is running.
-  void Clear(void);
+  void Clear();
 
   /// This function will estimate how many elements are waiting to be read.  It's threadsafe enough that the value returned is stable, but not threadsafe enough to give accurate results.
   /// \return An ESTIMATE of how many data elements are waiting to be read
-  int Size(void) const;
+  int Size() const;
 
   /// Make sure that the pointer we done reading for the call to ReadUnlock is the right pointer.
   /// param[in] A previous pointer returned by ReadLock()
@@ -73,7 +73,7 @@ class RAK_DLL_EXPORT SingleProducerConsumer {
 
   /// Returns if ReadUnlock was called before ReadLock
   /// \return If the read is locked
-  bool ReadIsLocked(void) const;
+  bool ReadIsLocked() const;
 
  private:
   struct DataPlusPtr {
@@ -128,7 +128,7 @@ SingleProducerConsumer<SingleProducerConsumerType>::~SingleProducerConsumer() {
 
 template <class SingleProducerConsumerType>
 SingleProducerConsumerType*
-SingleProducerConsumer<SingleProducerConsumerType>::WriteLock(void) {
+SingleProducerConsumer<SingleProducerConsumerType>::WriteLock() {
   if (writeAheadPointer->next == readPointer ||
       writeAheadPointer->next->readyToRead == true) {
     volatile DataPlusPtr* originalNext = writeAheadPointer->next;
@@ -151,7 +151,7 @@ void SingleProducerConsumer<SingleProducerConsumerType>::CancelWriteLock(
 }
 
 template <class SingleProducerConsumerType>
-void SingleProducerConsumer<SingleProducerConsumerType>::WriteUnlock(void) {
+void SingleProducerConsumer<SingleProducerConsumerType>::WriteUnlock() {
   //	DataPlusPtr *dataContainer = (DataPlusPtr *)structure;
 
 #ifdef _DEBUG
@@ -167,7 +167,7 @@ void SingleProducerConsumer<SingleProducerConsumerType>::WriteUnlock(void) {
 
 template <class SingleProducerConsumerType>
 SingleProducerConsumerType*
-SingleProducerConsumer<SingleProducerConsumerType>::ReadLock(void) {
+SingleProducerConsumer<SingleProducerConsumerType>::ReadLock() {
   if (readAheadPointer == writePointer ||
       readAheadPointer->readyToRead == false) {
     return 0;
@@ -189,7 +189,7 @@ void SingleProducerConsumer<SingleProducerConsumerType>::CancelReadLock(
 }
 
 template <class SingleProducerConsumerType>
-void SingleProducerConsumer<SingleProducerConsumerType>::ReadUnlock(void) {
+void SingleProducerConsumer<SingleProducerConsumerType>::ReadUnlock() {
 #ifdef _DEBUG
   RakAssert(
       readAheadPointer !=
@@ -206,7 +206,7 @@ void SingleProducerConsumer<SingleProducerConsumerType>::ReadUnlock(void) {
 }
 
 template <class SingleProducerConsumerType>
-void SingleProducerConsumer<SingleProducerConsumerType>::Clear(void) {
+void SingleProducerConsumer<SingleProducerConsumerType>::Clear() {
   // Shrink the list down to MINIMUM_LIST_SIZE elements
   volatile DataPlusPtr* next;
   writePointer = readPointer->next;
@@ -235,7 +235,7 @@ void SingleProducerConsumer<SingleProducerConsumerType>::Clear(void) {
 }
 
 template <class SingleProducerConsumerType>
-int SingleProducerConsumer<SingleProducerConsumerType>::Size(void) const {
+int SingleProducerConsumer<SingleProducerConsumerType>::Size() const {
   return writeCount - readCount;
 }
 
@@ -247,8 +247,7 @@ bool SingleProducerConsumer<SingleProducerConsumerType>::CheckReadUnlockOrder(
 }
 
 template <class SingleProducerConsumerType>
-bool SingleProducerConsumer<SingleProducerConsumerType>::ReadIsLocked(
-    void) const {
+bool SingleProducerConsumer<SingleProducerConsumerType>::ReadIsLocked() const {
   return readAheadPointer != readPointer;
 }
 } // namespace DataStructures

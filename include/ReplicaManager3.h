@@ -38,7 +38,7 @@ class Replica3;
 
 /// \ingroup REPLICA_MANAGER_GROUP3
 /// Used for multiple worlds. World 0 is created automatically by default
-typedef uint8_t WorldId;
+using WorldId = uint8_t;
 
 /// \internal
 /// \ingroup REPLICA_MANAGER_GROUP3
@@ -76,7 +76,7 @@ struct PRO {
 class RAK_DLL_EXPORT ReplicaManager3 : public PluginInterface2 {
  public:
   ReplicaManager3();
-  virtual ~ReplicaManager3();
+  ~ReplicaManager3() override;
 
   /// \brief Implement to return a game specific derivation of Connection_RM3
   /// \details The connection object represents a remote system connected to you that is using the ReplicaManager3 system.<BR>
@@ -108,10 +108,10 @@ class RAK_DLL_EXPORT ReplicaManager3 : public PluginInterface2 {
   void SetAutoManageConnections(bool autoCreate, bool autoDestroy);
 
   /// \return What was passed to the autoCreate parameter of SetAutoManageConnections()
-  bool GetAutoCreateConnections(void) const;
+  bool GetAutoCreateConnections() const;
 
   /// \return What was passed to the autoDestroy parameter of SetAutoManageConnections()
-  bool GetAutoDestroyConnections(void) const;
+  bool GetAutoDestroyConnections() const;
 
   /// \brief Call AllocConnection() and PushConnection() for each connection in \a participantList
   /// \param[in] participantListIn The list of connections to allocate
@@ -280,7 +280,7 @@ class RAK_DLL_EXPORT ReplicaManager3 : public PluginInterface2 {
 
   /// \brief Returns the number of world id specifiers in memory, added with AddWorld() and removed with RemoveWorld()
   /// \return The number of worlds added
-  unsigned int GetWorldCount(void) const;
+  unsigned int GetWorldCount() const;
 
   /// \details Sets the networkIDManager instance that this plugin relys upon.<BR>
   /// Uses whatever instance is attached to RakPeerInterface if unset.<BR>
@@ -320,10 +320,10 @@ class RAK_DLL_EXPORT ReplicaManager3 : public PluginInterface2 {
   void Clear(bool deleteWorlds = false);
 
   /// \internal
-  PRO GetDefaultSendParameters(void) const;
+  PRO GetDefaultSendParameters() const;
 
   /// Call interfaces, send data
-  virtual void Update(void);
+  void Update() override;
 
   /// \internal
   struct RM3World {
@@ -337,17 +337,17 @@ class RAK_DLL_EXPORT ReplicaManager3 : public PluginInterface2 {
   };
 
  protected:
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnNewConnection(
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
-  virtual void OnRakPeerShutdown(void);
-  virtual void OnDetach(void);
+      bool isIncoming) override;
+  void OnRakPeerShutdown() override;
+  void OnDetach() override;
 
   PluginReceiveResult OnConstruction(
       Packet* packet,
@@ -424,7 +424,7 @@ struct LastSerializationResult {
   //	bool isConstructed;
   RakNet::Time whenLastSerialized;
 
-  void AllocBS(void);
+  void AllocBS();
   LastSerializationResultBS* lastSerializationResultBS;
 };
 
@@ -539,17 +539,17 @@ class RAK_DLL_EXPORT Connection_RM3 {
   }
 
   /// \return The system address passed to the constructor of this object
-  SystemAddress GetSystemAddress(void) const {
+  SystemAddress GetSystemAddress() const {
     return systemAddress;
   }
 
   /// \return Returns the RakNetGUID passed to the constructor of this object
-  RakNetGUID GetRakNetGUID(void) const {
+  RakNetGUID GetRakNetGUID() const {
     return guid;
   }
 
   /// \return True if ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE arrived for this connection
-  bool GetDownloadWasCompleted(void) const {
+  bool GetDownloadWasCompleted() const {
     return gotDownloadComplete;
   }
 
@@ -580,7 +580,7 @@ class RAK_DLL_EXPORT Connection_RM3 {
   /// If you return true from QueryGroupDownloadMessages(), then these messages will be returned all in one tick, returned only when the download is complete
   /// \note ID_REPLICA_MANAGER_DOWNLOAD_STARTED calls the callback DeserializeOnDownloadStarted()
   /// \note ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE calls the callback DeserializeOnDownloadComplete()
-  virtual bool QueryGroupDownloadMessages(void) const {
+  virtual bool QueryGroupDownloadMessages() const {
     return false;
   }
 
@@ -589,7 +589,7 @@ class RAK_DLL_EXPORT Connection_RM3 {
   /// QueryDestruction is also not necessarily useful or efficient, as object destruction tends to happen in known cases, and can be accomplished by calling Replica3::BroadcastDestruction()
   /// QueryConstructionMode() allows you to specify more efficient algorithms than the default when overriden.
   /// \return How to get the list of objects that exist on the remote system. You should always return the same value for a given connection
-  virtual ConstructionMode QueryConstructionMode(void) const {
+  virtual ConstructionMode QueryConstructionMode() const {
     return QUERY_REPLICA_FOR_CONSTRUCTION_AND_DESTRUCTION;
   }
 
@@ -963,7 +963,7 @@ class RAK_DLL_EXPORT Replica3 : public NetworkIDObject {
 
   /// Before deleting a local instance of Replica3, call Replica3::BroadcastDestruction() for the deletion notification to go out on the network.
   /// It is not necessary to call ReplicaManager3::Dereference(), as this happens automatically in the destructor
-  virtual ~Replica3();
+  ~Replica3() override;
 
   /// \brief Write a unique identifer that can be read on a remote system to create an object of this same class.
   /// \details The value written to \a allocationIdBitstream will be passed to Connection_RM3::AllocReplica().<BR>
@@ -1111,7 +1111,7 @@ class RAK_DLL_EXPORT Replica3 : public NetworkIDObject {
 
   /// \brief Called for each replica owned by the user, once per Serialization tick, before Serialize() is called.
   /// If you want to do some kind of operation on the Replica objects that you own, just before Serialization(), then overload this function
-  virtual void OnUserReplicaPreSerializeTick(void) {}
+  virtual void OnUserReplicaPreSerializeTick() {}
 
   /// \brief Serialize our class to a bitstream
   /// \details User should implement this function to write the contents of this class to SerializationParamters::serializationBitstream.<BR>
@@ -1274,15 +1274,15 @@ class RAK_DLL_EXPORT Replica3 : public NetworkIDObject {
 
   /// Call to send a network message to delete this object on other systems.<BR>
   /// Call it before deleting the object
-  virtual void BroadcastDestruction(void);
+  virtual void BroadcastDestruction();
 
   /// creatingSystemGUID is set the first time Reference() is called, or if we get the object from another system
   /// \return System that originally created this object
-  RakNetGUID GetCreatingSystemGUID(void) const;
+  RakNetGUID GetCreatingSystemGUID() const;
 
   /// \return If ReplicaManager3::Reference() was called on this object.
-  bool WasReferenced(void) const {
-    return replicaManager != 0;
+  bool WasReferenced() const {
+    return replicaManager != nullptr;
   }
 
   /// GUID of the system that first called Reference() on this object.
@@ -1314,130 +1314,130 @@ class RAK_DLL_EXPORT Replica3Composite : public Replica3 {
   void SetCompositeOwner(parent_type* p) {
     r3CompositeOwner = p;
   }
-  parent_type* GetCompositeOwner(void) const {
+  parent_type* GetCompositeOwner() const {
     return r3CompositeOwner;
   };
-  virtual void WriteAllocationID(
+  void WriteAllocationID(
       RakNet::Connection_RM3* destinationConnection,
-      RakNet::BitStream* allocationIdBitstream) const {
+      RakNet::BitStream* allocationIdBitstream) const override {
     r3CompositeOwner->WriteAllocationID(
         destinationConnection, allocationIdBitstream);
   }
-  virtual RakNet::RM3ConstructionState QueryConstruction(
+  RakNet::RM3ConstructionState QueryConstruction(
       RakNet::Connection_RM3* destinationConnection,
-      RakNet::ReplicaManager3* replicaManager3) {
+      RakNet::ReplicaManager3* replicaManager3) override {
     return r3CompositeOwner->QueryConstruction(
         destinationConnection, replicaManager3);
   }
-  virtual RakNet::RM3DestructionState QueryDestruction(
+  RakNet::RM3DestructionState QueryDestruction(
       RakNet::Connection_RM3* destinationConnection,
-      RakNet::ReplicaManager3* replicaManager3) {
+      RakNet::ReplicaManager3* replicaManager3) override {
     return r3CompositeOwner->QueryDestruction(
         destinationConnection, replicaManager3);
   }
-  virtual bool QueryRemoteConstruction(
-      RakNet::Connection_RM3* sourceConnection) {
+  bool QueryRemoteConstruction(
+      RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->QueryRemoteConstruction(sourceConnection);
   }
-  virtual bool QueryRelayDestruction(
-      RakNet::Connection_RM3* sourceConnection) const {
+  bool QueryRelayDestruction(
+      RakNet::Connection_RM3* sourceConnection) const override {
     return r3CompositeOwner->QueryRelayDestruction(sourceConnection);
   }
-  virtual void SerializeConstruction(
+  void SerializeConstruction(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* destinationConnection) {
+      RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeConstruction(
         constructionBitstream, destinationConnection);
   }
-  virtual bool DeserializeConstruction(
+  bool DeserializeConstruction(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* sourceConnection) {
+      RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->DeserializeConstruction(
         constructionBitstream, sourceConnection);
   }
-  virtual void SerializeConstructionExisting(
+  void SerializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* destinationConnection) {
+      RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeConstructionExisting(
         constructionBitstream, destinationConnection);
   }
-  virtual void DeserializeConstructionExisting(
+  void DeserializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* sourceConnection) {
+      RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->DeserializeConstructionExisting(
         constructionBitstream, sourceConnection);
   }
-  virtual void SerializeDestruction(
+  void SerializeDestruction(
       RakNet::BitStream* destructionBitstream,
-      RakNet::Connection_RM3* destinationConnection) {
+      RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->SerializeDestruction(
         destructionBitstream, destinationConnection);
   }
-  virtual bool DeserializeDestruction(
+  bool DeserializeDestruction(
       RakNet::BitStream* destructionBitstream,
-      RakNet::Connection_RM3* sourceConnection) {
+      RakNet::Connection_RM3* sourceConnection) override {
     return r3CompositeOwner->DeserializeDestruction(
         destructionBitstream, sourceConnection);
   }
-  virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(
-      RakNet::Connection_RM3* droppedConnection) const {
+  RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(
+      RakNet::Connection_RM3* droppedConnection) const override {
     return r3CompositeOwner->QueryActionOnPopConnection(droppedConnection);
   }
-  virtual void OnPoppedConnection(RakNet::Connection_RM3* droppedConnection) {
+  void OnPoppedConnection(RakNet::Connection_RM3* droppedConnection) override {
     r3CompositeOwner->OnPoppedConnection(droppedConnection);
   }
-  virtual void DeallocReplica(RakNet::Connection_RM3* sourceConnection) {
+  void DeallocReplica(RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->DeallocReplica(sourceConnection);
   }
-  virtual RakNet::RM3QuerySerializationResult QuerySerialization(
-      RakNet::Connection_RM3* destinationConnection) {
+  RakNet::RM3QuerySerializationResult QuerySerialization(
+      RakNet::Connection_RM3* destinationConnection) override {
     return r3CompositeOwner->QuerySerialization(destinationConnection);
   }
-  virtual void OnUserReplicaPreSerializeTick(void) {
+  void OnUserReplicaPreSerializeTick() override {
     r3CompositeOwner->OnUserReplicaPreSerializeTick();
   }
-  virtual RakNet::RM3SerializationResult Serialize(
-      RakNet::SerializeParameters* serializeParameters) {
+  RakNet::RM3SerializationResult Serialize(
+      RakNet::SerializeParameters* serializeParameters) override {
     return r3CompositeOwner->Serialize(serializeParameters);
   }
-  virtual void OnSerializeTransmission(
+  void OnSerializeTransmission(
       RakNet::BitStream* bitStream,
       RakNet::Connection_RM3* destinationConnection,
       RakNet::BitSize_t
           bitsPerChannel[RakNet::RM3_NUM_OUTPUT_BITSTREAM_CHANNELS],
-      RakNet::Time curTime) {
+      RakNet::Time curTime) override {
     r3CompositeOwner->OnSerializeTransmission(
         bitStream, destinationConnection, bitsPerChannel, curTime);
   }
-  virtual void Deserialize(
-      RakNet::DeserializeParameters* deserializeParameters) {
+  void Deserialize(
+      RakNet::DeserializeParameters* deserializeParameters) override {
     r3CompositeOwner->Deserialize(deserializeParameters);
   }
-  virtual void PostSerializeConstruction(
+  void PostSerializeConstruction(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* destinationConnection) {
+      RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->PostSerializeConstruction(
         constructionBitstream, destinationConnection);
   }
-  virtual void PostDeserializeConstruction(
+  void PostDeserializeConstruction(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* sourceConnection) {
+      RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PostDeserializeConstruction(
         constructionBitstream, sourceConnection);
   }
-  virtual void PostSerializeConstructionExisting(
+  void PostSerializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* destinationConnection) {
+      RakNet::Connection_RM3* destinationConnection) override {
     r3CompositeOwner->PostSerializeConstructionExisting(
         constructionBitstream, destinationConnection);
   }
-  virtual void PostDeserializeConstructionExisting(
+  void PostDeserializeConstructionExisting(
       RakNet::BitStream* constructionBitstream,
-      RakNet::Connection_RM3* sourceConnection) {
+      RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PostDeserializeConstructionExisting(
         constructionBitstream, sourceConnection);
   }
-  virtual void PreDestruction(RakNet::Connection_RM3* sourceConnection) {
+  void PreDestruction(RakNet::Connection_RM3* sourceConnection) override {
     r3CompositeOwner->PreDestruction(sourceConnection);
   }
 };

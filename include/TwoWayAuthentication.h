@@ -45,7 +45,7 @@
 #include "RakMemoryOverride.h"
 #include "RakString.h"
 
-typedef int64_t FCM2Guid;
+using FCM2Guid = int64_t;
 
 namespace RakNet {
 /// Forward declarations
@@ -63,7 +63,7 @@ class RAK_DLL_EXPORT TwoWayAuthentication : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(TwoWayAuthentication)
 
   TwoWayAuthentication();
-  virtual ~TwoWayAuthentication();
+  ~TwoWayAuthentication() override;
 
   /// \brief Adds a password to the list of passwords the system will accept
   /// \details Each password, which is secret and not transmitted, is identified by \a identifier.
@@ -82,19 +82,19 @@ class RAK_DLL_EXPORT TwoWayAuthentication : public PluginInterface2 {
   bool Challenge(RakNet::RakString identifier, AddressOrGUID remoteSystem);
 
   /// \brief Free all memory
-  void Clear(void);
+  void Clear();
 
   /// \internal
-  virtual void Update(void);
+  void Update() override;
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
   /// \internal
-  virtual void OnRakPeerShutdown(void);
+  void OnRakPeerShutdown() override;
   /// \internal
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
   /// \internal
   struct PendingChallenge {
@@ -127,7 +127,7 @@ class RAK_DLL_EXPORT TwoWayAuthentication : public PluginInterface2 {
         unsigned short requestId,
         RakNet::AddressOrGUID remoteSystem,
         bool popIfFound);
-    void Clear(void);
+    void Clear();
     void ClearByAddress(RakNet::AddressOrGUID remoteSystem);
     void Update(RakNet::Time curTime);
 

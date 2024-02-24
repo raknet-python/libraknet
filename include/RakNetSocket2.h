@@ -39,7 +39,7 @@ namespace RakNet {
 class RakNetSocket2;
 struct RNS2_BerkleyBindParameters;
 struct RNS2_SendParameters;
-typedef int RNS2Socket;
+using RNS2Socket = int;
 
 enum RNS2BindResult {
   BR_SUCCESS,
@@ -48,7 +48,7 @@ enum RNS2BindResult {
   BR_FAILED_SEND_TEST,
 };
 
-typedef int RNS2SendResult;
+using RNS2SendResult = int;
 
 enum RNS2Type {
   RNS2T_WINDOWS_STORE_8,
@@ -83,14 +83,14 @@ struct RNS2RecvStruct {
 
 class RakNetSocket2Allocator {
  public:
-  static RakNetSocket2* AllocRNS2(void);
+  static RakNetSocket2* AllocRNS2();
   static void DeallocRNS2(RakNetSocket2* s);
 };
 
 class RAK_DLL_EXPORT RNS2EventHandler {
  public:
-  RNS2EventHandler() {}
-  virtual ~RNS2EventHandler() {}
+  RNS2EventHandler() = default;
+  virtual ~RNS2EventHandler() = default;
 
   //		bufferedPackets.Push(recvFromStruct);
   //		quitAndDataEvents.SetEvent();
@@ -118,13 +118,13 @@ class RakNetSocket2 {
       RNS2_SendParameters* sendParameters,
       const char* file,
       unsigned int line) = 0;
-  RNS2Type GetSocketType(void) const;
+  RNS2Type GetSocketType() const;
   void SetSocketType(RNS2Type t);
-  bool IsBerkleySocket(void) const;
-  SystemAddress GetBoundAddress(void) const;
-  unsigned int GetUserConnectionSocketIndex(void) const;
+  bool IsBerkleySocket() const;
+  SystemAddress GetBoundAddress() const;
+  unsigned int GetUserConnectionSocketIndex() const;
   void SetUserConnectionSocketIndex(unsigned int i);
-  RNS2EventHandler* GetEventHandler(void) const;
+  RNS2EventHandler* GetEventHandler() const;
 
   // ----------- STATICS ------------
   static void GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]);
@@ -305,12 +305,12 @@ class IRNS2_Berkley : public RakNetSocket2 {
 class RNS2_Berkley : public IRNS2_Berkley {
  public:
   RNS2_Berkley();
-  virtual ~RNS2_Berkley();
+  ~RNS2_Berkley() override;
   int CreateRecvPollingThread(int threadPriority);
-  void SignalStopRecvPollingThread(void);
-  void BlockOnStopRecvPollingThread(void);
-  const RNS2_BerkleyBindParameters* GetBindings(void) const;
-  RNS2Socket GetSocket(void) const;
+  void SignalStopRecvPollingThread();
+  void BlockOnStopRecvPollingThread();
+  const RNS2_BerkleyBindParameters* GetBindings() const;
+  RNS2Socket GetSocket() const;
   void SetDoNotFragment(int opt);
 
  protected:
@@ -337,7 +337,7 @@ class RNS2_Berkley : public IRNS2_Berkley {
 
   // Internal
   void SetNonBlockingSocket(unsigned long nonblocking);
-  void SetSocketOptions(void);
+  void SetSocketOptions();
   void SetBroadcastSocket(int broadcast);
   void SetIPHdrIncl(int ipHdrIncl);
   void RecvFromBlocking(RNS2RecvStruct* recvFromStruct);
@@ -347,7 +347,7 @@ class RNS2_Berkley : public IRNS2_Berkley {
   RNS2Socket rns2Socket;
   RNS2_BerkleyBindParameters binding;
 
-  unsigned RecvFromLoopInt(void);
+  unsigned RecvFromLoopInt();
   RakNet::LocklessUint32_t isRecvFromLoopThreadActive;
   volatile bool endThreads;
   // Constructor not called!
@@ -377,8 +377,8 @@ class RNS2_Windows_Linux_360 {
 
 class RAK_DLL_EXPORT SocketLayerOverride {
  public:
-  SocketLayerOverride() {}
-  virtual ~SocketLayerOverride() {}
+  SocketLayerOverride() = default;
+  virtual ~SocketLayerOverride() = default;
 
   /// Called when SendTo would otherwise occur.
   virtual int RakNetSendTo(
@@ -397,17 +397,17 @@ class RAK_DLL_EXPORT SocketLayerOverride {
 class RNS2_Windows : public RNS2_Berkley, public RNS2_Windows_Linux_360 {
  public:
   RNS2_Windows();
-  virtual ~RNS2_Windows();
+  ~RNS2_Windows() override;
   RNS2BindResult Bind(
       RNS2_BerkleyBindParameters* bindParameters,
       const char* file,
-      unsigned int line);
+      unsigned int line) override;
   RNS2SendResult Send(
       RNS2_SendParameters* sendParameters,
       const char* file,
-      unsigned int line);
+      unsigned int line) override;
   void SetSocketLayerOverride(SocketLayerOverride* _slo);
-  SocketLayerOverride* GetSocketLayerOverride(void);
+  SocketLayerOverride* GetSocketLayerOverride();
   // ----------- STATICS ------------
   static void GetMyIP(SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS]);
 

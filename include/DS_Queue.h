@@ -43,15 +43,15 @@ class RAK_DLL_EXPORT Queue {
   void RemoveAtIndex(
       unsigned int
           position); // Not a normal thing you do with a queue but can be used for efficiency
-  inline queue_type Peek(void) const;
-  inline queue_type PeekTail(void) const;
-  inline queue_type Pop(void);
-  inline queue_type PopTail(void);
+  inline queue_type Peek() const;
+  inline queue_type PeekTail() const;
+  inline queue_type Pop();
+  inline queue_type PopTail();
   // Debug: Set pointer to 0, for memory leak detection
-  inline queue_type PopDeref(void);
-  inline unsigned int Size(void) const;
-  inline bool IsEmpty(void) const;
-  inline unsigned int AllocationSize(void) const;
+  inline queue_type PopDeref();
+  inline unsigned int Size() const;
+  inline bool IsEmpty() const;
+  inline unsigned int AllocationSize() const;
   inline void Clear(const char* file, unsigned int line);
   void Compress(const char* file, unsigned int line);
   bool Find(const queue_type& q);
@@ -68,7 +68,7 @@ class RAK_DLL_EXPORT Queue {
 };
 
 template <class queue_type>
-inline unsigned int Queue<queue_type>::Size(void) const {
+inline unsigned int Queue<queue_type>::Size() const {
   if (head <= tail)
     return tail - head;
   else
@@ -76,12 +76,12 @@ inline unsigned int Queue<queue_type>::Size(void) const {
 }
 
 template <class queue_type>
-inline bool Queue<queue_type>::IsEmpty(void) const {
+inline bool Queue<queue_type>::IsEmpty() const {
   return head == tail;
 }
 
 template <class queue_type>
-inline unsigned int Queue<queue_type>::AllocationSize(void) const {
+inline unsigned int Queue<queue_type>::AllocationSize() const {
   return allocation_size;
 }
 
@@ -102,7 +102,7 @@ Queue<queue_type>::~Queue() {
 }
 
 template <class queue_type>
-inline queue_type Queue<queue_type>::Pop(void) {
+inline queue_type Queue<queue_type>::Pop() {
 #ifdef _DEBUG
   RakAssert(head != tail);
 #endif
@@ -118,7 +118,7 @@ inline queue_type Queue<queue_type>::Pop(void) {
 }
 
 template <class queue_type>
-inline queue_type Queue<queue_type>::PopTail(void) {
+inline queue_type Queue<queue_type>::PopTail() {
 #ifdef _DEBUG
   RakAssert(head != tail);
 #endif
@@ -132,7 +132,7 @@ inline queue_type Queue<queue_type>::PopTail(void) {
 }
 
 template <class queue_type>
-inline queue_type Queue<queue_type>::PopDeref(void) {
+inline queue_type Queue<queue_type>::PopDeref() {
   if (++head == allocation_size)
     head = 0;
 
@@ -193,7 +193,7 @@ void Queue<queue_type>::PushAtHead(
 }
 
 template <class queue_type>
-inline queue_type Queue<queue_type>::Peek(void) const {
+inline queue_type Queue<queue_type>::Peek() const {
 #ifdef _DEBUG
   RakAssert(head != tail);
 #endif
@@ -202,7 +202,7 @@ inline queue_type Queue<queue_type>::Peek(void) const {
 }
 
 template <class queue_type>
-inline queue_type Queue<queue_type>::PeekTail(void) const {
+inline queue_type Queue<queue_type>::PeekTail() const {
 #ifdef _DEBUG
   RakAssert(head != tail);
 #endif

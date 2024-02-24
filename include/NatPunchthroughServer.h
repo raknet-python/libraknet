@@ -41,15 +41,15 @@ class PacketLogger;
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct RAK_DLL_EXPORT NatPunchthroughServerDebugInterface {
-  NatPunchthroughServerDebugInterface() {}
-  virtual ~NatPunchthroughServerDebugInterface() {}
+  NatPunchthroughServerDebugInterface() = default;
+  virtual ~NatPunchthroughServerDebugInterface() = default;
   virtual void OnServerMessage(const char* msg) = 0;
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct RAK_DLL_EXPORT NatPunchthroughServerDebugInterface_Printf
     : public NatPunchthroughServerDebugInterface {
-  virtual void OnServerMessage(const char* msg);
+  void OnServerMessage(const char* msg) override;
 };
 
 #if _RAKNET_SUPPORT_PacketLogger == 1
@@ -60,10 +60,10 @@ struct RAK_DLL_EXPORT NatPunchthroughServerDebugInterface_PacketLogger
   PacketLogger* pl;
 
   NatPunchthroughServerDebugInterface_PacketLogger() {
-    pl = 0;
+    pl = nullptr;
   }
-  ~NatPunchthroughServerDebugInterface_PacketLogger() {}
-  virtual void OnServerMessage(const char* msg);
+  ~NatPunchthroughServerDebugInterface_PacketLogger() override = default;
+  void OnServerMessage(const char* msg) override;
 };
 #endif
 
@@ -82,34 +82,34 @@ class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2 {
   NatPunchthroughServer();
 
   // Destructor
-  virtual ~NatPunchthroughServer();
+  ~NatPunchthroughServer() override;
 
   /// Sets a callback to be called with debug messages
   /// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
   void SetDebugInterface(NatPunchthroughServerDebugInterface* i);
 
   /// \internal For plugin handling
-  virtual void Update(void);
+  void Update() override;
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
   /// \internal For plugin handling
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnNewConnection(
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
+      bool isIncoming) override;
 
   // Each connected user has a ready state. Ready means ready for nat punchthrough.
   struct User;
   struct ConnectionAttempt {
     ConnectionAttempt() {
-      sender = 0;
-      recipient = 0;
+      sender = nullptr;
+      recipient = nullptr;
       startTime = 0;
       attemptPhase = NAT_ATTEMPT_PHASE_NOT_STARTED;
     }
@@ -149,8 +149,8 @@ class RAK_DLL_EXPORT NatPunchthroughServer : public PluginInterface2 {
   void OnGetMostRecentPort(Packet* packet);
   void OnClientReady(Packet* packet);
 
-  void SendTimestamps(void);
-  void StartPendingPunchthrough(void);
+  void SendTimestamps();
+  void StartPendingPunchthrough();
   void StartPunchthroughForUser(User* user);
   uint16_t sessionId;
   NatPunchthroughServerDebugInterface* natPunchthroughServerDebugInterface;

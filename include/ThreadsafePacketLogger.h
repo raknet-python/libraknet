@@ -28,12 +28,12 @@ namespace RakNet {
 class RAK_DLL_EXPORT ThreadsafePacketLogger : public PacketLogger {
  public:
   ThreadsafePacketLogger();
-  virtual ~ThreadsafePacketLogger();
+  ~ThreadsafePacketLogger() override;
 
-  virtual void Update(void);
+  void Update() override;
 
  protected:
-  virtual void AddToLog(const char* str);
+  void AddToLog(const char* str) override;
 
   DataStructures::SingleProducerConsumer<char*> logMessages;
 };

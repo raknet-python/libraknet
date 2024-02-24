@@ -11,11 +11,11 @@
 #ifndef __RAK_STRING_H
 #define __RAK_STRING_H
 
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
 #include "DS_List.h"
 #include "Export.h"
 #include "RakNetTypes.h" // int64_t
-#include "stdarg.h"
 
 #ifdef _WIN32
 
@@ -49,13 +49,13 @@ class RAK_DLL_EXPORT RakString {
   }
 
   /// Same as std::string::c_str
-  const char* C_String(void) const {
+  const char* C_String() const {
     return sharedString->c_str;
   }
 
   // Lets you modify the string. Do not make the string longer - however, you can make it shorter, or change the contents.
   // Pointer is only valid in the scope of RakString itself
-  char* C_StringUnsafe(void) {
+  char* C_StringUnsafe() {
     Clone();
     return sharedString->c_str;
   }
@@ -82,7 +82,7 @@ class RAK_DLL_EXPORT RakString {
 #ifdef _WIN32
   // Return as Wide char
   // Deallocate with DeallocWideChar
-  WCHAR* ToWideChar(void);
+  WCHAR* ToWideChar();
   void DeallocWideChar(WCHAR* w);
 
   void FromWideChar(const wchar_t* source);
@@ -114,10 +114,10 @@ class RAK_DLL_EXPORT RakString {
   bool operator!=(char* str) const;
 
   /// Change all characters to lowercase
-  const char* ToLower(void);
+  const char* ToLower();
 
   /// Change all characters to uppercase
-  const char* ToUpper(void);
+  const char* ToUpper();
 
   /// Set the value of the string
   void Set(const char* format, ...);
@@ -132,11 +132,11 @@ class RAK_DLL_EXPORT RakString {
   RakString Assign(const char* str, size_t pos, size_t n);
 
   /// Returns if the string is empty. Also, C_String() would return ""
-  bool IsEmpty(void) const;
+  bool IsEmpty() const;
 
   /// Returns the length of the string
-  size_t GetLength(void) const;
-  size_t GetLengthUTF8(void) const;
+  size_t GetLength() const;
+  size_t GetLengthUTF8() const;
 
   /// Replace character(s) in starting at index, for count, with c
   void Replace(unsigned index, unsigned count, unsigned char c);
@@ -198,10 +198,10 @@ class RAK_DLL_EXPORT RakString {
   int StrICmp(const RakString& rhs) const;
 
   /// Clear the string
-  void Clear(void);
+  void Clear();
 
   /// Print the string to the screen
-  void Printf(void);
+  void Printf();
 
   /// Print the string to a file
   void FPrintf(FILE* fp);
@@ -210,16 +210,16 @@ class RAK_DLL_EXPORT RakString {
   bool IPAddressMatch(const char* IP);
 
   /// Does the string contain non-printable characters other than spaces?
-  bool ContainsNonprintableExceptSpaces(void) const;
+  bool ContainsNonprintableExceptSpaces() const;
 
   /// Is this a valid email address?
-  bool IsEmailAddress(void) const;
+  bool IsEmailAddress() const;
 
   /// URL Encode the string. See http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4029/
-  RakNet::RakString& URLEncode(void);
+  RakNet::RakString& URLEncode();
 
   /// URL decode the string
-  RakNet::RakString& URLDecode(void);
+  RakNet::RakString& URLDecode();
 
   /// https://servers.api.rackspacecloud.com/v1.0 to https://,  servers.api.rackspacecloud.com, /v1.0
   void SplitURI(
@@ -228,7 +228,7 @@ class RAK_DLL_EXPORT RakString {
       RakNet::RakString& path);
 
   /// Scan for quote, double quote, and backslash and prepend with backslash
-  RakNet::RakString& SQLEscape(void);
+  RakNet::RakString& SQLEscape();
 
   /// Format as a POST command that can be sent to a webserver
   /// \param[in] uri For example, masterserver2.raknet.com/testServer
@@ -261,13 +261,13 @@ class RAK_DLL_EXPORT RakString {
       const char* extraHeaders = "");
 
   /// Fix to be a file path, ending with /
-  RakNet::RakString& MakeFilePath(void);
+  RakNet::RakString& MakeFilePath();
 
   /// RakString uses a freeList of old no-longer used strings
   /// Call this function to clear this memory on shutdown
-  static void FreeMemory(void);
+  static void FreeMemory();
   /// \internal
-  static void FreeMemoryNoMutex(void);
+  static void FreeMemoryNoMutex();
 
   /// Serialize to a bitstream, uncompressed (slightly faster)
   /// \param[out] bs Bitstream to serialize to
@@ -319,10 +319,11 @@ class RAK_DLL_EXPORT RakString {
   static size_t GetSizeToAllocate(size_t bytes) {
     const size_t smallStringSize =
         128 - sizeof(unsigned int) - sizeof(size_t) - sizeof(char*) * 2;
-    if (bytes <= smallStringSize)
+    if (bytes <= smallStringSize) {
       return smallStringSize;
-    else
+    } else {
       return bytes * 2;
+    }
   }
 
   /// \internal
@@ -355,8 +356,8 @@ class RAK_DLL_EXPORT RakString {
 
   static int RakStringComp(RakString const& key, RakString const& data);
 
-  static void LockMutex(void);
-  static void UnlockMutex(void);
+  static void LockMutex();
+  static void UnlockMutex();
 
  protected:
   static RakNet::RakString FormatForPUTOrPost(
@@ -369,8 +370,8 @@ class RAK_DLL_EXPORT RakString {
   void Assign(const char* str);
   void Assign(const char* str, va_list ap);
 
-  void Clone(void);
-  void Free(void);
+  void Clone();
+  void Free();
   unsigned char ToLower(unsigned char c);
   unsigned char ToUpper(unsigned char c);
   void Realloc(SharedString* sharedString, size_t bytes);

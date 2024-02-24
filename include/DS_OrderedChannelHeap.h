@@ -34,7 +34,7 @@ template <
         const channel_key_type&) = defaultMapKeyComparison<channel_key_type>>
 class RAK_DLL_EXPORT OrderedChannelHeap {
  public:
-  static void IMPLEMENT_DEFAULT_COMPARISON(void) {
+  static void IMPLEMENT_DEFAULT_COMPARISON() {
     DataStructures::defaultMapKeyComparison<channel_key_type>(
         channel_key_type(), channel_key_type());
   }
@@ -50,10 +50,10 @@ class RAK_DLL_EXPORT OrderedChannelHeap {
   heap_data_type Peek(const unsigned startingIndex) const;
   void AddChannel(const channel_key_type& channelID, const double weight);
   void RemoveChannel(channel_key_type channelID);
-  void Clear(void);
+  void Clear();
   heap_data_type& operator[](const unsigned int position) const;
   unsigned ChannelSize(const channel_key_type& channelID);
-  unsigned Size(void) const;
+  unsigned Size() const;
 
   struct QueueAndWeight {
     DataStructures::Queue<double> randResultQueue;
@@ -76,7 +76,7 @@ class RAK_DLL_EXPORT OrderedChannelHeap {
       Map<channel_key_type, QueueAndWeight*, channel_key_comparison_func>
           map;
   DataStructures::Heap<double, HeapChannelAndData, true> heap;
-  void GreatestRandResult(void);
+  void GreatestRandResult();
 };
 
 template <
@@ -126,7 +126,7 @@ template <
 void OrderedChannelHeap<
     channel_key_type,
     heap_data_type,
-    channel_key_comparison_func>::GreatestRandResult(void) {
+    channel_key_comparison_func>::GreatestRandResult() {
   double greatest;
   unsigned i;
   greatest = 0.0;
@@ -297,7 +297,7 @@ template <
 unsigned OrderedChannelHeap<
     channel_key_type,
     heap_data_type,
-    channel_key_comparison_func>::Size(void) const {
+    channel_key_comparison_func>::Size() const {
   return heap.Size();
 }
 
@@ -339,7 +339,7 @@ template <
 void OrderedChannelHeap<
     channel_key_type,
     heap_data_type,
-    channel_key_comparison_func>::Clear(void) {
+    channel_key_comparison_func>::Clear() {
   unsigned i;
   for (i = 0; i < map.Size(); i++)
     RakNet::OP_DELETE(map[i], _FILE_AND_LINE_);

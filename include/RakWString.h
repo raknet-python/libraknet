@@ -34,15 +34,17 @@ class RAK_DLL_EXPORT RakWString {
 
   /// Implicit return of wchar_t*
   operator wchar_t*() const {
-    if (c_str)
+    if (c_str) {
       return c_str;
+    }
     return (wchar_t*)L"";
   }
 
   /// Same as std::string::c_str
-  const wchar_t* C_String(void) const {
-    if (c_str)
+  const wchar_t* C_String() const {
+    if (c_str) {
       return c_str;
+    }
     return (const wchar_t*)L"";
   }
 
@@ -75,10 +77,10 @@ class RAK_DLL_EXPORT RakWString {
   void Set(wchar_t* str);
 
   /// Returns if the string is empty. Also, C_String() would return ""
-  bool IsEmpty(void) const;
+  bool IsEmpty() const;
 
   /// Returns the length of the string
-  size_t GetLength(void) const;
+  size_t GetLength() const;
 
   /// Has the string into an unsigned int
   static unsigned long ToInteger(const RakWString& rs);
@@ -90,10 +92,10 @@ class RAK_DLL_EXPORT RakWString {
   int StrICmp(const RakWString& right) const;
 
   /// Clear the string
-  void Clear(void);
+  void Clear();
 
   /// Print the string to the screen
-  void Printf(void);
+  void Printf();
 
   /// Print the string to a file
   void FPrintf(FILE* fp);

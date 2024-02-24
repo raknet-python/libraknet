@@ -174,21 +174,21 @@ class CircularLinkedList {
       ; // Adds after the current position
   void Replace(const CircularLinkedListType& input);
 
-  void Del(void);
+  void Del();
 
-  unsigned int Size(void);
+  unsigned int Size();
 
-  CircularLinkedListType& Peek(void);
+  CircularLinkedListType& Peek();
 
-  CircularLinkedListType Pop(void);
+  CircularLinkedListType Pop();
 
-  void Clear(void);
+  void Clear();
 
-  void Sort(void);
+  void Sort();
 
-  void Beginning(void);
+  void Beginning();
 
-  void End(void);
+  void End();
 
   void Concatenate(const CircularLinkedList& L);
 
@@ -227,13 +227,13 @@ class LinkedList : public CircularLinkedList<LinkedListType> {
 };
 
 template <class CircularLinkedListType>
-inline void CircularLinkedList<CircularLinkedListType>::Beginning(void) {
+inline void CircularLinkedList<CircularLinkedListType>::Beginning() {
   if (this->root)
     this->position = this->root;
 }
 
 template <class CircularLinkedListType>
-inline void CircularLinkedList<CircularLinkedListType>::End(void) {
+inline void CircularLinkedList<CircularLinkedListType>::End() {
   if (this->root)
     this->position = this->root->previous;
 }
@@ -830,19 +830,19 @@ CircularLinkedList<CircularLinkedListType>::FindPointer(
 }
 
 template <class CircularLinkedListType>
-inline unsigned int CircularLinkedList<CircularLinkedListType>::Size(void) {
+inline unsigned int CircularLinkedList<CircularLinkedListType>::Size() {
   return this->list_size;
 }
 
 template <class CircularLinkedListType>
-inline CircularLinkedListType& CircularLinkedList<CircularLinkedListType>::Peek(
-    void) {
+inline CircularLinkedListType&
+CircularLinkedList<CircularLinkedListType>::Peek() {
   // return *(position->item);
   return this->position->item;
 }
 
 template <class CircularLinkedListType>
-CircularLinkedListType CircularLinkedList<CircularLinkedListType>::Pop(void) {
+CircularLinkedListType CircularLinkedList<CircularLinkedListType>::Pop() {
   CircularLinkedListType element;
   element = Peek();
   Del();
@@ -906,7 +906,7 @@ CircularLinkedList<CircularLinkedListType>::operator--(int) {
 }
 
 template <class CircularLinkedListType>
-void CircularLinkedList<CircularLinkedListType>::Clear(void) {
+void CircularLinkedList<CircularLinkedListType>::Clear() {
   if (this->list_size == 0)
     return;
   else if (
@@ -968,7 +968,7 @@ inline void CircularLinkedList<CircularLinkedListType>::Concatenate(
 }
 
 template <class CircularLinkedListType>
-inline void CircularLinkedList<CircularLinkedListType>::Sort(void) {
+inline void CircularLinkedList<CircularLinkedListType>::Sort() {
   if (this->list_size <= 1)
     return;
 

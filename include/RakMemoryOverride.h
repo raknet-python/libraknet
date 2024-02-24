@@ -243,7 +243,7 @@ void UseRaknetFixedHeap(
     int (*yourMUnmapFunction)(void* p, size_t size) = RakNet::_DLMallocMUnmap);
 
 // Free memory allocated from UseRaknetFixedHeap
-void FreeRakNetFixedHeap(void);
+void FreeRakNetFixedHeap();
 
 // #if _USE_RAK_MEMORY_OVERRIDE==1
 // 	#if defined(RMO_NEW_UNDEF)

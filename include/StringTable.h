@@ -25,7 +25,7 @@ class BitStream;
 };
 
 /// StringTableType should be the smallest type possible, or else it defeats the purpose of the StringTable class, which is to save bandwidth.
-typedef unsigned char StringTableType;
+using StringTableType = unsigned char;
 
 /// The string plus a bool telling us if this string was copied or not.
 struct StrAndBool {
@@ -50,7 +50,7 @@ class RAK_DLL_EXPORT StringTable {
   /// static function because only static functions can access static members
   /// The RakPeer constructor adds a reference to this class, so don't call this until an instance of RakPeer exists, or unless you call AddReference yourself.
   /// \return the unique instance of the StringTable
-  static StringTable* Instance(void);
+  static StringTable* Instance();
 
   /// Add a string to the string table.
   /// \param[in] str The string to add to the string table
@@ -76,10 +76,10 @@ class RAK_DLL_EXPORT StringTable {
   DecodeString(char* output, int maxCharsToWrite, RakNet::BitStream* input);
 
   /// Used so I can allocate and deallocate this singleton at runtime
-  static void AddReference(void);
+  static void AddReference();
 
   /// Used so I can allocate and deallocate this singleton at runtime
-  static void RemoveReference(void);
+  static void RemoveReference();
 
   /// Private Constructor
   StringTable();

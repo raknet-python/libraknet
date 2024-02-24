@@ -98,15 +98,15 @@ struct RAK_DLL_EXPORT PunchthroughConfiguration {
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct RAK_DLL_EXPORT NatPunchthroughDebugInterface {
-  NatPunchthroughDebugInterface() {}
-  virtual ~NatPunchthroughDebugInterface() {}
+  NatPunchthroughDebugInterface() = default;
+  virtual ~NatPunchthroughDebugInterface() = default;
   virtual void OnClientMessage(const char* msg) = 0;
 };
 
 /// \ingroup NAT_PUNCHTHROUGH_GROUP
 struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_Printf
     : public NatPunchthroughDebugInterface {
-  virtual void OnClientMessage(const char* msg);
+  void OnClientMessage(const char* msg) override;
 };
 
 #if _RAKNET_SUPPORT_PacketLogger == 1
@@ -117,10 +117,10 @@ struct RAK_DLL_EXPORT NatPunchthroughDebugInterface_PacketLogger
   PacketLogger* pl;
 
   NatPunchthroughDebugInterface_PacketLogger() {
-    pl = 0;
+    pl = nullptr;
   }
-  ~NatPunchthroughDebugInterface_PacketLogger() {}
-  virtual void OnClientMessage(const char* msg);
+  ~NatPunchthroughDebugInterface_PacketLogger() override = default;
+  void OnClientMessage(const char* msg) override;
 };
 #endif
 
@@ -137,7 +137,7 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(NatPunchthroughClient)
 
   NatPunchthroughClient();
-  ~NatPunchthroughClient();
+  ~NatPunchthroughClient() override;
 
   /// If the instance of RakPeer running NATPunchthroughServer was bound to two IP addresses, then you can call FindRouterPortStride()
   /// This will determine the stride that your router uses when assigning ports, if your router is full-cone
@@ -167,7 +167,7 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
 
   /// Modify the system configuration if desired
   /// Don't modify the variables in the structure while punchthrough is in progress
-  PunchthroughConfiguration* GetPunchthroughConfiguration(void);
+  PunchthroughConfiguration* GetPunchthroughConfiguration();
 
   /// Sets a callback to be called with debug messages
   /// \param[in] i Pointer to an interface. The pointer is stored, so don't delete it while in progress. Pass 0 to clear.
@@ -180,27 +180,27 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
       const SystemAddress& natPunchthroughServerAddress);
 
   /// \internal For plugin handling
-  virtual void Update(void);
+  void Update() override;
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
   /// \internal For plugin handling
-  virtual void OnNewConnection(
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
+      bool isIncoming) override;
 
   /// \internal For plugin handling
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
-  virtual void OnAttach(void);
-  virtual void OnDetach(void);
-  virtual void OnRakPeerShutdown(void);
-  void Clear(void);
+  void OnAttach() override;
+  void OnDetach() override;
+  void OnRakPeerShutdown() override;
+  void Clear();
 
   struct SendPing {
     RakNet::Time nextActionTime;
@@ -247,14 +247,14 @@ class RAK_DLL_EXPORT NatPunchthroughClient : public PluginInterface2 {
       RakNetGUID destination,
       const SystemAddress& facilitator);
   void QueueOpenNAT(RakNetGUID destination, const SystemAddress& facilitator);
-  void SendQueuedOpenNAT(void);
+  void SendQueuedOpenNAT();
   void SendTTL(const SystemAddress& sa);
   void SendOutOfBand(SystemAddress sa, MessageID oobId);
-  void OnPunchthroughFailure(void);
-  void OnReadyForNextPunchthrough(void);
-  void PushFailure(void);
-  bool RemoveFromFailureQueue(void);
-  void PushSuccess(void);
+  void OnPunchthroughFailure();
+  void OnReadyForNextPunchthrough();
+  void PushFailure();
+  bool RemoveFromFailureQueue();
+  void PushSuccess();
 
   PunchthroughConfiguration pc;
   NatPunchthroughDebugInterface* natPunchthroughDebugInterface;

@@ -25,9 +25,9 @@ class VariableListDeltaTracker {
   ~VariableListDeltaTracker();
 
   // Call before using a series of WriteVar
-  void StartWrite(void);
+  void StartWrite();
 
-  bool IsPastEndOfList(void) const {
+  bool IsPastEndOfList() const {
     return nextWriteIndex >= variableList.Size();
   }
 

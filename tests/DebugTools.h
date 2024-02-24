@@ -15,8 +15,8 @@
 using namespace RakNet;
 class DebugTools {
  public:
-  DebugTools(void);
-  ~DebugTools(void);
+  DebugTools();
+  ~DebugTools();
   static void ShowError(
       RakString errorString,
       bool pause,

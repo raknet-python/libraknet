@@ -24,17 +24,17 @@ extern void RAK_DLL_EXPORT seedMT(unsigned int seed);
 
 /// \internal
 /// \note not threadSafe, use an instance of RakNetRandom if necessary per thread
-extern unsigned int RAK_DLL_EXPORT reloadMT(void);
+extern unsigned int RAK_DLL_EXPORT reloadMT();
 
 /// Gets a random unsigned int
 /// \note not threadSafe, use an instance of RakNetRandom if necessary per thread
 /// \return an integer random value.
-extern unsigned int RAK_DLL_EXPORT randomMT(void);
+extern unsigned int RAK_DLL_EXPORT randomMT();
 
 /// Gets a random float
 /// \note not threadSafe, use an instance of RakNetRandom if necessary per thread
 /// \return 0 to 1.0f, inclusive
-extern float RAK_DLL_EXPORT frandomMT(void);
+extern float RAK_DLL_EXPORT frandomMT();
 
 /// Randomizes a buffer
 /// \note not threadSafe, use an instance of RakNetRandom if necessary per thread
@@ -48,9 +48,9 @@ class RAK_DLL_EXPORT RakNetRandom {
   RakNetRandom();
   ~RakNetRandom();
   void SeedMT(unsigned int seed);
-  unsigned int ReloadMT(void);
-  unsigned int RandomMT(void);
-  float FrandomMT(void);
+  unsigned int ReloadMT();
+  unsigned int RandomMT();
+  float FrandomMT();
   void FillBufferMT(void* buffer, unsigned int bytes);
 
  protected:

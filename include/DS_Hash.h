@@ -15,7 +15,7 @@
 #ifndef __HASH_H
 #define __HASH_H
 
-#include <string.h> // memmove
+#include <cstring> // memmove
 #include "Export.h"
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
@@ -27,10 +27,10 @@ namespace DataStructures {
 struct HashIndex {
   unsigned int primaryIndex;
   unsigned int secondaryIndex;
-  bool IsInvalid(void) const {
+  bool IsInvalid() const {
     return primaryIndex == (unsigned int)-1;
   }
-  void SetInvalid(void) {
+  void SetInvalid() {
     primaryIndex = (unsigned int)-1;
     secondaryIndex = (unsigned int)-1;
   }
@@ -68,7 +68,7 @@ class RAK_DLL_EXPORT Hash {
       DataStructures::List<key_type>& keyList,
       const char* file,
       unsigned int line) const;
-  unsigned int Size(void) const;
+  unsigned int Size() const;
 
   /// \brief Clear the list
   void Clear(const char* file, unsigned int line);
@@ -412,8 +412,7 @@ template <
     class data_type,
     unsigned int HASH_SIZE,
     unsigned long (*hashFunction)(const key_type&)>
-unsigned int Hash<key_type, data_type, HASH_SIZE, hashFunction>::Size(
-    void) const {
+unsigned int Hash<key_type, data_type, HASH_SIZE, hashFunction>::Size() const {
   return size;
 }
 } // namespace DataStructures

@@ -29,15 +29,16 @@
 using namespace RakNet;
 class PingTestsTest : public TestInterface {
  public:
-  PingTestsTest(void);
-  ~PingTestsTest(void);
+  PingTestsTest();
+  ~PingTestsTest() override;
   int RunTest(
       DataStructures::List<RakString> params,
       bool isVerbose,
-      bool noPauses); //should return 0 if no error, or the error number
-  RakString GetTestName();
-  RakString ErrorCodeToString(int errorCode);
-  void DestroyPeers();
+      bool noPauses)
+      override; //should return 0 if no error, or the error number
+  RakString GetTestName() override;
+  RakString ErrorCodeToString(int errorCode) override;
+  void DestroyPeers() override;
   int TestAverageValue(
       int averagePing,
       int line,

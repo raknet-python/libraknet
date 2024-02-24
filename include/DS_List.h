@@ -17,7 +17,7 @@
 #ifndef __LIST_H
 #define __LIST_H
 
-#include <string.h> // memmove
+#include <cstring> // memmove
 #include "Export.h"
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
@@ -63,7 +63,7 @@ class RAK_DLL_EXPORT List {
   /// \brief Pop an element from the end of the stack.
   /// \pre Size()>0
   /// \return The element at the end.
-  list_type& Pop(void);
+  list_type& Pop();
 
   /// \brief Insert an element at position \a position in the list.
   /// \param[in] input The new element.
@@ -115,7 +115,7 @@ class RAK_DLL_EXPORT List {
   unsigned int GetIndexOf(const list_type& input) const;
 
   /// \return The number of elements in the list
-  unsigned int Size(void) const;
+  unsigned int Size() const;
 
   /// \brief Clear the list
   void
@@ -228,7 +228,7 @@ void List<list_type>::Push(
 }
 
 template <class list_type>
-inline list_type& List<list_type>::Pop(void) {
+inline list_type& List<list_type>::Pop() {
 #ifdef _DEBUG
   RakAssert(list_size > 0);
 #endif
@@ -429,7 +429,7 @@ unsigned int List<list_type>::GetIndexOf(const list_type& input) const {
 }
 
 template <class list_type>
-inline unsigned int List<list_type>::Size(void) const {
+inline unsigned int List<list_type>::Size() const {
   return list_size;
 }
 

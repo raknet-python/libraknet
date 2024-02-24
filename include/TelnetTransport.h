@@ -37,16 +37,16 @@ class RAK_DLL_EXPORT TelnetTransport : public TransportInterface {
   STATIC_FACTORY_DECLARATIONS(TelnetTransport)
 
   TelnetTransport();
-  virtual ~TelnetTransport();
-  bool Start(unsigned short port, bool serverMode);
-  void Stop(void);
-  void Send(SystemAddress systemAddress, const char* data, ...);
-  void CloseConnection(SystemAddress systemAddress);
-  Packet* Receive(void);
-  void DeallocatePacket(Packet* packet);
-  SystemAddress HasNewIncomingConnection(void);
-  SystemAddress HasLostConnection(void);
-  CommandParserInterface* GetCommandParser(void);
+  ~TelnetTransport() override;
+  bool Start(unsigned short port, bool serverMode) override;
+  void Stop() override;
+  void Send(SystemAddress systemAddress, const char* data, ...) override;
+  void CloseConnection(SystemAddress systemAddress) override;
+  Packet* Receive() override;
+  void DeallocatePacket(Packet* packet) override;
+  SystemAddress HasNewIncomingConnection() override;
+  SystemAddress HasLostConnection() override;
+  CommandParserInterface* GetCommandParser() override;
   void SetSendSuffix(const char* suffix);
   void SetSendPrefix(const char* prefix);
 
@@ -59,7 +59,7 @@ class RAK_DLL_EXPORT TelnetTransport : public TransportInterface {
   };
 
   TCPInterface* tcpInterface;
-  void AutoAllocate(void);
+  void AutoAllocate();
   bool ReassembleLine(
       TelnetTransport::TelnetClient* telnetClient,
       unsigned char c);

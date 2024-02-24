@@ -33,8 +33,8 @@ class UDPProxyClient;
 /// Callback to handle results of calling UDPProxyClient::RequestForwarding()
 /// \ingroup UDP_PROXY_GROUP
 struct UDPProxyClientResultHandler {
-  UDPProxyClientResultHandler() {}
-  virtual ~UDPProxyClientResultHandler() {}
+  UDPProxyClientResultHandler() = default;
+  virtual ~UDPProxyClientResultHandler() = default;
 
   /// Called when our forwarding request was completed. We can now connect to \a targetAddress by using \a proxyAddress instead
   /// \param[out] proxyIPAddress IP Address of the proxy server, which will forward messages to targetAddress
@@ -143,7 +143,7 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(UDPProxyClient)
 
   UDPProxyClient();
-  ~UDPProxyClient();
+  ~UDPProxyClient() override;
 
   /// Receives the results of calling RequestForwarding()
   /// Set before calling RequestForwarding or you won't know what happened
@@ -167,7 +167,7 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
       SystemAddress sourceAddress,
       SystemAddress targetAddressAsSeenFromCoordinator,
       RakNet::TimeMS timeoutOnNoDataMS,
-      RakNet::BitStream* serverSelectionBitstream = 0);
+      RakNet::BitStream* serverSelectionBitstream = nullptr);
 
   /// Same as above, but specify the target with a GUID, in case you don't know what its address is to the coordinator
   /// If requesting forwarding to a RakNet enabled system, then it is easier to use targetGuid instead of targetAddressAsSeenFromCoordinator
@@ -176,12 +176,12 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
       SystemAddress sourceAddress,
       RakNetGUID targetGuid,
       RakNet::TimeMS timeoutOnNoDataMS,
-      RakNet::BitStream* serverSelectionBitstream = 0);
+      RakNet::BitStream* serverSelectionBitstream = nullptr);
 
   /// \internal
-  virtual void Update(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnRakPeerShutdown(void);
+  void Update() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnRakPeerShutdown() override;
 
   struct ServerWithPing {
     unsigned short ping;
@@ -197,7 +197,7 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
     SystemAddress coordinatorAddressForPings;
     //DataStructures::Multilist<ML_UNORDERED_LIST, ServerWithPing> serversToPing;
     DataStructures::List<ServerWithPing> serversToPing;
-    bool AreAllServersPinged(void) const;
+    bool AreAllServersPinged() const;
     void SendPingedServersToCoordinator(RakPeerInterface* rakPeerInterface);
   };
   //DataStructures::Multilist<ML_UNORDERED_LIST, PingServerGroup*> pingServerGroups;
@@ -205,7 +205,7 @@ class RAK_DLL_EXPORT UDPProxyClient : public PluginInterface2 {
 
  protected:
   void OnPingServers(Packet* packet);
-  void Clear(void);
+  void Clear();
   UDPProxyClientResultHandler* resultHandler;
 };
 

@@ -39,7 +39,7 @@ class RakPeerInterface;
 /// 0...254 for your team number identifiers. 255 is reserved as undefined.
 /// \deprecated Use TeamManager intead
 /// \ingroup TEAM_BALANCER_GROUP
-typedef unsigned char TeamId;
+using TeamId = unsigned char;
 
 #define UNASSIGNED_TEAM_ID 255
 
@@ -54,7 +54,7 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(TeamBalancer)
 
   TeamBalancer();
-  virtual ~TeamBalancer();
+  ~TeamBalancer() override;
 
   /// \brief Set the limit to the number of players on the specified team
   /// \details SetTeamSizeLimit() must be called on the host, so the host can enforce the maximum number of players on each team.
@@ -142,14 +142,14 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
 
  protected:
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
   /// \internal
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
   /// \internal
-  void OnAttach(void);
+  void OnAttach() override;
 
   void OnStatusUpdateToNewHost(Packet* packet);
   void OnCancelTeamRequest(Packet* packet);
@@ -170,7 +170,7 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
   unsigned int AddTeamMember(
       const TeamMember& tm); // Returns index of new member
   void RemoveTeamMember(unsigned int index);
-  void EvenTeams(void);
+  void EvenTeams();
   unsigned int GetMemberIndexToSwitchTeams(
       const DataStructures::List<TeamId>& sourceTeamNumbers,
       TeamId targetTeamNumber);
@@ -179,15 +179,15 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
       int maxTeamSize);
   void SwitchMemberTeam(unsigned int teamMemberIndex, TeamId destinationTeam);
   void NotifyTeamAssigment(unsigned int teamMemberIndex);
-  bool WeAreHost(void) const;
+  bool WeAreHost() const;
   PluginReceiveResult OnTeamAssigned(Packet* packet);
   PluginReceiveResult OnRequestedTeamChangePending(Packet* packet);
   PluginReceiveResult OnTeamsLocked(Packet* packet);
   void GetMinMaxTeamMembers(
       int& minMembersOnASingleTeam,
       int& maxMembersOnASingleTeam);
-  TeamId GetNextDefaultTeam(
-      void); // Accounting for team balancing and team limits, get the team a player should be placed on
+  TeamId
+  GetNextDefaultTeam(); // Accounting for team balancing and team limits, get the team a player should be placed on
   bool TeamWouldBeOverpopulatedOnAddition(
       TeamId teamId,
       unsigned int
@@ -195,8 +195,8 @@ class RAK_DLL_EXPORT TeamBalancer : public PluginInterface2 {
   bool TeamWouldBeUnderpopulatedOnLeave(
       TeamId teamId,
       unsigned int teamMemberSize);
-  TeamId GetSmallestNonFullTeam(void) const;
-  TeamId GetFirstNonFullTeam(void) const;
+  TeamId GetSmallestNonFullTeam() const;
+  TeamId GetFirstNonFullTeam() const;
   void MoveMemberThatWantsToJoinTeam(TeamId teamId);
   TeamId MoveMemberThatWantsToJoinTeamInternal(TeamId teamId);
   void NotifyTeamsLocked(RakNetGUID target, TeamId requestedTeam);

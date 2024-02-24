@@ -111,8 +111,8 @@ class FileListTransferCBInterface {
     RakNetGUID senderGuid;
   };
 
-  FileListTransferCBInterface() {}
-  virtual ~FileListTransferCBInterface() {}
+  FileListTransferCBInterface() = default;
+  virtual ~FileListTransferCBInterface() = default;
 
   /// \brief Got a file.
   /// \details This structure is only valid for the duration of this function call.
@@ -131,7 +131,7 @@ class FileListTransferCBInterface {
   /// \brief Called while the handler is active by FileListTransfer
   /// \details Return false when you are done with the class.
   /// At that point OnDereference will be called and the class will no longer be maintained by the FileListTransfer plugin.
-  virtual bool Update(void) {
+  virtual bool Update() {
     return true;
   }
 
@@ -148,7 +148,7 @@ class FileListTransferCBInterface {
   /// \details Update will no longer be called.
   /// It will will be deleted automatically if true was passed to FileListTransfer::SetupReceive::deleteHandler
   /// Otherwise it is up to you to delete it yourself.
-  virtual void OnDereference(void) {}
+  virtual void OnDereference() {}
 };
 
 } // namespace RakNet

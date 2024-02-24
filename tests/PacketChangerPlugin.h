@@ -19,32 +19,32 @@
 using namespace RakNet;
 class PacketChangerPlugin : public PluginInterface2 {
  public:
-  PacketChangerPlugin(void);
-  ~PacketChangerPlugin(void);
+  PacketChangerPlugin();
+  ~PacketChangerPlugin() override;
 
   /// \param[in] peer the instance of RakPeer that is calling Receive
-  void OnAttach(void) {}
+  void OnAttach() override {}
 
   /// Called when the interface is detached
   /// \param[in] peer the instance of RakPeer that is calling Receive
-  void OnDetach(void) {}
+  void OnDetach() override {}
 
   /// Update is called every time a packet is checked for .
-  void Update(void) {}
+  void Update() override {}
 
   /// OnReceive is called for every packet.
   /// \param[in] packet the packet that is being returned to the user
   /// \return True to allow the game and other plugins to get this message, false to absorb it
-  PluginReceiveResult OnReceive(Packet* packet) {
+  PluginReceiveResult OnReceive(Packet* packet) override {
     (void)packet;
     return RR_CONTINUE_PROCESSING;
   }
 
   /// Called when RakPeer is initialized
-  void OnStartup(void) {}
+  void OnStartup() {}
 
   /// Called when RakPeer is shutdown
-  void OnShutdown(void) {}
+  void OnShutdown() {}
 
   /// Called when a connection is dropped because the user called RakPeer::CloseConnection() for a particular system
   /// \param[in] systemAddress The system whose connection was closed
@@ -77,7 +77,8 @@ class PacketChangerPlugin : public PluginInterface2 {
   /// \param[in] failedConnectionReason Why the connection failed
   void OnFailedConnectionAttempt(
       Packet* packet,
-      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) {
+      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason)
+      override {
     (void)failedConnectionAttemptReason;
   }
 
@@ -88,7 +89,7 @@ class PacketChangerPlugin : public PluginInterface2 {
   void OnDirectSocketSend(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress) {
+      SystemAddress remoteSystemAddress) override {
     (void)data;
     (void)bitsUsed;
     (void)remoteSystemAddress;
@@ -101,7 +102,7 @@ class PacketChangerPlugin : public PluginInterface2 {
   void OnDirectSocketReceive(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress) {
+      SystemAddress remoteSystemAddress) override {
     (void)data;
     (void)bitsUsed;
     (void)remoteSystemAddress;
@@ -118,7 +119,8 @@ class PacketChangerPlugin : public PluginInterface2 {
       unsigned frameNumber,
       SystemAddress remoteSystemAddress,
       TimeMS time,
-      int isSend); // {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
+      int isSend)
+      override; // {(void) internalPacket; (void) frameNumber; (void) remoteSystemAddress; (void) time; (void) isSend;}
 
   /// Called when we get an ack for a message we reliabily sent
   /// \param[in] messageNumber The numerical identifier for which message this is
@@ -127,7 +129,7 @@ class PacketChangerPlugin : public PluginInterface2 {
   void OnAck(
       unsigned int messageNumber,
       SystemAddress remoteSystemAddress,
-      TimeMS time) {
+      TimeMS time) override {
     (void)messageNumber;
     (void)remoteSystemAddress;
     (void)time;
@@ -140,13 +142,13 @@ class PacketChangerPlugin : public PluginInterface2 {
   void OnPushBackPacket(
       const char* data,
       const BitSize_t bitsUsed,
-      SystemAddress remoteSystemAddress) {
+      SystemAddress remoteSystemAddress) override {
     (void)data;
     (void)bitsUsed;
     (void)remoteSystemAddress;
   }
 
-  virtual bool UsesReliabilityLayer(void) const {
+  bool UsesReliabilityLayer() const override {
     return true;
   }
 };

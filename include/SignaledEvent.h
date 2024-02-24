@@ -30,9 +30,9 @@ class RAK_DLL_EXPORT SignaledEvent {
   SignaledEvent();
   ~SignaledEvent();
 
-  void InitEvent(void);
-  void CloseEvent(void);
-  void SetEvent(void);
+  void InitEvent();
+  void CloseEvent();
+  void SetEvent();
   void WaitOnEvent(int timeoutMs);
 
  protected:

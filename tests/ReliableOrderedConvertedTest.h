@@ -13,8 +13,8 @@
 #include "TestInterface.h"
 
 #include <memory.h>
-#include <stdlib.h>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "BitStream.h"
 #include "GetTime.h"
@@ -30,15 +30,16 @@
 using namespace RakNet;
 class ReliableOrderedConvertedTest : public TestInterface {
  public:
-  ReliableOrderedConvertedTest(void);
-  ~ReliableOrderedConvertedTest(void);
+  ReliableOrderedConvertedTest();
+  ~ReliableOrderedConvertedTest() override;
   int RunTest(
       DataStructures::List<RakString> params,
       bool isVerbose,
-      bool noPauses); //should return 0 if no error, or the error number
-  RakString GetTestName();
-  RakString ErrorCodeToString(int errorCode);
-  void DestroyPeers();
+      bool noPauses)
+      override; //should return 0 if no error, or the error number
+  RakString GetTestName() override;
+  RakString ErrorCodeToString(int errorCode) override;
+  void DestroyPeers() override;
 
  protected:
   void* LoggedMalloc(size_t size, const char* file, unsigned int line);

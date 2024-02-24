@@ -32,7 +32,7 @@ class RAK_DLL_EXPORT Tree {
   ~Tree();
   void LevelOrderTraversal(DataStructures::List<Tree*>& output);
   void AddChild(TreeType& newData);
-  void DeleteDecendants(void);
+  void DeleteDecendants();
 
   TreeType data;
   DataStructures::List<Tree*> children;
@@ -74,7 +74,7 @@ void Tree<TreeType>::AddChild(TreeType& newData) {
 }
 
 template <class TreeType>
-void Tree<TreeType>::DeleteDecendants(void) {
+void Tree<TreeType>::DeleteDecendants() {
   /*
         DataStructures::List<Tree*> output;
 		LevelOrderTraversal(output);

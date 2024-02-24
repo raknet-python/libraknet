@@ -26,7 +26,7 @@
 #include "RakMemoryOverride.h"
 #include "RakString.h"
 
-typedef int64_t FCM2Guid;
+using FCM2Guid = int64_t;
 
 namespace RakNet {
 /// Forward declarations
@@ -43,7 +43,7 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(FullyConnectedMesh2)
 
   FullyConnectedMesh2();
-  virtual ~FullyConnectedMesh2();
+  ~FullyConnectedMesh2() override;
 
   /// When the message ID_REMOTE_NEW_INCOMING_CONNECTION arrives, we try to connect to that system
   /// If \a attemptConnection is false, you can manually connect to all systems listed in ID_REMOTE_NEW_INCOMING_CONNECTION with ConnectToRemoteNewIncomingConnections()
@@ -60,14 +60,14 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   /// includeCalculating should be true if you are taking action based on another system becoming host, because not all host calculations may complete at the exact same time
   /// \sa ConnectionGraph2::GetLowestAveragePingSystem() . If you need one system in the peer to peer group to relay data, have the host call this function after host migration, and use that system
   /// \return System address of whichever system is host.
-  RakNetGUID GetConnectedHost(void) const;
-  SystemAddress GetConnectedHostAddr(void) const;
+  RakNetGUID GetConnectedHost() const;
+  SystemAddress GetConnectedHostAddr() const;
 
   /// \return System address of whichever system is host. Always returns something, even though it may be our own system.
-  RakNetGUID GetHostSystem(void) const;
+  RakNetGUID GetHostSystem() const;
 
   /// \return If our system is host
-  bool IsHostSystem(void) const;
+  bool IsHostSystem() const;
 
   /// Get the list of connected systems, from oldest connected to newest
   /// This is also the order that the hosts will be chosen in
@@ -75,7 +75,7 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
 
   /// \param[in] includeCalculating If true, and we are currently calculating a new host, return the new host if the calculation is nearly complete
   /// \return If our system is host
-  bool IsConnectedHost(void) const;
+  bool IsConnectedHost() const;
 
   /// \brief Automatically add new connections to the fully connected mesh.
   /// Each remote system that you want to check should be added as a participant, either through SetAutoparticipateConnections() or by calling this function
@@ -85,7 +85,7 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
 
   /// Clear our own host order, and recalculate as if we had just reconnected
   /// Call this to reset the running time of the host just before joining/creating a game room for networking
-  void ResetHostCalculation(void);
+  void ResetHostCalculation();
 
   /// \brief if SetAutoparticipateConnections() is called with false, then you need to use AddParticipant before these systems will be added to the mesh
   /// FullyConnectedMesh2 will track who is the who host among a fully connected mesh of participants
@@ -122,9 +122,9 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   void ConnectToRemoteNewIncomingConnections(Packet* packet);
 
   /// \brief Clear all memory and reset everything
-  void Clear(void);
+  void Clear();
 
-  unsigned int GetParticipantCount(void) const;
+  unsigned int GetParticipantCount() const;
   void GetParticipantCount(unsigned int* participantListSize) const;
 
   /// In the simple case of forming a peer to peer mesh:
@@ -235,34 +235,34 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   }
 
   /// \internal
-  RakNet::TimeUS GetElapsedRuntime(void);
+  RakNet::TimeUS GetElapsedRuntime();
 
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
   /// \internal
-  virtual void OnRakPeerStartup(void);
+  void OnRakPeerStartup() override;
   /// \internal
-  virtual void OnAttach(void);
+  void OnAttach() override;
   /// \internal
-  virtual void OnRakPeerShutdown(void);
+  void OnRakPeerShutdown() override;
   /// \internal
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
   /// \internal
-  virtual void OnNewConnection(
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
+      bool isIncoming) override;
   /// \internal
-  virtual void OnFailedConnectionAttempt(
+  void OnFailedConnectionAttempt(
       Packet* packet,
-      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
+      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) override;
 
   /// \internal
   struct FCM2Participant {
-    FCM2Participant() {}
+    FCM2Participant() = default;
     FCM2Participant(const FCM2Guid& _fcm2Guid, const RakNetGUID& _rakNetGuid)
         : fcm2Guid(_fcm2Guid), rakNetGuid(_rakNetGuid) {}
 
@@ -297,7 +297,7 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   };
 
   /// \internal for debugging
-  unsigned int GetTotalConnectionCount(void) const;
+  unsigned int GetTotalConnectionCount() const;
 
  protected:
   void PushNewHost(const RakNetGUID& guid, RakNetGUID oldHost);
@@ -311,12 +311,12 @@ class RAK_DLL_EXPORT FullyConnectedMesh2 : public PluginInterface2 {
   void OnRespondConnectionCount(Packet* packet);
   void OnInformFCMGuid(Packet* packet);
   void OnUpdateMinTotalConnectionCount(Packet* packet);
-  void AssignOurFCMGuid(void);
+  void AssignOurFCMGuid();
   void CalculateHost(RakNetGUID* rakNetGuid, FCM2Guid* fcm2Guid);
   // bool AddParticipantInternal( RakNetGUID rakNetGuid, FCM2Guid theirFCMGuid, BitStream *userContext );
   bool AddParticipantInternal(RakNetGUID rakNetGuid, FCM2Guid theirFCMGuid);
-  void CalculateAndPushHost(void);
-  bool ParticipantListComplete(void);
+  void CalculateAndPushHost();
+  bool ParticipantListComplete();
   void IncrementTotalConnectionCount(unsigned int i);
   PluginReceiveResult OnVerifiedJoinStart(Packet* packet);
   PluginReceiveResult OnVerifiedJoinCapable(Packet* packet);

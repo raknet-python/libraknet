@@ -67,7 +67,7 @@ class ReadyEvent : public PluginInterface2 {
   ReadyEvent();
 
   // Destructor
-  virtual ~ReadyEvent();
+  ~ReadyEvent() override;
 
   // --------------------------------------------------------------------------------------------
   // User functions
@@ -122,7 +122,7 @@ class ReadyEvent : public PluginInterface2 {
 
   /// Returns the total number of events stored in the system.
   /// \return The total number of events stored in the system.
-  unsigned GetEventListSize(void) const;
+  unsigned GetEventListSize() const;
 
   /// Returns the event ID stored at a particular index.  EventIDs are stored sorted from least to greatest.
   /// \param[in] index Index into the array, from 0 to GetEventListSize()
@@ -201,14 +201,14 @@ class ReadyEvent : public PluginInterface2 {
   // --------------------------------------------------------------------------------------------
   // Packet handling functions
   // --------------------------------------------------------------------------------------------
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnRakPeerShutdown(void);
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnRakPeerShutdown() override;
 
-  void Clear(void);
+  void Clear();
   /*
 	bool AnyWaitersCompleted(unsigned eventIndex) const;
 	bool AllWaitersCompleted(unsigned eventIndex) const;

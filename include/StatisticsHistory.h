@@ -17,7 +17,7 @@
 #ifndef __STATISTICS_HISTORY_H
 #define __STATISTICS_HISTORY_H
 
-#include <float.h>
+#include <cfloat>
 #include "DS_Hash.h"
 #include "DS_List.h"
 #include "DS_OrderedList.h"
@@ -33,7 +33,7 @@ namespace RakNet {
 class RakPeerInterface;
 
 // Type used to track values. If needed, change to double and recompile
-typedef double SHValueType;
+using SHValueType = double;
 #define SH_TYPE_MAX DBL_MAX
 
 /// \brief Input numerical values over time. Get sum, average, highest, lowest, standard deviation on recent or all-time values
@@ -99,12 +99,12 @@ class RAK_DLL_EXPORT StatisticsHistory {
   StatisticsHistory();
   virtual ~StatisticsHistory();
   void SetDefaultTimeToTrack(Time defaultTimeToTrack);
-  Time GetDefaultTimeToTrack(void) const;
+  Time GetDefaultTimeToTrack() const;
   bool AddObject(TrackedObjectData tod);
   bool RemoveObject(uint64_t objectId, void** userData);
   void RemoveObjectAtIndex(unsigned int index);
-  void Clear(void);
-  unsigned int GetObjectCount(void) const;
+  void Clear();
+  unsigned int GetObjectCount() const;
   StatisticsHistory::TrackedObjectData* GetObjectAtIndex(
       unsigned int index) const;
   unsigned int GetObjectIndex(uint64_t objectId) const;
@@ -157,19 +157,19 @@ class RAK_DLL_EXPORT StatisticsHistory {
     SHValueType longTermHighest;
 
     void SetTimeToTrackValues(Time t);
-    Time GetTimeToTrackValues(void) const;
-    SHValueType GetRecentSum(void) const;
-    SHValueType GetRecentSumOfSquares(void) const;
-    SHValueType GetLongTermSum(void) const;
-    SHValueType GetRecentAverage(void) const;
-    SHValueType GetRecentLowest(void) const;
-    SHValueType GetRecentHighest(void) const;
-    SHValueType GetRecentStandardDeviation(void) const;
-    SHValueType GetLongTermAverage(void) const;
-    SHValueType GetLongTermLowest(void) const;
-    SHValueType GetLongTermHighest(void) const;
+    Time GetTimeToTrackValues() const;
+    SHValueType GetRecentSum() const;
+    SHValueType GetRecentSumOfSquares() const;
+    SHValueType GetLongTermSum() const;
+    SHValueType GetRecentAverage() const;
+    SHValueType GetRecentLowest() const;
+    SHValueType GetRecentHighest() const;
+    SHValueType GetRecentStandardDeviation() const;
+    SHValueType GetLongTermAverage() const;
+    SHValueType GetLongTermLowest() const;
+    SHValueType GetLongTermHighest() const;
     SHValueType GetSumSinceTime(Time t) const;
-    Time GetTimeRange(void) const;
+    Time GetTimeRange() const;
 
     // Merge two sets to output
     static void MergeSets(
@@ -189,7 +189,7 @@ class RAK_DLL_EXPORT StatisticsHistory {
         Time timeClipEnd = 0);
 
     // Clear out all values
-    void Clear(void);
+    void Clear();
 
     TimeAndValueQueue& operator=(const TimeAndValueQueue& input);
 
@@ -236,22 +236,22 @@ class RAK_DLL_EXPORT StatisticsHistoryPlugin : public PluginInterface2 {
   StatisticsHistory statistics;
 
   StatisticsHistoryPlugin();
-  virtual ~StatisticsHistoryPlugin();
+  ~StatisticsHistoryPlugin() override;
   void SetTrackConnections(
       bool _addNewConnections,
       int newConnectionsObjectType,
       bool _removeLostConnections);
 
  protected:
-  virtual void Update(void);
-  virtual void OnClosedConnection(
+  void Update() override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnNewConnection(
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnNewConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      bool isIncoming);
+      bool isIncoming) override;
 
   // Too slow
   // 	virtual bool UsesReliabilityLayer(void) const {return true;}

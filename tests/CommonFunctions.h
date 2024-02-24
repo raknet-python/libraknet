@@ -25,8 +25,8 @@
 using namespace RakNet;
 class CommonFunctions {
  public:
-  CommonFunctions(void);
-  ~CommonFunctions(void);
+  CommonFunctions();
+  ~CommonFunctions();
 
   static bool WaitAndConnect(
       RakPeerInterface* peer,

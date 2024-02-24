@@ -69,7 +69,7 @@ class RAK_DLL_EXPORT RelayPlugin : public PluginInterface2 {
   RelayPlugin();
 
   /// Destructor
-  virtual ~RelayPlugin();
+  ~RelayPlugin() override;
 
   /// \brief Forward messages from any system, to the system specified by the combination of key and guid. The sending system only needs to know the key.
   /// \param[in] key A string to identify the target's RakNetGUID. This is so the sending system does not need to know the RakNetGUID of the target system. The key should be unique among all guids added. If the key is not unique, only one system will be sent to (at random).
@@ -127,12 +127,12 @@ class RAK_DLL_EXPORT RelayPlugin : public PluginInterface2 {
   void GetGroupList(const RakNetGUID& relayPluginServerGuid);
 
   /// \internal
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
   /// \internal
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
   struct StrAndGuidAndRoom {
     RakString str;

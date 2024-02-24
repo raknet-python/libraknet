@@ -15,8 +15,8 @@ class WSAStartupSingleton {
  public:
   WSAStartupSingleton();
   ~WSAStartupSingleton();
-  static void AddRef(void);
-  static void Deref(void);
+  static void AddRef();
+  static void Deref();
 
  protected:
   static int refCount;

@@ -16,7 +16,7 @@
 #ifndef __MULTILIST_H
 #define __MULTILIST_H
 
-#include <string.h> // memmove
+#include <cstring> // memmove
 #include "Export.h"
 #include "NativeTypes.h"
 #include "RakAssert.h"
@@ -70,7 +70,7 @@ template <class templateType>
 class MLKeyRef {
  public:
   MLKeyRef(const templateType& input) : val(input) {}
-  const templateType& Get(void) const {
+  const templateType& Get() const {
     return val;
   }
   bool operator<(const templateType& right) {
@@ -110,7 +110,7 @@ class MLKeyRef {
     return inputKey.Get() == cls->_MEMBER_VARIABLE_NAME_;   \
   }
 
-typedef uint32_t DefaultIndexType;
+using DefaultIndexType = uint32_t;
 
 /// \brief The multilist, representing an abstract data type that generally holds lists.
 /// \param[in] _MultilistType What type of list this is, \sa MultilistType
@@ -145,7 +145,7 @@ class RAK_DLL_EXPORT Multilist {
   /// \brief Gets or removes and gets an element from the list, according to the same rules as Push().
   /// Ordered list is LIFO for the purposes of Pop and Peek.
   _DataType& Pop(const char* file = __FILE__, unsigned int line = __LINE__);
-  _DataType& Peek(void) const;
+  _DataType& Peek() const;
 
   /// \brief Same as Push(), except FIFO and LIFO are reversed.
   /// Ordered list still inserts in order.
@@ -163,7 +163,7 @@ class RAK_DLL_EXPORT Multilist {
   _DataType& PopOpposite(
       const char* file = __FILE__,
       unsigned int line = __LINE__);
-  _DataType& PeekOpposite(void) const;
+  _DataType& PeekOpposite() const;
 
   /// \brief Stack,Queue: Inserts at index indicated, elements are shifted.
   /// Ordered list: Inserts, position is ignored
@@ -207,10 +207,10 @@ class RAK_DLL_EXPORT Multilist {
   void ForEach(void (*func)(_DataType& item));
 
   /// \brief Returns if the list is empty.
-  bool IsEmpty(void) const;
+  bool IsEmpty() const;
 
   /// \brief Returns the number of elements used in the list.
-  _IndexType GetSize(void) const;
+  _IndexType GetSize() const;
 
   /// \brief Empties the list. The list is not deallocated if it is small,
   /// unless \a deallocateSmallBlocks is true
@@ -234,7 +234,7 @@ class RAK_DLL_EXPORT Multilist {
 
   /// \brief Reverses the elements in the list, and flips the sort order
   /// returned by GetSortOrder() if IsSorted() returns true at the time the function is called
-  void ReverseList(void);
+  void ReverseList();
 
   /// \brief Reallocates the list to a larger size.
   /// If \a size is smaller than the value returned by GetSize(), the call does nothing.
@@ -250,22 +250,22 @@ class RAK_DLL_EXPORT Multilist {
 
   /// \brief Sets the list to be remembered as sorted.
   /// \details Optimization if the source is sorted already
-  void TagSorted(void);
+  void TagSorted();
 
   /// \brief Defaults to ascending.
   /// \details Used by Sort(), and by ML_ORDERED_LIST
   void SetSortOrder(bool ascending);
 
   /// \brief Returns true if ascending.
-  bool GetSortOrder(void) const;
+  bool GetSortOrder() const;
 
   /// \brief Returns true if the list is currently believed to be in a sorted state.
   /// \details Doesn't actually check for sortedness, just if Sort()
   /// was recently called, or MultilistType is ML_ORDERED_LIST
-  bool IsSorted(void) const;
+  bool IsSorted() const;
 
   /// Returns what type of list this is
-  MultilistType GetMultilistType(void) const;
+  MultilistType GetMultilistType() const;
 
   /// \brief Changes what type of list this is.
   /// \pre Template must be defined with ML_VARIABLE_DURING_RUNTIME for this to do anything
@@ -288,7 +288,7 @@ class RAK_DLL_EXPORT Multilist {
       _IndexType newAllocationSize,
       const char* file,
       unsigned int line);
-  void ReverseListInternal(void);
+  void ReverseListInternal();
   void InsertInOrderedList(const _DataType& d, const _KeyType& key);
   _IndexType GetIndexFromKeyInSortedList(
       const _KeyType& key,
@@ -518,8 +518,8 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-_DataType& Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::Peek(
-    void) const {
+_DataType& Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::Peek()
+    const {
   RakAssert(IsEmpty() == false);
   if (GetMultilistType() == ML_UNORDERED_LIST ||
       GetMultilistType() == ML_STACK || GetMultilistType() == ML_ORDERED_LIST) {
@@ -626,8 +626,8 @@ template <
     class _KeyType,
     class _IndexType>
 _DataType&
-Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::PeekOpposite(
-    void) const {
+Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::PeekOpposite()
+    const {
   RakAssert(IsEmpty() == false);
   if (GetMultilistType() == ML_UNORDERED_LIST ||
       GetMultilistType() == ML_STACK || GetMultilistType() == ML_ORDERED_LIST) {
@@ -897,8 +897,8 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsEmpty(
-    void) const {
+bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsEmpty()
+    const {
   return dataSize == 0;
 }
 
@@ -907,8 +907,8 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-_IndexType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSize(
-    void) const {
+_IndexType Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSize()
+    const {
   return dataSize;
 }
 
@@ -976,8 +976,7 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseList(
-    void) {
+void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::ReverseList() {
   if (IsSorted())
     ascendingSort = !ascendingSort;
 
@@ -1027,8 +1026,7 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::TagSorted(
-    void) {
+void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::TagSorted() {
   if (ascendingSort)
     sortState = ML_SORTED_ASCENDING;
   else
@@ -1146,8 +1144,8 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSortOrder(
-    void) const {
+bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetSortOrder()
+    const {
   return ascendingSort;
 }
 
@@ -1156,8 +1154,8 @@ template <
     class _DataType,
     class _KeyType,
     class _IndexType>
-bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsSorted(
-    void) const {
+bool Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::IsSorted()
+    const {
   return GetMultilistType() == ML_ORDERED_LIST || sortState != ML_UNSORTED;
 }
 
@@ -1167,8 +1165,8 @@ template <
     class _KeyType,
     class _IndexType>
 MultilistType
-Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetMultilistType(
-    void) const {
+Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::GetMultilistType()
+    const {
   if (_MultilistType == ML_VARIABLE_DURING_RUNTIME)
     return variableMultilistType;
   return _MultilistType;
@@ -1384,7 +1382,7 @@ template <
     class _KeyType,
     class _IndexType>
 void Multilist<_MultilistType, _DataType, _KeyType, _IndexType>::
-    ReverseListInternal(void) {
+    ReverseListInternal() {
   _DataType temp;
   _IndexType i;
   for (i = 0; i < dataSize / 2; i++) {

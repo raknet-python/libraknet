@@ -57,7 +57,7 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(FileListTransfer)
 
   FileListTransfer();
-  virtual ~FileListTransfer();
+  ~FileListTransfer() override;
 
   /// \brief Optionally start worker threads when using _incrementalReadInterface for the Send() operation
   /// \param[in] numThreads how many worker threads to start
@@ -90,7 +90,7 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
       unsigned short setID,
       PacketPriority priority,
       char orderingChannel,
-      IncrementalReadInterface* _incrementalReadInterface = 0,
+      IncrementalReadInterface* _incrementalReadInterface = nullptr,
       unsigned int _chunkSize = 262144 * 4 * 16);
 
   /// Return number of files waiting to go out to a particular address
@@ -114,29 +114,29 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
   void RemoveCallback(FileListProgress* cb);
 
   /// \brief Removes all callbacks
-  void ClearCallbacks(void);
+  void ClearCallbacks();
 
   /// Returns all callbacks added with AddCallback()
   /// \param[out] callbacks The list is set to the list of callbacks
   void GetCallbacks(DataStructures::List<FileListProgress*>& callbacks);
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  PluginReceiveResult OnReceive(Packet* packet) override;
   /// \internal For plugin handling
-  virtual void OnRakPeerShutdown(void);
+  void OnRakPeerShutdown() override;
   /// \internal For plugin handling
-  virtual void OnClosedConnection(
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
   /// \internal For plugin handling
-  virtual void Update(void);
+  void Update() override;
 
  protected:
   bool DecodeSetHeader(Packet* packet);
   bool DecodeFile(Packet* packet, bool fullFile);
 
-  void Clear(void);
+  void Clear();
 
   void OnReferencePush(Packet* packet, bool fullFile);
   void OnReferencePushAck(Packet* packet);
@@ -159,9 +159,9 @@ class RAK_DLL_EXPORT FileListTransfer : public PluginInterface2 {
   struct FileToPushRecipient {
     unsigned int refCount;
     SimpleMutex refCountMutex;
-    void DeleteThis(void);
-    void AddRef(void);
-    void Deref(void);
+    void DeleteThis();
+    void AddRef();
+    void Deref();
 
     SystemAddress systemAddress;
     unsigned short setId;

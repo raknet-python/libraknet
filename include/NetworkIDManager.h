@@ -36,7 +36,7 @@ class RAK_DLL_EXPORT NetworkIDManager {
   STATIC_FACTORY_DECLARATIONS(NetworkIDManager)
 
   NetworkIDManager();
-  virtual ~NetworkIDManager(void);
+  virtual ~NetworkIDManager();
 
   /// Returns the parent object, or this instance if you don't use a parent.
   /// Supports NetworkIDObject anywhere in the inheritance hierarchy
@@ -52,7 +52,7 @@ class RAK_DLL_EXPORT NetworkIDManager {
   }
 
   // Stop tracking all NetworkID objects
-  void Clear(void);
+  void Clear();
 
   /// \internal
   NetworkIDObject* GET_BASE_OBJECT_FROM_ID(NetworkID x);
@@ -68,7 +68,7 @@ class RAK_DLL_EXPORT NetworkIDManager {
   unsigned int NetworkIDToHashIndex(NetworkID networkId);
   uint64_t startingOffset;
   /// \internal
-  NetworkID GetNewNetworkID(void);
+  NetworkID GetNewNetworkID();
 };
 
 } // namespace RakNet

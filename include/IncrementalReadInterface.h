@@ -18,8 +18,8 @@ namespace RakNet {
 
 class RAK_DLL_EXPORT IncrementalReadInterface {
  public:
-  IncrementalReadInterface() {}
-  virtual ~IncrementalReadInterface() {}
+  IncrementalReadInterface() = default;
+  virtual ~IncrementalReadInterface() = default;
 
   /// Read part of a file into \a destination
   /// Return the number of bytes written. Return 0 when file is done.

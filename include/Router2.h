@@ -32,8 +32,8 @@ namespace RakNet {
 class RakPeerInterface;
 
 struct Router2DebugInterface {
-  Router2DebugInterface() {}
-  virtual ~Router2DebugInterface() {}
+  Router2DebugInterface() = default;
+  virtual ~Router2DebugInterface() = default;
   virtual void ShowFailure(const char* message);
   virtual void ShowDiagnostic(const char* message);
 };
@@ -54,7 +54,7 @@ class RAK_DLL_EXPORT Router2 : public PluginInterface2 {
   STATIC_FACTORY_DECLARATIONS(Router2)
 
   Router2();
-  virtual ~Router2();
+  ~Router2() override;
 
   /// Sets the socket family to use, either IPV4 or IPV6
   /// \param[in] socketFamily For IPV4, use AF_INET (default). For IPV6, use AF_INET6. To autoselect, use AF_UNSPEC.
@@ -88,21 +88,21 @@ class RAK_DLL_EXPORT Router2 : public PluginInterface2 {
   void SetDebugInterface(Router2DebugInterface* _debugInterface);
 
   /// Get the pointer passed to SetDebugInterface()
-  Router2DebugInterface* GetDebugInterface(void) const;
+  Router2DebugInterface* GetDebugInterface() const;
 
   // --------------------------------------------------------------------------------------------
   // Packet handling functions
   // --------------------------------------------------------------------------------------------
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void Update(void);
-  virtual void OnClosedConnection(
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void Update() override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnFailedConnectionAttempt(
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnFailedConnectionAttempt(
       Packet* packet,
-      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);
-  virtual void OnRakPeerShutdown(void);
+      PI2_FailedConnectionAttemptReason failedConnectionAttemptReason) override;
+  void OnRakPeerShutdown() override;
 
   enum Router2RequestStates {
     R2RS_REQUEST_STATE_QUERY_FORWARDING,
@@ -163,7 +163,7 @@ class RAK_DLL_EXPORT Router2 : public PluginInterface2 {
   void OnMiniPunchReply(Packet* packet);
   void OnMiniPunchReplyBounce(Packet* packet);
   bool OnForwardingSuccess(Packet* packet);
-  int GetLargestPingAmongConnectedSystems(void) const;
+  int GetLargestPingAmongConnectedSystems() const;
   void ReturnToUser(
       MessageID messageId,
       RakNetGUID endpointGuid,
@@ -182,10 +182,10 @@ class RAK_DLL_EXPORT Router2 : public PluginInterface2 {
   // Forwarding we have initiated
   DataStructures::List<ForwardedConnection> forwardedConnectionList;
 
-  void ClearConnectionRequests(void);
-  void ClearMinipunches(void);
-  void ClearForwardedConnections(void);
-  void ClearAll(void);
+  void ClearConnectionRequests();
+  void ClearMinipunches();
+  void ClearForwardedConnections();
+  void ClearAll();
   int ReturnFailureOnCannotForward(
       RakNetGUID sourceGuid,
       RakNetGUID endpointGuid);

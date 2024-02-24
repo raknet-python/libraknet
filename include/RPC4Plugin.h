@@ -90,7 +90,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
   RPC4();
 
   // Destructor
-  virtual ~RPC4();
+  ~RPC4() override;
 
   /// \deprecated Use RegisterSlot
   /// \brief Register a function pointer to be callable from a remote system
@@ -211,7 +211,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
       bool invokeLocal);
 
   /// If called while processing a slot, no further slots for the currently executing signal will be executed
-  void InterruptSignal(void);
+  void InterruptSignal();
 
   /// \internal
   struct LocalCallback {
@@ -225,7 +225,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
   /// \internal
   // Callable object, along with priority to call relative to other objects
   struct LocalSlotObject {
-    LocalSlotObject() {}
+    LocalSlotObject() = default;
     LocalSlotObject(
         unsigned int _registrationCount,
         int _callPriority,
@@ -234,7 +234,7 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
       callPriority = _callPriority;
       functionPointer = _functionPointer;
     }
-    ~LocalSlotObject() {}
+    ~LocalSlotObject() = default;
 
     // Used so slots are called in the order they are registered
     unsigned int registrationCount;
@@ -260,8 +260,8 @@ class RAK_DLL_EXPORT RPC4 : public PluginInterface2 {
   // --------------------------------------------------------------------------------------------
   // Packet handling functions
   // --------------------------------------------------------------------------------------------
-  virtual void OnAttach(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
+  void OnAttach() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
 
   DataStructures::Hash<
       RakNet::RakString,

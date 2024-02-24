@@ -26,11 +26,11 @@ struct CloudQueryRow;
 /// \ingroup CLOUD_GROUP
 class RAK_DLL_EXPORT CloudAllocator {
  public:
-  CloudAllocator() {}
-  virtual ~CloudAllocator() {}
+  CloudAllocator() = default;
+  virtual ~CloudAllocator() = default;
 
   /// \brief Allocate a row
-  virtual CloudQueryRow* AllocateCloudQueryRow(void);
+  virtual CloudQueryRow* AllocateCloudQueryRow();
   /// \brief Free a row
   virtual void DeallocateCloudQueryRow(CloudQueryRow* row);
   /// \brief Allocate CloudQueryRow::data
@@ -42,10 +42,10 @@ class RAK_DLL_EXPORT CloudAllocator {
 /// Serves as a key to identify data uploaded to or queried from the server.
 /// \ingroup CLOUD_GROUP
 struct RAK_DLL_EXPORT CloudKey {
-  CloudKey() {}
+  CloudKey() = default;
   CloudKey(RakNet::RakString _primaryKey, uint32_t _secondaryKey)
       : primaryKey(_primaryKey), secondaryKey(_secondaryKey) {}
-  ~CloudKey() {}
+  ~CloudKey() = default;
 
   /// Identifies the primary key. This is intended to be a major category, such as the name of the application
   /// Must be non-empty

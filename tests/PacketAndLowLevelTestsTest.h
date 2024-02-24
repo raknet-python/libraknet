@@ -28,15 +28,16 @@
 using namespace RakNet;
 class PacketAndLowLevelTestsTest : public TestInterface {
  public:
-  PacketAndLowLevelTestsTest(void);
-  ~PacketAndLowLevelTestsTest(void);
+  PacketAndLowLevelTestsTest();
+  ~PacketAndLowLevelTestsTest() override;
   int RunTest(
       DataStructures::List<RakString> params,
       bool isVerbose,
-      bool noPauses); //should return 0 if no error, or the error number
-  RakString GetTestName();
-  RakString ErrorCodeToString(int errorCode);
-  void DestroyPeers();
+      bool noPauses)
+      override; //should return 0 if no error, or the error number
+  RakString GetTestName() override;
+  RakString ErrorCodeToString(int errorCode) override;
+  void DestroyPeers() override;
 
  protected:
   void FloodWithHighPriority(RakPeerInterface* client);

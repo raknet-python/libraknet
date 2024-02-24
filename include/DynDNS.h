@@ -67,31 +67,31 @@ class RAK_DLL_EXPORT DynDNS {
       const char* dnsHost,
       const char* newIPAddress,
       const char* usernameAndPassword);
-  void Update(void);
+  void Update();
 
   // Output
-  bool IsRunning(void) const {
+  bool IsRunning() const {
     return connectPhase != CP_IDLE;
   }
-  bool IsCompleted(void) const {
+  bool IsCompleted() const {
     return connectPhase == CP_IDLE;
   }
-  RakNet::DynDnsResultCode GetCompletedResultCode(void) {
+  RakNet::DynDnsResultCode GetCompletedResultCode() {
     return result;
   }
-  const char* GetCompletedDescription(void) const {
+  const char* GetCompletedDescription() const {
     return resultDescription;
   }
-  bool WasResultSuccessful(void) const {
+  bool WasResultSuccessful() const {
     return result == RC_SUCCESS || result == RC_DNS_ALREADY_SET ||
         result == RC_NO_CHANGE;
   }
-  char* GetMyPublicIP(void) const {
+  char* GetMyPublicIP() const {
     return (char*)myIPStr;
   } // We get our public IP as part of the process. This is valid once completed
 
  protected:
-  void Stop(void);
+  void Stop();
   void SetCompleted(
       RakNet::DynDnsResultCode _result,
       const char* _resultDescription) {

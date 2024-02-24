@@ -14,7 +14,7 @@
 #ifndef __B_PLUS_TREE_CPP
 #define __B_PLUS_TREE_CPP
 
-#include <stdio.h>
+#include <cstdio>
 #include "DS_MemoryPool.h"
 #include "DS_Queue.h"
 #include "Export.h"
@@ -87,16 +87,16 @@ class RAK_DLL_EXPORT BPlusTree {
   bool Delete(const KeyType key);
   bool Delete(const KeyType key, DataType& out);
   bool Insert(const KeyType key, const DataType& data);
-  void Clear(void);
-  unsigned Size(void) const;
-  bool IsEmpty(void) const;
-  Page<KeyType, DataType, order>* GetListHead(void) const;
-  DataType GetDataHead(void) const;
-  void PrintLeaves(void);
+  void Clear();
+  unsigned Size() const;
+  bool IsEmpty() const;
+  Page<KeyType, DataType, order>* GetListHead() const;
+  DataType GetDataHead() const;
+  void PrintLeaves();
   void ForEachLeaf(
       void (*func)(Page<KeyType, DataType, order>* leaf, int index));
   void ForEachData(void (*func)(DataType input, int index));
-  void PrintGraph(void);
+  void PrintGraph();
 
  protected:
   void ValidateTreeRecursive(Page<KeyType, DataType, order>* cur);
@@ -104,7 +104,7 @@ class RAK_DLL_EXPORT BPlusTree {
       const int index,
       Page<KeyType, DataType, order>* cur);
   static void PrintLeaf(Page<KeyType, DataType, order>* leaf, int index);
-  void FreePages(void);
+  void FreePages();
   bool GetIndexOf(
       const KeyType key,
       Page<KeyType, DataType, order>* page,
@@ -853,7 +853,7 @@ void BPlusTree<KeyType, DataType, order>::ShiftKeysLeft(
     cur->keys[i] = cur->keys[i + 1];
 }
 template <class KeyType, class DataType, int order>
-void BPlusTree<KeyType, DataType, order>::Clear(void) {
+void BPlusTree<KeyType, DataType, order>::Clear() {
   if (root) {
     FreePages();
     leftmostLeaf = 0;
@@ -862,7 +862,7 @@ void BPlusTree<KeyType, DataType, order>::Clear(void) {
   pagePool.Clear(_FILE_AND_LINE_);
 }
 template <class KeyType, class DataType, int order>
-unsigned BPlusTree<KeyType, DataType, order>::Size(void) const {
+unsigned BPlusTree<KeyType, DataType, order>::Size() const {
   unsigned int count = 0;
   DataStructures::Page<KeyType, DataType, order>* cur = GetListHead();
   while (cur) {
@@ -872,7 +872,7 @@ unsigned BPlusTree<KeyType, DataType, order>::Size(void) const {
   return count;
 }
 template <class KeyType, class DataType, int order>
-bool BPlusTree<KeyType, DataType, order>::IsEmpty(void) const {
+bool BPlusTree<KeyType, DataType, order>::IsEmpty() const {
   return root == 0;
 }
 template <class KeyType, class DataType, int order>
@@ -908,7 +908,7 @@ bool BPlusTree<KeyType, DataType, order>::GetIndexOf(
   }
 }
 template <class KeyType, class DataType, int order>
-void BPlusTree<KeyType, DataType, order>::FreePages(void) {
+void BPlusTree<KeyType, DataType, order>::FreePages() {
   DataStructures::Queue<DataStructures::Page<KeyType, DataType, order>*> queue;
   DataStructures::Page<KeyType, DataType, order>* ptr;
   int i;
@@ -925,11 +925,11 @@ void BPlusTree<KeyType, DataType, order>::FreePages(void) {
 }
 template <class KeyType, class DataType, int order>
 Page<KeyType, DataType, order>*
-BPlusTree<KeyType, DataType, order>::GetListHead(void) const {
+BPlusTree<KeyType, DataType, order>::GetListHead() const {
   return leftmostLeaf;
 }
 template <class KeyType, class DataType, int order>
-DataType BPlusTree<KeyType, DataType, order>::GetDataHead(void) const {
+DataType BPlusTree<KeyType, DataType, order>::GetDataHead() const {
   return leftmostLeaf->data[0];
 }
 template <class KeyType, class DataType, int order>
@@ -963,7 +963,7 @@ void BPlusTree<KeyType, DataType, order>::PrintLeaf(
     RAKNET_DEBUG_PRINTF(" %i. %i\n", i + 1, leaf->data[i]);
 }
 template <class KeyType, class DataType, int order>
-void BPlusTree<KeyType, DataType, order>::PrintLeaves(void) {
+void BPlusTree<KeyType, DataType, order>::PrintLeaves() {
   ForEachLeaf(PrintLeaf);
 }
 
@@ -984,7 +984,7 @@ void BPlusTree<KeyType, DataType, order>::ValidateTreeRecursive(
 }
 
 template <class KeyType, class DataType, int order>
-void BPlusTree<KeyType, DataType, order>::PrintGraph(void) {
+void BPlusTree<KeyType, DataType, order>::PrintGraph() {
   DataStructures::Queue<DataStructures::Page<KeyType, DataType, order>*> queue;
   queue.Push(root, _FILE_AND_LINE_);
   queue.Push(0, _FILE_AND_LINE_);

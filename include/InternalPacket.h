@@ -28,18 +28,18 @@
 
 namespace RakNet {
 
-typedef uint16_t SplitPacketIdType;
-typedef uint32_t SplitPacketIndexType;
+using SplitPacketIdType = uint16_t;
+using SplitPacketIndexType = uint32_t;
 
 /// This is the counter used for holding packet numbers, so we can detect duplicate packets.  It should be large enough that if the variables
 /// Internally assumed to be 4 bytes, but written as 3 bytes in ReliabilityLayer::WriteToBitStreamFromInternalPacket
-typedef uint24_t MessageNumberType;
+using MessageNumberType = uint24_t;
 
 /// This is the counter used for holding ordered packet numbers, so we can detect out-of-order packets.  It should be large enough that if the variables
 /// were to wrap, the newly wrapped values would no longer be in use.  Warning: Too large of a value wastes bandwidth!
-typedef MessageNumberType OrderingIndexType;
+using OrderingIndexType = MessageNumberType;
 
-typedef RakNet::TimeUS RemoteSystemTimeType;
+using RemoteSystemTimeType = RakNet::TimeUS;
 
 struct InternalPacketFixedSizeTransmissionHeader {
   /// A unique numerical identifier given to this user message. Used to identify reliable messages on the network

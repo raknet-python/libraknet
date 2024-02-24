@@ -18,7 +18,7 @@
 #ifndef __PACKET_FILE_LOGGER_H_
 #define __PACKET_FILE_LOGGER_H_
 
-#include <stdio.h>
+#include <cstdio>
 #include "PacketLogger.h"
 
 namespace RakNet {
@@ -28,9 +28,9 @@ namespace RakNet {
 class RAK_DLL_EXPORT PacketFileLogger : public PacketLogger {
  public:
   PacketFileLogger();
-  virtual ~PacketFileLogger();
+  ~PacketFileLogger() override;
   void StartLog(const char* filenamePrefix);
-  virtual void WriteLog(const char* str);
+  void WriteLog(const char* str) override;
 
  protected:
   FILE* packetLogFile;

@@ -30,10 +30,10 @@ class RAK_DLL_EXPORT RakNetRandomSync {
   virtual ~RakNetRandomSync();
   void SeedMT(uint32_t _seed);
   void SeedMT(uint32_t _seed, uint32_t skipValues);
-  float FrandomMT(void);
-  unsigned int RandomMT(void);
-  uint32_t GetSeed(void) const;
-  uint32_t GetCallCount(void) const;
+  float FrandomMT();
+  unsigned int RandomMT();
+  uint32_t GetSeed() const;
+  uint32_t GetCallCount() const;
   void SetCallCount(uint32_t i);
 
   virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream);

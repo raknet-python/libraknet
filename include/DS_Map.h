@@ -46,7 +46,7 @@ template <
         defaultMapKeyComparison<key_type>>
 class RAK_DLL_EXPORT Map {
  public:
-  static void IMPLEMENT_DEFAULT_COMPARISON(void) {
+  static void IMPLEMENT_DEFAULT_COMPARISON() {
     DataStructures::defaultMapKeyComparison<key_type>(key_type(), key_type());
   }
 
@@ -95,8 +95,8 @@ class RAK_DLL_EXPORT Map {
   key_type GetKeyAtIndex(const unsigned int position) const;
   unsigned GetIndexAtKey(const key_type& key);
   void RemoveAtIndex(const unsigned index);
-  void Clear(void);
-  unsigned Size(void) const;
+  void Clear();
+  unsigned Size() const;
 
  protected:
   DataStructures::OrderedList<key_type, MapNode, &Map::NodeComparisonFunc>
@@ -325,7 +325,7 @@ template <
     class key_type,
     class data_type,
     int (*key_comparison_func)(const key_type&, const key_type&)>
-void Map<key_type, data_type, key_comparison_func>::Clear(void) {
+void Map<key_type, data_type, key_comparison_func>::Clear() {
   lastSearchIndexValid = false;
   mapNodeList.Clear(false, _FILE_AND_LINE_);
 }
@@ -352,7 +352,7 @@ template <
     class key_type,
     class data_type,
     int (*key_comparison_func)(const key_type&, const key_type&)>
-unsigned Map<key_type, data_type, key_comparison_func>::Size(void) const {
+unsigned Map<key_type, data_type, key_comparison_func>::Size() const {
   return mapNodeList.Size();
 }
 

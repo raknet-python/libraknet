@@ -16,7 +16,7 @@
 
 #ifndef __APPLE__
 // Use stdlib and not malloc for compatibility
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 #include "Export.h"
 #include "RakAssert.h"
@@ -53,19 +53,19 @@ class RAK_DLL_EXPORT MemoryPool {
   void Release(MemoryBlockType* m, const char* file, unsigned int line);
   void Clear(const char* file, unsigned int line);
 
-  int GetAvailablePagesSize(void) const {
+  int GetAvailablePagesSize() const {
     return availablePagesSize;
   }
-  int GetUnavailablePagesSize(void) const {
+  int GetUnavailablePagesSize() const {
     return unavailablePagesSize;
   }
-  int GetMemoryPoolPageSize(void) const {
+  int GetMemoryPoolPageSize() const {
     return memoryPoolPageSize;
   }
 
  protected:
-  int BlocksPerPage(void) const;
-  void AllocateFirst(void);
+  int BlocksPerPage() const;
+  void AllocateFirst();
   bool InitPage(Page* page, Page* prev, const char* file, unsigned int line);
 
   // availablePages contains pages which have room to give the user new blocks.  We return these blocks from the head of the list
@@ -254,7 +254,7 @@ void MemoryPool<MemoryBlockType>::Clear(const char* file, unsigned int line) {
 #endif
 }
 template <class MemoryBlockType>
-int MemoryPool<MemoryBlockType>::BlocksPerPage(void) const {
+int MemoryPool<MemoryBlockType>::BlocksPerPage() const {
   return memoryPoolPageSize / sizeof(MemoryWithPage);
 }
 template <class MemoryBlockType>

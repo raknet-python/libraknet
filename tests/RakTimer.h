@@ -16,9 +16,9 @@
 using namespace RakNet;
 class RakTimer {
  public:
-  RakTimer(void);
+  RakTimer();
   RakTimer(int lengthInMilliseconds);
-  ~RakTimer(void);
+  ~RakTimer();
   void SetTimerLength(int lengthInMilliseconds);
   void Start();
   void Pause();

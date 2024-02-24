@@ -76,7 +76,7 @@ class GridSectorizer {
       const float maxX,
       const float maxY);
 
-  void Clear(void);
+  void Clear();
 
  protected:
   int WorldToCellX(const float input) const;

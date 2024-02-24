@@ -27,9 +27,9 @@ typedef unsigned int socklen_t;
 // WinRT: http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets
 // Sample code: http://stackoverflow.com/questions/10290945/correct-use-of-udp-datagramsocket
 #include <winsock2.h>
-typedef SOCKET __UDPSOCKET__;
-typedef SOCKET __TCPSOCKET__;
-typedef int socklen_t;
+using __UDPSOCKET__ = SOCKET;
+using __TCPSOCKET__ = SOCKET;
+using socklen_t = int;
 #else
 #define closesocket close
 #include <arpa/inet.h>

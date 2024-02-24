@@ -60,7 +60,7 @@ class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2,
   NatTypeDetectionServer();
 
   // Destructor
-  virtual ~NatTypeDetectionServer();
+  ~NatTypeDetectionServer() override;
 
   /// Start the system, binding to 3 external IPs not already in useS
   /// \param[in] nonRakNetIP2 First unused external IP
@@ -77,17 +77,17 @@ class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2,
   );
 
   // Releases the sockets created in Startup();
-  void Shutdown(void);
+  void Shutdown();
 
   /// \internal For plugin handling
-  virtual void Update(void);
+  void Update() override;
 
   /// \internal For plugin handling
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
+      PI2_LostConnectionReason lostConnectionReason) override;
 
   enum NATDetectionState {
     STATE_NONE,
@@ -111,12 +111,13 @@ class RAK_DLL_EXPORT NatTypeDetectionServer : public PluginInterface2,
     RakNetGUID guid;
   };
 
-  virtual void OnRNS2Recv(RNS2RecvStruct* recvStruct);
-  virtual void
-  DeallocRNS2RecvStruct(RNS2RecvStruct* s, const char* file, unsigned int line);
-  virtual RNS2RecvStruct* AllocRNS2RecvStruct(
+  void OnRNS2Recv(RNS2RecvStruct* recvStruct) override;
+  void DeallocRNS2RecvStruct(
+      RNS2RecvStruct* s,
       const char* file,
-      unsigned int line);
+      unsigned int line) override;
+  RNS2RecvStruct* AllocRNS2RecvStruct(const char* file, unsigned int line)
+      override;
 
  protected:
   DataStructures::Queue<RNS2RecvStruct*> bufferedPackets;

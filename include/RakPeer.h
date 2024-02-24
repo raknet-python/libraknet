@@ -63,7 +63,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   RakPeer();
 
   ///Destructor
-  virtual ~RakPeer();
+  ~RakPeer() override;
 
   // --------------------------------------------------------------------------------------------Major Low Level Functions - Functions needed by most users--------------------------------------------------------------------------------------------
   /// \brief Starts the network threads and opens the listen port.
@@ -81,7 +81,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       unsigned int maxConnections,
       SocketDescriptor* socketDescriptors,
       unsigned socketDescriptorCount,
-      int threadPriority = -99999);
+      int threadPriority = -99999) override;
 
   /// If you accept connections, you must call this or else security will not be enabled for incoming connections.
   /// This feature requires more round trips, bandwidth, and CPU time for the connection handshake
@@ -95,27 +95,27 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   bool InitializeSecurity(
       const char* publicKey,
       const char* privateKey,
-      bool bRequireClientKey = false);
+      bool bRequireClientKey = false) override;
 
   /// Disables security for incoming connections.
   /// \note Must be called while offline
-  void DisableSecurity(void);
+  void DisableSecurity() override;
 
   /// \brief This is useful if you have a fixed-address internal server behind a LAN.
   ///
   ///  Secure connections are determined by the recipient of an incoming connection. This has no effect if called on the system attempting to connect.
   /// \note If secure connections are on, do not use secure connections for a specific IP address.
   /// \param[in] ip IP address to add. * wildcards are supported.
-  void AddToSecurityExceptionList(const char* ip);
+  void AddToSecurityExceptionList(const char* ip) override;
 
   /// \brief Remove a specific connection previously added via AddToSecurityExceptionList.
   /// \param[in] ip IP address to remove. Pass 0 to remove all IP addresses. * wildcards are supported.
-  void RemoveFromSecurityExceptionList(const char* ip);
+  void RemoveFromSecurityExceptionList(const char* ip) override;
 
   /// \brief Checks to see if a given IP is in the security exception list.
   /// \param[in] IP address to check.
   /// \return True if the IP address is found in security exception list, else returns false.
-  bool IsInSecurityExceptionList(const char* ip);
+  bool IsInSecurityExceptionList(const char* ip) override;
 
   /// \brief Sets the maximum number of incoming connections allowed.
   /// \details If the number of incoming connections is less than the number of players currently connected,
@@ -124,15 +124,15 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   ///
   /// Defaults to 0, meaning by default, nobody can connect to you
   /// \param[in] numberAllowed Maximum number of incoming connections allowed.
-  void SetMaximumIncomingConnections(unsigned short numberAllowed);
+  void SetMaximumIncomingConnections(unsigned short numberAllowed) override;
 
   /// \brief Returns the value passed to SetMaximumIncomingConnections().
   /// \return Maximum number of incoming connections, which is always <= maxConnections
-  unsigned int GetMaximumIncomingConnections(void) const;
+  unsigned int GetMaximumIncomingConnections() const override;
 
   /// \brief Returns how many open connections exist at this time.
   /// \return Number of open connections.
-  unsigned short NumberOfConnections(void) const;
+  unsigned short NumberOfConnections() const override;
 
   /// \brief Sets the password for the incoming connections.
   /// \details  The password must match in the call to Connect (defaults to none).
@@ -140,12 +140,14 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// This is a way to set a low level password for all incoming connections.  To selectively reject connections, implement your own scheme using CloseConnection() to remove unwanted connections.
   /// \param[in] passwordData A data block that incoming connections must match.  This can be just a password, or can be a stream of data. Specify 0 for no password data
   /// \param[in] passwordDataLength The length in bytes of passwordData
-  void SetIncomingPassword(const char* passwordData, int passwordDataLength);
+  void SetIncomingPassword(const char* passwordData, int passwordDataLength)
+      override;
 
   /// \brief Gets the password passed to SetIncomingPassword
   /// \param[out] passwordData  Should point to a block large enough to hold the password data you passed to SetIncomingPassword()
   /// \param[in,out] passwordDataLength Maximum size of the passwordData array.  Modified to hold the number of bytes actually written.
-  void GetIncomingPassword(char* passwordData, int* passwordDataLength);
+  void GetIncomingPassword(char* passwordData, int* passwordDataLength)
+      override;
 
   /// \brief Connect to the specified host (ip or domain name) and server port.
   /// \details Calling Connect and not calling SetMaximumIncomingConnections acts as a dedicated client.
@@ -173,11 +175,11 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       unsigned short remotePort,
       const char* passwordData,
       int passwordDataLength,
-      PublicKey* publicKey = 0,
+      PublicKey* publicKey = nullptr,
       unsigned connectionSocketIndex = 0,
       unsigned sendConnectionAttemptCount = 6,
       unsigned timeBetweenSendConnectionAttemptsMS = 1000,
-      RakNet::TimeMS timeoutTime = 0);
+      RakNet::TimeMS timeoutTime = 0) override;
 
   /// \brief Connect to the specified host (ip or domain name) and server port.
   /// \param[in] host Either a dotted IP address or a domain name.
@@ -190,16 +192,16 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \param[in] timeoutTime Time to elapse before dropping the connection if a reliable message could not be sent. 0 to use the default from SetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
   /// \return CONNECTION_ATTEMPT_STARTED on successful initiation. Otherwise, an appropriate enumeration indicating failure.
   /// \note CONNECTION_ATTEMPT_STARTED does not mean you are already connected!
-  virtual ConnectionAttemptResult ConnectWithSocket(
+  ConnectionAttemptResult ConnectWithSocket(
       const char* host,
       unsigned short remotePort,
       const char* passwordData,
       int passwordDataLength,
       RakNetSocket2* socket,
-      PublicKey* publicKey = 0,
+      PublicKey* publicKey = nullptr,
       unsigned sendConnectionAttemptCount = 6,
       unsigned timeBetweenSendConnectionAttemptsMS = 1000,
-      RakNet::TimeMS timeoutTime = 0);
+      RakNet::TimeMS timeoutTime = 0) override;
 
   /* /// \brief Connect to the specified network ID (Platform specific console function)
 	/// \details Does built-in NAT traversal
@@ -216,28 +218,28 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   void Shutdown(
       unsigned int blockDuration,
       unsigned char orderingChannel = 0,
-      PacketPriority disconnectionNotificationPriority = LOW_PRIORITY);
+      PacketPriority disconnectionNotificationPriority = LOW_PRIORITY) override;
 
   /// \brief Returns true if the network thread is running.
   /// \return True if the network thread is running, False otherwise
-  bool IsActive(void) const;
+  bool IsActive() const override;
 
   /// \brief Fills the array remoteSystems with the SystemAddress of all the systems we are connected to.
   /// \param[out] remoteSystems An array of SystemAddress structures, to be filled with the SystemAddresss of the systems we are connected to. Pass 0 to remoteSystems to get the number of systems we are connected to.
   /// \param[in, out] numberOfSystems As input, the size of remoteSystems array.  As output, the number of elements put into the array.
   bool GetConnectionList(
       SystemAddress* remoteSystems,
-      unsigned short* numberOfSystems) const;
+      unsigned short* numberOfSystems) const override;
 
   /// Returns the next uint32_t that Send() will return
   /// \note If using RakPeer from multiple threads, this may not be accurate for your thread. Use IncrementNextSendReceipt() in that case.
   /// \return The next uint32_t that Send() or SendList will return
-  virtual uint32_t GetNextSendReceipt(void);
+  uint32_t GetNextSendReceipt() override;
 
   /// Returns the next uint32_t that Send() will return, and increments the value by one
   /// \note If using RakPeer from multiple threads, pass this to forceReceipt in the send function
   /// \return The next uint32_t that Send() or SendList will return
-  virtual uint32_t IncrementNextSendReceipt(void);
+  uint32_t IncrementNextSendReceipt() override;
 
   /// \brief Sends a block of data to the specified system that you are connected to.
   /// \note This function only works while connected.
@@ -259,7 +261,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       char orderingChannel,
       const AddressOrGUID systemIdentifier,
       bool broadcast,
-      uint32_t forceReceiptNumber = 0);
+      uint32_t forceReceiptNumber = 0) override;
 
   /// \brief "Send" to yourself rather than a remote system.
   /// \details The message will be processed through the plugins and returned to the game as usual.
@@ -267,7 +269,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \note The first byte should be a message identifier starting at ID_USER_PACKET_ENUM
   /// \param[in] data Block of data to send.
   /// \param[in] length Size in bytes of the data to send.
-  void SendLoopback(const char* data, const int length);
+  void SendLoopback(const char* data, const int length) override;
 
   /// \brief Sends a block of data to the specified system that you are connected to.
   ///
@@ -288,7 +290,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       char orderingChannel,
       const AddressOrGUID systemIdentifier,
       bool broadcast,
-      uint32_t forceReceiptNumber = 0);
+      uint32_t forceReceiptNumber = 0) override;
 
   /// \brief Sends multiple blocks of data, concatenating them automatically.
   ///
@@ -319,7 +321,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       char orderingChannel,
       const AddressOrGUID systemIdentifier,
       bool broadcast,
-      uint32_t forceReceiptNumber = 0);
+      uint32_t forceReceiptNumber = 0) override;
 
   /// \brief Gets a message from the incoming message queue.
   /// \details Use DeallocatePacket() to deallocate the message after you are done with it.
@@ -327,15 +329,15 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \return 0 if no packets are waiting to be handled, otherwise a pointer to a packet.
   /// \note COMMON MISTAKE: Be sure to call this in a loop, once per game tick, until it returns 0. If you only process one packet per game tick they will buffer up.
   /// \sa RakNetTypes.h contains struct Packet.
-  Packet* Receive(void);
+  Packet* Receive() override;
 
   /// \brief Call this to deallocate a message returned by Receive() when you are done handling it.
   /// \param[in] packet Message to deallocate.
-  void DeallocatePacket(Packet* packet);
+  void DeallocatePacket(Packet* packet) override;
 
   /// \brief Return the total number of connections we are allowed.
   /// \return Total number of connections allowed.
-  unsigned int GetMaximumNumberOfPeers(void) const;
+  unsigned int GetMaximumNumberOfPeers() const override;
 
   // -------------------------------------------------------------------------------------------- Connection Management Functions--------------------------------------------------------------------------------------------
   /// \brief Close the connection to another host (if we initiated the connection it will disconnect, if they did it will kick them out).
@@ -348,36 +350,38 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       const AddressOrGUID target,
       bool sendDisconnectionNotification,
       unsigned char orderingChannel = 0,
-      PacketPriority disconnectionNotificationPriority = LOW_PRIORITY);
+      PacketPriority disconnectionNotificationPriority = LOW_PRIORITY) override;
 
   /// \brief Cancel a pending connection attempt.
   /// \details If we are already connected, the connection stays open
   /// \param[in] target Target system to cancel.
-  void CancelConnectionAttempt(const SystemAddress target);
+  void CancelConnectionAttempt(const SystemAddress target) override;
   /// Returns if a system is connected, disconnected, connecting in progress, or various other states
   /// \param[in] systemIdentifier The system we are referring to
   /// \note This locks a mutex, do not call too frequently during connection attempts or the attempt will take longer and possibly even timeout
   /// \return What state the remote system is in
-  ConnectionState GetConnectionState(const AddressOrGUID systemIdentifier);
+  ConnectionState GetConnectionState(
+      const AddressOrGUID systemIdentifier) override;
 
   /// \brief Given \a systemAddress, returns its index into remoteSystemList.
   /// \details Values range from 0 to the maximum number of players allowed - 1.
   /// This includes systems which were formerly connected, but are now not connected.
   /// \param[in] systemAddress The SystemAddress we are referring to
   /// \return The index of this SystemAddress or -1 on system not found.
-  int GetIndexFromSystemAddress(const SystemAddress systemAddress) const;
+  int GetIndexFromSystemAddress(
+      const SystemAddress systemAddress) const override;
 
   /// \brief Given \a index into remoteSystemList, will return a SystemAddress.
   /// This function is only useful for looping through all systems.
   ///
   /// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
   /// \return The SystemAddress structure corresponding to \a index in remoteSystemList.
-  SystemAddress GetSystemAddressFromIndex(unsigned int index);
+  SystemAddress GetSystemAddressFromIndex(unsigned int index) override;
 
   /// \brief Same as GetSystemAddressFromIndex but returns RakNetGUID
   /// \param[in] index Index should range between 0 and the maximum number of players allowed - 1.
   /// \return The RakNetGUID
-  RakNetGUID GetGUIDFromIndex(unsigned int index);
+  RakNetGUID GetGUIDFromIndex(unsigned int index) override;
 
   /// \brief Same as calling GetSystemAddressFromIndex and GetGUIDFromIndex for all systems, but more efficient
   /// Indices match each other, so \a addresses[0] and \a guids[0] refer to the same system
@@ -385,36 +389,36 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \param[out] guids All guids. Size of the list is the number of connections. Size of the list will match the size of the \a addresses list.
   void GetSystemList(
       DataStructures::List<SystemAddress>& addresses,
-      DataStructures::List<RakNetGUID>& guids) const;
+      DataStructures::List<RakNetGUID>& guids) const override;
 
   /// \brief Bans an IP from connecting.
   /// \details Banned IPs persist between connections but are not saved on shutdown nor loaded on startup.
   /// \param[in] IP Dotted IP address. You can use * for a wildcard address, such as 128.0.0. * will ban all IP addresses starting with 128.0.0.
   /// \param[in] milliseconds Gives time in milli seconds for a temporary ban of the IP address.  Use 0 for a permanent ban.
-  void AddToBanList(const char* IP, RakNet::TimeMS milliseconds = 0);
+  void AddToBanList(const char* IP, RakNet::TimeMS milliseconds = 0) override;
 
   /// \brief Allows a previously banned IP to connect.
   /// param[in] Dotted IP address. You can use * as a wildcard. An IP such as 128.0.0.* will ban all IP addresses starting with 128.0.0.
-  void RemoveFromBanList(const char* IP);
+  void RemoveFromBanList(const char* IP) override;
 
   /// \brief Allows all previously banned IPs to connect.
-  void ClearBanList(void);
+  void ClearBanList() override;
 
   /// \brief Returns true or false indicating if a particular IP is banned.
   /// \param[in] IP Dotted IP address.
   /// \return True if IP matches any IPs in the ban list, accounting for any wildcards. False otherwise.
-  bool IsBanned(const char* IP);
+  bool IsBanned(const char* IP) override;
 
   /// \brief Enable or disable allowing frequent connections from the same IP adderss
   /// \details This is a security measure which is disabled by default, but can be set to true to prevent attackers from using up all connection slots.
   /// \param[in] b True to limit connections from the same ip to at most 1 per 100 milliseconds.
-  void SetLimitIPConnectionFrequency(bool b);
+  void SetLimitIPConnectionFrequency(bool b) override;
 
   // --------------------------------------------------------------------------------------------Pinging Functions - Functions dealing with the automatic ping mechanism--------------------------------------------------------------------------------------------
   /// Send a ping to the specified connected system.
   /// \pre The sender and recipient must already be started via a successful call to Startup()
   /// \param[in] target Which system to ping
-  void Ping(const SystemAddress target);
+  void Ping(const SystemAddress target) override;
 
   /// \brief Send a ping to the specified unconnected system.
   /// \details The remote system, if it is Initialized, will respond with ID_PONG followed by sizeof(RakNet::TimeMS) containing the system time the ping was sent. Default is 4 bytes - See __GET_TIME_64BIT in RakNetTypes.h
@@ -428,34 +432,35 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       const char* host,
       unsigned short remotePort,
       bool onlyReplyOnAcceptingConnections,
-      unsigned connectionSocketIndex = 0);
+      unsigned connectionSocketIndex = 0) override;
 
   /// \brief Returns the average of all ping times read for the specific system or -1 if none read yet
   /// \param[in] systemAddress Which system we are referring to
   /// \return The ping time for this system, or -1
-  int GetAveragePing(const AddressOrGUID systemIdentifier);
+  int GetAveragePing(const AddressOrGUID systemIdentifier) override;
 
   /// \brief Returns the last ping time read for the specific system or -1 if none read yet.
   /// \param[in] systemAddress Which system we are referring to
   /// \return The last ping time for this system, or -1.
-  int GetLastPing(const AddressOrGUID systemIdentifier) const;
+  int GetLastPing(const AddressOrGUID systemIdentifier) const override;
 
   /// \brief Returns the lowest ping time read or -1 if none read yet.
   /// \param[in] systemIdentifier Which system we are referring to
   /// \return The lowest ping time for this system, or -1.
-  int GetLowestPing(const AddressOrGUID systemIdentifier) const;
+  int GetLowestPing(const AddressOrGUID systemIdentifier) const override;
 
   /// Ping the remote systems every so often, or not. Can be called anytime.
   /// By default this is true. Recommended to leave on, because congestion control uses it to determine how often to resend lost packets.
   /// It would be true by default to prevent timestamp drift, since in the event of a clock spike, the timestamp deltas would no longer be accurate
   /// \param[in] doPing True to start occasional pings.  False to stop them.
-  void SetOccasionalPing(bool doPing);
+  void SetOccasionalPing(bool doPing) override;
 
   /// Return the clock difference between your system and the specified system
   /// Subtract GetClockDifferential() from a time returned by the remote system to get that time relative to your own system
   /// Returns 0 if the system is unknown
   /// \param[in] systemIdentifier Which system we are referring to
-  RakNet::Time GetClockDifferential(const AddressOrGUID systemIdentifier);
+  RakNet::Time GetClockDifferential(
+      const AddressOrGUID systemIdentifier) override;
 
   // --------------------------------------------------------------------------------------------Static Data Functions - Functions dealing with API defined synchronized memory--------------------------------------------------------------------------------------------
   /// \brief Sets the data to send along with a LAN server discovery or offline ping reply.
@@ -463,13 +468,14 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \param[in] length Length of the data in bytes, or 0 for none
   /// \note \a length should be under 400 bytes, as a security measure against flood attacks
   /// \sa Ping.cpp
-  void SetOfflinePingResponse(const char* data, const unsigned int length);
+  void SetOfflinePingResponse(const char* data, const unsigned int length)
+      override;
 
   /// \brief Returns pointers to a copy of the \a data passed to SetOfflinePingResponse.
   /// \param[out] data A pointer to a copy of the data passed to SetOfflinePingResponse()
   /// \param[out] length A pointer filled in with the length parameter passed to SetOfflinePingResponse()
   /// \sa SetOfflinePingResponse
-  void GetOfflinePingResponse(char** data, unsigned int* length);
+  void GetOfflinePingResponse(char** data, unsigned int* length) override;
 
   //--------------------------------------------------------------------------------------------Network Functions - Functions dealing with the network in general--------------------------------------------------------------------------------------------
   /// \brief Returns the unique address identifier that represents you or another system on the the network
@@ -479,22 +485,22 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \return Identifier of your system internally, which may not be how other systems see if you if you are behind a NAT or proxy.
   SystemAddress GetInternalID(
       const SystemAddress systemAddress = UNASSIGNED_SYSTEM_ADDRESS,
-      const int index = 0) const;
+      const int index = 0) const override;
 
   /// \brief Sets your internal IP address, for platforms that do not support reading it, or to override a value
   /// \param[in] systemAddress. The address to set. Use SystemAddress::FromString() if you want to use a dotted string
   /// \param[in] index When you have multiple internal IDs, which index to set?
-  void SetInternalID(SystemAddress systemAddress, int index = 0);
+  void SetInternalID(SystemAddress systemAddress, int index = 0) override;
 
   /// \brief Returns the unique address identifier that represents the target on the the network and is based on the target's external IP / port.
   /// \param[in] target The SystemAddress of the remote system. Usually the same for all systems, unless you have two or more network cards.
-  SystemAddress GetExternalID(const SystemAddress target) const;
+  SystemAddress GetExternalID(const SystemAddress target) const override;
 
   /// Return my own GUID
-  const RakNetGUID GetMyGUID(void) const;
+  const RakNetGUID GetMyGUID() const override;
 
   /// Return the address bound to a socket at the specified index
-  SystemAddress GetMyBoundAddress(const int socketIndex = 0);
+  SystemAddress GetMyBoundAddress(const int socketIndex = 0) override;
 
   /// \brief  Given a connected system address, this method gives the unique GUID representing that instance of RakPeer.
   /// This will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
@@ -502,14 +508,15 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// If \a input is UNASSIGNED_SYSTEM_ADDRESS, will return your own GUID
   /// \pre Call Startup() first, or the function will return UNASSIGNED_RAKNET_GUID
   /// \param[in] input The system address of the target system we are connected to.
-  const RakNetGUID& GetGuidFromSystemAddress(const SystemAddress input) const;
+  const RakNetGUID& GetGuidFromSystemAddress(
+      const SystemAddress input) const override;
 
   /// \brief Gives the system address of a connected system, given its GUID.
   /// The GUID will be the same on all systems connected to that instance of RakPeer, even if the external system addresses are different.
   /// Currently O(log(n)), but this may be improved in the future
   /// If \a input is UNASSIGNED_RAKNET_GUID, UNASSIGNED_SYSTEM_ADDRESS is returned.
   /// \param[in] input The RakNetGUID of the target system.
-  SystemAddress GetSystemAddressFromGuid(const RakNetGUID input) const;
+  SystemAddress GetSystemAddressFromGuid(const RakNetGUID input) const override;
 
   /// Given the SystemAddress of a connected system, get the public key they provided as an identity
   /// Returns false if system address was not found or client public key is not known
@@ -517,7 +524,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \param[in] client_public_key The connected client's public key is copied to this address.  Buffer must be cat::EasyHandshake::PUBLIC_KEY_BYTES bytes in length.
   bool GetClientPublicKeyFromSystemAddress(
       const SystemAddress input,
-      char* client_public_key) const;
+      char* client_public_key) const override;
 
   /// \brief Set the time, in MS, to use before considering ourselves disconnected after not being able to deliver a reliable message.
 
@@ -526,37 +533,38 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// Do not set different values for different computers that are connected to each other, or you won't be able to reconnect after ID_CONNECTION_LOST
   /// \param[in] timeMS Time, in MS
   /// \param[in] target SystemAddress structure of the target system. Pass UNASSIGNED_SYSTEM_ADDRESS for all systems.
-  void SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target);
+  void SetTimeoutTime(RakNet::TimeMS timeMS, const SystemAddress target)
+      override;
 
   /// \brief Returns the Timeout time for the given system.
   /// \param[in] target Target system to get the TimeoutTime for. Pass UNASSIGNED_SYSTEM_ADDRESS to get the default value.
   /// \return Timeout time for a given system.
-  RakNet::TimeMS GetTimeoutTime(const SystemAddress target);
+  RakNet::TimeMS GetTimeoutTime(const SystemAddress target) override;
 
   /// \brief Returns the current MTU size
   /// \param[in] target Which system to get MTU for.  UNASSIGNED_SYSTEM_ADDRESS to get the default
   /// \return The current MTU size of the target system.
-  int GetMTUSize(const SystemAddress target) const;
+  int GetMTUSize(const SystemAddress target) const override;
 
   /// \brief Returns the number of IP addresses this system has internally.
   /// \details Get the actual addresses from GetLocalIP()
-  unsigned GetNumberOfAddresses(void);
+  unsigned GetNumberOfAddresses() override;
 
   /// Returns an IP address at index 0 to GetNumberOfAddresses-1 in ipList array.
   /// \param[in] index index into the list of IP addresses
   /// \return The local IP address at this index
-  const char* GetLocalIP(unsigned int index);
+  const char* GetLocalIP(unsigned int index) override;
 
   /// Is this a local IP?
   /// Checks if this ip is in the ipList array.
   /// \param[in] An IP address to check, excluding the port.
   /// \return True if this is one of the IP addresses returned by GetLocalIP
-  bool IsLocalIP(const char* ip);
+  bool IsLocalIP(const char* ip) override;
 
   /// \brief Allow or disallow connection responses from any IP.
   /// \details Normally this should be false, but may be necessary when connecting to servers with multiple IP addresses.
   /// \param[in] allow - True to allow this behavior, false to not allow. Defaults to false. Value persists between connections.
-  void AllowConnectionResponseIPMigration(bool allow);
+  void AllowConnectionResponseIPMigration(bool allow) override;
 
   /// \brief Sends a one byte message ID_ADVERTISE_SYSTEM to the remote unconnected system.
   /// This will send our external IP outside the LAN along with some user data to the remote system.
@@ -572,24 +580,24 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       unsigned short remotePort,
       const char* data,
       int dataLength,
-      unsigned connectionSocketIndex = 0);
+      unsigned connectionSocketIndex = 0) override;
 
   /// \brief Controls how often to return ID_DOWNLOAD_PROGRESS for large message downloads.
   /// \details ID_DOWNLOAD_PROGRESS is returned to indicate a new partial message chunk, roughly the MTU size, has arrived.
   /// As it can be slow or cumbersome to get this notification for every chunk, you can set the interval at which it is returned.
   /// Defaults to 0 (never return this notification).
   /// \param[in] interval How many messages to use as an interval before a download progress notification is returned.
-  void SetSplitMessageProgressInterval(int interval);
+  void SetSplitMessageProgressInterval(int interval) override;
 
   /// \brief Returns what was passed to SetSplitMessageProgressInterval().
   /// \return Number of messages to be recieved before a download progress notification is returned. Default to 0.
-  int GetSplitMessageProgressInterval(void) const;
+  int GetSplitMessageProgressInterval() const override;
 
   /// \brief Set how long to wait before giving up on sending an unreliable message.
   /// Useful if the network is clogged up.
   /// Set to 0 or less to never timeout.  Defaults to 0.
   /// \param[in] timeoutMS How many ms to wait before simply not sending an unreliable message.
-  void SetUnreliableTimeout(RakNet::TimeMS timeoutMS);
+  void SetUnreliableTimeout(RakNet::TimeMS timeoutMS) override;
 
   /// \brief Send a message to a host, with the IP socket option TTL set to 3.
   /// \details This message will not reach the host, but will open the router.
@@ -602,68 +610,69 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       const char* host,
       unsigned short remotePort,
       int ttl,
-      unsigned connectionSocketIndex = 0);
+      unsigned connectionSocketIndex = 0) override;
 
   // -------------------------------------------------------------------------------------------- Plugin Functions--------------------------------------------------------------------------------------------
   /// \brief Attaches a Plugin interface to an instance of the base class (RakPeer or PacketizedTCP) to run code automatically on message receipt in the Receive call.
   /// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
   /// \param[in] messageHandler Pointer to the plugin to attach.
-  void AttachPlugin(PluginInterface2* plugin);
+  void AttachPlugin(PluginInterface2* plugin) override;
 
   /// \brief Detaches a Plugin interface from the instance of the base class (RakPeer or PacketizedTCP) it is attached to.
   ///	\details This method disables the plugin code from running automatically on base class's updates or message receipt.
   /// If the plugin returns false from PluginInterface::UsesReliabilityLayer(), which is the case for all plugins except PacketLogger, you can call AttachPlugin() and DetachPlugin() for this plugin while RakPeer is active.
   /// \param[in] messageHandler Pointer to a plugin to detach.
-  void DetachPlugin(PluginInterface2* messageHandler);
+  void DetachPlugin(PluginInterface2* messageHandler) override;
 
   // --------------------------------------------------------------------------------------------Miscellaneous Functions--------------------------------------------------------------------------------------------
   /// \brief Puts a message back in the receive queue in case you don't want to deal with it immediately.
   /// \param[in] packet The pointer to the packet you want to push back.
   /// \param[in] pushAtHead True to push the packet at the start of the queue so that the next receive call returns it.  False to push it at the end of the queue.
   /// \note Setting pushAtHead to false end makes the packets out of order.
-  void PushBackPacket(Packet* packet, bool pushAtHead);
+  void PushBackPacket(Packet* packet, bool pushAtHead) override;
 
   /// \internal
   /// \brief For a given system identified by \a guid, change the SystemAddress to send to.
   /// \param[in] guid The connection we are referring to
   /// \param[in] systemAddress The new address to send to
-  void ChangeSystemAddress(RakNetGUID guid, const SystemAddress& systemAddress);
+  void ChangeSystemAddress(RakNetGUID guid, const SystemAddress& systemAddress)
+      override;
 
   /// \brief Returns a packet for you to write to if you want to create a Packet for some reason.
   /// You can add it to the receive buffer with PushBackPacket
   /// \param[in] dataSize How many bytes to allocate for the buffer
   /// \return A packet.
-  Packet* AllocatePacket(unsigned dataSize);
+  Packet* AllocatePacket(unsigned dataSize) override;
 
   /// \brief Get the socket used with a particular active connection.
   /// The smart pointer reference counts the RakNetSocket object, so the socket will remain active as long as the smart pointer does, even if RakNet were to shutdown or close the connection.
   /// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
   /// \param[in] target Which system.
   /// \return A smart pointer object containing the socket information about the target. Be sure to check IsNull() which is returned if the update thread is unresponsive, shutting down, or if this system is not connected.
-  virtual RakNetSocket2* GetSocket(const SystemAddress target);
+  RakNetSocket2* GetSocket(const SystemAddress target) override;
 
   /// \brief Gets all sockets in use.
   /// \note This sends a query to the thread and blocks on the return value for up to one second. In practice it should only take a millisecond or so.
   /// \param[out] sockets List of RakNetSocket structures in use.
-  virtual void GetSockets(DataStructures::List<RakNetSocket2*>& sockets);
-  virtual void ReleaseSockets(DataStructures::List<RakNetSocket2*>& sockets);
+  void GetSockets(DataStructures::List<RakNetSocket2*>& sockets) override;
+  void ReleaseSockets(DataStructures::List<RakNetSocket2*>& sockets) override;
 
   /// \internal
-  virtual void WriteOutOfBandHeader(RakNet::BitStream* bitStream);
+  void WriteOutOfBandHeader(RakNet::BitStream* bitStream) override;
 
   /// If you need code to run in the same thread as RakNet's update thread, this function can be used for that
   /// \param[in] _userUpdateThreadPtr C callback function
   /// \param[in] _userUpdateThreadData Passed to C callback function
-  virtual void SetUserUpdateThread(
+  void SetUserUpdateThread(
       void (*_userUpdateThreadPtr)(RakPeerInterface*, void*),
-      void* _userUpdateThreadData);
+      void* _userUpdateThreadData) override;
 
   /// Set a C callback to be called whenever a datagram arrives
   /// Return true from the callback to have RakPeer handle the datagram. Return false and RakPeer will ignore the datagram.
   /// This can be used to filter incoming datagrams by system, or to share a recvfrom socket with RakPeer
   /// RNS2RecvStruct will only remain valid for the duration of the call
-  virtual void SetIncomingDatagramEventHandler(
-      bool (*_incomingDatagramEventHandler)(RNS2RecvStruct*));
+  void SetIncomingDatagramEventHandler(
+      bool (*_incomingDatagramEventHandler)(RNS2RecvStruct*)) override;
 
   // --------------------------------------------------------------------------------------------Network Simulator Functions--------------------------------------------------------------------------------------------
   /// Adds simulated ping and packet loss to the outgoing data flow.
@@ -674,21 +683,21 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \param[in] packetloss Chance to lose a packet. Ranges from 0 to 1.
   /// \param[in] minExtraPing The minimum time to delay sends.
   /// \param[in] extraPingVariance The additional random time to delay sends.
-  virtual void ApplyNetworkSimulator(
+  void ApplyNetworkSimulator(
       float packetloss,
       unsigned short minExtraPing,
-      unsigned short extraPingVariance);
+      unsigned short extraPingVariance) override;
 
   /// Limits how much outgoing bandwidth can be sent per-connection.
   /// This limit does not apply to the sum of all connections!
   /// Exceeding the limit queues up outgoing traffic
   /// \param[in] maxBitsPerSecond Maximum bits per second to send.  Use 0 for unlimited (default). Once set, it takes effect immedately and persists until called again.
-  virtual void SetPerConnectionOutgoingBandwidthLimit(
-      unsigned maxBitsPerSecond);
+  void SetPerConnectionOutgoingBandwidthLimit(
+      unsigned maxBitsPerSecond) override;
 
   /// Returns if you previously called ApplyNetworkSimulator
   /// \return If you previously called ApplyNetworkSimulator
-  virtual bool IsNetworkSimulatorActive(void);
+  bool IsNetworkSimulatorActive() override;
 
   // --------------------------------------------------------------------------------------------Statistical Functions - Functions dealing with API performance--------------------------------------------------------------------------------------------
 
@@ -700,22 +709,22 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// \sa RakNetStatistics.h
   RakNetStatistics* GetStatistics(
       const SystemAddress systemAddress,
-      RakNetStatistics* rns = 0);
+      RakNetStatistics* rns = nullptr) override;
   /// \brief Returns the network statistics of the system at the given index in the remoteSystemList.
   ///	\return True if the index is less than the maximum number of peers allowed and the system is active. False otherwise.
-  bool GetStatistics(const unsigned int index, RakNetStatistics* rns);
+  bool GetStatistics(const unsigned int index, RakNetStatistics* rns) override;
   /// \brief Returns the list of systems, and statistics for each of those systems
   /// Each system has one entry in each of the lists, in the same order
   /// \param[out] addresses SystemAddress for each connected system
   /// \param[out] guids RakNetGUID for each connected system
   /// \param[out] statistics Calculated RakNetStatistics for each connected system
-  virtual void GetStatisticsList(
+  void GetStatisticsList(
       DataStructures::List<SystemAddress>& addresses,
       DataStructures::List<RakNetGUID>& guids,
-      DataStructures::List<RakNetStatistics>& statistics);
+      DataStructures::List<RakNetStatistics>& statistics) override;
 
   /// \Returns how many messages are waiting when you call Receive()
-  virtual unsigned int GetReceiveBufferSize(void);
+  unsigned int GetReceiveBufferSize() override;
 
   // --------------------------------------------------------------------------------------------EVERYTHING AFTER THIS COMMENT IS FOR INTERNAL USE ONLY--------------------------------------------------------------------------------------------
 
@@ -727,7 +736,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   //	+ cat::AuthenticatedEncryption::OVERHEAD_BYTES
   // #endif
   // );
-  bool RunUpdateCycle(BitStream& updateBitStream);
+  bool RunUpdateCycle(BitStream& updateBitStream) override;
 
   /// \internal
   // Call manually if RAKPEER_USER_THREADED==1 at least every 30 milliseconds.
@@ -741,7 +750,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       unsigned short remotePort,
       const char* data,
       BitSize_t dataLength,
-      unsigned connectionSocketIndex = 0);
+      unsigned connectionSocketIndex = 0) override;
 
   // static Packet *AllocPacket(unsigned dataSize, const char *file, unsigned int line);
 
@@ -875,7 +884,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       const AddressOrGUID systemIdentifier,
       bool calledFromNetworkThread,
       bool onlyActive) const;
-  void ValidateRemoteSystemLookup(void) const;
+  void ValidateRemoteSystemLookup() const;
   RemoteSystemStruct* GetRemoteSystemFromGUID(
       const RakNetGUID guid,
       bool onlyActive) const;
@@ -895,7 +904,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       unsigned char orderingChannel,
       PacketPriority disconnectionNotificationPriority);
   ///Returns how many remote systems initiated a connection to us
-  unsigned int GetNumberOfRemoteInitiatedConnections(void) const;
+  unsigned int GetNumberOfRemoteInitiatedConnections() const;
   ///	\brief Get a free remote system from the list and assign our systemAddress to it.
   /// \note Should only be called from the update thread - not the user thread.
   /// \param[in] systemAddress	systemAddress to be assigned
@@ -927,7 +936,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
 
   bool IsLoopbackAddress(const AddressOrGUID& systemIdentifier, bool matchPort)
       const;
-  SystemAddress GetLoopbackAddress(void) const;
+  SystemAddress GetLoopbackAddress() const;
 
   ///Set this to true to terminate the Peer thread execution
   volatile bool endThreads;
@@ -970,7 +979,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   void DereferenceRemoteSystem(const SystemAddress& sa);
   RemoteSystemStruct* GetRemoteSystem(const SystemAddress& sa) const;
   unsigned int GetRemoteSystemIndex(const SystemAddress& sa) const;
-  void ClearRemoteSystemLookup(void);
+  void ClearRemoteSystemLookup();
   DataStructures::MemoryPool<RemoteSystemIndex> remoteSystemIndexPool;
 
   void AddToActiveSystemList(unsigned int remoteSystemListIndex);
@@ -1094,25 +1103,26 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   DataStructures::Queue<RNS2RecvStruct*> bufferedPacketsQueue;
   RakNet::SimpleMutex bufferedPacketsQueueMutex;
 
-  virtual void
-  DeallocRNS2RecvStruct(RNS2RecvStruct* s, const char* file, unsigned int line);
-  virtual RNS2RecvStruct* AllocRNS2RecvStruct(
+  void DeallocRNS2RecvStruct(
+      RNS2RecvStruct* s,
       const char* file,
-      unsigned int line);
-  void SetupBufferedPackets(void);
+      unsigned int line) override;
+  RNS2RecvStruct* AllocRNS2RecvStruct(const char* file, unsigned int line)
+      override;
+  void SetupBufferedPackets();
   void PushBufferedPacket(RNS2RecvStruct* p);
-  RNS2RecvStruct* PopBufferedPacket(void);
+  RNS2RecvStruct* PopBufferedPacket();
 
   struct SocketQueryOutput {
-    SocketQueryOutput() {}
-    ~SocketQueryOutput() {}
+    SocketQueryOutput() = default;
+    ~SocketQueryOutput() = default;
     DataStructures::List<RakNetSocket2*> sockets;
   };
 
   DataStructures::ThreadsafeAllocatingQueue<SocketQueryOutput>
       socketQueryOutput;
 
-  bool AllowIncomingConnections(void) const;
+  bool AllowIncomingConnections() const;
 
   void PingInternal(
       const SystemAddress target,
@@ -1158,12 +1168,12 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       RakNet::TimeUS currentTime,
       uint32_t receipt);
   //bool HandleBufferedRPC(BufferedCommandStruct *bcs, RakNet::TimeMS time);
-  void ClearBufferedCommands(void);
-  void ClearBufferedPackets(void);
-  void ClearSocketQueryOutput(void);
-  void ClearRequestedConnectionList(void);
+  void ClearBufferedCommands();
+  void ClearBufferedPackets();
+  void ClearSocketQueryOutput();
+  void ClearRequestedConnectionList();
   void AddPacketToProducer(RakNet::Packet* p);
-  unsigned int GenerateSeedFromGuid(void);
+  unsigned int GenerateSeedFromGuid();
   RakNet::Time GetClockDifferentialInt(RemoteSystemStruct* remoteSystem) const;
   SimpleMutex securityExceptionMutex;
 
@@ -1173,7 +1183,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
 
   // Smart pointer so I can return the object to the user
   DataStructures::List<RakNetSocket2*> socketList;
-  void DerefAllSockets(void);
+  void DerefAllSockets();
   unsigned int GetRakNetSocketFromUserConnectionSocketIndex(
       unsigned int userIndex) const;
   // Used for RPC replies
@@ -1184,7 +1194,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   RakNet::TimeMS defaultTimeoutTime;
 
   // Generate and store a unique GUID
-  void GenerateGUID(void);
+  void GenerateGUID();
   unsigned int GetSystemIndexFromGuid(const RakNetGUID input) const;
   RakNetGUID myGuid;
 
@@ -1237,7 +1247,7 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
   /// with the reliability types that contain RECEIPT in the name
   SimpleMutex sendReceiptSerialMutex;
   uint32_t sendReceiptSerial;
-  void ResetSendReceipt(void);
+  void ResetSendReceipt();
   void OnConnectedPong(
       RakNet::Time sendPingTime,
       RakNet::Time sendPongTime,
@@ -1257,8 +1267,8 @@ class RAK_DLL_EXPORT RakPeer : public RakPeerInterface,
       const char* public_key);
 #endif
 
-  virtual void OnRNS2Recv(RNS2RecvStruct* recvStruct);
-  void FillIPList(void);
+  void OnRNS2Recv(RNS2RecvStruct* recvStruct) override;
+  void FillIPList();
 }
 // #if defined(SN_TARGET_PSP2)
 // __attribute__((aligned(8)))

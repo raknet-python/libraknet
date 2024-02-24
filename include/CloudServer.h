@@ -40,8 +40,8 @@ class RakPeerInterface;
 /// \ingroup CLOUD_GROUP
 class RAK_DLL_EXPORT CloudServerQueryFilter {
  public:
-  CloudServerQueryFilter() {}
-  virtual ~CloudServerQueryFilter() {}
+  CloudServerQueryFilter() = default;
+  virtual ~CloudServerQueryFilter() = default;
 
   /// Called when a local client wants to post data
   /// \return true to allow, false to reject
@@ -86,7 +86,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
   STATIC_FACTORY_DECLARATIONS(CloudServer)
 
   CloudServer();
-  virtual ~CloudServer();
+  ~CloudServer() override;
 
   /// \brief Max bytes a client can upload
   /// Data in excess of this value is silently ignored
@@ -115,7 +115,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
   void GetRemoteServers(DataStructures::List<RakNetGUID>& remoteServersOut);
 
   /// \brief Frees all memory. Does not remove query filters
-  void Clear(void);
+  void Clear();
 
   /// \brief Report the specified SystemAddress to client queries, rather than what RakPeer reads.
   /// This is useful if you already know your public IP
@@ -135,16 +135,16 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
 
   /// \brief Removes all instances of CloudServerQueryFilter added with AddQueryFilter().
   /// The instances are not deleted, only unreferenced. It is up to the user to delete the instances, if necessary
-  void RemoveAllQueryFilters(void);
+  void RemoveAllQueryFilters();
 
  protected:
-  virtual void Update(void);
-  virtual PluginReceiveResult OnReceive(Packet* packet);
-  virtual void OnClosedConnection(
+  void Update() override;
+  PluginReceiveResult OnReceive(Packet* packet) override;
+  void OnClosedConnection(
       const SystemAddress& systemAddress,
       RakNetGUID rakNetGUID,
-      PI2_LostConnectionReason lostConnectionReason);
-  virtual void OnRakPeerShutdown(void);
+      PI2_LostConnectionReason lostConnectionReason) override;
+  void OnRakPeerShutdown() override;
 
   virtual void OnPostRequest(Packet* packet);
   virtual void OnReleaseRequest(Packet* packet);
@@ -159,19 +159,21 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
   // For a given data key, quickly look up one or all systems that have uploaded
   // ----------------------------------------------------------------------------
   struct CloudData {
-    CloudData() {}
+    CloudData() = default;
     ~CloudData() {
-      if (allocatedData)
+      if (allocatedData) {
         rakFree_Ex(allocatedData, _FILE_AND_LINE_);
+      }
     }
-    bool IsUnused(void) const {
-      return isUploaded == false && specificSubscribers.Size() == 0;
+    bool IsUnused() const {
+      return !isUploaded && specificSubscribers.Size() == 0;
     }
-    void Clear(void) {
-      if (dataPtr == allocatedData)
+    void Clear() {
+      if (dataPtr == allocatedData) {
         rakFree_Ex(allocatedData, _FILE_AND_LINE_);
-      allocatedData = 0;
-      dataPtr = 0;
+      }
+      allocatedData = nullptr;
+      dataPtr = nullptr;
       dataLengthBytes = 0;
       isUploaded = false;
     }
@@ -211,10 +213,10 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
 
   static int KeyDataPtrComp(const RakNetGUID& key, CloudData* const& data);
   struct CloudDataList {
-    bool IsUnused(void) const {
+    bool IsUnused() const {
       return keyData.Size() == 0 && nonSpecificSubscribers.Size() == 0;
     }
-    bool IsNotUploaded(void) const {
+    bool IsNotUploaded() const {
       return uploaderCount == 0;
     }
     bool RemoveSubscriber(RakNetGUID g) {
@@ -258,7 +260,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
 
   // Remote systems
   struct RemoteCloudClient {
-    bool IsUnused(void) const {
+    bool IsUnused() const {
       return uploadedKeys.Size() == 0 && subscribedKeys.Size() == 0;
     }
 
@@ -337,7 +339,7 @@ class RAK_DLL_EXPORT CloudServer : public PluginInterface2, CloudAllocator {
       BufferedGetResponseFromServer* const& data);
   struct GetRequest {
     void Clear(CloudAllocator* allocator);
-    bool AllRemoteServersHaveResponded(void) const;
+    bool AllRemoteServersHaveResponded() const;
     CloudQueryWithAddresses cloudQueryWithAddresses;
 
     // When request started. If takes too long for a response from another system, can abort remaining systems

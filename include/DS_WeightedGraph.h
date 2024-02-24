@@ -25,7 +25,7 @@
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
 #ifdef _DEBUG
-#include <stdio.h>
+#include <cstdio>
 #endif
 
 #ifdef _MSC_VER
@@ -38,7 +38,7 @@ namespace DataStructures {
 template <class node_type, class weight_type, bool allow_unlinkedNodes>
 class RAK_DLL_EXPORT WeightedGraph {
  public:
-  static void IMPLEMENT_DEFAULT_COMPARISON(void) {
+  static void IMPLEMENT_DEFAULT_COMPARISON() {
     DataStructures::defaultMapKeyComparison<node_type>(
         node_type(), node_type());
   }
@@ -55,8 +55,8 @@ class RAK_DLL_EXPORT WeightedGraph {
       weight_type weight);
   void RemoveConnection(const node_type& node1, const node_type& node2);
   bool HasConnection(const node_type& node1, const node_type& node2);
-  void Print(void);
-  void Clear(void);
+  void Print();
+  void Clear();
   bool GetShortestPath(
       DataStructures::List<node_type>& path,
       node_type startNode,
@@ -67,7 +67,7 @@ class RAK_DLL_EXPORT WeightedGraph {
       DataStructures::List<node_type>* inputNodes,
       node_type startNode,
       weight_type INFINITE_WEIGHT);
-  unsigned GetNodeCount(void) const;
+  unsigned GetNodeCount() const;
   unsigned GetConnectionCount(unsigned nodeIndex) const;
   void GetConnectionAtIndex(
       unsigned nodeIndex,
@@ -77,7 +77,7 @@ class RAK_DLL_EXPORT WeightedGraph {
   node_type GetNodeAtIndex(unsigned nodeIndex) const;
 
  protected:
-  void ClearDijkstra(void);
+  void ClearDijkstra();
   void GenerateDisjktraMatrix(node_type startNode, weight_type INFINITE_WEIGHT);
 
   DataStructures::Map<node_type, DataStructures::Map<node_type, weight_type>*>
@@ -251,7 +251,7 @@ void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::
 }
 
 template <class node_type, class weight_type, bool allow_unlinkedNodes>
-void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::Clear(void) {
+void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::Clear() {
   unsigned i;
   for (i = 0; i < adjacencyLists.Size(); i++)
     RakNet::OP_DELETE(adjacencyLists[i], _FILE_AND_LINE_);
@@ -344,8 +344,8 @@ WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::GetNodeAtIndex(
 
 template <class node_type, class weight_type, bool allow_unlinkedNodes>
 unsigned
-WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::GetNodeCount(
-    void) const {
+WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::GetNodeCount()
+    const {
   return adjacencyLists.Size();
 }
 
@@ -547,8 +547,8 @@ void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::
 }
 
 template <class node_type, class weight_type, bool allow_unlinkedNodes>
-void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::ClearDijkstra(
-    void) {
+void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::
+    ClearDijkstra() {
   if (isValidPath) {
     isValidPath = false;
     RakNet::OP_DELETE_ARRAY(costMatrix, _FILE_AND_LINE_);
@@ -558,7 +558,7 @@ void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::ClearDijkstra(
 }
 
 template <class node_type, class weight_type, bool allow_unlinkedNodes>
-void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::Print(void) {
+void WeightedGraph<node_type, weight_type, allow_unlinkedNodes>::Print() {
 #ifdef _DEBUG
   unsigned i, j;
   for (i = 0; i < adjacencyLists.Size(); i++) {

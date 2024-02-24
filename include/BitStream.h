@@ -21,8 +21,8 @@
 #ifndef __BITSTREAM_H
 #define __BITSTREAM_H
 
-#include <float.h>
-#include <math.h>
+#include <cfloat>
+#include <cmath>
 #include "Export.h"
 #include "RakAssert.h"
 #include "RakMemoryOverride.h"
@@ -76,7 +76,7 @@ class RAK_DLL_EXPORT BitStream {
   ~BitStream();
 
   /// Resets the bitstream for reuse.
-  void Reset(void);
+  void Reset();
 
   /// \brief Bidirectional serialize/deserialize any integral type to/from a bitstream.
   /// \details Undefine __BITSTREAM_NATIVE_END if you need endian swapping.
@@ -581,20 +581,20 @@ class RAK_DLL_EXPORT BitStream {
       templateType& m22);
 
   /// \brief Sets the read pointer back to the beginning of your data.
-  void ResetReadPointer(void);
+  void ResetReadPointer();
 
   /// \brief Sets the write pointer back to the beginning of your data.
-  void ResetWritePointer(void);
+  void ResetWritePointer();
 
   /// \brief This is good to call when you are done with the stream to make
   /// sure you didn't leave any data left over void
-  void AssertStreamEmpty(void);
+  void AssertStreamEmpty();
 
   /// \brief RAKNET_DEBUG_PRINTF the bits in the stream.  Great for debugging.
   void PrintBits(char* out) const;
-  void PrintBits(void) const;
+  void PrintBits() const;
   void PrintHex(char* out) const;
-  void PrintHex(void) const;
+  void PrintHex() const;
 
   /// \brief Ignore data we don't intend to read
   /// \param[in] numberOfBits The number of bits to ignore
@@ -612,20 +612,20 @@ class RAK_DLL_EXPORT BitStream {
   void SetWriteOffset(const BitSize_t offset);
 
   /// \brief Returns the length in bits of the stream
-  inline BitSize_t GetNumberOfBitsUsed(void) const {
+  inline BitSize_t GetNumberOfBitsUsed() const {
     return GetWriteOffset();
   }
-  inline BitSize_t GetWriteOffset(void) const {
+  inline BitSize_t GetWriteOffset() const {
     return numberOfBitsUsed;
   }
 
   /// \brief Returns the length in bytes of the stream
-  inline BitSize_t GetNumberOfBytesUsed(void) const {
+  inline BitSize_t GetNumberOfBytesUsed() const {
     return BITS_TO_BYTES(numberOfBitsUsed);
   }
 
   /// \brief Returns the number of bits into the stream that we have read
-  inline BitSize_t GetReadOffset(void) const {
+  inline BitSize_t GetReadOffset() const {
     return readOffset;
   }
 
@@ -635,7 +635,7 @@ class RAK_DLL_EXPORT BitStream {
   }
 
   /// \brief Returns the number of bits left in the stream that haven't been read
-  inline BitSize_t GetNumberOfUnreadBits(void) const {
+  inline BitSize_t GetNumberOfUnreadBits() const {
     return numberOfBitsUsed - readOffset;
   }
 
@@ -652,7 +652,7 @@ class RAK_DLL_EXPORT BitStream {
   /// Gets the data that BitStream is writing to / reading from.
   /// Partial bytes are left aligned.
   /// \return A pointer to the internal state
-  inline unsigned char* GetData(void) const {
+  inline unsigned char* GetData() const {
     return data;
   }
 
@@ -734,7 +734,7 @@ class RAK_DLL_EXPORT BitStream {
   /// can also be used to force coalesced bitstreams to start on byte
   /// boundaries so so WriteAlignedBits and ReadAlignedBits both
   /// calculate the same offset when aligning.
-  inline void AlignWriteToByteBoundary(void) {
+  inline void AlignWriteToByteBoundary() {
     numberOfBitsUsed += 8 - (((numberOfBitsUsed - 1) & 7) + 1);
   }
 
@@ -743,7 +743,7 @@ class RAK_DLL_EXPORT BitStream {
   /// can also be used to force coalesced bitstreams to start on byte
   /// boundaries so so WriteAlignedBits and ReadAlignedBits both
   /// calculate the same offset when aligning.
-  inline void AlignReadToByteBoundary(void) {
+  inline void AlignReadToByteBoundary() {
     readOffset += 8 - (((readOffset - 1) & 7) + 1);
   }
 
@@ -761,17 +761,17 @@ class RAK_DLL_EXPORT BitStream {
       const bool alignBitsToRight = true);
 
   /// \brief Write a 0
-  void Write0(void);
+  void Write0();
 
   /// \brief Write a 1
-  void Write1(void);
+  void Write1();
 
   /// \brief Reads 1 bit and returns true if that bit is 1 and false if it is 0.
-  bool ReadBit(void);
+  bool ReadBit();
 
   /// \brief If we used the constructor version with copy data off, this
   /// *makes sure it is set to on and the data pointed to is copied.
-  void AssertCopyData(void);
+  void AssertCopyData();
 
   /// \brief Use this if you pass a pointer copy to the constructor
   /// *(_copyData==false) and want to overallocate to prevent
@@ -783,7 +783,7 @@ class RAK_DLL_EXPORT BitStream {
 
   /// \internal
   /// \return How many bits have been allocated internally
-  BitSize_t GetNumberOfBitsAllocated(void) const;
+  BitSize_t GetNumberOfBitsAllocated() const;
 
   /// \brief Read strings, non reference.
   bool Read(char* varString);
@@ -1030,22 +1030,22 @@ class RAK_DLL_EXPORT BitStream {
   bool ReadCompressedDelta(bool& var);
 #endif
 
-  inline static bool DoEndianSwap(void) {
+  inline static bool DoEndianSwap() {
 #ifndef __BITSTREAM_NATIVE_END
-    return IsNetworkOrder() == false;
+    return !IsNetworkOrder();
 #else
     return false;
 #endif
   }
-  inline static bool IsBigEndian(void) {
+  inline static bool IsBigEndian() {
     return IsNetworkOrder();
   }
-  inline static bool IsNetworkOrder(void) {
+  inline static bool IsNetworkOrder() {
     bool r = IsNetworkOrderInternal();
     return r;
   }
   // Not inline, won't compile on PC due to winsock include errors
-  static bool IsNetworkOrderInternal(void);
+  static bool IsNetworkOrderInternal();
   static void ReverseBytes(
       unsigned char* inByteArray,
       unsigned char* inOutByteArray,
@@ -1166,10 +1166,11 @@ inline bool BitStream::Serialize(
     bool writeToBitstream,
     char* inOutByteArray,
     const unsigned int numberOfBytes) {
-  if (writeToBitstream)
+  if (writeToBitstream) {
     Write(inOutByteArray, numberOfBytes);
-  else
+  } else {
     return Read(inOutByteArray, numberOfBytes);
+  }
   return true;
 }
 
@@ -1280,10 +1281,11 @@ inline bool BitStream::SerializeBits(
     unsigned char* inOutByteArray,
     const BitSize_t numberOfBitsToSerialize,
     const bool rightAlignedBits) {
-  if (writeToBitstream)
+  if (writeToBitstream) {
     WriteBits(inOutByteArray, numberOfBitsToSerialize, rightAlignedBits);
-  else
+  } else {
     return ReadBits(inOutByteArray, numberOfBitsToSerialize, rightAlignedBits);
+  }
   return true;
 }
 
@@ -1292,18 +1294,19 @@ inline void BitStream::Write(const templateType& inTemplateVar) {
 #ifdef _MSC_VER
 #pragma warning(disable : 4127) // conditional expression is constant
 #endif
-  if (sizeof(inTemplateVar) == 1)
+  if (sizeof(inTemplateVar) == 1) {
     WriteBits((unsigned char*)&inTemplateVar, sizeof(templateType) * 8, true);
-  else {
+  } else {
 #ifndef __BITSTREAM_NATIVE_END
     if (DoEndianSwap()) {
       unsigned char output[sizeof(templateType)];
       ReverseBytes(
           (unsigned char*)&inTemplateVar, output, sizeof(templateType));
       WriteBits((unsigned char*)output, sizeof(templateType) * 8, true);
-    } else
+    } else {
 #endif
       WriteBits((unsigned char*)&inTemplateVar, sizeof(templateType) * 8, true);
+    }
   }
 }
 
@@ -1330,10 +1333,11 @@ inline void BitStream::WritePtr(templateType* inTemplateVar) {
 /// \param[in] inTemplateVar The value to write
 template <>
 inline void BitStream::Write(const bool& inTemplateVar) {
-  if (inTemplateVar)
+  if (inTemplateVar) {
     Write1();
-  else
+  } else {
     Write0();
+  }
 }
 
 /// \brief Write a systemAddress to a bitstream.
@@ -1365,7 +1369,7 @@ inline void BitStream::Write(const uint24_t& inTemplateVar) {
   AlignWriteToByteBoundary();
   AddBitsAndReallocate(3 * 8);
 
-  if (IsBigEndian() == false) {
+  if (!IsBigEndian()) {
     data[(numberOfBitsUsed >> 3) + 0] = ((unsigned char*)&inTemplateVar.val)[0];
     data[(numberOfBitsUsed >> 3) + 1] = ((unsigned char*)&inTemplateVar.val)[1];
     data[(numberOfBitsUsed >> 3) + 2] = ((unsigned char*)&inTemplateVar.val)[2];
@@ -1509,10 +1513,12 @@ template <>
 inline void BitStream::WriteCompressed(const float& inTemplateVar) {
   RakAssert(inTemplateVar > -1.01f && inTemplateVar < 1.01f);
   float varCopy = inTemplateVar;
-  if (varCopy < -1.0f)
+  if (varCopy < -1.0f) {
     varCopy = -1.0f;
-  if (varCopy > 1.0f)
+  }
+  if (varCopy > 1.0f) {
     varCopy = 1.0f;
+  }
   Write((unsigned short)((varCopy + 1.0f) * 32767.5f));
 }
 
@@ -1521,10 +1527,12 @@ template <>
 inline void BitStream::WriteCompressed(const double& inTemplateVar) {
   RakAssert(inTemplateVar > -1.01 && inTemplateVar < 1.01);
   double varCopy = inTemplateVar;
-  if (varCopy < -1.0f)
+  if (varCopy < -1.0f) {
     varCopy = -1.0f;
-  if (varCopy > 1.0f)
+  }
+  if (varCopy > 1.0f) {
     varCopy = 1.0f;
+  }
   Write((uint32_t)((varCopy + 1.0) * 2147483648.0));
 }
 
@@ -1613,10 +1621,10 @@ inline bool BitStream::Read(templateType& outTemplateVar) {
 #ifdef _MSC_VER
 #pragma warning(disable : 4127) // conditional expression is constant
 #endif
-  if (sizeof(outTemplateVar) == 1)
+  if (sizeof(outTemplateVar) == 1) {
     return ReadBits(
         (unsigned char*)&outTemplateVar, sizeof(templateType) * 8, true);
-  else {
+  } else {
 #ifndef __BITSTREAM_NATIVE_END
 #ifdef _MSC_VER
 #pragma warning( \
@@ -1630,10 +1638,11 @@ inline bool BitStream::Read(templateType& outTemplateVar) {
         return true;
       }
       return false;
-    } else
+    } else {
 #endif
       return ReadBits(
           (unsigned char*)&outTemplateVar, sizeof(templateType) * 8, true);
+    }
   }
 }
 
@@ -1641,14 +1650,16 @@ inline bool BitStream::Read(templateType& outTemplateVar) {
 /// \param[in] outTemplateVar The value to read
 template <>
 inline bool BitStream::Read(bool& outTemplateVar) {
-  if (readOffset + 1 > numberOfBitsUsed)
+  if (readOffset + 1 > numberOfBitsUsed) {
     return false;
+  }
 
   if (data[readOffset >> 3] &
-      (0x80 >> (readOffset & 7))) // Is it faster to just write it out here?
+      (0x80 >> (readOffset & 7))) { // Is it faster to just write it out here?
     outTemplateVar = true;
-  else
+  } else {
     outTemplateVar = false;
+  }
 
   // Has to be on a different line for Mac
   readOffset++;
@@ -1693,10 +1704,11 @@ inline bool BitStream::Read(SystemAddress& outTemplateVar) {
 template <>
 inline bool BitStream::Read(uint24_t& outTemplateVar) {
   AlignReadToByteBoundary();
-  if (readOffset + 3 * 8 > numberOfBitsUsed)
+  if (readOffset + 3 * 8 > numberOfBitsUsed) {
     return false;
+  }
 
-  if (IsBigEndian() == false) {
+  if (!IsBigEndian()) {
     ((unsigned char*)&outTemplateVar.val)[0] = data[(readOffset >> 3) + 0];
     ((unsigned char*)&outTemplateVar.val)[1] = data[(readOffset >> 3) + 1];
     ((unsigned char*)&outTemplateVar.val)[2] = data[(readOffset >> 3) + 2];

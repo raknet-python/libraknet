@@ -67,8 +67,8 @@ class RAK_DLL_EXPORT FileListProgress {
   // GetInstance() and DestroyInstance(instance*)
   STATIC_FACTORY_DECLARATIONS(FileListProgress)
 
-  FileListProgress() {}
-  virtual ~FileListProgress() {}
+  FileListProgress() = default;
+  virtual ~FileListProgress() = default;
 
   /// First callback called when FileList::AddFilesFromDirectory() starts
   virtual void OnAddFilesFromDirectoryStarted(FileList* fileList, char* dir) {
@@ -139,23 +139,24 @@ class RAK_DLL_EXPORT FLP_Printf : public FileListProgress {
   // GetInstance() and DestroyInstance(instance*)
   STATIC_FACTORY_DECLARATIONS(FLP_Printf)
 
-  FLP_Printf() {}
-  virtual ~FLP_Printf() {}
+  FLP_Printf() = default;
+  ~FLP_Printf() override = default;
 
   /// First callback called when FileList::AddFilesFromDirectory() starts
-  virtual void OnAddFilesFromDirectoryStarted(FileList* fileList, char* dir);
+  void OnAddFilesFromDirectoryStarted(FileList* fileList, char* dir) override;
 
   /// Called for each directory, when that directory begins processing
-  virtual void
-  OnDirectory(FileList* fileList, char* dir, unsigned int directoriesRemaining);
+  void OnDirectory(
+      FileList* fileList,
+      char* dir,
+      unsigned int directoriesRemaining) override;
 
   /// \brief This function is called when all files have been transferred to a particular remote system
-  virtual void OnFilePushesComplete(
-      SystemAddress systemAddress,
-      unsigned short setID);
+  void OnFilePushesComplete(SystemAddress systemAddress, unsigned short setID)
+      override;
 
   /// \brief This function is called when a send to a system was aborted (probably due to disconnection)
-  virtual void OnSendAborted(SystemAddress systemAddress);
+  void OnSendAborted(SystemAddress systemAddress) override;
 };
 
 class RAK_DLL_EXPORT FileList {
@@ -181,7 +182,7 @@ class RAK_DLL_EXPORT FileList {
       FileListNodeContext context);
 
   /// Deallocate all memory
-  void Clear(void);
+  void Clear();
 
   /// Write all encoded data into a bitstream
   void Serialize(RakNet::BitStream* outBitStream);
@@ -228,7 +229,7 @@ class RAK_DLL_EXPORT FileList {
 
   /// By default, GetDeltaToCurrent tags files as non-references, meaning they are assumed to be populated later
   /// This tags all files as references, required for IncrementalReadInterface to process them incrementally
-  void FlagFilesAsReferences(void);
+  void FlagFilesAsReferences();
 
   /// \brief Write all files to disk, prefixing the paths with applicationDirectory
   /// \param[in] applicationDirectory path prefix
@@ -275,7 +276,7 @@ class RAK_DLL_EXPORT FileList {
   void RemoveCallback(FileListProgress* cb);
 
   /// \brief Removes all callbacks
-  void ClearCallbacks(void);
+  void ClearCallbacks();
 
   /// Returns all callbacks added with AddCallback()
   /// \param[out] callbacks The list is set to the list of callbacks

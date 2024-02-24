@@ -106,12 +106,12 @@
 #define SHA1_H_A545E61D43E9404E8D736869AB3CBFE7
 
 // KevinJ:
-#include <stdio.h> // Needed for file access
+#include <cstdio> // Needed for file access
 #include "RakMemoryOverride.h"
 
 #include <memory.h> // Needed for memset and memcpy
 
-#include <string.h> // Needed for strcat and strcpy
+#include <cstring> // Needed for strcat and strcpy
 #include "Export.h"
 //#define MAX_FILE_READ_BUFFER 8000
 #define SHA1_LENGTH 20
@@ -129,11 +129,11 @@
 
 #include <memory.h>
 
-#include <limits.h>
+#include <climits>
 
 #ifdef SHA1_UTILITY_FUNCTIONS
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #endif
 
 #ifdef SHA1_STL_FUNCTIONS
@@ -141,7 +141,7 @@
 #endif
 
 #ifdef _MSC_VER
-#include <stdlib.h>
+#include <cstdlib>
 #endif
 
 // You can define the endian mode in your files without modifying the SHA-1
@@ -224,10 +224,10 @@
 ///////////////////////////////////////////////////////////////////////////
 // Declare SHA-1 workspace
 
-typedef union {
+using SHA1_WORKSPACE_BLOCK = union {
   UINT_8 c[64];
   UINT_32 l[16];
-} SHA1_WORKSPACE_BLOCK;
+};
 
 class RAK_DLL_EXPORT CSHA1 {
  public:
@@ -270,7 +270,7 @@ class RAK_DLL_EXPORT CSHA1 {
   // Get the raw message digest (20 bytes)
   bool GetHash(UINT_8* pbDest20) const;
 
-  unsigned char* GetHash(void) const;
+  unsigned char* GetHash() const;
   // KevinJ: http://cseweb.ucsd.edu/~mihir/papers/hmac-cb.pdf
   static void HMAC(
       unsigned char* sharedKey,

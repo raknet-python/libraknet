@@ -24,23 +24,24 @@
 #include "RakPeerInterface.h"
 #include "RakSleep.h"
 
-#include <stdio.h>
-#include <stdlib.h> // For atoi
+#include <cstdio>
+#include <cstdlib> // For atoi
 #include <cstring> // For strlen
 #include "Rand.h"
 
 using namespace RakNet;
 class ComprehensiveConvertTest : public TestInterface {
  public:
-  ComprehensiveConvertTest(void);
-  ~ComprehensiveConvertTest(void);
+  ComprehensiveConvertTest();
+  ~ComprehensiveConvertTest() override;
   int RunTest(
       DataStructures::List<RakString> params,
       bool isVerbose,
-      bool noPauses); //should return 0 if no error, or the error number
-  RakString GetTestName();
-  RakString ErrorCodeToString(int errorCode);
-  void DestroyPeers();
+      bool noPauses)
+      override; //should return 0 if no error, or the error number
+  RakString GetTestName() override;
+  RakString ErrorCodeToString(int errorCode) override;
+  void DestroyPeers() override;
 
  private:
   static const int NUM_PEERS = 10;
