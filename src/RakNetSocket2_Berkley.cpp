@@ -124,7 +124,9 @@ void RNS2_Berkley::GetSystemAddressIPV4And6(
         NULL);
     // something has gone wrong here...
     RAKNET_DEBUG_PRINTF(
-        "getsockname failed:Error code - %d\n%s", dwIOError, messageBuffer);
+        "getsockname failed:Error code - %d\n%s",
+        dwIOError,
+        (LPTSTR)messageBuffer);
 
     //Free the buffer.
     LocalFree(messageBuffer);
@@ -395,7 +397,7 @@ void RNS2_Berkley::RecvFromBlockingIPV4And6(RNS2RecvStruct* recvFromStruct) {
       RAKNET_DEBUG_PRINTF(
           "Warning: recvfrom failed:Error code - %d\n%s",
           dwIOError,
-          messageBuffer);
+          (LPTSTR)messageBuffer);
       LocalFree(messageBuffer);
     }
   }
