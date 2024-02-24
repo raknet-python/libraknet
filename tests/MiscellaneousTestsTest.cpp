@@ -47,13 +47,14 @@ int MiscellaneousTestsTest::RunTest(
 
   printf("Testing AdvertiseSystem\n");
 
-  client->AdvertiseSystem("127.0.0.1", 60000, 0, 0);
+  client->AdvertiseSystem("127.0.0.1", 60000, nullptr, 0);
 
   if (!CommonFunctions::WaitForMessageWithID(
           server, ID_ADVERTISE_SYSTEM, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[1 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 1;
   }
@@ -76,11 +77,12 @@ RakString MiscellaneousTestsTest::ErrorCodeToString(int errorCode) {
 void MiscellaneousTestsTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }
 
-MiscellaneousTestsTest::MiscellaneousTestsTest(void) {
+MiscellaneousTestsTest::MiscellaneousTestsTest() {
   errorList.Push("Did not recieve client advertise", _FILE_AND_LINE_);
   errorList.Push(
       "The router interface should not be called because no send has happened yet",
@@ -90,4 +92,4 @@ MiscellaneousTestsTest::MiscellaneousTestsTest(void) {
   errorList.Push("Router was not properly removed", _FILE_AND_LINE_);
 }
 
-MiscellaneousTestsTest::~MiscellaneousTestsTest(void) {}
+MiscellaneousTestsTest::~MiscellaneousTestsTest(void) = default;

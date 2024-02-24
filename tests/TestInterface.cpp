@@ -10,6 +10,6 @@
 
 #include "TestInterface.h"
 
-TestInterface::TestInterface(void) {}
+TestInterface::TestInterface(void) = default;
 
-TestInterface::~TestInterface(void) {}
+TestInterface::~TestInterface(void) = default;

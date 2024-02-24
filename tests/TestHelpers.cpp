@@ -10,13 +10,13 @@
 
 #include "TestHelpers.h"
 
-TestHelpers::TestHelpers(void) {}
+TestHelpers::TestHelpers(void) = default;
 
-TestHelpers::~TestHelpers(void) {}
+TestHelpers::~TestHelpers(void) = default;
 
 void TestHelpers::StandardServerPrep(RakPeerInterface*& server) {
   server = RakPeerInterface::GetInstance();
-  SocketDescriptor sd(60000, 0);
+  SocketDescriptor sd(60000, nullptr);
   server->Startup(1, &sd, 1);
   server->SetMaximumIncomingConnections(1);
 }
@@ -57,7 +57,7 @@ bool TestHelpers::ConnectTwoPeersLocally(
     RakPeerInterface* connector,
     RakPeerInterface* connectee) {
   SystemAddress connecteeAdd = connectee->GetInternalID();
-  return connector->Connect("127.0.0.1", connecteeAdd.GetPort(), 0, 0);
+  return connector->Connect("127.0.0.1", connecteeAdd.GetPort(), nullptr, 0);
 }
 
 bool TestHelpers::BroadCastTestPacket(

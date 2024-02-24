@@ -109,15 +109,16 @@ int SecurityFunctionsTest::RunTest(
   serverAddress.SetPortHostOrder(60000);
   TimeMS entryTime = GetTimeMS();
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Testing if  no password is rejected\n");
+  }
 
   while (!CommonFunctions::ConnectionStateMatchesOptions(
              client, serverAddress, true) &&
          GetTimeMS() - entryTime < 5000) {
     if (!CommonFunctions::ConnectionStateMatchesOptions(
             client, serverAddress, true, true, true, true)) {
-      client->Connect("127.0.0.1", serverAddress.GetPort(), 0, 0);
+      client->Connect("127.0.0.1", serverAddress.GetPort(), nullptr, 0);
     }
 
     RakSleep(100);
@@ -125,17 +126,19 @@ int SecurityFunctionsTest::RunTest(
 
   if (CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client connected with no password\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 1;
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Testing if incorrect password is rejected\n");
+  }
 
   char badPass[] = "badpass";
   entryTime = GetTimeMS();
@@ -153,17 +156,19 @@ int SecurityFunctionsTest::RunTest(
 
   if (CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client connected with wrong password\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 2;
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Testing if correct password is accepted\n");
+  }
 
   entryTime = GetTimeMS();
   while (!CommonFunctions::ConnectionStateMatchesOptions(
@@ -183,12 +188,13 @@ int SecurityFunctionsTest::RunTest(
 
   if (!CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client failed to connect with correct password\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 3;
   }
 
@@ -198,8 +204,9 @@ int SecurityFunctionsTest::RunTest(
     client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Testing if connection is rejected after adding to ban list\n");
+  }
 
   server->AddToBanList("127.0.0.1", 0);
 
@@ -220,38 +227,42 @@ int SecurityFunctionsTest::RunTest(
   }
 
   if (!server->IsBanned("127.0.0.1")) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "IsBanned does not show localhost as banned\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 6;
   }
 
   if (CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client was banned but connected anyways\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 4;
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf(
         "Testing if connection is accepted after ban removal by RemoveFromBanList\n");
+  }
 
   server->RemoveFromBanList("127.0.0.1");
   if (server->IsBanned("127.0.0.1")) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Localhost was not unbanned\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 7;
   }
 
@@ -273,12 +284,13 @@ int SecurityFunctionsTest::RunTest(
 
   if (!CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client failed to connect after banlist removal\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 8;
   }
 
@@ -288,8 +300,9 @@ int SecurityFunctionsTest::RunTest(
     client->CloseConnection(serverAddress, true, 0, LOW_PRIORITY);
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Testing if connection is rejected after adding to ban list\n");
+  }
 
   server->AddToBanList("127.0.0.1", 0);
 
@@ -310,38 +323,42 @@ int SecurityFunctionsTest::RunTest(
   }
 
   if (!server->IsBanned("127.0.0.1")) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "IsBanned does not show localhost as banned\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 6;
   }
 
   if (CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client was banned but connected anyways\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 4;
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf(
         "Testing if connection is accepted after ban removal by ClearBanList\n");
+  }
 
   server->ClearBanList();
   if (server->IsBanned("127.0.0.1")) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Localhost was not unbanned\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 7;
   }
 
@@ -363,12 +380,13 @@ int SecurityFunctionsTest::RunTest(
 
   if (!CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Client failed to connect after banlist removal with clear function\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 9;
   }
 
@@ -631,9 +649,9 @@ RakString SecurityFunctionsTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-SecurityFunctionsTest::SecurityFunctionsTest(void) {}
+SecurityFunctionsTest::SecurityFunctionsTest(void) = default;
 
-SecurityFunctionsTest::~SecurityFunctionsTest(void) {}
+SecurityFunctionsTest::~SecurityFunctionsTest(void) = default;
 
 void SecurityFunctionsTest::DestroyPeers() {
   RakPeerInterface::DestroyInstance(client);

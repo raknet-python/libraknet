@@ -10,11 +10,11 @@
 
 #include "PacketDropPlugin.h"
 
-PacketDropPlugin::PacketDropPlugin(void) {
+PacketDropPlugin::PacketDropPlugin() {
   timer.SetTimerLength(500);
 }
 
-PacketDropPlugin::~PacketDropPlugin(void) {}
+PacketDropPlugin::~PacketDropPlugin(void) = default;
 
 PluginReceiveResult PacketDropPlugin::OnReceive(Packet* packet) {
   if (timer.IsExpired()) {

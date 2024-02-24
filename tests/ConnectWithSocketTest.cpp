@@ -54,9 +54,10 @@ int ConnectWithSocketTest::RunTest(
 
   printf("Testing normal connect before test\n");
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(client, server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[1 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 1;
   }
@@ -64,9 +65,10 @@ int ConnectWithSocketTest::RunTest(
   TestHelpers::BroadCastTestPacket(client);
 
   if (!TestHelpers::WaitForTestPacket(server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[2 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 2;
   }
@@ -89,7 +91,7 @@ int ConnectWithSocketTest::RunTest(
     if (!CommonFunctions::ConnectionStateMatchesOptions(
             client, serverAddress, true, true, true, true)) {
       client->ConnectWithSocket(
-          "127.0.0.1", serverAddress.GetPort(), 0, 0, theSocket);
+          "127.0.0.1", serverAddress.GetPort(), nullptr, 0, theSocket);
     }
 
     RakSleep(100);
@@ -97,9 +99,10 @@ int ConnectWithSocketTest::RunTest(
 
   if (!CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[3 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 3;
   }
@@ -107,9 +110,10 @@ int ConnectWithSocketTest::RunTest(
   TestHelpers::BroadCastTestPacket(client);
 
   if (!TestHelpers::WaitForTestPacket(server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[4 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 4;
   }
@@ -128,7 +132,7 @@ int ConnectWithSocketTest::RunTest(
     if (!CommonFunctions::ConnectionStateMatchesOptions(
             client, serverAddress, true, true, true, true)) {
       client->ConnectWithSocket(
-          "127.0.0.1", serverAddress.GetPort(), 0, 0, theSocket);
+          "127.0.0.1", serverAddress.GetPort(), nullptr, 0, theSocket);
     }
 
     RakSleep(100);
@@ -136,9 +140,10 @@ int ConnectWithSocketTest::RunTest(
 
   if (!CommonFunctions::ConnectionStateMatchesOptions(
           client, serverAddress, true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[5 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 5;
   }
@@ -146,9 +151,10 @@ int ConnectWithSocketTest::RunTest(
   TestHelpers::BroadCastTestPacket(client);
 
   if (!TestHelpers::WaitForTestPacket(server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[6 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 6;
   }
@@ -168,7 +174,7 @@ RakString ConnectWithSocketTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-ConnectWithSocketTest::ConnectWithSocketTest(void) {
+ConnectWithSocketTest::ConnectWithSocketTest() {
   errorList.Push("Client did not connect after 5 seconds", _FILE_AND_LINE_);
   errorList.Push("Control test send didn't work", _FILE_AND_LINE_);
   errorList.Push(
@@ -183,11 +189,12 @@ ConnectWithSocketTest::ConnectWithSocketTest(void) {
       "Server did not recieve test packet from client", _FILE_AND_LINE_);
 }
 
-ConnectWithSocketTest::~ConnectWithSocketTest(void) {}
+ConnectWithSocketTest::~ConnectWithSocketTest(void) = default;
 
 void ConnectWithSocketTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

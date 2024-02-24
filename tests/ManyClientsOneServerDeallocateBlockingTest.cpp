@@ -24,7 +24,7 @@ void ManyClientsOneServerDeallocateBlockingTest::
 
     while (CommonFunctions::ConnectionStateMatchesOptions(
         clientList[i], currentSystem, false, true, true)) {
-      if (msgWasPrinted == false) {
+      if (!msgWasPrinted) {
         printf("Waiting for connection requests to complete.\n");
         msgWasPrinted = true;
       }
@@ -43,61 +43,72 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(
 
   Packet* packet;
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("For server\n");
+  }
 
   for (packet = server->Receive(); packet;
        server->DeallocatePacket(packet), packet = server->Receive()) {
     switch (packet->data[0]) {
       case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Another client has disconnected.\n");
+        }
 
         break;
       case ID_REMOTE_CONNECTION_LOST:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Another client has lost the connection.\n");
+        }
 
         break;
       case ID_REMOTE_NEW_INCOMING_CONNECTION:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Another client has connected.\n");
+        }
         break;
       case ID_CONNECTION_REQUEST_ACCEPTED:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Our connection request has been accepted.\n");
+        }
 
         break;
       case ID_CONNECTION_ATTEMPT_FAILED:
-        if (isVerbose)
+        if (isVerbose) {
           printf("A connection has failed.\n");
+        }
 
         break;
 
       case ID_NEW_INCOMING_CONNECTION:
-        if (isVerbose)
+        if (isVerbose) {
           printf("A connection is incoming.\n");
+        }
 
         break;
       case ID_NO_FREE_INCOMING_CONNECTIONS:
-        if (isVerbose)
+        if (isVerbose) {
           printf("The server is full.\n");
+        }
 
         break;
 
       case ID_ALREADY_CONNECTED:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Already connected\n");
+        }
 
         break;
 
       case ID_DISCONNECTION_NOTIFICATION:
-        if (isVerbose)
+        if (isVerbose) {
           printf("We have been disconnected.\n");
+        }
         break;
       case ID_CONNECTION_LOST:
-        if (isVerbose)
+        if (isVerbose) {
           printf("Connection lost.\n");
+        }
 
         break;
       default:
@@ -111,62 +122,73 @@ void ManyClientsOneServerDeallocateBlockingTest::WaitAndPrintResults(
   // Log all events per peer
   for (int i = 0; i < clientNum; i++) //Receive for all peers
   {
-    if (isVerbose)
+    if (isVerbose) {
       printf("For client %i\n", i);
+    }
 
     for (packet = clientList[i]->Receive(); packet;
          clientList[i]->DeallocatePacket(packet),
         packet = clientList[i]->Receive()) {
       switch (packet->data[0]) {
         case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has disconnected.\n");
+          }
 
           break;
         case ID_REMOTE_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has lost the connection.\n");
+          }
 
           break;
         case ID_REMOTE_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has connected.\n");
+          }
           break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Our connection request has been accepted.\n");
+          }
 
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection has failed.\n");
+          }
 
           break;
 
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection is incoming.\n");
+          }
 
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("The server is full.\n");
+          }
 
           break;
 
         case ID_ALREADY_CONNECTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Already connected\n");
+          }
 
           break;
 
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("We have been disconnected.\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection lost.\n");
+          }
 
           break;
         default:
@@ -247,7 +269,7 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
   }
 
   server = RakPeerInterface::GetInstance();
-  SocketDescriptor sd(60000, 0);
+  SocketDescriptor sd(60000, nullptr);
   server->Startup(clientNum, &sd, 1);
   server->SetMaximumIncomingConnections(clientNum);
 
@@ -256,12 +278,13 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
 
   int retTimeout = (int)server->GetTimeoutTime(UNASSIGNED_SYSTEM_ADDRESS);
   if (retTimeout != timeoutTime) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "GetTimeoutTime did not match the timeout that was set. \n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 3;
   }
@@ -269,14 +292,15 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
   //Connect all the clients to the server
 
   for (int i = 0; i < clientNum; i++) {
-    if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+    if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
         CONNECTION_ATTEMPT_STARTED) {
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError(
             "Problem while calling connect.\n",
             !noPauses && isVerbose,
             __LINE__,
             __FILE__);
+      }
 
       return 1; //This fails the test, don't bother going on.
     }
@@ -287,8 +311,9 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
   DataStructures::List<SystemAddress> systemList;
   DataStructures::List<RakNetGUID> guidList;
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Entering disconnect loop \n");
+  }
 
   while (GetTimeMS() - entryTime < 30000) //Run for 30 Secoonds
   {
@@ -321,14 +346,15 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
               true,
               true)) //Are we connected or is there a pending operation ?
       {
-        if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+        if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
             CONNECTION_ATTEMPT_STARTED) {
-          if (isVerbose)
+          if (isVerbose) {
             DebugTools::ShowError(
                 "Problem while calling connect. \n",
                 !noPauses && isVerbose,
                 __LINE__,
                 __FILE__);
+          }
 
           return 1; //This fails the test, don't bother going on.
         }
@@ -360,38 +386,38 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
     {
       printf("Calling Connect() for client %i.\n", i);
 
-      if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+      if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
           CONNECTION_ATTEMPT_STARTED) {
         clientList[i]->GetSystemList(systemList, guidList); //Get connectionlist
         int len = systemList.Size();
 
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               "Problem while calling connect. \n",
               !noPauses && isVerbose,
               __LINE__,
               __FILE__);
+        }
 
         return 1; //This fails the test, don't bother going on.
       }
     } else {
-      if (CommonFunctions::ConnectionStateMatchesOptions(
-              clientList[i], currentSystem, false, false, false, true) == false)
+      if (!CommonFunctions::ConnectionStateMatchesOptions(
+              clientList[i], currentSystem, false, false, false, true)) {
         printf(
             "Not calling Connect() for client %i because it is disconnecting.\n",
             i);
-      else if (
-          CommonFunctions::ConnectionStateMatchesOptions(
-              clientList[i], currentSystem, false, true, true) == false)
+      } else if (!CommonFunctions::ConnectionStateMatchesOptions(
+                     clientList[i], currentSystem, false, true, true)) {
         printf(
             "Not calling Connect() for client %i  because it is connecting.\n",
             i);
-      else if (
-          CommonFunctions::ConnectionStateMatchesOptions(
-              clientList[i], currentSystem, true) == false)
+      } else if (!CommonFunctions::ConnectionStateMatchesOptions(
+                     clientList[i], currentSystem, true)) {
         printf(
             "Not calling Connect() for client %i because it is connected).\n",
             i);
+      }
     }
   }
 
@@ -415,8 +441,9 @@ int ManyClientsOneServerDeallocateBlockingTest::RunTest(
     }
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Pass\n");
+  }
   return 0;
 }
 
@@ -449,14 +476,15 @@ RakString ManyClientsOneServerDeallocateBlockingTest::ErrorCodeToString(
 }
 
 ManyClientsOneServerDeallocateBlockingTest::
-    ManyClientsOneServerDeallocateBlockingTest(void) {}
+    ManyClientsOneServerDeallocateBlockingTest(void) = default;
 
 ManyClientsOneServerDeallocateBlockingTest::
-    ~ManyClientsOneServerDeallocateBlockingTest(void) {}
+    ~ManyClientsOneServerDeallocateBlockingTest(void) = default;
 
 void ManyClientsOneServerDeallocateBlockingTest::DestroyPeers() {
-  for (int i = 0; i < clientNum; i++)
+  for (int i = 0; i < clientNum; i++) {
     RakPeerInterface::DestroyInstance(clientList[i]);
+  }
 
   RakPeerInterface::DestroyInstance(server);
 }

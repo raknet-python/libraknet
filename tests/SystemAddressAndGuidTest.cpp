@@ -76,20 +76,22 @@ int SystemAddressAndGuidTest::RunTest(
   client = RakPeerInterface::GetInstance();
   destroyList.Push(client, _FILE_AND_LINE_);
   if (client->IsActive()) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[1 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 1;
   }
 
-  SocketDescriptor sd(60001, 0);
+  SocketDescriptor sd(60001, nullptr);
   client->Startup(1, &sd, 1);
 
   if (!client->IsActive()) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[2 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 2;
   }
@@ -98,9 +100,10 @@ int SystemAddressAndGuidTest::RunTest(
   TestHelpers::StandardServerPrep(server, destroyList);
 
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(client, server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[3 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 3;
   }
@@ -121,9 +124,10 @@ int SystemAddressAndGuidTest::RunTest(
   if (len2 != len) {
     printf("system list size is %i and guid size is %i ", len, len2);
 
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[4 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 4;
   }
@@ -137,9 +141,10 @@ int SystemAddressAndGuidTest::RunTest(
             len,
             conNum);
 
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               errorList[5 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+        }
 
         return 5;
       }
@@ -150,9 +155,10 @@ int SystemAddressAndGuidTest::RunTest(
             len,
             conNum);
 
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               errorList[6 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+        }
 
         return 6;
       }
@@ -162,9 +168,10 @@ int SystemAddressAndGuidTest::RunTest(
           len,
           conNum);
 
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError(
             errorList[7 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+      }
 
       return 7;
     }
@@ -176,9 +183,10 @@ int SystemAddressAndGuidTest::RunTest(
           len,
           conNum);
 
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError(
             errorList[8 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+      }
 
       return 8;
     }
@@ -190,9 +198,10 @@ int SystemAddressAndGuidTest::RunTest(
   serverAddress.SetPortHostOrder(60000);
 
   if (!compareSystemAddresses(systemList[0], serverAddress)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[10 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 10;
   }
@@ -201,9 +210,10 @@ int SystemAddressAndGuidTest::RunTest(
       server->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS);
 
   if (guidList[0] != serverGuid) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[11 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 11;
   }
@@ -211,9 +221,10 @@ int SystemAddressAndGuidTest::RunTest(
   printf("Test GetSystemAddressFromIndex\n");
   if (!compareSystemAddresses(
           client->GetSystemAddressFromIndex(0), serverAddress)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[12 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 12;
   }
@@ -221,27 +232,30 @@ int SystemAddressAndGuidTest::RunTest(
   printf("Test GetSystemAddressFromGuid\n");
   if (!compareSystemAddresses(
           client->GetSystemAddressFromGuid(serverGuid), serverAddress)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[13 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 13;
   }
 
   printf("Test GetGuidFromSystemAddress\n");
   if (client->GetGuidFromSystemAddress(serverAddress) != serverGuid) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[14 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 14;
   }
 
   printf("Test GetGUIDFromIndex\n");
   if (client->GetGUIDFromIndex(0) != serverGuid) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[15 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 15;
   }
@@ -255,9 +269,10 @@ int SystemAddressAndGuidTest::RunTest(
 
   if (!compareSystemAddresses(
           client->GetExternalID(serverAddress), clientAddress)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[16 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 16;
   }
@@ -283,7 +298,7 @@ bool SystemAddressAndGuidTest::compareSystemAddresses(
   return ad1 == ad2;
 }
 
-SystemAddressAndGuidTest::SystemAddressAndGuidTest(void) {
+SystemAddressAndGuidTest::SystemAddressAndGuidTest() {
   errorList.Push("Client was active but shouldn't be yet", _FILE_AND_LINE_);
   errorList.Push("Client was not active but should be", _FILE_AND_LINE_);
   errorList.Push("Could not connect the client", _FILE_AND_LINE_);
@@ -315,11 +330,12 @@ SystemAddressAndGuidTest::SystemAddressAndGuidTest(void) {
       "GetExternalID failed to return correct values", _FILE_AND_LINE_);
 }
 
-SystemAddressAndGuidTest::~SystemAddressAndGuidTest(void) {}
+SystemAddressAndGuidTest::~SystemAddressAndGuidTest(void) = default;
 
 void SystemAddressAndGuidTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

@@ -10,9 +10,9 @@
 
 #include "PacketChangerPlugin.h"
 
-PacketChangerPlugin::PacketChangerPlugin(void) {}
+PacketChangerPlugin::PacketChangerPlugin(void) = default;
 
-PacketChangerPlugin::~PacketChangerPlugin(void) {}
+PacketChangerPlugin::~PacketChangerPlugin(void) = default;
 
 void PacketChangerPlugin::OnInternalPacket(
     InternalPacket* internalPacket,

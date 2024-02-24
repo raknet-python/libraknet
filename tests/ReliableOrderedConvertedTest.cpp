@@ -20,9 +20,10 @@ void* ReliableOrderedConvertedTest::LoggedMalloc(
     const char* file,
     unsigned int line) {
   memoryUsage += (int)size;
-  if (fp)
+  if (fp) {
     fprintf(
-        fp, "Alloc %s:%i %i bytes %i total\n", file, line, size, memoryUsage);
+        fp, "Alloc %s:%i %zu bytes %i total\n", file, line, size, memoryUsage);
+  }
   char* p = (char*)malloc(size + sizeof(size));
   memcpy(p, &size, sizeof(size));
   return p + sizeof(size);
@@ -35,14 +36,15 @@ void ReliableOrderedConvertedTest::LoggedFree(
   size_t allocatedSize;
   memcpy(&allocatedSize, realP, sizeof(size_t));
   memoryUsage -= (int)allocatedSize;
-  if (fp)
+  if (fp) {
     fprintf(
         fp,
-        "Free %s:%i %i bytes %i total\n",
+        "Free %s:%i %zu bytes %i total\n",
         file,
         line,
         allocatedSize,
         memoryUsage);
+  }
   free(realP);
 }
 void* ReliableOrderedConvertedTest::LoggedRealloc(
@@ -57,15 +59,16 @@ void* ReliableOrderedConvertedTest::LoggedRealloc(
   memoryUsage += (int)size;
   p = realloc(realP, size + sizeof(size));
   memcpy(p, &size, sizeof(size));
-  if (fp)
+  if (fp) {
     fprintf(
         fp,
-        "Realloc %s:%i %i to %i bytes %i total\n",
+        "Realloc %s:%i %zu to %zu bytes %i total\n",
         file,
         line,
         allocatedSize,
         size,
         memoryUsage);
+  }
   return (char*)p + sizeof(size);
 }
 
@@ -117,7 +120,7 @@ int ReliableOrderedConvertedTest::RunTest(
 	}
 	else
 	*/
-  fp = 0;
+  fp = nullptr;
   destroyList.Clear(false, _FILE_AND_LINE_);
 
   sender = RakPeerInterface::GetInstance();
@@ -151,12 +154,13 @@ int ReliableOrderedConvertedTest::RunTest(
   strcpy(str, "0");
   localPort = atoi(str);
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Connecting...\n");
+  }
 
-  SocketDescriptor sd(localPort, 0);
+  SocketDescriptor sd(localPort, nullptr);
   sender->Startup(1, &sd, 1);
-  sender->Connect(ip, remotePort, 0, 0);
+  sender->Connect(ip, remotePort, nullptr, 0);
 
   receiver = RakPeerInterface::GetInstance();
   destroyList.Push(receiver, _FILE_AND_LINE_);
@@ -168,8 +172,9 @@ int ReliableOrderedConvertedTest::RunTest(
   strcpy(str, "60000");
   localPort = atoi(str);
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Waiting for connections...\n");
+  }
 
   sd.port = localPort;
   receiver->Startup(32, &sd, 1);
@@ -198,26 +203,31 @@ int ReliableOrderedConvertedTest::RunTest(
       // PARSE TYPES
       switch (packet->data[0]) {
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+          }
           doSend = true;
           nextSend = currentTime;
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_NO_FREE_INCOMING_CONNECTIONS\n");
+          }
           break;
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_DISCONNECTION_NOTIFICATION\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_CONNECTION_LOST\n");
+          }
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection attempt failed\n");
+          }
           break;
       }
 
@@ -241,20 +251,22 @@ int ReliableOrderedConvertedTest::RunTest(
       delete[] pad;
       // Send on a random priority with a random stream
       // if (sender->Send(&bitStream, HIGH_PRIORITY, (PacketReliability) (RELIABLE + (randomMT() %2)) ,streamNumber, UNASSIGNED_SYSTEM_ADDRESS, true)==false)
-      if (sender->Send(
+      if (!static_cast<bool>(sender->Send(
               &bitStream,
               HIGH_PRIORITY,
               RELIABLE_ORDERED,
               streamNumberSender,
               UNASSIGNED_SYSTEM_ADDRESS,
-              true) == false)
+              true))) {
         packetNumberSender
             [streamNumberSender]--; // Didn't finish connecting yet?
+      }
 
       RakNetStatistics* rssSender;
       rssSender = sender->GetStatistics(sender->GetSystemAddressFromIndex(0));
-      if (isVerbose)
+      if (isVerbose) {
         printf("Snd: %i.\n", packetNumberSender[streamNumberSender]);
+      }
 
       nextSend += sendInterval;
 
@@ -267,16 +279,19 @@ int ReliableOrderedConvertedTest::RunTest(
     while (packet) {
       switch (packet->data[0]) {
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_NEW_INCOMING_CONNECTION\n");
+          }
           break;
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_DISCONNECTION_NOTIFICATION\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_CONNECTION_LOST\n");
+          }
           break;
         case ID_USER_PACKET_ENUM + 1:
           bitStream.Reset();
@@ -381,8 +396,9 @@ int ReliableOrderedConvertedTest::RunTest(
     printf("Client stats%s", message);
   }
 
-  if (fp)
+  if (fp) {
     fclose(fp);
+  }
 
   return 0;
 }
@@ -410,12 +426,13 @@ RakString ReliableOrderedConvertedTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-ReliableOrderedConvertedTest::ReliableOrderedConvertedTest(void) {}
+ReliableOrderedConvertedTest::ReliableOrderedConvertedTest(void) = default;
 
-ReliableOrderedConvertedTest::~ReliableOrderedConvertedTest(void) {}
+ReliableOrderedConvertedTest::~ReliableOrderedConvertedTest(void) = default;
 void ReliableOrderedConvertedTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

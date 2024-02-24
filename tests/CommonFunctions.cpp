@@ -10,9 +10,9 @@
 
 #include "CommonFunctions.h"
 
-CommonFunctions::CommonFunctions(void) {}
+CommonFunctions::CommonFunctions(void) = default;
 
-CommonFunctions::~CommonFunctions(void) {}
+CommonFunctions::~CommonFunctions(void) = default;
 
 bool CommonFunctions::ConnectionStateMatchesOptions(
     RakPeerInterface* peer,
@@ -72,17 +72,17 @@ bool CommonFunctions::WaitAndConnect(
          GetTimeMS() - entryTime < millisecondsToWait) {
     if (!CommonFunctions::ConnectionStateMatchesOptions(
             peer, connectToAddress, true, true, true, true)) {
-      peer->Connect(ip, port, 0, 0);
+      peer->Connect(ip, port, nullptr, 0);
     }
 
     RakSleep(100);
   }
 
   if (ConnectionStateMatchesOptions(peer, connectToAddress, true)) {
-    return 1;
+    return true;
   }
 
-  return 0;
+  return false;
 }
 
 void CommonFunctions::DisconnectAndWait(
@@ -139,5 +139,5 @@ Packet* CommonFunctions::WaitAndReturnMessageWithID(
     }
   }
 
-  return 0;
+  return nullptr;
 }

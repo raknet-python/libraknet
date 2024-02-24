@@ -26,7 +26,7 @@ void PeerConnectDisconnectTest::WaitForConnectionRequestsToComplete(
 
       while (CommonFunctions::ConnectionStateMatchesOptions(
           peerList[i], currentSystem, false, true, true)) {
-        if (msgWasPrinted == false) {
+        if (!msgWasPrinted) {
           printf("Waiting for connection requests to complete.\n");
           msgWasPrinted = true;
         }
@@ -47,62 +47,73 @@ void PeerConnectDisconnectTest::WaitAndPrintResults(
   // Log all events per peer
   for (int i = 0; i < peerNum; i++) //Receive for all peers
   {
-    if (isVerbose)
+    if (isVerbose) {
       printf("For peer %i\n", i);
+    }
 
     for (packet = peerList[i]->Receive(); packet;
          peerList[i]->DeallocatePacket(packet),
         packet = peerList[i]->Receive()) {
       switch (packet->data[0]) {
         case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has disconnected.\n");
+          }
 
           break;
         case ID_REMOTE_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has lost the connection.\n");
+          }
 
           break;
         case ID_REMOTE_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has connected.\n");
+          }
           break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Our connection request has been accepted.\n");
+          }
 
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection has failed.\n");
+          }
 
           break;
 
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection is incoming.\n");
+          }
 
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("The server is full.\n");
+          }
 
           break;
 
         case ID_ALREADY_CONNECTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Already connected\n");
+          }
 
           break;
 
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("We have been disconnected.\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection lost.\n");
+          }
 
           break;
         default:
@@ -156,7 +167,7 @@ int PeerConnectDisconnectTest::RunTest(
     peerList[i] = RakPeerInterface::GetInstance();
     destroyList.Push(peerList[i], _FILE_AND_LINE_);
 
-    SocketDescriptor sd(60000 + i, 0);
+    SocketDescriptor sd(60000 + i, nullptr);
     peerList[i]->Startup(maxConnections, &sd, 1);
     peerList[i]->SetMaximumIncomingConnections(maxConnections);
   }
@@ -167,14 +178,15 @@ int PeerConnectDisconnectTest::RunTest(
     for (int j = i + 1; j < peerNum;
          j++) //Start at i+1 so don't connect two of the same together.
     {
-      if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+      if (peerList[i]->Connect("127.0.0.1", 60000 + j, nullptr, 0) !=
           CONNECTION_ATTEMPT_STARTED) {
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               "Problem while calling connect.\n",
               !noPauses && isVerbose,
               __LINE__,
               __FILE__);
+        }
 
         return 1; //This fails the test, don't bother going on.
       }
@@ -219,14 +231,15 @@ int PeerConnectDisconnectTest::RunTest(
                 true,
                 true)) //Are we connected or is there a pending operation ?
         {
-          if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+          if (peerList[i]->Connect("127.0.0.1", 60000 + j, nullptr, 0) !=
               CONNECTION_ATTEMPT_STARTED) {
-            if (isVerbose)
+            if (isVerbose) {
               DebugTools::ShowError(
                   "Problem while calling connect.\n",
                   !noPauses && isVerbose,
                   __LINE__,
                   __FILE__);
+            }
 
             return 1; //This fails the test, don't bother going on.
           }
@@ -260,41 +273,41 @@ int PeerConnectDisconnectTest::RunTest(
       {
         printf("Calling Connect() for peer %i to peer %i.\n", i, j);
 
-        if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+        if (peerList[i]->Connect("127.0.0.1", 60000 + j, nullptr, 0) !=
             CONNECTION_ATTEMPT_STARTED) {
           peerList[i]->GetSystemList(systemList, guidList); //Get connectionlist
           int len = systemList.Size();
 
-          if (isVerbose)
+          if (isVerbose) {
             DebugTools::ShowError(
                 "Problem while calling connect.\n",
                 !noPauses && isVerbose,
                 __LINE__,
                 __FILE__);
+          }
 
           return 1; //This fails the test, don't bother going on.
         }
       } else {
-        if (CommonFunctions::ConnectionStateMatchesOptions(
-                peerList[i], currentSystem, false, false, false, true) == false)
+        if (!CommonFunctions::ConnectionStateMatchesOptions(
+                peerList[i], currentSystem, false, false, false, true)) {
           printf(
               "Not calling Connect() for peer %i to peer %i because it is disconnecting.\n",
               i,
               j);
-        else if (
-            CommonFunctions::ConnectionStateMatchesOptions(
-                peerList[i], currentSystem, false, true, true) == false)
+        } else if (!CommonFunctions::ConnectionStateMatchesOptions(
+                       peerList[i], currentSystem, false, true, true)) {
           printf(
               "Not calling Connect() for peer %i to peer %i because it is connecting.\n",
               i,
               j);
-        else if (
-            CommonFunctions::ConnectionStateMatchesOptions(
-                peerList[i], currentSystem, true) == false)
+        } else if (!CommonFunctions::ConnectionStateMatchesOptions(
+                       peerList[i], currentSystem, true)) {
           printf(
               "Not calling Connect() for peer %i to peer %i because it is connected).\n",
               i,
               j);
+        }
       }
     }
   }
@@ -320,8 +333,9 @@ int PeerConnectDisconnectTest::RunTest(
     }
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Pass\n");
+  }
   return 0;
 }
 
@@ -348,12 +362,13 @@ RakString PeerConnectDisconnectTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-PeerConnectDisconnectTest::PeerConnectDisconnectTest(void) {}
+PeerConnectDisconnectTest::PeerConnectDisconnectTest(void) = default;
 
-PeerConnectDisconnectTest::~PeerConnectDisconnectTest(void) {}
+PeerConnectDisconnectTest::~PeerConnectDisconnectTest(void) = default;
 void PeerConnectDisconnectTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

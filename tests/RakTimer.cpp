@@ -10,7 +10,7 @@
 
 #include "RakTimer.h"
 
-RakTimer::RakTimer(void) {
+RakTimer::RakTimer() {
   timerLength = 1000;
   Start();
 }
@@ -20,7 +20,7 @@ RakTimer::RakTimer(int lengthInMilliseconds) {
   Start();
 }
 
-RakTimer::~RakTimer(void) {}
+RakTimer::~RakTimer(void) = default;
 
 void RakTimer::SetTimerLength(int lengthInMilliseconds) {
   timerLength = lengthInMilliseconds;

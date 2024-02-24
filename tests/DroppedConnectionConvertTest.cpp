@@ -56,7 +56,7 @@ int DroppedConnectionConvertTest::RunTest(
   destroyList.Clear(false, _FILE_AND_LINE_);
   destroyList.Push(server, _FILE_AND_LINE_);
   //	server->InitializeSecurity(0,0,0,0);
-  SocketDescriptor socketDescriptor(serverPort, 0);
+  SocketDescriptor socketDescriptor(serverPort, nullptr);
   server->Startup(NUMBER_OF_CLIENTS, &socketDescriptor, 1);
   server->SetMaximumIncomingConnections(NUMBER_OF_CLIENTS);
   server->SetTimeoutTime(2000, UNASSIGNED_SYSTEM_ADDRESS);
@@ -64,9 +64,9 @@ int DroppedConnectionConvertTest::RunTest(
   for (index = 0; index < NUMBER_OF_CLIENTS; index++) {
     clients[index] = RakPeerInterface::GetInstance();
     destroyList.Push(clients[index], _FILE_AND_LINE_);
-    SocketDescriptor socketDescriptor2(serverPort + 1 + index, 0);
+    SocketDescriptor socketDescriptor2(serverPort + 1 + index, nullptr);
     clients[index]->Startup(1, &socketDescriptor2, 1);
-    if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0) !=
+    if (clients[index]->Connect("127.0.0.1", serverPort, nullptr, 0) !=
         CONNECTION_ATTEMPT_STARTED) {
       DebugTools::ShowError(
           "Connect function failed.",
@@ -78,15 +78,17 @@ int DroppedConnectionConvertTest::RunTest(
     clients[index]->SetTimeoutTime(5000, UNASSIGNED_SYSTEM_ADDRESS);
 
     RakSleep(1000);
-    if (isVerbose)
+    if (isVerbose) {
       printf("%i. ", index);
+    }
   }
 
   TimeMS entryTime = GetTimeMS(); //Loop entry time
 
   int seed = 12345;
-  if (isVerbose)
+  if (isVerbose) {
     printf("Using seed %i\n", seed);
+  }
   seedMT(seed); //specify seed to keep execution path the same.
 
   int randomTest;
@@ -101,12 +103,12 @@ int DroppedConnectionConvertTest::RunTest(
     randomTest = randomMT() % 4;
 
     if (dropTest) {
-      server->GetConnectionList(0, &numberOfSystems);
+      server->GetConnectionList(nullptr, &numberOfSystems);
       numberOfSystems2 = numberOfSystems;
 
       connectionCount = 0;
       for (index = 0; index < NUMBER_OF_CLIENTS; index++) {
-        clients[index]->GetConnectionList(0, &numberOfSystems);
+        clients[index]->GetConnectionList(nullptr, &numberOfSystems);
         if (numberOfSystems > 1) {
           if (isVerbose) {
             printf("Client %i has %i connections\n", index, numberOfSystems);
@@ -124,12 +126,13 @@ int DroppedConnectionConvertTest::RunTest(
       }
 
       if (connectionCount != numberOfSystems2) {
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               "Timeout on dropped clients not detected",
               !noPauses && isVerbose,
               __LINE__,
               __FILE__);
+        }
         return 3;
       }
     }
@@ -139,14 +142,16 @@ int DroppedConnectionConvertTest::RunTest(
       case 0: {
         index = randomMT() % NUMBER_OF_CLIENTS;
 
-        clients[index]->GetConnectionList(0, &numberOfSystems);
+        clients[index]->GetConnectionList(nullptr, &numberOfSystems);
         clients[index]->CloseConnection(serverID, false, 0);
         if (numberOfSystems == 0) {
-          if (isVerbose)
+          if (isVerbose) {
             printf("Client %i silently closing inactive connection.\n", index);
+          }
         } else {
-          if (isVerbose)
+          if (isVerbose) {
             printf("Client %i silently closing active connection.\n", index);
+          }
         }
       }
 
@@ -154,7 +159,7 @@ int DroppedConnectionConvertTest::RunTest(
       case 1: {
         index = randomMT() % NUMBER_OF_CLIENTS;
 
-        clients[index]->GetConnectionList(0, &numberOfSystems);
+        clients[index]->GetConnectionList(nullptr, &numberOfSystems);
 
         if (!CommonFunctions::ConnectionStateMatchesOptions(
                 clients[index],
@@ -164,7 +169,7 @@ int DroppedConnectionConvertTest::RunTest(
                 true,
                 true)) //Are we connected or is there a pending operation ?
         {
-          if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0) !=
+          if (clients[index]->Connect("127.0.0.1", serverPort, nullptr, 0) !=
               CONNECTION_ATTEMPT_STARTED) {
             DebugTools::ShowError(
                 "Connect function failed.",
@@ -175,28 +180,32 @@ int DroppedConnectionConvertTest::RunTest(
           }
         }
         if (numberOfSystems == 0) {
-          if (isVerbose)
+          if (isVerbose) {
             printf(
                 "Client %i connecting to same existing connection.\n", index);
+          }
 
         } else {
-          if (isVerbose)
+          if (isVerbose) {
             printf("Client %i connecting to closed connection.\n", index);
+          }
         }
       }
 
       break;
       case 2: {
-        if (isVerbose)
+        if (isVerbose) {
           printf("Randomly connecting and disconnecting each client\n");
+        }
         for (index = 0; index < NUMBER_OF_CLIENTS; index++) {
           if (NUMBER_OF_CLIENTS == 1 || (randomMT() % 2) == 0) {
             if (clients[index]->IsActive()) {
               int randomTest2 = randomMT() % 2;
-              if (randomTest2)
+              if (randomTest2) {
                 clients[index]->CloseConnection(serverID, false, 0);
-              else
+              } else {
                 clients[index]->CloseConnection(serverID, true, 0);
+              }
             }
           } else {
             if (!CommonFunctions::ConnectionStateMatchesOptions(
@@ -207,7 +216,8 @@ int DroppedConnectionConvertTest::RunTest(
                     true,
                     true)) //Are we connected or is there a pending operation ?
             {
-              if (clients[index]->Connect("127.0.0.1", serverPort, 0, 0) !=
+              if (clients[index]->Connect(
+                      "127.0.0.1", serverPort, nullptr, 0) !=
                   CONNECTION_ATTEMPT_STARTED) {
                 DebugTools::ShowError(
                     "Connect function failed.",
@@ -222,8 +232,9 @@ int DroppedConnectionConvertTest::RunTest(
       } break;
 
       case 3: {
-        if (isVerbose)
+        if (isVerbose) {
           printf("Testing if clients dropped after timeout.\n");
+        }
         timeoutWaitTimer.Start();
         //Wait half the timeout time, the other half after receive so we don't drop all connections only missing ones, Active ait so the threads run on linux
         while (!timeoutWaitTimer.IsExpired()) {
@@ -237,13 +248,14 @@ int DroppedConnectionConvertTest::RunTest(
         break;
     }
 
-    server->GetConnectionList(0, &numberOfSystems);
+    server->GetConnectionList(nullptr, &numberOfSystems);
     numberOfSystems2 = numberOfSystems;
-    if (isVerbose)
+    if (isVerbose) {
       printf("The server thinks %i clients are connected.\n", numberOfSystems);
+    }
     connectionCount = 0;
     for (index = 0; index < NUMBER_OF_CLIENTS; index++) {
-      clients[index]->GetConnectionList(0, &numberOfSystems);
+      clients[index]->GetConnectionList(nullptr, &numberOfSystems);
       if (numberOfSystems > 1) {
         if (isVerbose) {
           printf("Client %i has %i connections\n", index, numberOfSystems);
@@ -260,23 +272,25 @@ int DroppedConnectionConvertTest::RunTest(
       }
     }
 
-    if (isVerbose)
+    if (isVerbose) {
       printf("%i clients are actually connected.\n", connectionCount);
-    if (isVerbose)
+    }
+    if (isVerbose) {
       printf(
           "server->NumberOfConnections==%i.\n", server->NumberOfConnections());
+    }
 
     //}
 
     // Parse messages
 
-    while (1) {
+    while (true) {
       p = server->Receive();
       sender = NUMBER_OF_CLIENTS;
-      if (p == 0) {
+      if (p == nullptr) {
         for (index = 0; index < NUMBER_OF_CLIENTS; index++) {
           p = clients[index]->Receive();
-          if (p != 0) {
+          if (p != nullptr) {
             sender = index;
             break;
           }
@@ -286,59 +300,66 @@ int DroppedConnectionConvertTest::RunTest(
       if (p) {
         switch (p->data[0]) {
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf(
                   "%i: %ID_CONNECTION_REQUEST_ACCEPTED from %i.\n",
                   sender,
                   p->systemAddress.GetPort());
+            }
             break;
           case ID_DISCONNECTION_NOTIFICATION:
             // Connection lost normally
-            if (isVerbose)
+            if (isVerbose) {
               printf(
                   "%i: ID_DISCONNECTION_NOTIFICATION from %i.\n",
                   sender,
                   p->systemAddress.GetPort());
+            }
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
             // Somebody connected.  We have their IP now
-            if (isVerbose)
+            if (isVerbose) {
               printf(
                   "%i: ID_NEW_INCOMING_CONNECTION from %i.\n",
                   sender,
                   p->systemAddress.GetPort());
+            }
             break;
 
           case ID_CONNECTION_LOST:
             // Couldn't deliver a reliable packet - i.e. the other system was abnormally
             // terminated
-            if (isVerbose)
+            if (isVerbose) {
               printf(
                   "%i: ID_CONNECTION_LOST from %i.\n",
                   sender,
                   p->systemAddress.GetPort());
+            }
             break;
 
           case ID_NO_FREE_INCOMING_CONNECTIONS:
-            if (isVerbose)
+            if (isVerbose) {
               printf(
                   "%i: ID_NO_FREE_INCOMING_CONNECTIONS from %i.\n",
                   sender,
                   p->systemAddress.GetPort());
+            }
             break;
 
           default:
             // Ignore anything else
             break;
         }
-      } else
+      } else {
         break;
+      }
 
-      if (sender == NUMBER_OF_CLIENTS)
+      if (sender == NUMBER_OF_CLIENTS) {
         server->DeallocatePacket(p);
-      else
+      } else {
         clients[sender]->DeallocatePacket(p);
+      }
     }
     if (dropTest) {
       //Trigger the timeout if no recieve
@@ -395,10 +416,11 @@ RakString DroppedConnectionConvertTest::ErrorCodeToString(int errorCode) {
 void DroppedConnectionConvertTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }
 
-DroppedConnectionConvertTest::DroppedConnectionConvertTest(void) {}
+DroppedConnectionConvertTest::DroppedConnectionConvertTest(void) = default;
 
-DroppedConnectionConvertTest::~DroppedConnectionConvertTest(void) {}
+DroppedConnectionConvertTest::~DroppedConnectionConvertTest(void) = default;

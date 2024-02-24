@@ -10,9 +10,9 @@
 
 #include "DebugTools.h"
 
-DebugTools::DebugTools(void) {}
+DebugTools::DebugTools(void) = default;
 
-DebugTools::~DebugTools(void) {}
+DebugTools::~DebugTools(void) = default;
 
 void DebugTools::ShowError(
     RakString errorString,

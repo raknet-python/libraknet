@@ -48,8 +48,9 @@ int ComprehensiveConvertTest::RunTest(
   char data[8096];
 
   int seed = 12345;
-  if (isVerbose)
+  if (isVerbose) {
     printf("Using seed %i\n", seed);
+  }
   seedMT(seed);
 
   for (i = 0; i < NUM_PEERS; i++) {
@@ -59,7 +60,7 @@ int ComprehensiveConvertTest::RunTest(
     //autoRpcs[i].RegisterFunction("RPC4", RPC4, false);
     peers[i] = RakPeerInterface::GetInstance();
     peers[i]->SetMaximumIncomingConnections(CONNECTIONS_PER_SYSTEM);
-    SocketDescriptor socketDescriptor(60000 + i, 0);
+    SocketDescriptor socketDescriptor(60000 + i, nullptr);
     peers[i]->Startup(NUM_PEERS, &socketDescriptor, 1);
     peers[i]->SetOfflinePingResponse(
         "Offline Ping Data", (int)strlen("Offline Ping Data") + 1);
@@ -79,7 +80,7 @@ int ComprehensiveConvertTest::RunTest(
             true)) //Are we connected or is there a pending operation ?
     {
       ConnectionAttemptResult resultReturn =
-          peers[i]->Connect("127.0.0.1", 60000 + portAdd, 0, 0);
+          peers[i]->Connect("127.0.0.1", 60000 + portAdd, nullptr, 0);
       if (resultReturn != CONNECTION_ATTEMPT_STARTED &&
           resultReturn != ALREADY_CONNECTED_TO_ENDPOINT) {
         DebugTools::ShowError(
@@ -99,7 +100,7 @@ int ComprehensiveConvertTest::RunTest(
     if (nextAction < .04f) {
       // Initialize
       peerIndex = randomMT() % NUM_PEERS;
-      SocketDescriptor socketDescriptor(60000 + peerIndex, 0);
+      SocketDescriptor socketDescriptor(60000 + peerIndex, nullptr);
       peers[peerIndex]->Startup(NUM_PEERS, &socketDescriptor, 1);
       portAdd = randomMT() % NUM_PEERS;
 
@@ -115,7 +116,7 @@ int ComprehensiveConvertTest::RunTest(
               true)) //Are we connected or is there a pending operation ?
       {
         ConnectionAttemptResult resultReturn =
-            peers[peerIndex]->Connect("127.0.0.1", 60000 + portAdd, 0, 0);
+            peers[peerIndex]->Connect("127.0.0.1", 60000 + portAdd, nullptr, 0);
         if (resultReturn != CONNECTION_ATTEMPT_STARTED &&
             resultReturn != ALREADY_CONNECTED_TO_ENDPOINT) {
           DebugTools::ShowError(
@@ -142,7 +143,7 @@ int ComprehensiveConvertTest::RunTest(
               true)) //Are we connected or is there a pending operation ?
       {
         ConnectionAttemptResult resultReturn =
-            peers[peerIndex]->Connect("127.0.0.1", 60000 + portAdd, 0, 0);
+            peers[peerIndex]->Connect("127.0.0.1", 60000 + portAdd, nullptr, 0);
         if (resultReturn != CONNECTION_ATTEMPT_STARTED &&
             resultReturn != ALREADY_CONNECTED_TO_ENDPOINT) {
           DebugTools::ShowError(
@@ -189,11 +190,12 @@ int ComprehensiveConvertTest::RunTest(
       reliability =
           (PacketReliability)(randomMT() % ((int)RELIABLE_SEQUENCED + 1));
       orderingChannel = randomMT() % 32;
-      if ((randomMT() % NUM_PEERS) == 0)
+      if ((randomMT() % NUM_PEERS) == 0) {
         target = UNASSIGNED_SYSTEM_ADDRESS;
-      else
+      } else {
         target =
             peers[peerIndex]->GetSystemAddressFromIndex(randomMT() % NUM_PEERS);
+      }
 
       broadcast = (randomMT() % 2) > 0;
 #ifdef _VERIFY_RECIPIENTS
@@ -241,11 +243,12 @@ int ComprehensiveConvertTest::RunTest(
           (PacketReliability)(randomMT() % ((int)RELIABLE_SEQUENCED + 1));
       orderingChannel = randomMT() % 32;
       peerIndex = randomMT() % NUM_PEERS;
-      if ((randomMT() % NUM_PEERS) == 0)
+      if ((randomMT() % NUM_PEERS) == 0) {
         target = UNASSIGNED_SYSTEM_ADDRESS;
-      else
+      } else {
         target =
             peers[peerIndex]->GetSystemAddressFromIndex(randomMT() % NUM_PEERS);
+      }
       broadcast = (randomMT() % 2) > 0;
 #ifdef _VERIFY_RECIPIENTS
       broadcast = false; // Temporarily in so I can check recipients
@@ -300,24 +303,27 @@ int ComprehensiveConvertTest::RunTest(
       rss = peers[peerIndex]->GetStatistics(mySystemAddress);
       if (rss) {
         StatisticsToString(rss, data, 0);
-        if (isVerbose)
+        if (isVerbose) {
           printf(
               "Statistics for local system %i:\n%s",
               mySystemAddress.GetPort(),
               data);
+        }
       }
 
       rss = peers[peerIndex]->GetStatistics(target);
       if (rss) {
         StatisticsToString(rss, data, 0);
-        if (isVerbose)
+        if (isVerbose) {
           printf(
               "Statistics for target system %i:\n%s", target.GetPort(), data);
+        }
       }
     }
 
-    for (i = 0; i < NUM_PEERS; i++)
+    for (i = 0; i < NUM_PEERS; i++) {
       peers[i]->DeallocatePacket(peers[i]->Receive());
+    }
 
     RakSleep(0);
   }
@@ -326,8 +332,9 @@ int ComprehensiveConvertTest::RunTest(
 }
 
 void ComprehensiveConvertTest::DestroyPeers() {
-  for (int i = 0; i < NUM_PEERS; i++)
+  for (int i = 0; i < NUM_PEERS; i++) {
     RakPeerInterface::DestroyInstance(peers[i]);
+  }
 }
 
 RakString ComprehensiveConvertTest::GetTestName() {
@@ -349,6 +356,6 @@ RakString ComprehensiveConvertTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-ComprehensiveConvertTest::ComprehensiveConvertTest(void) {}
+ComprehensiveConvertTest::ComprehensiveConvertTest(void) = default;
 
-ComprehensiveConvertTest::~ComprehensiveConvertTest(void) {}
+ComprehensiveConvertTest::~ComprehensiveConvertTest(void) = default;

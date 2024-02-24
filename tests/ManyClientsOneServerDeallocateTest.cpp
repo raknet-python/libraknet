@@ -10,6 +10,8 @@
 
 #include "ManyClientsOneServerDeallocateTest.h"
 
-ManyClientsOneServerDeallocateTest::ManyClientsOneServerDeallocateTest(void) {}
+ManyClientsOneServerDeallocateTest::ManyClientsOneServerDeallocateTest(void) =
+    default;
 
-ManyClientsOneServerDeallocateTest::~ManyClientsOneServerDeallocateTest(void) {}
+ManyClientsOneServerDeallocateTest::~ManyClientsOneServerDeallocateTest(void) =
+    default;

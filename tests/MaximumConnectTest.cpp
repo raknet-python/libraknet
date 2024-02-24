@@ -53,7 +53,7 @@ int MaximumConnectTest::RunTest(
     peerList[i] = RakPeerInterface::GetInstance();
     destroyList.Push(peerList[i], _FILE_AND_LINE_);
 
-    SocketDescriptor sd(60000 + i, 0);
+    SocketDescriptor sd(60000 + i, nullptr);
     peerList[i]->Startup(maxConnections, &sd, 1);
     peerList[i]->SetMaximumIncomingConnections(maxConnections);
 
@@ -77,14 +77,15 @@ int MaximumConnectTest::RunTest(
     for (int j = i + 1; j < peerNum;
          j++) //Start at i+1 so don't connect two of the same together.
     {
-      if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+      if (peerList[i]->Connect("127.0.0.1", 60000 + j, nullptr, 0) !=
           CONNECTION_ATTEMPT_STARTED) {
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               "Problem while calling connect.\n",
               !noPauses && isVerbose,
               __LINE__,
               __FILE__);
+        }
 
         return 1; //This fails the test, don't bother going on.
       }
@@ -99,60 +100,71 @@ int MaximumConnectTest::RunTest(
     {
       packet = peerList[i]->Receive();
 
-      if (isVerbose && packet)
+      if (isVerbose && packet) {
         printf("For peer %i\n", i);
+      }
 
       while (packet) {
         switch (packet->data[0]) {
           case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has disconnected.\n");
+            }
 
             break;
           case ID_REMOTE_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has lost the connection.\n");
+            }
 
             break;
           case ID_REMOTE_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has connected.\n");
+            }
             break;
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Our connection request has been accepted.\n");
+            }
 
             break;
           case ID_CONNECTION_ATTEMPT_FAILED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection has failed.\n"); //Should happen in this test
+            }
 
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection is incoming.\n");
+            }
 
             break;
           case ID_NO_FREE_INCOMING_CONNECTIONS:
-            if (isVerbose)
+            if (isVerbose) {
               printf("The server is full.\n");
+            }
 
             break;
 
           case ID_ALREADY_CONNECTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Already connected\n"); //Shouldn't happen
+            }
 
             break;
 
           case ID_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("We have been disconnected.\n");
+            }
             break;
           case ID_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Connection lost.\n");
+            }
 
             break;
           default:
@@ -191,8 +203,9 @@ int MaximumConnectTest::RunTest(
     }
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Pass\n");
+  }
   return 0;
 }
 
@@ -223,13 +236,14 @@ RakString MaximumConnectTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-MaximumConnectTest::MaximumConnectTest(void) {}
+MaximumConnectTest::MaximumConnectTest(void) = default;
 
-MaximumConnectTest::~MaximumConnectTest(void) {}
+MaximumConnectTest::~MaximumConnectTest(void) = default;
 
 void MaximumConnectTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

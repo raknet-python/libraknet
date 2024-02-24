@@ -53,45 +53,50 @@ int OfflineMessagesConvertTest::RunTest(
   nextTest = 0;
 
   peer1->SetMaximumIncomingConnections(1);
-  SocketDescriptor socketDescriptor(60001, 0);
+  SocketDescriptor socketDescriptor(60001, nullptr);
   peer1->Startup(1, &socketDescriptor, 1);
   socketDescriptor.port = 60002;
   peer2->Startup(1, &socketDescriptor, 1);
-  char* pingResponseData = 0;
+  char* pingResponseData = nullptr;
   unsigned int responseLen = 0;
   peer1->SetOfflinePingResponse(
       "Offline Ping Data", (int)strlen("Offline Ping Data") + 1);
   peer1->GetOfflinePingResponse(&pingResponseData, &responseLen);
 
   if (strcmp(pingResponseData, "Offline Ping Data") != 0) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "GetOfflinePingResponse failed.\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 5;
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf(
         "Peer 1 guid = %s\n",
         peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
-  if (isVerbose)
+  }
+  if (isVerbose) {
     printf(
         "Peer 2 guid = %s\n",
         peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
-  if (isVerbose)
+  }
+  if (isVerbose) {
     printf("Systems started.  Waiting for advertise system packet\n");
+  }
 
   // Wait for connection to complete
   RakSleep(300);
 
-  if (isVerbose)
+  if (isVerbose) {
     printf(
         "Sending advertise system from %s\n",
         peer1->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS).ToString());
+  }
   peer1->AdvertiseSystem(
       "127.0.0.1", 60002, "hello world", (int)strlen("hello world") + 1);
 
@@ -104,38 +109,43 @@ int OfflineMessagesConvertTest::RunTest(
     if (packet) {
       if (packet->data[0] == ID_ADVERTISE_SYSTEM) {
         if (packet->length > 1) {
-          if (isVerbose)
+          if (isVerbose) {
             printf("Got Advertise system with data: %s\n", packet->data + 1);
+          }
 
           if (strcmp((const char*)(packet->data + 1), "hello world") == 0) {
             recievedProperOfflineData = true;
           } else {
-            if (isVerbose)
+            if (isVerbose) {
               DebugTools::ShowError(
                   "Got Advertise system with unexpected data\n",
                   !noPauses && isVerbose,
                   __LINE__,
                   __FILE__);
+            }
 
             return 1;
           }
         } else {
-          if (isVerbose)
+          if (isVerbose) {
             DebugTools::ShowError(
                 "Got Advertise system with unexpected data\n",
                 !noPauses && isVerbose,
                 __LINE__,
                 __FILE__);
+          }
 
           return 1;
         }
-        if (isVerbose)
+        if (isVerbose) {
           printf("Was sent from GUID %s\n", packet->guid.ToString());
-        if (isVerbose)
+        }
+        if (isVerbose) {
           printf(
               "Sending ping from %s\n",
               peer2->GetGuidFromSystemAddress(UNASSIGNED_SYSTEM_ADDRESS)
                   .ToString());
+        }
         peer2->Ping("127.0.0.1", 60001, false);
         nextTest++;
       } else if (packet->data[0] == ID_UNCONNECTED_PONG) {
@@ -148,11 +158,13 @@ int OfflineMessagesConvertTest::RunTest(
             sizeof(TimeMS));
         dataLength = packet->length - sizeof(unsigned char) - sizeof(TimeMS);
         if (peer2->IsLocalIP(packet->systemAddress.ToString(false))) {
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_UNCONNECTED_PONG from our own");
+          }
         } else {
-          if (isVerbose)
+          if (isVerbose) {
             printf("ID_UNCONNECTED_PONG from");
+          }
         }
         if (isVerbose) {
           printf(
@@ -171,12 +183,13 @@ int OfflineMessagesConvertTest::RunTest(
           printf("Data is %s\n", recString);
 
           if (strcmp(recString, "Offline Ping Data") != 0) {
-            if (isVerbose)
+            if (isVerbose) {
               DebugTools::ShowError(
                   "Received wrong offline ping response\n",
                   !noPauses && isVerbose,
                   __LINE__,
                   __FILE__);
+            }
 
             return 2;
           }
@@ -193,22 +206,24 @@ int OfflineMessagesConvertTest::RunTest(
   }
 
   if (!recievedProperOfflineData) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Never got proper offline data\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
     return 3;
   }
 
   if (!recievedProperPingData) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Never got proper ping data\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 4;
   }
@@ -247,13 +262,14 @@ RakString OfflineMessagesConvertTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-OfflineMessagesConvertTest::OfflineMessagesConvertTest(void) {}
+OfflineMessagesConvertTest::OfflineMessagesConvertTest(void) = default;
 
-OfflineMessagesConvertTest::~OfflineMessagesConvertTest(void) {}
+OfflineMessagesConvertTest::~OfflineMessagesConvertTest(void) = default;
 
 void OfflineMessagesConvertTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

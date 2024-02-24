@@ -55,9 +55,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   TestHelpers::StandardServerPrep(server, destroyList);
   printf("Connecting to server\n");
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(client, server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[1 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 1;
   }
@@ -97,17 +98,19 @@ int PacketAndLowLevelTestsTest::RunTest(
   Packet* packet;
   if (!(packet = CommonFunctions::WaitAndReturnMessageWithID(
             server, ID_USER_PACKET_ENUM + 1, 1000))) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[9 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 9;
   }
 
   if (packet->length != 25) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[13], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 14;
   }
@@ -120,9 +123,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   client->AttachPlugin(myPlug);
   TestHelpers::BroadCastTestPacket(client);
   if (TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[2 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 2;
   }
@@ -130,9 +134,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   client->DetachPlugin(myPlug);
   TestHelpers::BroadCastTestPacket(client);
   if (!TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[3 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 3;
   }
@@ -158,9 +163,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   server->SetSplitMessageProgressInterval(1);
 
   if (server->GetSplitMessageProgressInterval() != 1) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[4 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 4;
   }
@@ -173,18 +179,20 @@ int PacketAndLowLevelTestsTest::RunTest(
           0,
           UNASSIGNED_SYSTEM_ADDRESS,
           true)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[5 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 5;
   }
 
   if (!CommonFunctions::WaitForMessageWithID(
           server, ID_DOWNLOAD_PROGRESS, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[6 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 6;
   }
@@ -198,9 +206,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(
           client, server, 5000)) //Make sure connected before test
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[11 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 11;
   }
@@ -208,9 +217,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   printf("Making sure standard send/recieve still functioning\n");
   TestHelpers::BroadCastTestPacket(client);
   if (!TestHelpers::WaitForTestPacket(server, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[12], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 13;
   }
@@ -220,9 +230,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   server->PushBackPacket(hugePacket, false);
 
   if (!TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[7 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 7;
   }
@@ -231,9 +242,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(
           client, server, 5000)) //Make sure connected before test
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[11 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 11;
   }
@@ -241,9 +253,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   printf("Making sure standard send/recieve still functioning\n");
   TestHelpers::BroadCastTestPacket(client);
   if (!TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[12 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 12;
   }
@@ -252,9 +265,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   server->PushBackPacket(hugePacket2, true);
 
   if (!TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[10 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 10;
   }
@@ -263,9 +277,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(
           client, server, 5000)) //Make sure connected before test
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[11 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 11;
   }
@@ -273,9 +288,10 @@ int PacketAndLowLevelTestsTest::RunTest(
   printf("Run recieve test\n");
   TestHelpers::BroadCastTestPacket(client);
   if (!TestHelpers::WaitForTestPacket(server, 2000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           errorList[12 - 1], !noPauses && isVerbose, __LINE__, __FILE__);
+    }
 
     return 12;
   }
@@ -306,11 +322,12 @@ RakString PacketAndLowLevelTestsTest::ErrorCodeToString(int errorCode) {
 void PacketAndLowLevelTestsTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }
 
-PacketAndLowLevelTestsTest::PacketAndLowLevelTestsTest(void) {
+PacketAndLowLevelTestsTest::PacketAndLowLevelTestsTest() {
   errorList.Push("Client failed to connect to server", _FILE_AND_LINE_);
   errorList.Push("Attached plugin failed to modify packet", _FILE_AND_LINE_);
   errorList.Push(
@@ -336,4 +353,4 @@ PacketAndLowLevelTestsTest::PacketAndLowLevelTestsTest(void) {
   errorList.Push("Recieved size incorrect", _FILE_AND_LINE_);
 }
 
-PacketAndLowLevelTestsTest::~PacketAndLowLevelTestsTest(void) {}
+PacketAndLowLevelTestsTest::~PacketAndLowLevelTestsTest(void) = default;

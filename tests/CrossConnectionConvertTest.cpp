@@ -39,7 +39,7 @@ int CrossConnectionConvertTest::RunTest(
   client = RakPeerInterface::GetInstance();
   destroyList.Push(client, _FILE_AND_LINE_);
 
-  SocketDescriptor sd(SERVER_PORT, 0);
+  SocketDescriptor sd(SERVER_PORT, nullptr);
   server->Startup(1, &sd, 1);
   server->SetMaximumIncomingConnections(1);
 
@@ -71,32 +71,37 @@ int CrossConnectionConvertTest::RunTest(
         printedYet = true;
       }
       if (p->data[0] == ID_NEW_INCOMING_CONNECTION) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_NEW_INCOMING_CONNECTION\n");
+        }
         gotNotification = true;
       } else if (p->data[0] == ID_CONNECTION_REQUEST_ACCEPTED) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+        }
         gotNotification = true;
       } else if (p->data[0] == ID_UNCONNECTED_PING) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_PING\n");
+        }
         connectionAttemptTime = GetTimeMS() + 1000;
         p->systemAddress.ToString(false, clientIP);
         clientPort = p->systemAddress.GetPort();
         gotNotification = false;
       } else if (p->data[0] == ID_UNCONNECTED_PONG) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_UNCONNECTED_PONG\n");
+        }
         TimeMS sendPingTime;
         BitStream bs(p->data, p->length, false);
         bs.IgnoreBytes(1);
         bs.Read(sendPingTime);
         TimeMS rtt = GetTimeMS() - sendPingTime;
-        if (rtt / 2 <= 500)
+        if (rtt / 2 <= 500) {
           connectionAttemptTime = GetTimeMS() + 1000 - rtt / 2;
-        else
+        } else {
           connectionAttemptTime = GetTimeMS();
+        }
         gotNotification = false;
       }
     }
@@ -109,50 +114,56 @@ int CrossConnectionConvertTest::RunTest(
         printedYet = true;
       }
       if (p->data[0] == ID_NEW_INCOMING_CONNECTION) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_NEW_INCOMING_CONNECTION\n");
+        }
         gotNotification = true;
       } else if (p->data[0] == ID_CONNECTION_REQUEST_ACCEPTED) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_CONNECTION_REQUEST_ACCEPTED\n");
+        }
         gotNotification = true;
       } else if (p->data[0] == ID_UNCONNECTED_PING) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_PING\n");
+        }
         connectionAttemptTime = GetTimeMS() + 1000;
         p->systemAddress.ToString(false, clientIP);
         clientPort = p->systemAddress.GetPort();
         gotNotification = false;
       } else if (p->data[0] == ID_UNCONNECTED_PONG) {
-        if (isVerbose)
+        if (isVerbose) {
           printf("ID_UNCONNECTED_PONG\n");
+        }
         TimeMS sendPingTime;
         BitStream bs(p->data, p->length, false);
         bs.IgnoreBytes(1);
         bs.Read(sendPingTime);
         TimeMS rtt = GetTimeMS() - sendPingTime;
-        if (rtt / 2 <= 500)
+        if (rtt / 2 <= 500) {
           connectionAttemptTime = GetTimeMS() + 1000 - rtt / 2;
-        else
+        } else {
           connectionAttemptTime = GetTimeMS();
+        }
         gotNotification = false;
       }
     }
 
     if (connectionAttemptTime != 0 && GetTimeMS() >= connectionAttemptTime) {
-      if (isVerbose)
+      if (isVerbose) {
         printf("Attemping connection\n");
+      }
       connectionAttemptTime = 0;
 
-      server->Connect(clientIP, clientPort, 0, 0);
-      client->Connect(serverIP, SERVER_PORT, 0, 0);
+      server->Connect(clientIP, clientPort, nullptr, 0);
+      client->Connect(serverIP, SERVER_PORT, nullptr, 0);
 
       connectionResultDeterminationTime = GetTimeMS() + 2000;
     }
     if (connectionResultDeterminationTime != 0 &&
         GetTimeMS() >= connectionResultDeterminationTime) {
       connectionResultDeterminationTime = 0;
-      if (gotNotification == false) {
+      if (!gotNotification) {
         DebugTools::ShowError(
             "Did not recieve expected response. \n",
             !noPauses && isVerbose,
@@ -182,8 +193,9 @@ int CrossConnectionConvertTest::RunTest(
     }
     RakSleep(0);
   }
-  if (isVerbose)
+  if (isVerbose) {
     printf("Test succeeded.\n");
+  }
 
   return 0;
 }
@@ -210,10 +222,11 @@ RakString CrossConnectionConvertTest::ErrorCodeToString(int errorCode) {
 void CrossConnectionConvertTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }
 
-CrossConnectionConvertTest::CrossConnectionConvertTest(void) {}
+CrossConnectionConvertTest::CrossConnectionConvertTest(void) = default;
 
-CrossConnectionConvertTest::~CrossConnectionConvertTest(void) {}
+CrossConnectionConvertTest::~CrossConnectionConvertTest(void) = default;

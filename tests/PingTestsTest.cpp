@@ -51,7 +51,7 @@ int PingTestsTest::RunTest(
 
   receiver = RakPeerInterface::GetInstance();
   destroyList.Push(receiver, _FILE_AND_LINE_);
-  SocketDescriptor sd(60000, 0);
+  SocketDescriptor sd(60000, nullptr);
   receiver->Startup(2, &sd, 1);
   receiver->SetMaximumIncomingConnections(2);
   Packet* packet;
@@ -63,12 +63,13 @@ int PingTestsTest::RunTest(
 
   printf("Connecting sender2\n");
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(sender2, receiver, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Could not connect after 5 seconds\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 2;
   }
@@ -85,14 +86,16 @@ int PingTestsTest::RunTest(
   while (!timer.IsExpired()) {
     for (packet = receiver->Receive(); packet;
          receiver->DeallocatePacket(packet), packet = receiver->Receive()) {
-      if (isVerbose)
+      if (isVerbose) {
         printf("Receive packet id %i\n", packet->data[0]);
+      }
     }
 
     for (packet = sender2->Receive(); packet;
          sender2->DeallocatePacket(packet), packet = sender2->Receive()) {
-      if (isVerbose)
+      if (isVerbose) {
         printf("Send packet id %i\n", packet->data[0]);
+      }
     }
 
     if (GetTimeMS() > nextPing) {
@@ -104,17 +107,20 @@ int PingTestsTest::RunTest(
   }
 
   int averagePing = sender2->GetAveragePing(currentSystem);
-  if (isVerbose)
+  if (isVerbose) {
     printf("Average Ping time %i\n", averagePing);
+  }
 
   lastPing = sender2->GetLastPing(currentSystem);
   lowestPing = sender2->GetLowestPing(currentSystem);
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Last Ping time %i\n", lastPing);
+  }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Lowest Ping time %i\n", lowestPing);
+  }
 
   int returnVal = TestAverageValue(averagePing, __LINE__, noPauses, isVerbose);
 
@@ -124,12 +130,13 @@ int PingTestsTest::RunTest(
 
   if (lastPing > 100) //100 MS for localhost?
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Problem with the last ping time,greater then 100MS for localhost\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 3;
   }
@@ -137,23 +144,25 @@ int PingTestsTest::RunTest(
   if (lowestPing >
       10) //The lowest ping for localhost should drop below 10MS at least once
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "The lowest ping for localhost should drop below 10MS at least once\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 4;
   }
 
   if (lastPing < lowestPing) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "There is a problem if the lastping is lower than the lowestping stat\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 5;
   }
@@ -163,12 +172,13 @@ int PingTestsTest::RunTest(
 
   printf("Connecting sender\n");
   if (!TestHelpers::WaitAndConnectTwoPeersLocally(sender, receiver, 5000)) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Could not connect after 5 seconds\n",
           !noPauses && isVerbose,
           __LINE__,
           __FILE__);
+    }
 
     return 2;
   }
@@ -183,22 +193,25 @@ int PingTestsTest::RunTest(
   while (!timer.IsExpired()) {
     for (packet = receiver->Receive(); packet;
          receiver->DeallocatePacket(packet), packet = receiver->Receive()) {
-      if (isVerbose)
+      if (isVerbose) {
         printf("Receive packet id %i\n", packet->data[0]);
+      }
     }
 
     for (packet = sender->Receive(); packet;
          sender->DeallocatePacket(packet), packet = sender->Receive()) {
-      if (isVerbose)
+      if (isVerbose) {
         printf("Send packet id %i\n", packet->data[0]);
+      }
     }
 
     RakSleep(3);
   }
 
   averagePing = sender->GetAveragePing(currentSystem);
-  if (isVerbose)
+  if (isVerbose) {
     printf("Average Ping time %i\n", averagePing);
+  }
 
   returnVal = TestAverageValue(averagePing, __LINE__, noPauses, isVerbose);
 
@@ -215,12 +228,13 @@ int PingTestsTest::TestAverageValue(
     bool noPauses,
     bool isVerbose) {
   if (averagePing < 0) {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Problem with the average ping time,should never be less than zero in this test\n",
           !noPauses && isVerbose,
           line,
           __FILE__);
+    }
 
     return 1;
   }
@@ -228,12 +242,13 @@ int PingTestsTest::TestAverageValue(
   if (averagePing >
       10) //Average Ping should not be greater than 10MS for localhost. Command line pings typically give < 1ms
   {
-    if (isVerbose)
+    if (isVerbose) {
       DebugTools::ShowError(
           "Average Ping should not be greater than 10MS for localhost. Command line pings typically give < 1ms\n",
           !noPauses && isVerbose,
           line,
           __FILE__);
+    }
 
     return 5;
   }
@@ -280,13 +295,14 @@ RakString PingTestsTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-PingTestsTest::PingTestsTest(void) {}
+PingTestsTest::PingTestsTest(void) = default;
 
-PingTestsTest::~PingTestsTest(void) {}
+PingTestsTest::~PingTestsTest(void) = default;
 
 void PingTestsTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

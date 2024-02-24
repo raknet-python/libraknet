@@ -64,21 +64,22 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
 
   server = RakPeerInterface::GetInstance();
   destroyList.Push(server, _FILE_AND_LINE_);
-  SocketDescriptor sd(60000, 0);
+  SocketDescriptor sd(60000, nullptr);
   server->Startup(clientNum, &sd, 1);
   server->SetMaximumIncomingConnections(clientNum);
 
   //Connect all the clients to the server
 
   for (int i = 0; i < clientNum; i++) {
-    if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+    if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
         CONNECTION_ATTEMPT_STARTED) {
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError(
             "Problem while calling connect.\n",
             !noPauses && isVerbose,
             __LINE__,
             __FILE__);
+      }
 
       return 1; //This fails the test, don't bother going on.
     }
@@ -89,8 +90,9 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
   DataStructures::List<SystemAddress> systemList;
   DataStructures::List<RakNetGUID> guidList;
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Entering disconnect loop \n");
+  }
 
   while (GetTimeMS() - entryTime < 10000) //Run for 10 Secoonds
   {
@@ -120,14 +122,15 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
               true,
               true)) //Are we connected or is there a pending operation ?
       {
-        if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+        if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
             CONNECTION_ATTEMPT_STARTED) {
-          if (isVerbose)
+          if (isVerbose) {
             DebugTools::ShowError(
                 "Problem while calling connect. \n",
                 !noPauses && isVerbose,
                 __LINE__,
                 __FILE__);
+          }
 
           return 1; //This fails the test, don't bother going on.
         }
@@ -138,60 +141,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
 
     packet = server->Receive();
 
-    if (isVerbose && packet)
+    if (isVerbose && packet) {
       printf("For server\n");
+    }
 
     while (packet) {
       switch (packet->data[0]) {
         case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has disconnected.\n");
+          }
 
           break;
         case ID_REMOTE_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has lost the connection.\n");
+          }
 
           break;
         case ID_REMOTE_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has connected.\n");
+          }
           break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Our connection request has been accepted.\n");
+          }
 
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection has failed.\n");
+          }
 
           break;
 
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection is incoming.\n");
+          }
 
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("The server is full.\n");
+          }
 
           break;
 
         case ID_ALREADY_CONNECTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Already connected\n");
+          }
 
           break;
 
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("We have been disconnected.\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection lost.\n");
+          }
 
           break;
         default:
@@ -209,60 +223,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
     {
       packet = clientList[i]->Receive();
 
-      if (isVerbose && packet)
+      if (isVerbose && packet) {
         printf("For peer %i\n", i);
+      }
 
       while (packet) {
         switch (packet->data[0]) {
           case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has disconnected.\n");
+            }
 
             break;
           case ID_REMOTE_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has lost the connection.\n");
+            }
 
             break;
           case ID_REMOTE_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has connected.\n");
+            }
             break;
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Our connection request has been accepted.\n");
+            }
 
             break;
           case ID_CONNECTION_ATTEMPT_FAILED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection has failed.\n");
+            }
 
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection is incoming.\n");
+            }
 
             break;
           case ID_NO_FREE_INCOMING_CONNECTIONS:
-            if (isVerbose)
+            if (isVerbose) {
               printf("The server is full.\n");
+            }
 
             break;
 
           case ID_ALREADY_CONNECTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Already connected\n");
+            }
 
             break;
 
           case ID_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("We have been disconnected.\n");
+            }
             break;
           case ID_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Connection lost.\n");
+            }
 
             break;
           default:
@@ -288,60 +313,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
 
     packet = server->Receive();
 
-    if (isVerbose && packet)
+    if (isVerbose && packet) {
       printf("For server\n");
+    }
 
     while (packet) {
       switch (packet->data[0]) {
         case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has disconnected.\n");
+          }
 
           break;
         case ID_REMOTE_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has lost the connection.\n");
+          }
 
           break;
         case ID_REMOTE_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has connected.\n");
+          }
           break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Our connection request has been accepted.\n");
+          }
 
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection has failed.\n");
+          }
 
           break;
 
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection is incoming.\n");
+          }
 
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("The server is full.\n");
+          }
 
           break;
 
         case ID_ALREADY_CONNECTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Already connected\n");
+          }
 
           break;
 
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("We have been disconnected.\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection lost.\n");
+          }
 
           break;
         default:
@@ -358,60 +394,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
     for (int i = 0; i < clientNum; i++) //Receive for all peers
     {
       packet = clientList[i]->Receive();
-      if (isVerbose && packet)
+      if (isVerbose && packet) {
         printf("For peer %i\n", i);
+      }
 
       while (packet) {
         switch (packet->data[0]) {
           case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has disconnected.\n");
+            }
 
             break;
           case ID_REMOTE_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has lost the connection.\n");
+            }
 
             break;
           case ID_REMOTE_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has connected.\n");
+            }
             break;
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Our connection request has been accepted.\n");
+            }
 
             break;
           case ID_CONNECTION_ATTEMPT_FAILED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection has failed.\n");
+            }
 
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection is incoming.\n");
+            }
 
             break;
           case ID_NO_FREE_INCOMING_CONNECTIONS:
-            if (isVerbose)
+            if (isVerbose) {
               printf("The server is full.\n");
+            }
 
             break;
 
           case ID_ALREADY_CONNECTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Already connected\n");
+            }
 
             break;
 
           case ID_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("We have been disconnected.\n");
+            }
             break;
           case ID_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Connection lost.\n");
+            }
 
             break;
           default:
@@ -442,17 +489,18 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
             true,
             true)) //Are we connected or is there a pending operation ?
     {
-      if (clientList[i]->Connect("127.0.0.1", 60000, 0, 0) !=
+      if (clientList[i]->Connect("127.0.0.1", 60000, nullptr, 0) !=
           CONNECTION_ATTEMPT_STARTED) {
         clientList[i]->GetSystemList(systemList, guidList); //Get connectionlist
         int len = systemList.Size();
 
-        if (isVerbose)
+        if (isVerbose) {
           DebugTools::ShowError(
               "Problem while calling connect. \n",
               !noPauses && isVerbose,
               __LINE__,
               __FILE__);
+        }
 
         return 1; //This fails the test, don't bother going on.
       }
@@ -466,60 +514,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
     //Server receive
 
     packet = server->Receive();
-    if (isVerbose && packet)
+    if (isVerbose && packet) {
       printf("For server\n");
+    }
 
     while (packet) {
       switch (packet->data[0]) {
         case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has disconnected.\n");
+          }
 
           break;
         case ID_REMOTE_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has lost the connection.\n");
+          }
 
           break;
         case ID_REMOTE_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Another client has connected.\n");
+          }
           break;
         case ID_CONNECTION_REQUEST_ACCEPTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Our connection request has been accepted.\n");
+          }
 
           break;
         case ID_CONNECTION_ATTEMPT_FAILED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection has failed.\n");
+          }
 
           break;
 
         case ID_NEW_INCOMING_CONNECTION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("A connection is incoming.\n");
+          }
 
           break;
         case ID_NO_FREE_INCOMING_CONNECTIONS:
-          if (isVerbose)
+          if (isVerbose) {
             printf("The server is full.\n");
+          }
 
           break;
 
         case ID_ALREADY_CONNECTED:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Already connected\n");
+          }
 
           break;
 
         case ID_DISCONNECTION_NOTIFICATION:
-          if (isVerbose)
+          if (isVerbose) {
             printf("We have been disconnected.\n");
+          }
           break;
         case ID_CONNECTION_LOST:
-          if (isVerbose)
+          if (isVerbose) {
             printf("Connection lost.\n");
+          }
 
           break;
         default:
@@ -536,60 +595,71 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
     for (int i = 0; i < clientNum; i++) //Receive for all clients
     {
       packet = clientList[i]->Receive();
-      if (isVerbose && packet)
+      if (isVerbose && packet) {
         printf("For peer %i\n", i);
+      }
 
       while (packet) {
         switch (packet->data[0]) {
           case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has disconnected.\n");
+            }
 
             break;
           case ID_REMOTE_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has lost the connection.\n");
+            }
 
             break;
           case ID_REMOTE_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has connected.\n");
+            }
             break;
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Our connection request has been accepted.\n");
+            }
 
             break;
           case ID_CONNECTION_ATTEMPT_FAILED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection has failed.\n");
+            }
 
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection is incoming.\n");
+            }
 
             break;
           case ID_NO_FREE_INCOMING_CONNECTIONS:
-            if (isVerbose)
+            if (isVerbose) {
               printf("The server is full.\n");
+            }
 
             break;
 
           case ID_ALREADY_CONNECTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Already connected\n");
+            }
 
             break;
 
           case ID_DISCONNECTION_NOTIFICATION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("We have been disconnected.\n");
+            }
             break;
           case ID_CONNECTION_LOST:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Connection lost.\n");
+            }
 
             break;
           default:
@@ -612,20 +682,23 @@ int ManyClientsOneServerNonBlockingTest::RunTest(
         guidList.Size(); //Get the number of connections for the current peer
     if (connNum != 1) //Did we connect to all?
     {
-      if (isVerbose)
+      if (isVerbose) {
         printf(
             "Not all clients reconnected normally.\nFailed on clients number %i\n",
             i);
+      }
 
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError("", !noPauses && isVerbose, __LINE__, __FILE__);
+      }
 
       return 2;
     }
   }
 
-  if (isVerbose)
+  if (isVerbose) {
     printf("Pass\n");
+  }
   return 0;
 }
 
@@ -653,15 +726,16 @@ RakString ManyClientsOneServerNonBlockingTest::ErrorCodeToString(
   }
 }
 
-ManyClientsOneServerNonBlockingTest::ManyClientsOneServerNonBlockingTest(void) {
-}
+ManyClientsOneServerNonBlockingTest::ManyClientsOneServerNonBlockingTest(void) =
+    default;
 
 ManyClientsOneServerNonBlockingTest::~ManyClientsOneServerNonBlockingTest(
-    void) {}
+    void) = default;
 
 void ManyClientsOneServerNonBlockingTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }

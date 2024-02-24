@@ -60,7 +60,7 @@ int EightPeerTest::RunTest(
       lastNumberReceivedFromList[i][j] = 0;
     }
 
-    SocketDescriptor sd(60000 + i, 0);
+    SocketDescriptor sd(60000 + i, nullptr);
     peerList[i]->Startup(peerNum * 2, &sd, 1);
     peerList[i]->SetMaximumIncomingConnections(peerNum);
   }
@@ -70,7 +70,7 @@ int EightPeerTest::RunTest(
     for (int j = i + 1; j < peerNum;
          j++) //Start at i+1 so don't connect two of the same together.
     {
-      if (peerList[i]->Connect("127.0.0.1", 60000 + j, 0, 0) !=
+      if (peerList[i]->Connect("127.0.0.1", 60000 + j, nullptr, 0) !=
           CONNECTION_ATTEMPT_STARTED) {
         if (isVerbose) {
           DebugTools::ShowError(
@@ -106,19 +106,21 @@ int EightPeerTest::RunTest(
     if (GetTimeMS() - entryTime > 20000 && !initialConnectOver &&
         !allConnected) //failed for 20 seconds
     {
-      if (isVerbose)
+      if (isVerbose) {
         DebugTools::ShowError(
             "Failed to connect to all peers after 20 seconds",
             !noPauses && isVerbose,
             __LINE__,
             __FILE__);
+      }
       return 2;
       break;
     }
 
     if (allConnected) {
-      if (!initialConnectOver)
+      if (!initialConnectOver) {
         initialConnectOver = true;
+      }
       if (k < numPackets) {
         for (int i = 0; i < peerNum;
              i++) //Have all peers send a message to all peers
@@ -175,9 +177,10 @@ int EightPeerTest::RunTest(
       {
         packet = peerList[i]->Receive();
       }
-      if (isVerbose)
+      if (isVerbose) {
         printf(
             "For peer %i with %i connected peers.\n", i, connectionAmount[i]);
+      }
       while (packet) {
         switch (packet->data[0]) {
           case ID_REMOTE_DISCONNECTION_NOTIFICATION:
@@ -197,29 +200,33 @@ int EightPeerTest::RunTest(
             return 3;
             break;
           case ID_REMOTE_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Another client has connected.\n");
+            }
             break;
           case ID_CONNECTION_REQUEST_ACCEPTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Our connection request has been accepted.\n");
+            }
             connectionAmount[i]++;
 
             break;
           case ID_CONNECTION_ATTEMPT_FAILED:
 
-            if (isVerbose)
+            if (isVerbose) {
               DebugTools::ShowError(
                   "A connection has failed.\n Test failed.\n",
                   !noPauses && isVerbose,
                   __LINE__,
                   __FILE__);
+            }
             return 2;
             break;
 
           case ID_NEW_INCOMING_CONNECTION:
-            if (isVerbose)
+            if (isVerbose) {
               printf("A connection is incoming.\n");
+            }
             connectionAmount
                 [i]++; //For this test assume connection. Test will fail if connection fails.
             break;
@@ -235,8 +242,9 @@ int EightPeerTest::RunTest(
             break;
 
           case ID_ALREADY_CONNECTED:
-            if (isVerbose)
+            if (isVerbose) {
               printf("Already connected\n"); //Shouldn't happen
+            }
 
             break;
 
@@ -272,8 +280,9 @@ int EightPeerTest::RunTest(
               bitStream.IgnoreBits(8);
               bitStream.Read(sequenceNum);
               bitStream.Read(thePeerNum);
-              if (isVerbose)
+              if (isVerbose) {
                 printf("Message %i from %i\n", sequenceNum, thePeerNum);
+              }
 
               if (thePeerNum >= 0 && thePeerNum < peerNum) {
                 if (lastNumberReceivedFromList[i][thePeerNum] == sequenceNum) {
@@ -305,9 +314,10 @@ int EightPeerTest::RunTest(
   for (int i = 0; i < peerNum; i++) {
     for (int j = 0; j < peerNum; j++) {
       if (i != j) {
-        if (isVerbose)
+        if (isVerbose) {
           printf(
               "%i recieved %i packets from %i\n", i, recievedFromList[i][j], j);
+        }
         if (recievedFromList[i][j] != numPackets) {
           if (isVerbose) {
             printf(
@@ -361,13 +371,14 @@ RakString EightPeerTest::ErrorCodeToString(int errorCode) {
   }
 }
 
-EightPeerTest::EightPeerTest(void) {}
+EightPeerTest::EightPeerTest(void) = default;
 
-EightPeerTest::~EightPeerTest(void) {}
+EightPeerTest::~EightPeerTest(void) = default;
 
 void EightPeerTest::DestroyPeers() {
   int theSize = destroyList.Size();
 
-  for (int i = 0; i < theSize; i++)
+  for (int i = 0; i < theSize; i++) {
     RakPeerInterface::DestroyInstance(destroyList[i]);
+  }
 }
